@@ -23,17 +23,18 @@ export default function GameCard({
         comingSoon ? "opacity-60 cursor-not-allowed" : ""
       }`}
     >
-      <div className="relative w-full h-36">
+      <div className="relative w-full aspect-[16/9]">
         <Image
           src={imageUrl}
           alt={title}
           fill
-          style={{ objectFit: "cover" }}
-          className="block"
-          unoptimized // needed for external URLs
+          className="object-cover rounded-t-md"
+          unoptimized // for external image URLs (or configure next.config.js)
         />
       </div>
+
       <h3 className="text-lg font-semibold my-3 text-[#e0e0e0]">{title}</h3>
+
       {!comingSoon ? (
         <Link
           href={link}
