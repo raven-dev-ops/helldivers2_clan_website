@@ -1,107 +1,85 @@
-"use client";
+// src/components/common/Navbar.tsx
 
 import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react";
 
-export default function Navbar() {
-  const { data: session, status } = useSession();
-
-  const navLinks = [
-    { href: "/network/leaderboard", label: "Leaderboard" },
-    { href: "/creators", label: "Creators" },
-    { href: "/partners", label: "Partners" },
-    { href: "/academy", label: "Academy" },
-    { href: "/forum", label: "Forum" },
-    { href: "/studios", label: "GPT Studios" },
-    { href: "/about", label: "About" },
-  ];
-
-  // Example admin check
-  const isAdmin = session?.user?.role === "admin";
-
+const Navbar = () => {
   return (
-    <nav className="bg-[#162447] text-[#e0e0e0] p-4 shadow-md sticky top-0 z-50">
-      <div className="container mx-auto flex flex-wrap justify-between items-center gap-y-2">
-        {/* Logo */}
-        <div className="text-xl font-bold">
-          <Link href="/">Galactic Phantom Division</Link>
-        </div>
-
-        {/* Nav Links */}
-        <ul className="hidden md:flex items-center space-x-6 order-2 md:order-none">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link href={link.href} className="hover:text-[#00bcd4] transition duration-200">
-                {link.label}
-              </Link>
-            </li>
-          ))}
-          {isAdmin && (
-            <li>
-              <Link
-                href="/admin"
-                className="text-yellow-400 hover:text-yellow-300 transition duration-200"
-              >
-                Admin
-              </Link>
-            </li>
-          )}
-        </ul>
-
-        {/* Auth Buttons & Profile */}
-        <div className="flex items-center space-x-3 order-1 md:order-none">
-          {status === "loading" && <span className="text-sm text-gray-400">Loading...</span>}
-
-          {status === "unauthenticated" && (
-            <>
-              <button
-                onClick={() => signIn("discord")}
-                className="bg-[#7289da] hover:bg-[#5f73bc] text-white py-1 px-3 rounded text-sm transition duration-200"
-              >
-                Discord
-              </button>
-              <button
-                onClick={() => signIn("google")}
-                className="bg-white hover:bg-gray-200 text-gray-700 py-1 px-3 rounded text-sm transition duration-200"
-              >
-                Google
-              </button>
-            </>
-          )}
-
-          {status === "authenticated" && (
-            <>
-              <Link
-                href="/profile/me"
-                className="hover:text-[#00bcd4] transition duration-200 text-sm font-medium mr-2"
-              >
-                {session?.user?.name || session?.user?.email || "Profile"}
-              </Link>
-              <button
-                onClick={() => signOut()}
-                className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm transition duration-200"
-              >
-                Sign Out
-              </button>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Burger (placeholder) */}
-        <div className="md:hidden order-3">
-          <button className="text-white focus:outline-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
+    <nav className="bg-[#282842] p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <Link href="/" className="text-white font-bold text-xl">
+          Galactic Phantom Division
+        </Link>
+        <div className="flex items-center space-x-4">
+          <Link
+            href="/about"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            About
+          </Link>
+          <Link
+            href="/academy"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Academy
+          </Link>
+          <Link
+            href="/creators"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Creators
+          </Link>
+          <Link
+            href="/forum"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Forum
+          </Link>
+          <Link
+            href="/games/helldivers-2"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Helldivers 2
+          </Link>
+          <Link
+            href="/network/clans"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Clans
+          </Link>
+          <Link
+            href="/network/leaderboard"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Leaderboard
+          </Link>
+          <Link
+            href="/partners"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Partners
+          </Link>
+          <Link
+            href="/profile/me"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Profile
+          </Link>
+          <Link
+            href="/studios"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Studios
+          </Link>
+          <Link
+            href="/admin"
+            className="text-white hover:text-[#00bcd4] transition duration-300"
+          >
+            Admin
+          </Link>
         </div>
       </div>
     </nav>
   );
-}
+};
+
+export default Navbar;

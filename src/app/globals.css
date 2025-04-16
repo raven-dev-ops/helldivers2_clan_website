@@ -1,21 +1,33 @@
 /* styles/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html,
 body {
   padding: 0;
   margin: 0;
+  background-color: #1a1a2e;
+  color: #e0e0e0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  background-color: #1a1a2e; /* Dark background example */
-  color: #e0e0e0; /* Light text */
 }
 
 a {
-  color: #00bcd4; /* Example link color */
+  color: #00bcd4;
   text-decoration: none;
+  transition: color 0.3s ease; /* Added transition for smooth hover effects */
+}
+
+a:hover {
+  color: #0097a7; /* Darker shade for hover effect */
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Add more global styles here */
+/* Optional: Add smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
