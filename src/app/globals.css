@@ -1,0 +1,21 @@
+/* styles/globals.css */
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: #1a1a2e; /* Dark background example */
+  color: #e0e0e0; /* Light text */
+}
+
+a {
+  color: #00bcd4; /* Example link color */
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add more global styles here */
