@@ -1,0 +1,41 @@
+/* layout.module.css */
+.rootBody {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #e0e0e0;
+  }
+  
+  .overlayDark {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -10;
+  }
+  
+  .backgroundImage {
+    position: absolute;
+    inset: 0;
+    background-image: url('/images/space-bg.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -20;
+  }
+  
+  .mainContainer {
+    flex-grow: 1;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .contentWrapper {
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+  }
+  
