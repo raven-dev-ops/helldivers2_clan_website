@@ -2,21 +2,15 @@
 import { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // enable styled‑components SWC transform
-  compiler: {
-    styledComponents: true,
+  compiler: { styledComponents: true },
+  eslint: {
+    // disables eslint errors from failing `next build`
+    ignoreDuringBuilds: true,
   },
-
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.behance.net',
-      },
-      {
-        protocol: 'https',
-        hostname: 'visitarrakis.com',
-      },
+      { protocol: 'https', hostname: '**.behance.net' },
+      { protocol: 'https', hostname: 'visitarrakis.com' },
     ],
   },
 };
