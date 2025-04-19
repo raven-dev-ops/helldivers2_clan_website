@@ -1,0 +1,74 @@
+/* src/components/common/Navbar.module.css */
+.nav {
+    background-color: #282842;
+    padding: 1rem;
+  }
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+  .hamburger {
+    color: #ffffff;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  @media (min-width: 768px) {
+    .hamburger {
+      display: none;
+    }
+  }
+  .desktopMenu {
+    display: none;
+    gap: 1rem;
+  }
+  @media (min-width: 768px) {
+    .desktopMenu {
+      display: flex;
+      align-items: center;
+    }
+  }
+  .link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .link:hover {
+    color: #00bcd4;
+  }
+  .mobileMenu {
+    background-color: #1a1a2e;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 0.375rem;
+    margin-top: 1rem;
+  }
+  @media (min-width: 768px) {
+    .mobileMenu {
+      display: none;
+    }
+  }
+  .mobileList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+  .mobileLink {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  .mobileLink:hover {
+    color: #00bcd4;
+  }

@@ -1,211 +1,74 @@
 // src/components/common/Navbar.tsx
-
-"use client"; // necessary if using React state or event handlers in Next.js App Router
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
+import styles from "./Navbar.module.css";
 
 const Navbar = () => {
-  // Local state to track whether the mobile menu is open
   const [navOpen, setNavOpen] = useState(false);
-
-  const toggleNav = () => {
-    setNavOpen((prev) => !prev);
-  };
+  const toggleNav = () => setNavOpen((prev) => !prev);
 
   return (
-    <nav className="bg-[#282842] p-4">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo / Title */}
-        <Link href="/" className="text-white font-bold text-xl">
+    <nav className={styles.nav}>
+      <div className={styles.container}>
+        <Link href="/" className={styles.logo}>
           Galactic Phantom Division
         </Link>
 
-        {/* Hamburger Icon (Mobile Only) */}
         <button
           type="button"
-          className="text-white text-2xl md:hidden focus:outline-none"
+          className={styles.hamburger}
           onClick={toggleNav}
           aria-label="Toggle Navigation"
         >
           {navOpen ? <FaTimes /> : <FaBars />}
         </button>
 
-        {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Link
-            href="/about"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            About
-          </Link>
-          <Link
-            href="/academy"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Academy
-          </Link>
-          <Link
-            href="/creators"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Creators
-          </Link>
-          <Link
-            href="/forum"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Forum
-          </Link>
-          <Link
-            href="/games/helldivers-2"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Helldivers 2
-          </Link>
-          <Link
-            href="/network/clans"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Clans
-          </Link>
-          <Link
-            href="/network/leaderboard"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Leaderboard
-          </Link>
-          <Link
-            href="/partners"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Partners
-          </Link>
-          <Link
-            href="/profile/me"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Profile
-          </Link>
-          <Link
-            href="/studios"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Studios
-          </Link>
-          <Link
-            href="/admin"
-            className="text-white hover:text-[#00bcd4] transition duration-300"
-          >
-            Admin
-          </Link>
+        <div className={styles.desktopMenu}>
+          {[
+            { href: "/about", label: "About" },
+            { href: "/academy", label: "Academy" },
+            { href: "/creators", label: "Creators" },
+            { href: "/forum", label: "Forum" },
+            { href: "/games/helldivers-2", label: "Helldivers 2" },
+            { href: "/network/clans", label: "Clans" },
+            { href: "/network/leaderboard", label: "Leaderboard" },
+            { href: "/partners", label: "Partners" },
+            { href: "/profile/me", label: "Profile" },
+            { href: "/studios", label: "Studios" },
+            { href: "/admin", label: "Admin" },
+          ].map(({ href, label }) => (
+            <Link key={href} href={href} className={styles.link}>
+              {label}
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* Mobile Nav (Sliding Menu) */}
       {navOpen && (
-        <div className="md:hidden mt-4 bg-[#1a1a2e] shadow-lg rounded-md">
-          <ul className="flex flex-col space-y-2 p-4">
-            <li>
-              <Link
-                href="/about"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/academy"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Academy
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/creators"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Creators
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/forum"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Forum
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/games/helldivers-2"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Helldivers 2
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/network/clans"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Clans
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/network/leaderboard"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Leaderboard
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/partners"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Partners
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/profile/me"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Profile
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/studios"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Studios
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/admin"
-                className="block text-white hover:text-[#00bcd4] transition duration-300"
-                onClick={toggleNav}
-              >
-                Admin
-              </Link>
-            </li>
+        <div className={styles.mobileMenu}>
+          <ul className={styles.mobileList}>
+            {[
+              "/about",
+              "/academy",
+              "/creators",
+              "/forum",
+              "/games/helldivers-2",
+              "/network/clans",
+              "/network/leaderboard",
+              "/partners",
+              "/profile/me",
+              "/studios",
+              "/admin",
+            ].map((path) => (
+              <li key={path}>
+                <Link href={path} className={styles.mobileLink} onClick={toggleNav}>
+                  {path.replace(/^\//, "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       )}

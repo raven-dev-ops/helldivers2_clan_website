@@ -1,11 +1,13 @@
+// src/components/common/LoadingSpinner.tsx
 "use client";
 
 import React from "react";
+import styles from "./LoadingSpinner.module.css";
 
 export default function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center py-4">
-      <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+    <div className={styles.spinnerWrapper}>
+      <div className={styles.spinner} />
     </div>
   );
 }
