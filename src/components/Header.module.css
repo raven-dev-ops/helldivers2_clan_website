@@ -1,0 +1,10 @@
+/* src/components/Header.module.css */
+.header {
+    background: #282842;
+    padding: 1rem;
+  }
+  .title {
+    color: #00bcd4;
+    font-size: 2rem;
+  }
+  
