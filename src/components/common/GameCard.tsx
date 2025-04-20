@@ -1,47 +1,50 @@
-// src/components/common/GameCard.tsx
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import styles from "./GameCard.module.css";
+'use client';
+
+import Image from 'next/image';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface GameCardProps {
   title: string;
-  imageUrl?: string;
-  comingSoon?: boolean;
+  imageUrl: string;
   link?: string;
+  comingSoon?: boolean;
 }
 
-export default function GameCard({
-  title,
-  imageUrl = "/images/placeholder.png",
-  comingSoon = false,
-  link = "#",
-}: GameCardProps) {
+export default function GameCard({ title, imageUrl, link = '/', comingSoon }: GameCardProps) {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handleClick = async () => {
+    // If user not logged in, send them to /auth
+    if (!session) {
+      return router.push('/auth');
+    }
+
+    // Example: Save the user’s chosen "division" to your API
+    await fetch('/api/users/me', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ division: link.replace('/', '') }),
+    });
+
+    // Then redirect them back to the homepage, or wherever
+    router.replace('/');
+  };
+
   return (
-    <div className={`${styles.root} ${comingSoon ? styles.comingSoon : ""}`}>
-      <div className={styles.badge}>
-        {comingSoon ? "Coming Soon" : "Live"}
-      </div>
-
-      <div className={styles.imageWrapper}>
-        <Image
-          src={imageUrl}
-          alt={title}
-          fill
-          className={styles.image}
-          unoptimized
-        />
-      </div>
-
-      <h3 className={styles.title}>{title}</h3>
-
-      {!comingSoon ? (
-        <Link href={link} className={styles.button}>
-          Explore
-        </Link>
-      ) : (
-        <span className={styles.comingSoonText}>Coming Soon</span>
-      )}
+    <div
+      onClick={!comingSoon ? handleClick : undefined}
+      style={{ 
+        cursor: comingSoon ? 'default' : 'pointer',
+        border: '1px solid #333', 
+        padding: '1rem',
+        margin: '1rem'
+      }}
+    >
+      <Image src={imageUrl} alt={title} width={300} height={200} />
+      <h2>{title}</h2>
+      {comingSoon && <p>Coming Soon</p>}
     </div>
   );
 }

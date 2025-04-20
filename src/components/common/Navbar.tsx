@@ -28,17 +28,12 @@ const Navbar = () => {
 
         <div className={styles.desktopMenu}>
           {[
-            { href: "/about", label: "About" },
             { href: "/academy", label: "Academy" },
             { href: "/creators", label: "Creators" },
             { href: "/forum", label: "Forum" },
-            { href: "/games/helldivers-2", label: "Helldivers 2" },
-            { href: "/network/clans", label: "Clans" },
-            { href: "/network/leaderboard", label: "Leaderboard" },
+            { href: "/games", label: "Games" },
             { href: "/partners", label: "Partners" },
-            { href: "/profile/me", label: "Profile" },
             { href: "/studios", label: "Studios" },
-            { href: "/admin", label: "Admin" },
           ].map(({ href, label }) => (
             <Link key={href} href={href} className={styles.link}>
               {label}
@@ -51,17 +46,12 @@ const Navbar = () => {
         <div className={styles.mobileMenu}>
           <ul className={styles.mobileList}>
             {[
-              "/about",
               "/academy",
               "/creators",
               "/forum",
-              "/games/helldivers-2",
-              "/network/clans",
-              "/network/leaderboard",
+              "/games",
               "/partners",
-              "/profile/me",
               "/studios",
-              "/admin",
             ].map((path) => (
               <li key={path}>
                 <Link href={path} className={styles.mobileLink} onClick={toggleNav}>
