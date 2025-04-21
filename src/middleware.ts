@@ -1,113 +1,65 @@
-// src/middleware.ts (or middleware.ts at project root)
+// src/middleware.ts (Corrected Matcher Format)
 
-// Option 1: Using next-auth/middleware (Recommended)
-// This automatically handles session verification based on your authOptions
-import { withAuth } from "next-auth/middleware"
-import { NextResponse } from "next/server"
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
 export default withAuth(
-  // `withAuth` augments your `Request` with the user's token.
+  // Middleware logic (runs only AFTER authorized check passes for matched routes)
   function middleware(req) {
-    // console.log("Middleware running for:", req.nextUrl.pathname);
-    // console.log("Token:", req.nextauth.token); // Token available if logged in
+    // console.log("Middleware logic running for:", req.nextUrl.pathname);
+    // console.log("Token:", req.nextauth.token);
 
-    // Example: Redirect based on role
-    // if (req.nextUrl.pathname.startsWith("/admin") && req.nextauth.token?.role !== "admin") {
-    //   return NextResponse.rewrite(new URL("/denied", req.url))
+    // If user is authenticated and tries to access /auth, redirect them to home
+    // This check is fine here, as /auth won't be matched by the config below,
+    // but this handles the case where they navigate *after* logging in.
+    // However, it's often better handled client-side in the /auth page itself.
+    // Let's simplify: withAuth handles the core auth redirects.
+    // We might only need custom logic here for role-based access etc.
+    // if (req.nextauth.token && req.nextUrl.pathname === "/auth") {
+    //   return NextResponse.redirect(new URL("/", req.url));
     // }
 
-    // If user is authenticated (token exists) and they try to access /auth, redirect them to home
-    if (req.nextauth.token && req.nextUrl.pathname === "/auth") {
-      // console.log("Redirecting authenticated user from /auth");
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    // Allow the request to proceed if none of the above conditions are met
-    // (withAuth already handles redirecting unauthenticated users for matched paths)
-    return NextResponse.next();
+    return NextResponse.next(); // Allow authorized access to matched routes
   },
   {
     callbacks: {
-      // This callback determines if the user is authorized *to access the routes covered by the matcher*.
-      // If it returns false, the user is redirected to the login page.
-      // If it returns true, the middleware function above runs.
-      authorized: ({ token }) => {
-          // !!token checks if the token object exists and is not null/undefined
-          // This means the user is considered logged in if a valid token exists.
-          // console.log("Authorized callback token:", token);
-          return !!token;
-      }
+      // Determines if user token is valid. If not, redirect to signIn page.
+      authorized: ({ token }) => !!token,
     },
-    // Define the login page URL. If `authorized` returns false, user is sent here.
+    // Define the login page URL. Redirects here if authorized() is false.
     pages: {
-      signIn: "/auth", // Your sign-in page route
-      // error: "/auth/error", // Optional: page for auth errors
+      signIn: "/auth",
+      // error: "/auth/error", // Optional
     },
   }
-)
+);
 
-// --- Matcher ---
-// This specifies which paths the middleware should run on.
+// --- CORRECTED MATCHER CONFIG ---
+// Define the paths that SHOULD be protected by authentication.
+// Exclude paths for static assets, API routes, and the auth page itself.
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (API routes for NextAuth itself)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - auth (the login page itself, handled separately by redirect logic)
-     * - images (your public images folder)
-     * - *.png, *.jpg, *.jpeg, *.gif, *.svg (common image extensions)
+     * Match all routes EXCEPT for the ones starting with:
+     * - /api/ (API routes)
+     * - /api/auth/ (specifically NextAuth routes)
+     * - /_next/static (static files)
+     * - /_next/image (image optimization files)
+     * - /auth (the login page)
+     * - /images/ (your public images folder)
+     * - /videos/ (your public videos folder)
+     * - /audio/ (your public audio folder)
+     * - /favicon.ico (favicon file)
+     * - /placeholder.png (specific public files)
+     * Also exclude files by common extensions if needed, although matching folders is usually enough.
+     * The negative lookahead ensures these paths are SKIPPED by the middleware.
      */
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|auth|images|.*\\.(?:png|jpg|jpeg|gif|svg)$).*)",
+    "/((?!api/auth|api/|_next/static|_next/image|auth|images|videos|audio|favicon.ico|placeholder.png).*)",
+
+    /*
+     * Optionally, include specific root-level pages if the above doesn't catch them
+     * and you want them protected (though the above pattern usually covers /):
+     */
+    // "/" // Protect the homepage explicitly if needed
   ],
-}
-
-
-// // Option 2: Manual Token/Cookie Check (More complex, use if withAuth has issues)
-// import { NextResponse } from 'next/server'
-// import type { NextRequest } from 'next/server'
-// import { getToken } from 'next-auth/jwt' // If using JWT
-
-// export async function middleware(req: NextRequest) {
-//   const publicPaths = ['/auth']; // Pages accessible without login
-//   const pathname = req.nextUrl.pathname;
-
-//   // Allow requests for API auth, static files, images, and public pages
-//   if (
-//     pathname.startsWith('/api/auth') ||
-//     pathname.startsWith('/_next') ||
-//     pathname.startsWith('/images') || // Assuming public images
-//     pathname.includes('.') || // Allow files with extensions
-//     publicPaths.includes(pathname)
-//   ) {
-//     return NextResponse.next();
-//   }
-
-//   // Check for session token (JWT example)
-//   const secret = process.env.NEXTAUTH_SECRET;
-//   const token = await getToken({ req, secret });
-
-//   if (!token) {
-//     // No token, redirect to login page, preserving the originally requested URL
-//     const loginUrl = new URL('/auth', req.url);
-//     loginUrl.searchParams.set('callbackUrl', req.url); // Pass intended destination
-//     return NextResponse.redirect(loginUrl);
-//   }
-
-//    // If user is logged in and tries to access /auth page, redirect to home
-//   if (token && pathname === '/auth') {
-//       return NextResponse.redirect(new URL('/', req.url));
-//   }
-
-//   // User is authenticated and accessing a protected page, allow them
-//   return NextResponse.next();
-// }
-
-// // Matcher for manual check (similar to above, maybe slightly simpler)
-// export const config = {
-//   matcher: [
-//      '/((?!api/auth|_next/static|_next/image|favicon.ico|images).*)', // Protect most paths
-//   ],
-// }
+};
