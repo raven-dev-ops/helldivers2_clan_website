@@ -67,7 +67,7 @@ const styles = {
   } as React.CSSProperties,
 
   // --- Text styling ---
-  title: { fontSize: '1.8rem', fontWeight: 700, marginBottom: '0.5rem', color: '#f0f0f0' } as React.CSSProperties,
+  title: { fontSize: '2.4rem', fontWeight: 700, marginBottom: '0.5rem', color: '#f0f0f0' } as React.CSSProperties,
   subtitle: { fontSize: '1rem', color: '#a0aec0', marginBottom: '2rem' } as React.CSSProperties,
   footerText: { fontSize: '0.75rem', color: '#718096', marginTop: '2.5rem', textAlign: 'center' as 'center', maxWidth: '400px', position: 'relative', zIndex: 1 } as React.CSSProperties,
 

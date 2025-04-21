@@ -1,191 +1,140 @@
 "use client";
 
-// Using styled-components for styling this page
-import styled from 'styled-components';
-import { useSession, signIn } from 'next-auth/react'; // NextAuth hooks
-import { useRouter } from 'next/navigation'; // Next.js navigation
+import styled, { keyframes } from 'styled-components';
+import { useSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
-// Import the GameCard component with session/API logic
+// --- Swiper Imports ---
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, EffectCoverflow, A11y } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-coverflow';
+
+// Import the GameCard component
 import GameCard from '@/components/common/GameCard'; // Adjust path if needed
 
-// --- Styled Components Definitions ---
+// --- Define Type for Game Division Data ---
+interface GameDivision {
+  id: string;
+  title: string;
+  imageUrl: string;
+  href: string;
+  comingSoon: boolean;
+}
+
+// --- Data for Game Divisions (with Explicit Type) ---
+const gameDivisions: GameDivision[] = [ // Added type annotation
+  { id: 'helldivers2', title: "Helldivers 2", imageUrl: "/images/helldivers2-select-card.jpg", href: "/helldivers-2", comingSoon: false },
+  { id: 'dune',        title: "Dune: Awakening",    imageUrl: "/images/dune-awakening-select-card.jpg", href: "/dune-awakening",    comingSoon: true  },
+  { id: 'future0',     title: "Future Game",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future0",           comingSoon: false  },
+  { id: 'future1',     title: "Future Game",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future1",           comingSoon: false  },
+  { id: 'future2',     title: "Future Game",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future2",           comingSoon: false  },
+];
+
+// --- Keyframes ---
+const pulse = keyframes`
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+`;
+
+// --- Styled Components ---
 const Container = styled.div`
-  margin: 0 auto;
-  padding: 0 1rem 4rem; /* Add bottom padding */
-  max-width: 1200px;
-  color: #e0e0e0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-height: calc(100vh - 120px); /* Adjust based on layout */
+  width: 100%; padding: 2rem 0; /* Only vertical padding */
+  color: var(--color-text-primary, #e0e0e0);
+  overflow-x: hidden;
 `;
-
-const Hero = styled.section`
-  text-align: center;
-  padding: 4rem 1rem 3.5rem;
-  background: linear-gradient(180deg, #121e3a 0%, #1a1a2e 100%); /* Gradient background */
-  border-radius: 0 0 12px 12px; /* Softer rounding */
-  margin: -1rem -1rem 3rem; /* Extend slightly outside container padding */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  position: relative; /* For potential pseudo-elements */
-  overflow: hidden;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: clamp(2rem, 6vw, 3rem); /* Responsive font size */
-  color: #00bcd4;
-  margin-bottom: 0.75rem;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-`;
-
-const HeroSubtitle = styled.p`
-  font-size: clamp(1rem, 3vw, 1.25rem); /* Responsive font size */
-  color: #b0bec5;
-  margin-bottom: 2.5rem;
-  max-width: 600px; /* Limit subtitle width */
-  margin-left: auto;
-  margin-right: auto;
-  line-height: 1.6;
-`;
-
-const SignInButton = styled.button`
-  background-color: #00bcd4;
-  color: #1a1a2e;
-  padding: 0.85rem 1.75rem;
-  border-radius: 9999px;
-  font-weight: 700; /* Bolder */
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-
-  &:hover {
-    background-color: #00acc1; /* Slightly different hover */
-    transform: translateY(-2px); /* Subtle lift */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
-  }
-
-   &:focus-visible {
-    outline: 2px solid #80deea;
-    outline-offset: 2px;
-  }
-`;
-
 const CarouselSection = styled.section`
-  padding: 2rem 0;
+  padding: 0; width: 100%; max-width: 1400px;
+  display: flex; flex-direction: column; align-items: center;
 `;
-
-const CarouselTitle = styled.h2`
-    text-align: center;
-    font-size: clamp(1.5rem, 5vw, 2rem); /* Responsive title */
-    margin-bottom: 2.5rem;
-    color: #cfd8dc;
-    font-weight: 600;
+// CarouselTitle Removed
+const SwiperWrapper = styled.div`
+  position: relative; width: 100%; padding: 1rem 0; /* Reduced vertical padding slightly */ margin: 0 auto;
+  .swiper-button-prev, .swiper-button-next {
+    color: var(--color-primary, #00bcd4); background-color: rgba(30, 41, 59, 0.6); backdrop-filter: blur(4px);
+    width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--color-border, #334155);
+    transition: all 0.2s ease; top: 50%; transform: translateY(-50%); z-index: 30; position: fixed;
+    &:hover { background-color: rgba(51, 65, 85, 0.85); color: #ffffff; transform: translateY(-50%) scale(1.05); }
+    &::after { font-size: 1.2rem; font-weight: bold; }
+  }
+  .swiper-button-prev { left: 1.5rem; }
+  .swiper-button-next { right: 1.5rem; }
+  .swiper-button-disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+  .swiper { padding: 4rem 5vw; overflow: visible !important; } /* Adjusted padding */
+  .swiper-slide {
+    width: auto; transform: scale(0.55); opacity: 0.4; filter: grayscale(75%) brightness(0.65);
+    transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease; display: flex; justify-content: center; align-items: center;
+    backface-visibility: hidden; perspective: 1000px;
+    & > div { flex-shrink: 0; }
+  }
+  .swiper-slide-active { transform: scale(1.5); opacity: 1; filter: grayscale(0%) brightness(1); z-index: 10; }
+  .swiper-slide-active > div { cursor: pointer; }
 `;
-
-const ScrollContainer = styled.div`
-  display: flex;
-  gap: 1.75rem; /* Increased gap */
-  overflow-x: auto;
-  padding: 1rem 0.75rem; /* Adjust padding */
-  margin: 0 -0.75rem; /* Counteract padding for full-bleed effect */
-
-  /* Hide scrollbar */
-  scrollbar-width: none; /* Firefox */
-  &::-webkit-scrollbar { display: none; }
-
-  /* Improve scrolling experience on touch devices */
-  -webkit-overflow-scrolling: touch;
-`;
-
-const LoadingMessage = styled.p`
-    text-align: center;
-    padding: 6rem 1rem;
-    font-size: 1.2rem;
-    color: #90a4ae;
-    font-style: italic;
-`;
-// --- End Styled Components Definitions ---
+const LoadingMessage = styled.p` text-align: center; padding: 8rem 1rem; font-size: 1.2rem; color: var(--color-text-secondary, #90a4ae); font-style: italic; animation: ${pulse} 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; `;
+const FallbackContainer = styled(Container)` min-height: 60vh; `;
+const SignInButton = styled.button` background-color: var(--color-primary, #00bcd4); color: var(--color-background-alt, #1a1a2e); padding: 0.85rem 1.75rem; border-radius: 9999px; font-weight: 700; font-size: 1rem; border: none; cursor: pointer; transition: background-color 0.2s ease, transform 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.2); &:hover { background-color: var(--color-primary-hover, #00acc1); transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.25); } &:focus-visible { outline: 2px solid var(--color-primary-focus, #80deea); outline-offset: 2px; } `;
+// --- End Styled Components ---
 
 export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // --- Authentication Handling Effect ---
-  useEffect(() => {
-    // Redirect immediately if unauthenticated after initial check
-    if (status === 'unauthenticated') {
-      console.log("Homepage: User unauthenticated, redirecting to /auth");
-      router.replace('/auth'); // Use replace to avoid back button issues
-    }
-  }, [status, router]);
+  // Authentication Effect
+  useEffect(() => { if (status === 'unauthenticated') router.replace('/auth'); }, [status, router]);
 
-  // --- Render States ---
-  // 1. Loading State
-  if (status === 'loading') {
-    return <LoadingMessage>Loading Galactic Status...</LoadingMessage>;
-  }
+  // Loading State
+  if (status === 'loading') return <Container style={{ minHeight: '100vh' }}><LoadingMessage>Loading...</LoadingMessage></Container>;
 
-  // 2. Unauthenticated State (Redirect is in progress, render null)
-  if (status === 'unauthenticated') {
-    return null;
-  }
+  // Unauthenticated State
+  if (status === 'unauthenticated') return null;
 
-  // 3. Authenticated State (Primary Render Path)
-  if (status === 'authenticated' && session) { // Ensure session object is also available
+  // Authenticated State
+  if (status === 'authenticated' && session?.user) {
     return (
       <Container>
-        <Hero>
-          <HeroTitle>Welcome, Commander!</HeroTitle>
-          <HeroSubtitle>The Galaxy Needs You. Select Your Deployment Zone.</HeroSubtitle>
-          {/* No sign-in button needed here as user is authenticated */}
-        </Hero>
-
         <CarouselSection>
-          <CarouselTitle>
-            Choose Your Division
-          </CarouselTitle>
-          <ScrollContainer>
-            {/* --- Game Cards for Division Selection --- */}
-            <GameCard
-              title="Helldivers 2"
-              imageUrl="/images/helldivers2-select-card.jpg" // Use specific images for this page context
-              href="/helldivers-2" // Path used for API & final navigation
-              comingSoon={false}
-            />
-            <GameCard
-              title="Dune: Awakening"
-              imageUrl="/images/dune-awakening-select-card.jpg" // Specific image
-              href="/dune-awakening"
-              comingSoon={true} // Non-interactive
-            />
-            <GameCard
-              title="Future Game 0"
-              imageUrl="/images/placeholder-select-card.jpg" // Placeholder
-              href="/future0"
-              comingSoon={true} // Non-interactive
-            />
-            {/* Add more GameCards for other potential divisions */}
-          </ScrollContainer>
+          {/* Title Removed */}
+          <SwiperWrapper>
+            <Swiper
+              modules={[Navigation, EffectCoverflow, A11y]}
+              effect="coverflow"
+              grabCursor
+              centeredSlides
+              loop={gameDivisions.length > 4}
+              slidesPerView={"auto"} // Keep as auto
+              spaceBetween={-50} // Adjust for bigger base cards + scaling
+              coverflowEffect={{
+                rotate: 20,
+                stretch: -100, // More negative stretch needed
+                depth: 250,    // Adjust depth
+                modifier: 1,
+                scale: 0.6,    // Inactive scale
+                slideShadows: false,
+              }}
+              navigation={true}
+              a11y={{ prevSlideMessage: 'Previous', nextSlideMessage: 'Next' }}
+              className="mySwiper"
+            >
+              {/* Map over explicitly typed array */}
+              {gameDivisions.map(game => (
+                <SwiperSlide key={game.id}>
+                  <GameCard
+                    title={game.title} imageUrl={game.imageUrl}
+                    href={game.href} comingSoon={game.comingSoon}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </SwiperWrapper>
         </CarouselSection>
-
-        {/* Add more sections to your homepage below */}
-
       </Container>
     );
   }
 
-  // Fallback state (e.g., if status is authenticated but session is somehow null)
-  // This should be rare with NextAuth v5+ patterns but good to handle.
-  console.warn("Homepage: Reached fallback render state (authenticated but no session?).");
-  return (
-       <Container>
-         <Hero>
-            <HeroTitle>Authentication Error</HeroTitle>
-            <HeroSubtitle>There was an issue verifying your session. Please try signing in again.</HeroSubtitle>
-             <SignInButton onClick={() => signIn('discord', { callbackUrl: '/' })}>
-                Sign In
-            </SignInButton>
-         </Hero>
-       </Container>
-  );
+  // Fallback Error State
+  return ( <FallbackContainer style={{ minHeight: '100vh' }}> {/* ... Error content ... */} </FallbackContainer> );
 }

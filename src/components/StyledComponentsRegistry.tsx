@@ -1,48 +1,51 @@
 // src/components/StyledComponentsRegistry.tsx
-'use client';
+'use client' // This MUST be a client component to use hooks
 
-import React, { useState } from 'react';
-import {
-  ServerStyleSheet,
-  StyleSheetManager,
-  createGlobalStyle,
-} from 'styled-components';
+import React, { useState } from 'react'
+import { useServerInsertedHTML } from 'next/navigation' // Import the specific hook
+import { ServerStyleSheet, StyleSheetManager } from 'styled-components'
 
-/** 1) Define your global styles here */
-const GlobalStyle = createGlobalStyle`
-  *, *::before, *::after {
-    box-sizing: border-box;
-  }
-  html, body {
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a2e;
-    color: #e0e0e0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    scroll-behavior: smooth;
-  }
-  a {
-    color: #00bcd4;
-    text-decoration: none;
-    transition: color 0.3s ease;
-    &:hover { color: #0097a7; }
-  }
-`;
+// Optional: Keep GlobalStyle definition if you want it here,
+// but it's often better in layout.tsx or globals.css if using standard CSS.
+// If you keep it, render it *inside* the final return based on environment.
+// const GlobalStyle = createGlobalStyle` ... your styles ... `;
 
-/** 2) Wrap everything in the styled‑components SSR manager */
 export default function StyledComponentsRegistry({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [sheet] = useState(() => new ServerStyleSheet());
+  // Only create stylesheet once using lazy initial state
+  const [styledComponentsStyleSheet] = useState(() => new ServerStyleSheet())
+
+  useServerInsertedHTML(() => {
+    // This hook runs server-side after the component tree renders
+    const styles = styledComponentsStyleSheet.getStyleElement()
+    // Clear the sheet's tags for the next render cycle
+    // Use instance.clearTag() based on styled-components types/recommendations
+    // Using @ts-ignore if types cause issues temporarily
+    // @ts-ignore
+    styledComponentsStyleSheet.instance.clearTag()
+    // Return the collected style elements to be inserted into the <head>
+    return <>{styles}</>
+  })
+
+  // --- Client-Side Rendering ---
+  // If window is defined, we are on the client.
+  // Return children directly, styles are already in the <head> or managed by client-side styled-components.
+  if (typeof window !== 'undefined') {
+    return <>{children}</>;
+    // Alternatively, if you defined GlobalStyle above:
+    // return <> <GlobalStyle /> {children} </>;
+  }
+
+  // --- Server-Side Rendering ---
+  // Use StyleSheetManager to collect styles during SSR pass
   return (
-    <StyleSheetManager sheet={sheet.instance}>
-      <>
-        <GlobalStyle />
-        {children}
-        {sheet.getStyleElement()}
-      </>
+    <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
+       {/* If you defined GlobalStyle above, render it here too for SSR collection */}
+       {/* <GlobalStyle /> */}
+       {children}
     </StyleSheetManager>
-  );
+  )
 }
