@@ -4,13 +4,13 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { FaDiscord, FaGoogle, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
+import { FaDiscord, FaGoogle, FaPlay, FaPause } from 'react-icons/fa'; // Correct icons
 import Image from 'next/image';
-import Link from 'next/link'; // Import Link for the external link
+import Link from 'next/link';
 
 // --- Style Objects ---
+// Assume these exist as defined in the previous correct answer
 const styles = {
-  // ... (authContainer, videoBackground, overlay, card, logo, title, subtitle, buttons, etc. remain the same) ...
   authContainer: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', width: '100%', padding: '1rem', color: '#e0e0e0', position: 'relative', overflow: 'hidden' } as React.CSSProperties,
   videoBackground: { position: 'absolute', top: '50%', left: '50%', width: 'auto', height: 'auto', minWidth: '100%', minHeight: '100%', objectFit: 'cover', transform: 'translate(-50%, -50%)', zIndex: -2, filter: 'brightness(0.6)' } as React.CSSProperties,
   overlay: { position: 'absolute', inset: 0, backgroundColor: 'rgba(16, 20, 31, 0.65)', zIndex: -1 } as React.CSSProperties,
@@ -26,82 +26,26 @@ const styles = {
   googleButtonHover: { backgroundColor: '#f9fafb', borderColor: '#c8cdd3', transform: 'translateY(-2px)', boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)' } as React.CSSProperties,
   buttonFocusVisible: { outline: 'none', boxShadow: '0 0 0 3px rgba(66, 153, 225, 0.6)' } as React.CSSProperties,
   buttonIcon: { width: '1.25rem', height: '1.25rem', flexShrink: 0 } as React.CSSProperties,
-  footerText: { fontSize: '0.75rem', color: '#718096', marginTop: '2.5rem', textAlign: 'center' as 'center', maxWidth: '400px', position: 'relative', zIndex: 1 } as React.CSSProperties, // Ensure footer text is above overlay
+  footerText: { fontSize: '0.75rem', color: '#718096', marginTop: '2.5rem', textAlign: 'center' as 'center', maxWidth: '400px', position: 'relative', zIndex: 1 } as React.CSSProperties,
   loadingOverlay: { position: 'fixed', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)', zIndex: 50 } as React.CSSProperties,
   loadingText: { fontSize: '1.125rem', color: '#94a3b8' } as React.CSSProperties,
-
-  // --- Audio Controls Container ---
-  audioControlsContainer: {
-      position: 'fixed' as 'fixed',
-      bottom: '1.5rem',
-      left: '1.5rem',
-      display: 'flex',
-      alignItems: 'center', // Align button and text vertically
-      gap: '0.75rem', // Space between button and text
-      zIndex: 10,
-  } as React.CSSProperties,
-
-  // --- Audio Control Button ---
-  audioControl: {
-      // Removed position: 'fixed', using container now
-      backgroundColor: 'rgba(30, 41, 59, 0.6)',
-      backdropFilter: 'blur(5px)',
-      color: '#9ca3af',
-      border: '1px solid rgba(51, 65, 85, 0.5)',
-      borderRadius: '50%',
-      width: '44px',
-      height: '44px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-      flexShrink: 0, // Prevent button from shrinking
-  } as React.CSSProperties,
-  audioControlHover: {
-      color: '#e0e0e0',
-      backgroundColor: 'rgba(51, 65, 85, 0.8)',
-      transform: 'scale(1.05)',
-  } as React.CSSProperties,
-
-  // --- Audio Credit Text ---
-  audioCredit: {
-      // Base styles
-      fontSize: '0.7rem', // Extra small text
-      color: 'rgba(200, 200, 200, 0.8)', // Semi-transparent light text
-      lineHeight: 1.3,
-      textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
-      // Fade transition
-      opacity: 0, // Start hidden
-      visibility: 'hidden' as 'hidden',
-      transition: 'opacity 0.5s ease-in-out, visibility 0s linear 0.5s',
-      maxWidth: '200px', // Limit width
-  } as React.CSSProperties,
-  audioCreditVisible: { // Styles when visible
-      opacity: 1,
-      visibility: 'visible' as 'visible',
-      transition: 'opacity 0.5s ease-in-out, visibility 0s linear 0s',
-  } as React.CSSProperties,
-   audioCreditLink: {
-       color: 'rgba(165, 243, 252, 0.9)', // Light cyan link
-       textDecoration: 'underline',
-       textUnderlineOffset: '2px',
-       display: 'inline', // Keep link inline
-       wordBreak: 'break-all', // Allow long links to wrap if needed
-   } as React.CSSProperties,
-   audioCreditLinkHover: {
-        color: '#a5f3fc', // Lighter cyan on hover
-   } as React.CSSProperties,
+  audioControlsContainer: { position: 'fixed', bottom: '1.5rem', left: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', zIndex: 10 } as React.CSSProperties,
+  audioControl: { backgroundColor: 'rgba(30, 41, 59, 0.6)', backdropFilter: 'blur(5px)', color: '#9ca3af', border: '1px solid rgba(51, 65, 85, 0.5)', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)', flexShrink: 0 } as React.CSSProperties,
+  audioControlHover: { color: '#e0e0e0', backgroundColor: 'rgba(51, 65, 85, 0.8)', transform: 'scale(1.05)' } as React.CSSProperties,
+  audioCredit: { fontSize: '0.7rem', color: 'rgba(200, 200, 200, 0.8)', lineHeight: 1.3, textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)', opacity: 0, visibility: 'hidden' as 'hidden', transition: 'opacity 0.5s ease-in-out, visibility 0s linear 0.5s', maxWidth: '200px' } as React.CSSProperties,
+  audioCreditVisible: { opacity: 1, visibility: 'visible' as 'visible', transition: 'opacity 0.5s ease-in-out, visibility 0s linear 0s' } as React.CSSProperties,
+  audioCreditLink: { color: 'rgba(165, 243, 252, 0.9)', textDecoration: 'underline', textUnderlineOffset: '2px', display: 'inline', wordBreak: 'break-all' } as React.CSSProperties,
+  audioCreditLinkHover: { color: '#a5f3fc' } as React.CSSProperties,
 };
 
-// Component Constants
-const ANTHEM_URL = "https://www.youtube.com/watch?v=7na-zH-3S70"; // Example link
+
+const ANTHEM_YOUTUBE_URL = "https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW";
 
 export default function AuthPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Hover/Focus States
   const [discordHover, setDiscordHover] = useState(false);
@@ -112,7 +56,20 @@ export default function AuthPage() {
   const [anthemLinkHover, setAnthemLinkHover] = useState(false);
 
   // Audio State
-  const [isMuted, setIsMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
+
+  // Function to mark user interaction
+  const handleInteraction = () => {
+    if (!userInteracted) {
+      console.log("User interaction detected.");
+      setUserInteracted(true);
+      // Try playing video again if it was blocked
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(e => console.error("Video play error after interaction:", e));
+      }
+    }
+  };
 
   // Auth Redirect Effect
   useEffect(() => {
@@ -121,104 +78,146 @@ export default function AuthPage() {
     }
   }, [status, router]);
 
-  // Audio Control Effect
+  // Video Playback Attempt on Mount
   useEffect(() => {
-    const audioElement = audioRef.current;
-    if (audioElement) {
-      audioElement.muted = isMuted;
-      if (!isMuted) {
-        audioElement.play().catch(error => console.log("Audio playback requires user interaction:", error));
-      } else {
-        audioElement.pause();
+      const videoElement = videoRef.current;
+      if (videoElement) {
+          videoElement.muted = true;
+          videoElement.playsInline = true;
+          console.log("Attempting to play video...");
+          // Add a check to see if it's already playing to avoid unnecessary calls
+          if (videoElement.paused) {
+            videoElement.play().catch(error => {
+                console.warn("Video autoplay was potentially blocked. Requires user interaction.", error);
+            });
+          }
       }
-    }
-  }, [isMuted]);
+  }, []); // Run only once
 
-  const handleMuteToggle = () => {
-    const currentlyMuted = isMuted; // Capture current state before changing
-    setIsMuted(prev => !prev);
-    // Explicitly try to play if we are *unmuting*
-    if (currentlyMuted && audioRef.current) {
-        audioRef.current.play().catch(error => console.log("Audio play error on toggle:", error));
+  // Audio Toggle Handler
+  const handlePlayToggle = () => {
+    handleInteraction(); // Ensure interaction is registered
+    const audioElement = audioRef.current;
+    if (!audioElement) return;
+
+    if (isPlaying) {
+      audioElement.pause();
+      setIsPlaying(false);
+      console.log("Audio paused");
+    } else {
+      audioElement.play()
+        .then(() => {
+          setIsPlaying(true);
+          console.log("Audio playing");
+        })
+        .catch(error => {
+          setIsPlaying(false);
+          console.error("Audio play failed:", error);
+          if (!userInteracted) {
+              alert("Click anywhere on the page first to enable audio playback, then try playing again.");
+          } else {
+              alert("Could not play audio. Please check browser permissions or try again.");
+          }
+        });
     }
   };
 
-
+  // Render loading state
   if (status === 'loading') {
     return <div style={styles.loadingOverlay}><p style={styles.loadingText}>Loading Session...</p></div>;
   }
 
+  // Render sign-in options only if unauthenticated
   if (status === 'unauthenticated') {
-    // Combine styles conditionally
     const discordFinalStyle = { ...styles.buttonBase, ...styles.discordButton, ...(discordHover ? styles.discordButtonHover : {}), ...(discordFocus ? styles.buttonFocusVisible : {}) };
     const googleFinalStyle = { ...styles.buttonBase, ...styles.googleButton, ...(googleHover ? styles.googleButtonHover : {}), ...(googleFocus ? styles.buttonFocusVisible : {}) };
     const audioControlFinalStyle = { ...styles.audioControl, ...(audioControlHover ? styles.audioControlHover : {}) };
-    const audioCreditFinalStyle = { ...styles.audioCredit, ...(!isMuted ? styles.audioCreditVisible : {}) }; // Show if NOT muted
+    const audioCreditFinalStyle = { ...styles.audioCredit, ...(isPlaying ? styles.audioCreditVisible : {}) }; // Visibility based on isPlaying
     const audioCreditLinkFinalStyle = { ...styles.audioCreditLink, ...(anthemLinkHover ? styles.audioCreditLinkHover : {}) };
 
     return (
-      <div style={styles.authContainer}>
-        <video autoPlay loop muted playsInline style={styles.videoBackground} key="bg-video">
+      // Main container with interaction handler
+      <div style={styles.authContainer} onClick={handleInteraction}>
+
+        {/* --- Video Background Section --- */}
+        <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted // Keep muted for background video
+            playsInline
+            style={styles.videoBackground}
+            key="bg-video" // Key can help React manage the element
+            onCanPlay={() => console.log("Video ready to play")} // More specific event
+            onError={(e) => console.error("Video Error Event:", e)} // Log the event object
+        >
+          {/* Verify this path points to public/videos/gpd_background.mp4 */}
           <source src="/videos/gpd_background.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
         <div style={styles.overlay}></div>
+        {/* --- End Video Background --- */}
 
+
+        {/* --- Login Card Section --- */}
         <div style={styles.card}>
           <Image src="/placeholder.png" alt="GPD Logo" width={70} height={70} style={styles.logo} priority />
           <h1 style={styles.title}>Access Network Terminal</h1>
           <p style={styles.subtitle}>Authenticate using a secure channel.</p>
           <div style={styles.buttonGroup}>
-            <button onClick={() => signIn('discord', { callbackUrl: '/' })} style={discordFinalStyle} onMouseEnter={() => setDiscordHover(true)} onMouseLeave={() => setDiscordHover(false)} onFocus={() => setDiscordFocus(true)} onBlur={() => setDiscordFocus(false)}>
+            {/* Provider Buttons */}
+            <button onClick={() => { handleInteraction(); signIn('discord', { callbackUrl: '/' }); }} style={discordFinalStyle} onMouseEnter={() => setDiscordHover(true)} onMouseLeave={() => setDiscordHover(false)} onFocus={() => setDiscordFocus(true)} onBlur={() => setDiscordFocus(false)}>
               <FaDiscord style={styles.buttonIcon} /> Continue with Discord
             </button>
-            <button onClick={() => signIn('google', { callbackUrl: '/' })} style={googleFinalStyle} onMouseEnter={() => setGoogleHover(true)} onMouseLeave={() => setGoogleHover(false)} onFocus={() => setGoogleFocus(true)} onBlur={() => setGoogleFocus(false)}>
+            <button onClick={() => { handleInteraction(); signIn('google', { callbackUrl: '/' }); }} style={googleFinalStyle} onMouseEnter={() => setGoogleHover(true)} onMouseLeave={() => setGoogleHover(false)} onFocus={() => setGoogleFocus(true)} onBlur={() => setGoogleFocus(false)}>
               <FaGoogle style={styles.buttonIcon} /> Continue with Google
             </button>
           </div>
         </div>
+        {/* --- End Login Card --- */}
 
+
+        {/* --- Footer Text --- */}
         <p style={styles.footerText}>Unauthorized access is monitored. System use implies consent.</p>
 
-        {/* --- Audio Player and Controls --- */}
+
+        {/* --- Audio Section --- */}
         <audio ref={audioRef} loop preload="auto">
-          <source src="/audio/superearth_anthem.mp3" type="audio/mp4" />
+           {/* Verify this path points to public/audio/superearth_anthem.mp3 (or .mp4) */}
+          <source src="/audio/superearth_anthem.mp3" type="audio/mpeg" />
+          {/* Adjust type if using mp4: <source src="/audio/superearth_anthem.mp4" type="audio/mp4" /> */}
+          Your browser does not support the audio element.
         </audio>
 
         <div style={styles.audioControlsContainer}>
-            {/* Mute/Unmute Button */}
+            {/* Play/Pause Button */}
             <button
               style={audioControlFinalStyle}
-              onClick={handleMuteToggle}
+              onClick={handlePlayToggle}
               onMouseEnter={() => setAudioControlHover(true)}
               onMouseLeave={() => setAudioControlHover(false)}
-              aria-label={isMuted ? "Unmute background music" : "Mute background music"}
-              title={isMuted ? "Unmute background music" : "Mute background music"}
+              aria-label={isPlaying ? "Pause background music" : "Play background music"}
+              title={isPlaying ? "Pause background music" : "Play background music"}
             >
-              {isMuted ? <FaVolumeMute className="w-5 h-5" /> : <FaVolumeUp className="w-5 h-5" />}
+              {isPlaying ? <FaPause className="w-5 h-5" /> : <FaPlay className="w-5 h-5" />}
             </button>
 
-            {/* Credit Text (Conditional Visibility) */}
+            {/* Credit Text */}
             <div style={audioCreditFinalStyle}>
                 <strong>Super Earth National Anthem</strong><br />
                 Ross Tregenza<br />
                 <small>Helldivers 2 (Original Soundtrack)</small><br/>
-                <Link
-                    href={ANTHEM_URL}
-                    target="_blank" // Open link in new tab
-                    rel="noopener noreferrer" // Security best practice for target="_blank"
-                    style={audioCreditLinkFinalStyle}
-                    onMouseEnter={() => setAnthemLinkHover(true)}
-                    onMouseLeave={() => setAnthemLinkHover(false)}
-                    title="Listen on YouTube (opens new tab)"
-                >
+                <Link href={ANTHEM_YOUTUBE_URL} target="_blank" rel="noopener noreferrer" style={audioCreditLinkFinalStyle} onMouseEnter={() => setAnthemLinkHover(true)} onMouseLeave={() => setAnthemLinkHover(false)} title="Listen on YouTube (opens new tab)">
                     (Listen)
                 </Link>
             </div>
         </div>
-         {/* --- End Audio --- */}
-      </div>
+         {/* --- End Audio Section --- */}
+
+      </div> // End authContainer
     );
   }
 
+  // Return null if authenticated (redirect will happen) or in other states
   return null;
 }
