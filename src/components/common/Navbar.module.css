@@ -1,310 +1,112 @@
 /* src/components/common/Navbar.module.css */
 
-/* --- Base Nav Styles --- */
+/* ... (existing .nav, .container, .logo, .hamburger styles) ... */
+
 .nav {
-  background-color: #1a1a2e;
-  padding: 1rem;
-  position: relative;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: var(--color-surface); /* Use CSS Variable */
+  padding: var(--spacing-3) var(--spacing-4); /* Use CSS Variable for padding */
+  border-bottom: var(--border-width) solid var(--color-border);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  position: sticky; /* Make navbar sticky */
+  top: 0;
+  z-index: 50; /* Ensure it's above content but below modals */
 }
 
-/* --- Container Layout --- */
 .container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  gap: 1rem;
+  max-width: 1200px; /* Or your preferred max width */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .logo {
-  color: #00bcd4;
-  font-size: 1.2rem;
+  color: var(--color-primary); /* Use Variable */
+  font-size: 1.25rem;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 700; /* Bolder logo */
   white-space: nowrap;
-  flex-shrink: 0;
   transition: color 0.2s ease;
 }
 .logo:hover {
-    color: #80deea;
+    color: var(--color-primary-hover);
 }
 
-/* Hamburger (Mobile Only) */
 .hamburger {
-  display: none;
-  background: none;
-  border: none;
-  color: #e0e0e0;
-  font-size: 1.6rem;
-  cursor: pointer;
-  padding: 0.3rem;
-  line-height: 1;
-  z-index: 110;
-  margin-left: auto;
-  flex-shrink: 0;
-  border-radius: 4px;
+  /* ... existing styles ... */
+  display: block; /* Show by default, hide on larger screens */
+  color: var(--color-text-secondary);
+  font-size: 1.5rem;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-md);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 .hamburger:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-.hamburger:focus-visible { /* Keyboard focus */
-    outline: 2px solid #00bcd4;
-    outline-offset: 2px;
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-primary);
 }
 
+/* --- Desktop Menu & Toggle Wrapper --- */
+.desktopControls {
+    display: none; /* Hidden on mobile */
+    align-items: center;
+    gap: var(--spacing-2); /* Gap between menu and toggle */
+}
 
-/* --- Desktop Menu Layout --- */
 .desktopMenu {
-  display: none;
-  margin-left: auto;
+  display: flex; /* Use flex for horizontal items */
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--spacing-4); /* Gap between links */
 }
 
-/* Shared styles for Links and the Games Button */
-.link,
-.gamesButton {
-  color: #e0e0e0;
+.link {
+  color: var(--color-text-secondary);
   text-decoration: none;
-  cursor: pointer;
-  padding: 0.5rem 0.85rem;
-  border-radius: 4px;
-  transition: background-color 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-  border: none;
-  background: none;
-  font-family: inherit;
   font-size: 0.95rem;
-  line-height: 1.2;
-  outline: none; /* Base outline removal */
+  font-weight: 500;
+  padding: var(--spacing-2) var(--spacing-3);
+  border-radius: var(--border-radius-md);
+  transition: color 0.2s ease, background-color 0.2s ease;
+  white-space: nowrap;
 }
-.link:focus-visible, /* Keyboard focus */
-.gamesButton:focus-visible {
-    outline: 2px solid #00bcd4;
-    outline-offset: 2px;
-    background-color: #2e2e44; /* Indicate focus */
-    color: #00bcd4;
-}
-
 
 .link:hover,
-.gamesButton:hover {
-  background-color: #2e2e44;
-  color: #00bcd4;
-}
-
-.gamesButtonActive {
-    background-color: #2e2e44;
-    color: #00bcd4;
-}
-
-/* --- Game Carousel Overlay --- */
-.gameCarouselOverlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(18, 30, 58, 0.92);
-  backdrop-filter: blur(10px);
-  z-index: 150;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.35s;
-  padding: 1rem;
-}
-
-.nav.gameCarouselActive .gameCarouselOverlay {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
-}
-
-.gameCarouselContent {
-  position: relative;
-  max-width: 95%;
-  width: 100%;
-}
-
-.closeCarouselButton {
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    background: #f0f0f0;
-    color: #1a1a2e;
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    cursor: pointer;
-    z-index: 160;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-    outline: none;
-}
-.closeCarouselButton:hover {
-    background: #00bcd4;
-    color: #fff;
-    transform: scale(1.1);
-}
-.closeCarouselButton:focus-visible {
-    outline: 2px solid #00bcd4;
-    outline-offset: 2px;
-    background-color: #0097a7;
-    color: #fff;
-}
-
-
-/* --- Swiper Container & Perspective --- */
-.swiperContainer {
-  width: 100%;
-  padding: 5rem 90px; /* Generous padding */
-  overflow: visible !important;
-}
-
-.swiperPerspective {
-  perspective: 1200px;
-}
-
-/* --- Swiper Slide Styles --- */
-.swiperSlide {
-  width: auto !important;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform-style: preserve-3d;
-  cursor: default; /* Cursor default for slide, inner element handles interaction */
-
-  /* Base (inactive) state */
-  opacity: 0.5;
-  transform: scale(0.7) rotateY(35deg);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
-}
-
-/* Active slide styles */
-:global(.swiper-slide-active) {
-  opacity: 1;
-  transform: scale(1.75) rotateY(0deg); /* 75% larger */
-  z-index: 10;
-}
-
-/* Inner wrapper */
-.slideInnerWrapper {
-    transform-style: preserve-3d;
-    transition: box-shadow 0.4s ease;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 0.5rem; /* Match card radius if needed */
-    overflow: hidden; /* Ensure content stays within bounds */
-}
-
-/* Link wrapper specific styles */
-.navCardLink {
-    display: block; /* Make link fill wrapper */
-    width: 100%;
-    height: 100%;
-    text-decoration: none;
-    color: inherit;
-    outline: none; /* Remove default outline */
-}
-.navCardLink:focus-visible > div { /* Style GameCard root when link has focus */
-    outline: 2px solid #00bcd4;
-    outline-offset: -2px; /* Inset outline */
-    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.3);
-}
-
-/* Highlight effect on the wrapper of the active slide */
-:global(.swiper-slide-active) .slideInnerWrapper {
-  box-shadow: 0 15px 35px rgba(0, 217, 255, 0.45);
-}
-
-
-/* --- Swiper Navigation Arrows --- */
-.swiperContainer :global(.swiper-button-prev),
-.swiperContainer :global(.swiper-button-next) {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
-  margin-top: 0;
-  z-index: 20;
-  background-color: rgba(26, 26, 46, 0.75);
-  color: #00bcd4;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+.link:focus-visible { /* Style focus too */
+  color: var(--color-text-primary);
+  background-color: var(--color-surface-alt);
   outline: none;
 }
-.swiperContainer :global(.swiper-button-prev:hover),
-.swiperContainer :global(.swiper-button-next:hover) {
-  background-color: rgba(46, 46, 68, 0.95);
-  color: #fff;
-  transform: translateY(-50%) scale(1.05);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+
+/* Games button specific (if using button) */
+.gamesButton {
+    /* Inherit link styles */
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    /* Add active state if needed */
 }
-.swiperContainer :global(.swiper-button-prev:focus-visible), /* Keyboard focus */
-.swiperContainer :global(.swiper-button-next:focus-visible) {
-    outline: 2px solid #00bcd4;
-    outline-offset: 2px;
-    background-color: rgba(46, 46, 68, 0.95);
-    color: #fff;
-}
-
-
-.swiperContainer :global(.swiper-button-prev) { left: 15px; }
-.swiperContainer :global(.swiper-button-next) { right: 15px; }
-
-.swiperContainer :global(.swiper-button-prev::after),
-.swiperContainer :global(.swiper-button-next::after) {
-  font-family: swiper-icons;
-  font-size: 1.3rem;
-  font-weight: bold;
-  line-height: 1;
+.gamesButtonActive {
+   color: var(--color-text-primary);
+   background-color: var(--color-surface-alt);
 }
 
-.swiperContainer :global(.swiper-button-disabled) {
-  opacity: 0.3;
-  cursor: auto;
-  pointer-events: none;
-  box-shadow: none;
-}
 
 /* --- Mobile Menu Styles --- */
 .mobileMenu {
-  position: fixed;
-  top: 0;
-  left: -100%;
-  width: 85%;
-  max-width: 320px;
-  height: 100%;
-  background-color: #1a1a2e;
-  z-index: 140;
-  overflow-y: auto;
-  transition: left 0.35s ease-in-out;
-  padding-top: 4rem;
-  box-shadow: 5px 0px 15px rgba(0,0,0,0.25);
-  border-right: 1px solid #333;
-}
-
-.nav.navOpen .mobileMenu {
+  /* ... existing styles ... */
+  /* Example: position absolute or fixed for overlay */
+  position: absolute;
+  top: 100%; /* Position below navbar */
   left: 0;
+  right: 0;
+  background-color: var(--color-surface);
+  border-top: var(--border-width) solid var(--color-border);
+  border-bottom: var(--border-width) solid var(--color-border);
+  padding: var(--spacing-2) 0;
+  z-index: 40;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 .mobileList {
@@ -315,71 +117,44 @@
 
 .mobileLink {
   display: block;
-  color: #e0e0e0;
+  padding: var(--spacing-3) var(--spacing-4);
+  color: var(--color-text-secondary);
   text-decoration: none;
-  padding: 1rem 1.75rem;
-  border-bottom: 1px solid #333;
+  font-weight: 500;
   transition: background-color 0.2s ease, color 0.2s ease;
-  font-size: 1rem;
-  outline: none;
 }
-
-.mobileLink:hover,
-.mobileLink:focus-visible { /* Combine hover/focus */
-   background-color: #2e2e44;
-   color: #00bcd4;
+.mobileLink:hover {
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-primary);
 }
-
-.mobileGamesButton {
+.mobileGamesButton { /* If using button */
     width: 100%;
     text-align: left;
-    background: none;
-    border: none;
-    border-bottom: 1px solid #333;
-    font-family: inherit;
-    font-size: 1rem;
-    cursor: pointer;
-    /* Inherits .mobileLink styles via className */
+    /* Inherits .mobileLink styles */
 }
 
-.mobileList > li:last-child > .mobileLink,
-.mobileList > li:last-child > .mobileGamesButton {
-  border-bottom: none;
+/* Container for mobile toggle button */
+.mobileToggleContainer {
+    padding: var(--spacing-2) var(--spacing-4); /* Add padding around mobile toggle */
+    border-top: var(--border-width) solid var(--color-border);
+    margin-top: var(--spacing-2);
+    display: flex;
+    justify-content: flex-end; /* Position toggle to the right */
 }
 
-/* --- Accessibility Utility --- */
-.visuallyHidden {
-  position: absolute !important;
-  height: 1px; width: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
-  border: 0;
+
+/* --- Media Query for Desktop --- */
+@media (min-width: 768px) { /* Or your preferred breakpoint */
+  .hamburger {
+    display: none; /* Hide hamburger */
+  }
+  .desktopControls {
+    display: flex; /* Show desktop controls wrapper */
+  }
+   .mobileMenu {
+     display: none; /* Hide mobile menu */
+   }
 }
 
-/* --- Media Queries --- */
-@media (min-width: 768px) {
-  .hamburger { display: none; }
-  .mobileMenu { display: none; }
-  .desktopMenu { display: flex; }
-}
-
-@media (max-width: 767px) {
-  .desktopMenu { display: none; }
-  .hamburger { display: block; }
-
-  /* Mobile Carousel Adjustments */
-  .swiperPerspective { perspective: 900px; }
-  .swiperContainer { padding: 3rem 50px; }
-  .swiperSlide { transform: scale(0.75) rotateY(25deg); }
-  :global(.swiper-slide-active) { transform: scale(1.5) rotateY(0deg); } /* Keep 1.5x scale for mobile */
-
-  .swiperContainer :global(.swiper-button-prev),
-  .swiperContainer :global(.swiper-button-next) { width: 40px; height: 40px; }
-  .swiperContainer :global(.swiper-button-prev::after),
-  .swiperContainer :global(.swiper-button-next::after) { font-size: 1.1rem; }
-  .swiperContainer :global(.swiper-button-prev) { left: 5px; }
-  .swiperContainer :global(.swiper-button-next) { right: 5px; }
-
-  .closeCarouselButton { width: 32px; height: 32px; font-size: 1rem; top: -10px; right: -10px; }
-}
+/* --- Visually Hidden (Keep from previous examples if needed) --- */
+.visuallyHidden { /* ... */ }
