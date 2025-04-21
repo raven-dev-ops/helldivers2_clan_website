@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 // Import the form components
-import ProfileEditForm from "@/components/forms/ProfileEditForm"; // Adjust path if needed
-import StatsSubmitForm from "@/components/forms/StatsSubmitForm"; // Adjust path if needed
+import ProfileEditForm from "@/components/forum/ProfileEditForm"; // Adjust path if needed
+import StatsSubmitForm from "@/components/forum/StatsSubmitForm"; // Adjust path if needed
 
 // Define types for data
 interface UserProfileData {
