@@ -139,7 +139,7 @@ const Navbar = () => {
      triggerContent = (
         <div className={styles.logoAreaStatic}>
              <Link href="/" className={styles.staticLogoLink} aria-label="Go to Homepage">
-                 <span className={styles.siteTitleStatic}>Your Site Name</span>
+                 <span className={styles.siteTitleStatic}>HELLDIVERS 2</span>
              </Link>
         </div>
      );

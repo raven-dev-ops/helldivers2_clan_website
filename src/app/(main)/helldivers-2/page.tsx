@@ -8,7 +8,7 @@ import { FaStar, FaDiscord } from 'react-icons/fa';
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
 // Import Swiper modules
-import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
+import { Navigation, EffectFade } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -19,13 +19,26 @@ import 'swiper/css/effect-fade';
 // --- Review Data Structure ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
 const reviews: Review[] = [
-    { id: 1, author: "joshgiff", title: "A Solid Growing Community", text: "Safe, active and growing community...", rating: 5 },
-    { id: 2, author: "charredviolet8771", title: "Democracy Approved", text: "Community has been so welcoming...", rating: 5 },
-    { id: 3, author: "silverdolphin01", title: "Great Community", text: "Great community! Recommend to new and experienced...", rating: 5 },
-    { id: 4, author: "krieg112", title: "Great, Non-toxic, and Casual", text: "Training program was a great way of connecting...", rating: 5 },
-    { id: 5, author: "zephthehuman", title: "Best non toxic Helldivers 2 Community", text: "If you are looking for a ... mature community...", rating: 5 },
-    { id: 11, author: "vetscape", title: "A Fleet To Call Home...", text: "My goal for GPT Fleet is to have a HD2 focused community...", rating: 5 },
+    // --- Provided by User ---
+    { id: 1, author: "joshgiff", title: "A Solid Growing Community", text: "I came across GPT fleet as a helldiver in a different discord server. We were offered to join a server that had a discord bot that would link other servers together to allow divers from across discord to link up and spread democracy together. So far in my experience it has been a safe, active and growing community to meet up and dive together. On times where I am not diving there is usually a group of people socializing in one of the voice chat channels and I have found that helpful for hobbying and hanging with other people. 10/10 would dive with them any day of the week.", rating: 5 },
+    { id: 2, author: "charredviolet8771", title: "Democracy Approved", text: "I've been apart of the GPT Fleet for about three or four months now and the community has been so welcoming and encouraging. The folks here have given great advice and taught me so many things about Helldivers 2 that I would have struggled to figure out alone. I don't have to worry about folks being toxic towards me, which is great! I look forward to seeing where this awesome community goes in the future, and I highly recommend it as a place to learn/ hang out with your fellow Helldivers!", rating: 5 },
+    { id: 3, author: "silverdolphin01", title: "Great Community", text: "I haven't been able to be as active as I'd like but this is a great community! I would definitely recommend to both new and experienced players!", rating: 5 },
+    { id: 4, author: "krieg112", title: "Great, Non-toxic, and Casual", text: "I’ve been in GPT a few months now and I have achieved the server’s partial moderator sort of role. The training program was a great way of connecting to the amazing global community. I’ve not been pressured to play excessively or give up personal time to be involved either. TLDR: Great server with nice staff and members. Highly recommend.", rating: 5 },
+    { id: 5, author: "zephthehuman", title: "The best non toxic Helldivers 2 Community I've seen so far", text: "If you are looking for a Helldivers 2 Gaming Clan(s) that isn't filled with raging elitists, trolls or chaos divers, but instead an 18+ sfw mature community, then GPT Fleet is definitely for you! I've been on Discord gaming communities since September 2015 and I know for a fact that this community shines in making it comfortable and welcoming for new players, returning players and veterans alike. Things I've noticed: (personally) ✔️non problematic banter (mostly in vc's) ✔️no name calling or flaming (policy included to prevent that) ✔️a mix of players of different lvls with a focus on community based challenges and it's leaderboard. ✔️a more casual mindset which in turn makes the missions more lighthearted, less serious but still enough to make a super helldive more epic than usual ✔️a lot of friendly demeanor ✔️no activity requirements ✔️staff is attentive ✔️well structured server with it's own bots and clan network ✔️here's another checkmark for absolutely no reason!! :D", rating: 5 },
+    { id: 6, author: "zolosio", title: "CERTIFICATE OF LEGITNESS", text: "As a member of the GPT Fleet since September 4 of 2024, I can confidently say that the group and members within from newbies to veterans are always VERY supportive and professionally polite. I never have to worry about toxicness 1 bit! or if it's going to be dry or not busy. This Amazing community really strives to be the number one helldivers 2 discord group and it shows, there is plenty and I mean PLENTY of room to grow in rank within the GPT and an endless amount of amazing people I personally love playing with including myself that will help you along the way! Need advice on what loadouts to bring to that next D10, or some coaching on accuracy from one of our top players? Whether you're looking to become the next John helldiver or just another scratch in the paw for freedom, the GPT fleet is definitely the place to be! With everything from community movie night to karaoke it can be as serious or casual as need be. It is definitely thebest community I have ever experienced where your effort doesn't go un-noticed and your always respected and protected. Amazing people honestly -Zolosio", rating: 5 },
+    { id: 7, author: "duepulse", title: "GPT Fleet produces the best Helldivers", text: "Joined the fleet back in Aug of last year. Fought with the bravest and greatest that the fleet has to offer. And safe to say that anyone who joins up and is looking for anyone to join you into the frontlines, the fleet is spoiled with choices of very courageous and disciplined Helldivers. This review is approved by the Ministry of Truth", rating: 5 },
+    { id: 8, author: "mr.swimson", title: "11/10 experience", text: "love the people, love the vibe, love the bots. Adding my own server with over 2.5k members to the GPT Fleet alliance was one of the best choices I've made. Really opened up doors for people to play together and meet new people across multiple servers. If you're looking for a chill community to hang out, I highly recommend GPT Fleet. All are welcome!!", rating: 5 },
+    { id: 9, author: "mrman1594", title: "Best experience", text: "When I first got helldivers 2 I had a hard time knowing how the game works since I join GPT they give me one of the best experience!!!! I highly recommend joining If you’re new or daily player it makes the game so much fun!!!!", rating: 5 },
+    { id: 10, author: "shway_maximus", title: "An amazing Helldiver guild curated by the best 10 Star General there is", text: "I joined this community two months ago after leveling to 145 playing solo with randoms. After joining this discord I've met so many great players and I have made many new friends. It's awesome playing with highly competent people consistently. Our glorious leader made it easy for us to set up an LFG channel or join one that is already in session. Everyone is so supportive and we continue to grow everyday.", rating: 5 },
+    { id: 11, author: "vetscape", title: "A Fleet To Call Home Away From Super Earth", text: "I started this discord after my brother gifted me the game on steam when it came out. I never heard of Helldivers before. After playing the game, I really enjoyed the weapons mechanics, squad dynamics, and the galactic game master. My goal for GPT Fleet is to have a HD2 focused community that places value on escapism. Join our fleet, play in some squads, experience a fleet weekend event, and come back here and leave an honest review. Let us know how we can improve and catch up the latest fleet news on our youtube or X: @gptfleet", rating: 5 },
+    { id: 12, author: "lucian_666", title: "GPT FLEET is Amazing", text: "Ton of veterans from different branches. Great times and the owner of the server is always expanding to the next best thing. I love being here!", rating: 5 },
+    { id: 13, author: "theslayestfox", title: "Greatly organized", text: "I love how social this server especially with all the different channels and it really active got events about every week and people playing about everyday always time to grab some hell divers and spread democracy", rating: 5 },
+    { id: 14, author: "nocturnalverse", title: "GPT Fleet is a great Helldiver community.", text: "We're looking to be a Helldiver only discord. We welcome new players especially. We're growing slowly but the goal is to always have someone to play with in the style of play that you enjoy. Check it out. If you see someone in chat, they are probably playing, join up today!", rating: 5 },
+    { id: 15, author: "corbiskeys", title: "Ode to Freedom", text: `In the digital sea, a fleet does sail,\n"GPT Fleet," where friendships prevail.\nA haven for gamers, a circle so wide,\nWhere laughter and teamwork coincide.\n\nHere, every voice finds a welcoming tune,\nUnder the watchful gaze of the digital moon.\nFrom puzzles to battles, in worlds far and wide,\nBeside every player, a friend to confide.\n\nIn "GPT Fleet," where the banners are unfurled,\nA community thrives in this virtual world.\nNo matter the game, the hour, the quest,\nHere, you're more than a guest.\n\nSo sail into the harbor, where the heart never fleets,\nJoin hands, join games, in the "GPT Fleet."\nFor in this haven of pixels, you'll always find,\nA place to call home, a group of your kind.`, rating: 5 },
+    { id: 16, author: "themephs", title: "Unbelievable quality", text: "Thanks to GPT Fleet I can marry my cousins and developed a fentanyl addiction. Keep slaying. Thanks GPT Fleet!", rating: 5 },
+    { id: 17, author: "brentielal1123", title: "Democracy", text: "Come in and have fun, friendly people and there to help. Democracy for all and plenty of Bug Juice to go around. Weeky Events going on as well.", rating: 5 },
 ];
+
 
 // --- YouTube Video Interface ---
 interface YoutubeVideo {
@@ -44,11 +57,13 @@ const youtubeVideos: YoutubeVideo[] = [
 ];
 
 // --- Style Object ---
+// Styles remain the same as the previous version...
 const styles = {
     pageContainer: {
         maxWidth: '1200px', margin: '0 auto', padding: '0 1rem 4rem',
         color: 'var(--color-text-primary, #e0e0e0)',
     },
+    // Styles for YouTube Carousel
     youtubeCarouselContainer: {
         marginBottom: '3rem', maxWidth: '1024px', marginLeft: 'auto', marginRight: 'auto',
         paddingTop: '2rem',
@@ -58,124 +73,166 @@ const styles = {
         borderRadius: 'var(--border-radius-lg, 0.75rem)',
         boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
         border: '1px solid var(--color-border, #334155)',
-        backgroundColor: '#111',
+        backgroundColor: '#111', // Dark background while iframe loads
     } as React.CSSProperties,
     youtubeIframe: {
         position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none'
     } as React.CSSProperties,
-    discordIconLink: {
-        display: 'inline-block', marginLeft: '0.75rem', verticalAlign: 'middle',
-        color: 'var(--color-primary)',
-        transition: 'color 0.2s ease, transform 0.2s ease',
+    // Styles for Reviews Section
+    reviewSectionContainer: {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '1.5rem', // Increased gap slightly
+        marginTop: '3rem',
     } as React.CSSProperties,
-    discordIconLinkHover: {
-        color: 'var(--color-primary-hover)', transform: 'scale(1.1)',
+    reviewCardsWrapper: {
+        display: 'flex',
+        gap: '1rem',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'stretch',
+        flexWrap: 'wrap',
+        minHeight: '190px', // Adjust if needed based on longest review
+        opacity: 1,
+        transition: 'opacity 0.6s ease-in-out',
     } as React.CSSProperties,
-    discordIcon: {
-        width: '1em', height: '1em',
+    reviewCardsWrapperHidden: {
+        opacity: 0,
     } as React.CSSProperties,
-    reviewContainer: {
-        position: 'relative', maxWidth: '550px', minHeight: '170px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem 2rem',
+    individualReviewCard: {
+        flex: '1 1 300px',
+        maxWidth: '350px',
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '1.25rem',
         backgroundColor: 'var(--color-surface-alt)',
-        borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)', textAlign: 'left',
-        boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+        borderRadius: 'var(--border-radius-md)',
+        border: '1px solid var(--color-border)',
+        textAlign: 'left',
+        boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
     } as React.CSSProperties,
-    reviewContent: { width: '100%', opacity: 1, transition: 'opacity 0.6s ease-in-out' } as React.CSSProperties,
-    reviewContentHidden: { opacity: 0 } as React.CSSProperties,
     reviewStars: { display: 'flex', gap: '0.25rem', color: '#facc15', marginBottom: '0.5rem' } as React.CSSProperties,
-    reviewTitle: { fontSize: '1.1rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '0.5rem' } as React.CSSProperties,
+    reviewTitle: { fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '0.5rem', lineHeight: 1.3 } as React.CSSProperties, // Added line height
     reviewText: {
-        fontSize: '0.9rem', color: 'var(--color-text-secondary)', fontStyle: 'italic',
-        marginBottom: '0.75rem', lineHeight: 1.5, maxHeight: '6em', overflow: 'hidden', position: 'relative'
+        fontSize: '0.85rem', color: 'var(--color-text-secondary)', fontStyle: 'italic',
+        marginBottom: '0.75rem', lineHeight: 1.5, flexGrow: 1,
+         // Removed max-height to allow longer reviews to show fully, card height will adjust
+         // maxHeight: '5.1em',
+         // overflow: 'hidden',
+         whiteSpace: 'pre-line', // Respect newlines in the text (like the poem)
+         position: 'relative'
     } as React.CSSProperties,
-    reviewAuthor: { fontSize: '0.8rem', color: 'var(--color-text-muted)', textAlign: 'right', marginTop: 'auto' } as React.CSSProperties,
+    reviewAuthor: { fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'right', marginTop: 'auto', paddingTop: '0.5rem' } as React.CSSProperties,
     disboardLinkBottom: {
         display: 'block', textAlign: 'center', fontSize: '0.9rem',
         color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '3px',
-        marginTop: '1rem',
     } as React.CSSProperties,
-    section: {
-        marginBottom: '3rem', padding: '2rem',
-        backgroundColor: 'var(--color-surface)',
-        borderRadius: 'var(--border-radius-lg)',
-        boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-        border: '1px solid var(--color-border)',
-    } as React.CSSProperties,
-    sectionTitle: {
-        fontSize: 'clamp(1.5rem, 4vw, 1.8rem)', fontWeight: 600, marginBottom: '1.5rem',
-        color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem',
-        display: 'flex', alignItems: 'center',
-    } as React.CSSProperties,
-    paragraph: { color: 'var(--color-text-secondary)', marginBottom: '1.25rem', lineHeight: 1.7 } as React.CSSProperties,
-    strongText: { fontWeight: 600, color: 'var(--color-primary)' } as React.CSSProperties,
-    link: { color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '2px' } as React.CSSProperties,
-    codeBlock: {
-        backgroundColor: 'var(--color-background-alt)', border: '1px solid var(--color-border)',
-        borderRadius: 'var(--border-radius-md)', padding: '1rem', fontSize: '0.9rem',
-        fontFamily: 'var(--font-mono)', whiteSpace: 'pre-wrap', overflowX: 'auto',
-        marginBottom: '0', // Remove bottom margin, handled by wrapper
-        color: 'var(--color-text-secondary)',
-        lineHeight: 1.5, // Adjust line height for readability
-    } as React.CSSProperties,
-    subHeading: { fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)', marginTop: '2rem', marginBottom: '1rem' } as React.CSSProperties,
-    ruleList: { listStyleType: 'decimal', paddingLeft: '1.75rem', marginBottom: '1.5rem', color: 'var(--color-text-secondary)' } as React.CSSProperties,
-    ruleListItem: { marginBottom: '0.6rem', lineHeight: 1.6 } as React.CSSProperties,
-    challengeLevel: {
-        fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-primary)',
-        marginTop: '0', // Remove top margin, handled by wrapper/border
-        marginBottom: '0.75rem', // Space below heading
-        borderTop: '1px dashed var(--color-border)',
-        paddingTop: '1.5rem', // Space above heading text
-    } as React.CSSProperties,
-    challengeLevelWrapper: {
-        marginBottom: '2rem', // Increased space between challenge blocks
-    } as React.CSSProperties,
-};
+     // Discord icon styles
+     discordIconLink: {
+         display: 'inline-block', marginLeft: '0.75rem', verticalAlign: 'middle',
+         color: 'var(--color-primary)',
+         transition: 'color 0.2s ease, transform 0.2s ease',
+     } as React.CSSProperties,
+     discordIconLinkHover: {
+         color: 'var(--color-primary-hover)', transform: 'scale(1.1)',
+     } as React.CSSProperties,
+     discordIcon: {
+         width: '1em', height: '1em',
+     } as React.CSSProperties,
+     // General Section styles
+     section: {
+         marginBottom: '3rem', padding: '2rem',
+         backgroundColor: 'var(--color-surface)',
+         borderRadius: 'var(--border-radius-lg)',
+         boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+         border: '1px solid var(--color-border)',
+     } as React.CSSProperties,
+     sectionTitle: {
+         fontSize: 'clamp(1.5rem, 4vw, 1.8rem)', fontWeight: 600, marginBottom: '1.5rem',
+         color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem',
+         display: 'flex', alignItems: 'center',
+     } as React.CSSProperties,
+     paragraph: { color: 'var(--color-text-secondary)', marginBottom: '1.25rem', lineHeight: 1.7 } as React.CSSProperties,
+     strongText: { fontWeight: 600, color: 'var(--color-primary)' } as React.CSSProperties,
+     link: { color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '2px' } as React.CSSProperties,
+     codeBlock: {
+         backgroundColor: 'var(--color-background-alt)', border: '1px solid var(--color-border)',
+         borderRadius: 'var(--border-radius-md)', padding: '1rem', fontSize: '0.9rem',
+         fontFamily: 'var(--font-mono)', whiteSpace: 'pre-wrap', overflowX: 'auto',
+         marginBottom: '0',
+         color: 'var(--color-text-secondary)',
+         lineHeight: 1.5,
+     } as React.CSSProperties,
+     subHeading: { fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)', marginTop: '2rem', marginBottom: '1rem' } as React.CSSProperties,
+     ruleList: { listStyleType: 'decimal', paddingLeft: '1.75rem', marginBottom: '1.5rem', color: 'var(--color-text-secondary)' } as React.CSSProperties,
+     ruleListItem: { marginBottom: '0.6rem', lineHeight: 1.6 } as React.CSSProperties,
+     challengeLevel: {
+         fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-primary)',
+         marginTop: '0', marginBottom: '0.75rem',
+         borderTop: '1px dashed var(--color-border)',
+         paddingTop: '1.5rem',
+     } as React.CSSProperties,
+     challengeLevelWrapper: {
+         marginBottom: '2rem',
+     } as React.CSSProperties,
+ };
+
 
 // --- Main Component ---
 export default function HelldiversPage() {
     const discordServerLink = "https://discord.gg/gptfleet";
     const reviewSourceLink = "https://disboard.org/server/1214787549655203862";
 
-    const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+    const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
     const [isReviewVisible, setIsReviewVisible] = useState(true);
     const [discordIconHover, setDiscordIconHover] = useState(false);
 
+    // Effect for cycling reviews
     useEffect(() => {
+        if (reviews.length <= 3) return;
+
         const intervalId = setInterval(() => {
             setIsReviewVisible(false);
             setTimeout(() => {
-                setCurrentReviewIndex((prevIndex) => (prevIndex + 1) % reviews.length);
+                setCurrentReviewStartIndex((prevIndex) => {
+                    const nextIndex = prevIndex + 3;
+                    return nextIndex >= reviews.length ? 0 : nextIndex;
+                });
                 setIsReviewVisible(true);
             }, 600);
         }, 10000);
+
         return () => clearInterval(intervalId);
     }, []);
 
-    const currentReview = reviews[currentReviewIndex];
+    const reviewsToShow = reviews.slice(currentReviewStartIndex, currentReviewStartIndex + 3);
 
     const discordIconFinalStyle = {
         ...styles.discordIconLink,
         ...(discordIconHover ? styles.discordIconLinkHover : {})
     };
 
+    const reviewWrapperFinalStyle = {
+        ...styles.reviewCardsWrapper,
+        ...(!isReviewVisible ? styles.reviewCardsWrapperHidden : {})
+    };
+
     // --- Render Logic ---
     return (
         <div style={styles.pageContainer}>
 
-            {/* YouTube Carousel */}
+            {/* YouTube Carousel - No Autoplay, No Pagination */}
             <div style={styles.youtubeCarouselContainer}>
                 <Swiper
-                    modules={[Navigation, Pagination, Autoplay, EffectFade]}
+                    modules={[Navigation, EffectFade]} // Only Navigation and EffectFade
                     effect="fade"
                     fadeEffect={{ crossFade: true }}
                     spaceBetween={30}
                     slidesPerView={1}
-                    navigation={true}
-                    pagination={{ clickable: true }}
+                    navigation={true} // Keep arrows
                     loop={true}
-                    autoplay={{ delay: 6000, disableOnInteraction: false }}
                     className="helldivers-youtube-swiper"
                 >
                     {youtubeVideos.map((video) => (
@@ -241,6 +298,7 @@ export default function HelldiversPage() {
                  <p style={styles.paragraph}>Target enemy faction: Automaton (Bots) or Terminids (Bugs).</p>
 
                  {/* --- Challenge Levels --- */}
+                 {/* (Challenge level code blocks remain the same) */}
                  <div style={styles.challengeLevelWrapper}>
                     <h4 style={styles.challengeLevel}>LEVEL 0 - Basic Clearance</h4>
                     <pre style={styles.codeBlock}>{`
@@ -347,7 +405,6 @@ EXTRACT:      Required
                  </div>
 
                  <h3 style={{...styles.subHeading, marginTop: '2.5rem'}}>Prestige John Helldiver Challenges</h3>
-                 {/* Updated paragraph text */}
                  <p style={styles.paragraph}>Created by John Helldivers.</p>
 
                 <div style={styles.challengeLevelWrapper}>
@@ -429,37 +486,32 @@ EXTRACT:      Required
                  </p>
             </section>
 
-            {/* --- Bottom Info Section (Review + Disboard Link) --- */}
-            <div className="bottom-info-section">
-                {/* Content Wrapper for Review/Disboard */}
-                <div className="bottom-info-content-wrapper">
-                    {/* Review Carousel */}
-                    <div style={styles.reviewContainer}>
-                       <div style={{...styles.reviewContent, ...(!isReviewVisible && styles.reviewContentHidden)}}>
-                           {currentReview && (
-                               <>
-                                   <div style={styles.reviewStars}>
-                                       {Array.from({ length: currentReview.rating }).map((_, i) => ( <FaStar key={i} /> ))}
-                                   </div>
-                                   <h3 style={styles.reviewTitle}>{currentReview.title}</h3>
-                                   <p style={styles.reviewText}>"{currentReview.text}"</p>
-                                   <p style={styles.reviewAuthor}>- {currentReview.author}</p>
-                               </>
-                           )}
-                       </div>
-                    </div>
-                    {/* Disboard Link */}
-                     {reviewSourceLink && (
-                         <Link
-                             href={reviewSourceLink}
-                             target="_blank"
-                             rel="noopener noreferrer"
-                             style={styles.disboardLinkBottom}
-                         >
-                             Disboard Reviews
-                         </Link>
-                     )}
+            {/* --- Bottom Info Section (Reviews + Disboard Link) --- */}
+            <div style={styles.reviewSectionContainer}>
+                <div style={reviewWrapperFinalStyle}>
+                    {reviewsToShow.map((review) => (
+                        <div key={review.id} style={styles.individualReviewCard}>
+                            <div style={styles.reviewStars}>
+                                {Array.from({ length: review.rating }).map((_, i) => (<FaStar key={i} />))}
+                            </div>
+                            <h3 style={styles.reviewTitle}>{review.title}</h3>
+                            {/* Added quotes around review text for consistency */}
+                            <p style={styles.reviewText}>"{review.text}"</p>
+                            <p style={styles.reviewAuthor}>- {review.author}</p>
+                        </div>
+                    ))}
                 </div>
+
+                {reviewSourceLink && (
+                    <Link
+                        href={reviewSourceLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={styles.disboardLinkBottom}
+                    >
+                        Disboard Reviews
+                    </Link>
+                )}
             </div>
 
         </div> // End pageContainer
