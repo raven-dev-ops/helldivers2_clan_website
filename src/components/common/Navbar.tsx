@@ -21,7 +21,7 @@ interface GameData {
 const AVAILABLE_GAMES: GameData[] = [
   {
     id: 'helldivers-2',
-    title: "Helldivers 2",
+    title: "HELLDIVERS 2",
     href: "/helldivers-2" // UPDATED href
   },
   {
