@@ -1,0 +1,263 @@
+/* src/app/(main)/creators/CreatorsPage.module.css */
+
+/* Basic Variables (adjust as needed or use CSS variables from global scope) */
+:root {
+    --color-background: #111827; /* Example: Dark background */
+    --color-card-bg: #1f2937;    /* Example: Darker card */
+    --color-border: #4b5563;     /* Example: Gray border */
+    --color-primary: #3b82f6;    /* Example: Blue */
+    --color-primary-hover: #60a5fa;
+    --color-text-primary: #f3f4f6;   /* Example: Light gray text */
+    --color-text-secondary: #9ca3af; /* Example: Medium gray text */
+    --color-text-muted: #6b7280;    /* Example: Darker gray text */
+    --color-error-bg: #fef2f2;      /* Example: Light red background */
+    --color-error-border: #fecaca; /* Example: Red border */
+    --color-error-text: #dc2626;   /* Example: Red text */
+    --color-live-bg: #dc2626;      /* Example: Red for live badge */
+    --color-live-text: #ffffff;
+    --border-radius: 0.5rem;      /* 8px */
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Page Layout */
+  .pageContainer {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 2rem 1rem; /* py-8 px-4 */
+    color: var(--color-text-primary);
+  }
+  
+  .pageTitle {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 1rem; /* mb-4 */
+    text-align: center;
+  }
+  
+  .pageSubtitle {
+    text-align: center;
+    color: var(--color-text-muted);
+    margin-bottom: 2.5rem; /* mb-10 */
+  }
+  
+  /* Loading/Error States */
+  .loadingContainer,
+  .noCreatorsContainer {
+    text-align: center;
+    padding-top: 2.5rem; /* py-10 */
+    padding-bottom: 2.5rem;
+  }
+  
+  .loadingText,
+  .noCreatorsText {
+    font-size: 1.125rem; /* text-lg */
+    color: var(--color-text-muted);
+  }
+  
+  .loadingText {
+    /* Basic pulse animation */
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+  }
+  
+  .errorContainer {
+    text-align: center;
+    color: var(--color-error-text);
+    background-color: var(--color-error-bg);
+    border: 1px solid var(--color-error-border);
+    padding: 1rem; /* p-4 */
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem; /* mb-8 */
+    max-width: 42rem; /* max-w-2xl */
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .errorTitle {
+    font-weight: 600; /* font-semibold */
+  }
+  
+  .errorHint {
+    margin-top: 0.5rem; /* mt-2 */
+    font-size: 0.875rem; /* text-sm */
+  }
+  
+  /* Creators Grid */
+  .creatorsGrid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem; /* gap-10 / md:gap-12 */
+  }
+  
+  /* Creator Card */
+  .creatorCard {
+    width: 100%;
+    max-width: 42rem; /* max-w-2xl */
+    background-color: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .creatorCard:hover {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  /* Embed Wrapper */
+  .embedWrapper {
+    aspect-ratio: 16 / 9;
+    background-color: #000000; /* Black background */
+    width: 100%;
+  }
+  
+  .twitchEmbed {
+    border: none;
+    display: block; /* Prevent extra space below iframe */
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Info Section */
+  .infoSection {
+    padding: 1.5rem; /* p-5 / md:p-6 */
+  }
+  
+  .headerSection {
+    display: flex;
+    align-items: flex-start; /* Start aligned on small screens */
+    gap: 1rem; /* gap-4 */
+    margin-bottom: 1rem; /* mb-4 */
+  }
+  
+  @media (min-width: 640px) { /* sm breakpoint */
+    .headerSection {
+      align-items: center; /* Center aligned on larger screens */
+    }
+  }
+  
+  .profileImageWrapper {
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 0.25rem; /* Slight adjustment for alignment */
+  }
+  
+  @media (min-width: 640px) { /* sm breakpoint */
+    .profileImageWrapper {
+      margin-top: 0;
+    }
+  }
+  
+  .profileImage,
+  .profileImagePlaceholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 9999px; /* rounded-full */
+    border: 2px solid var(--color-primary);
+    display: flex; /* For placeholder centering */
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .profileImagePlaceholder {
+    background-color: var(--color-text-muted); /* bg-muted */
+  }
+  
+  .placeholderIcon {
+    color: var(--color-text-secondary);
+    font-size: 1.875rem; /* text-3xl */
+  }
+  
+  .liveBadge {
+    position: absolute;
+    top: -0.25rem; /* -top-1 */
+    right: -0.25rem; /* -right-1 */
+    background-color: var(--color-live-bg);
+    color: var(--color-live-text);
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 700; /* font-bold */
+    padding: 0.125rem 0.5rem; /* px-2 py-0.5 */
+    border-radius: 9999px; /* rounded-full */
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; /* gap-1 */
+    box-shadow: var(--shadow);
+    /* Add pulse animation */
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .liveDot {
+    width: 0.5rem; /* w-2 */
+    height: 0.5rem; /* h-2 */
+  }
+  
+  .channelInfo {
+    flex-grow: 1; /* Allow text to take space and wrap */
+    min-width: 0; /* Prevent overflow issues in flex */
+  }
+  
+  .channelNameLink {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: var(--color-text-primary);
+    transition: color 0.2s ease;
+    display: block; /* Allow line clamp */
+    /* Line Clamp */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-height: 1.4; /* Adjust for single line */
+  }
+  
+  .channelNameLink:hover {
+    color: var(--color-primary-hover);
+  }
+  
+  .channelUrlLink {
+    display: block;
+    font-size: 0.75rem; /* text-xs */
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+  
+  .channelUrlLink:hover {
+    text-decoration: underline;
+  }
+  
+  .descriptionText,
+  .noDescriptionText {
+    font-size: 0.875rem; /* text-sm */
+    line-height: 1.6; /* leading-relaxed */
+    color: var(--color-text-secondary);
+    /* Line Clamp */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; /* Limit to 3 lines */
+  }
+  
+  .noDescriptionText {
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+  
+  /* No Creators State */
+  .noCreatorsContainer {
+    text-align: center;
+    padding-top: 2.5rem; /* py-10 */
+    padding-bottom: 2.5rem;
+  }
+  
+  .noCreatorsText {
+    font-size: 1.125rem; /* text-lg */
+    color: var(--color-text-muted);
+  }
