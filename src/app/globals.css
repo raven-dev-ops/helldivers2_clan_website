@@ -28,6 +28,18 @@
 
   /* Set color scheme */
   color-scheme: dark; /* Assuming dark is default, override if needed */
+
+  /* Swiper Variables */
+  --swiper-navigation-size: 36px; /* Example size */
+  --swiper-theme-color: var(--color-primary); /* Example using your theme */
+  --swiper-navigation-color: var(--color-primary);
+  --swiper-navigation-color-hover: var(--color-primary-hover);
+  --swiper-pagination-color: var(--color-primary);
+  --swiper-pagination-bullet-inactive-color: var(--color-text-muted);
+  --swiper-pagination-bullet-inactive-opacity: 0.4;
+  --swiper-pagination-bullet-size: 8px;
+  --swiper-pagination-bullet-horizontal-gap: 5px;
+  --swiper-pagination-bullet-vertical-gap: 6px;
 }
 
 /* Optional: Light theme overrides if you implement manual toggle later */
@@ -361,62 +373,219 @@ a:focus { /* Combine hover and focus for consistency */
 }
 
 
-/* === 7. Helldivers 2 Page Specific Layout === */
-/* Added section from previous step */
-
-/* Container for the top section (Links + Video) */
-.helldivers-top-section {
+/* === 7. Swiper Base Styles === */
+/* Added section */
+.swiper {
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  overflow: hidden;
+  list-style: none;
+  padding: 0;
+  z-index: 1;
+  display: block;
+}
+.swiper-vertical > .swiper-wrapper { flex-direction: column; }
+.swiper-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
   display: flex;
-  flex-direction: column; /* Stack vertically by default */
-  gap: 2rem; /* Space between items when stacked */
-  margin-bottom: 3rem; /* Space below this section */
-  align-items: center; /* Center items when stacked */
+  transition-property: transform;
+  box-sizing: content-box;
 }
+.swiper-horizontal { touch-action: pan-y; }
+.swiper-vertical { touch-action: pan-x; }
+.swiper-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition-property: transform;
+  display: block;
+}
+.swiper-slide-invisible-blank { visibility: hidden; }
+.swiper-autoheight, .swiper-autoheight .swiper-slide { height: auto; }
+.swiper-autoheight .swiper-wrapper { align-items: flex-start; transition-property: transform, height; }
+.swiper-backface-hidden .swiper-slide { transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.swiper-3d.swiper-css-mode .swiper-wrapper { perspective: 1200px; }
+.swiper-3d .swiper-wrapper { transform-style: preserve-3d; }
+.swiper-3d { perspective: 1200px; }
+.swiper-3d .swiper-slide, .swiper-3d .swiper-cube-shadow { transform-style: preserve-3d; }
+.swiper-css-mode > .swiper-wrapper { overflow: auto; scrollbar-width: none; /* Firefox */ -ms-overflow-style: none; /* IE 10+ */ }
+.swiper-css-mode > .swiper-wrapper::-webkit-scrollbar { display: none; }
+.swiper-css-mode > .swiper-wrapper > .swiper-slide { scroll-snap-align: start start; }
+.swiper-horizontal.swiper-css-mode > .swiper-wrapper { scroll-snap-type: x mandatory; }
+.swiper-vertical.swiper-css-mode > .swiper-wrapper { scroll-snap-type: y mandatory; }
+.swiper-centered > .swiper-wrapper::before { content: ''; flex-shrink: 0; order: 9999; }
+.swiper-centered > .swiper-wrapper > .swiper-slide { scroll-snap-align: center center; }
+.swiper-centered.swiper-horizontal > .swiper-wrapper > .swiper-slide:first-child { margin-inline-start: var(--swiper-centered-offset-before); }
+.swiper-centered.swiper-horizontal > .swiper-wrapper::before { height: 100%; width: var(--swiper-centered-offset-after); }
+.swiper-centered.swiper-vertical > .swiper-wrapper > .swiper-slide:first-child { margin-block-start: var(--swiper-centered-offset-before); }
+.swiper-centered.swiper-vertical > .swiper-wrapper::before { width: 100%; height: var(--swiper-centered-offset-after); }
 
-/* Left column holding Discord/Disboard links */
-.helldivers-left-column {
+/* Navigation */
+.swiper-button-prev,
+.swiper-button-next {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--swiper-navigation-size) / 44 * 27);
+  height: var(--swiper-navigation-size);
+  margin-top: calc(0px - (var(--swiper-navigation-size) / 2));
+  z-index: 10;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  align-items: center; /* Center button/links horizontally */
-  gap: 1rem; /* Space between button and links */
-  width: 100%; /* Take full width when stacked */
-  max-width: 380px; /* Limit width for aesthetics */
-  padding: 1rem 0;
-  flex-shrink: 0; /* Prevent shrinking when in row layout */
+  align-items: center;
+  justify-content: center;
+  color: var(--swiper-navigation-color);
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  padding: 0.5rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--swiper-navigation-color-hover);
+}
+.swiper-button-prev.swiper-button-disabled,
+.swiper-button-next.swiper-button-disabled {
+  opacity: 0.35;
+  cursor: auto;
+  pointer-events: none;
+}
+/* Icons */
+.swiper-button-prev:after,
+.swiper-button-next:after {
+  font-family: swiper-icons; /* Ensure this font is available or use SVGs/Icons */
+  font-size: var(--swiper-navigation-size);
+  text-transform: none !important;
+  letter-spacing: 0;
+  font-variant: initial;
+  line-height: 1;
+}
+@font-face {
+  font-family: 'swiper-icons';
+  src: url('data:application/font-woff;charset=utf-8;base64, d09GRgABAAAAAAZgABAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAAGRAAAABoAAAAci6qHkUdERUYAAAWgAAAAIwAAACQAYABXR1BPUwAABhQAAAAuAAAANuAY7+xHU1VCAAAFxAAAAFAAAABm2fPczU9TLzIAAAHcAAAASgAAAGBP9V5RY21hcAAAAkQAAACIAAABYt6F0cBjdnQgAAACzAAAAAQAAAAEABEBRGdhc3AAAAWYAAAACAAAAAj//wADZ2x5ZgAAAywAAADMAAAD2MHtryVoZWFkAAABbAAAADAAAAA2E2+eoWhoZWEAAAGcAAAAHwAAACQC9gDzaG10eAAAAigAAAAZAAAArgJkABFsb2NhAAAC0AAAAFoAAABaFQAUGG1heHAAAAG8AAAAHwAAACAAcABAbmFtZQAAA/gAAAE5AAACXvFdBwlwb3N0AAAFNAAAAGIAAACE5s74hXjaY2BkYGAAYpf5Hu/j+W2+MnAzMYDAzaX6QjD6/4//Bxj5GA8AuRwMYGkAPywL13jaY2BkYGA88P8Agx4j+/8fQMKMGCkAUggaNABsocket9vaZCajCL9fWH5 MvjJ7 V L M Y D A c o n v e r t e d f r o m T r u e t y p e f o n t');
+  font-weight: 400;
+  font-style: normal;
+}
+.swiper-button-prev, .swiper-rtl .swiper-button-next { left: 10px; right: auto; }
+.swiper-button-prev:after { content: 'prev'; }
+.swiper-button-next, .swiper-rtl .swiper-button-prev { right: 10px; left: auto; }
+.swiper-button-next:after { content: 'next'; }
+
+/* Pagination */
+.swiper-pagination {
+  position: absolute;
+  text-align: center;
+  transition: 300ms opacity;
+  transform: translate3d(0, 0, 0);
+  z-index: 10;
+}
+.swiper-pagination.swiper-pagination-hidden { opacity: 0; }
+/* Common Styles */
+.swiper-pagination-fraction,
+.swiper-pagination-custom,
+.swiper-horizontal > .swiper-pagination-bullets,
+.swiper-pagination-bullets.swiper-pagination-horizontal {
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+}
+/* Bullets */
+.swiper-pagination-bullets-dynamic { overflow: hidden; font-size: 0; }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet { transform: scale(0.33); position: relative; }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active { transform: scale(1); }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-main { transform: scale(1); }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev { transform: scale(0.66); }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-prev-prev { transform: scale(0.33); }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next { transform: scale(0.66); }
+.swiper-pagination-bullets-dynamic .swiper-pagination-bullet-active-next-next { transform: scale(0.33); }
+.swiper-pagination-bullet {
+  width: var(--swiper-pagination-bullet-width, var(--swiper-pagination-bullet-size));
+  height: var(--swiper-pagination-bullet-height, var(--swiper-pagination-bullet-size));
+  display: inline-block;
+  border-radius: 50%;
+  background: var(--swiper-pagination-bullet-inactive-color);
+  opacity: var(--swiper-pagination-bullet-inactive-opacity);
+}
+button.swiper-pagination-bullet {
+  border: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  appearance: none;
+}
+.swiper-pagination-clickable .swiper-pagination-bullet { cursor: pointer; }
+.swiper-pagination-bullet:only-child { display: none !important; }
+/* Active Bullet */
+.swiper-pagination-bullet-active {
+  opacity: var(--swiper-pagination-bullet-opacity, 1);
+  background: var(--swiper-pagination-color, var(--swiper-theme-color));
+}
+/* Vertical */
+.swiper-vertical > .swiper-pagination-bullets,
+.swiper-pagination-vertical.swiper-pagination-bullets {
+  right: 10px;
+  top: 50%;
+  transform: translate3d(0px, -50%, 0);
+}
+.swiper-vertical > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-vertical.swiper-pagination-bullets .swiper-pagination-bullet {
+  margin: var(--swiper-pagination-bullet-vertical-gap) 0;
+  display: block;
+}
+.swiper-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+.swiper-pagination-vertical.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+}
+.swiper-vertical > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet,
+.swiper-pagination-vertical.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  display: inline-block;
+  transition: 200ms transform, 200ms top;
+}
+/* Horizontal */
+.swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
+  margin: 0 var(--swiper-pagination-bullet-horizontal-gap);
+}
+.swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet,
+.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transition: 200ms transform, 200ms left;
+}
+.swiper-horizontal.swiper-rtl > .swiper-pagination-bullets-dynamic .swiper-pagination-bullet {
+  transition: 200ms transform, 200ms right;
 }
 
-/* Right column holding the video */
-.helldivers-right-column {
-  width: 100%; /* Take full width when stacked */
-  flex-grow: 1; /* Allow growing when in row layout */
-  max-width: 896px; /* Max video width */
+/* --- End Swiper Base Styles --- */
+
+
+/* === 8. Helldivers 2 Page Specific Layout (Simplified Bottom) === */
+/* Updated */
+.bottom-info-section {
+    display: flex; /* Use flex to center */
+    justify-content: center; /* Center the review/Disboard content horizontally */
+    margin-top: 2rem; /* Space above this section */
+    padding: 0 1rem; /* Add horizontal padding if needed */
 }
 
-/* Media Query for side-by-side layout on larger screens (e.g., 768px) */
-@media (min-width: 768px) {
-  .helldivers-top-section {
-    flex-direction: row; /* Switch to side-by-side */
-    align-items: flex-start; /* Align items to the top */
-    gap: 2.5rem; /* Adjust gap for row layout */
-  }
-
-  .helldivers-left-column {
-    width: auto; /* Allow natural width or set a specific basis */
-    /* Consider adding flex-basis if needed: flex-basis: 300px; */
-    align-items: flex-start; /* Align links to the left */
-    max-width: none; /* Remove max-width constraint */
-  }
-
-  /* .helldivers-right-column { flex-grow: 1; is already set } */
-}
-
-/* Styling for the Discord Button (assign className="helldivers-discord-button") */
+/* Keep Discord Button Style if needed for the icon or elsewhere */
 .helldivers-discord-button {
-    display: inline-block; /* Changed from inline-flex if only text inside */
+    display: inline-block;
     background-color: var(--color-primary, #22d3ee);
     color: var(--color-on-primary, #1a1a2e);
     padding: 0.8rem 1.75rem;
-    border-radius: 9999px; /* Pill shape */
+    border-radius: 9999px;
     font-weight: 700;
     font-size: 1.1rem;
     border: none;
@@ -426,17 +595,13 @@ a:focus { /* Combine hover and focus for consistency */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .helldivers-discord-button:hover {
-    background-color: var(--color-primary-hover, #06b6d4); /* Use updated hover color */
+    background-color: var(--color-primary-hover, #06b6d4);
     transform: scale(1.03);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
-
-/* Optional: Focus styles for accessibility */
 .helldivers-discord-button:focus-visible {
-    outline: 2px solid var(--color-primary-focus, #0891b2); /* Use updated focus color */
+    outline: 2px solid var(--color-primary-focus, #0891b2);
     outline-offset: 2px;
 }
-
-/* === End Helldivers Specific === */
+/* === End Updated CSS === */
