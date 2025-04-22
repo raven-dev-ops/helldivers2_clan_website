@@ -12,8 +12,9 @@
   --color-text-secondary: #94a3b8; /* Slate 400 */
   --color-text-muted: #64748b;   /* Slate 500 */
   --color-primary: #22d3ee;      /* Cyan 400 */
-  --color-primary-hover: #67e8f9;   /* Cyan 300 */
-  --color-primary-focus: #a5f3fc;   /* Cyan 200 */
+  --color-primary-hover: #06b6d4;   /* Cyan 500 - Adjusted for better contrast/step */
+  --color-primary-focus: #0891b2;   /* Cyan 600 - Adjusted for better contrast/step */
+  --color-on-primary: #1a1a2e;     /* Dark color for text on primary buttons */
   --color-error: #fca5a5;        /* Red 300 */
   --color-success: #86efac;      /* Green 300 */
 
@@ -63,13 +64,13 @@ body {
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: url('/images/space-bg.png'); /* Verify path */
+  background-image: url('/images/space-bg.png'); /* Verify path is correct relative to public folder */
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  position: relative;
-  z-index: 0;
+  position: relative; /* Needed for pseudo-element overlay */
+  z-index: 0; /* Establish stacking context */
 }
 
 /* Global Dark Overlay */
@@ -77,20 +78,20 @@ body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
-  z-index: -1;
-  pointer-events: none;
+  background-color: rgba(0, 0, 0, 0.45); /* Adjust opacity as needed */
+  z-index: -1; /* Place it behind the body content */
+  pointer-events: none; /* Allow clicks to pass through */
 }
 
 img, picture, video, canvas, svg { display: block; max-width: 100%; height: auto; }
-ul, ol { list-style: none; }
+ul, ol { list-style: none; } /* Base reset, override when needed */
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; background-color: transparent; border: none; padding: 0; }
 
 
 /* --- 3. Base Typography & Links --- */
 h1, h2, h3, h4, h5, h6 {
-  margin-top: var(--spacing-6); margin-bottom: var(--spacing-3);
+  /* Removed default margins, apply via utilities or specific components */
   font-weight: 600; line-height: 1.3; color: var(--color-text-primary);
 }
 h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); }
@@ -98,9 +99,12 @@ h2 { font-size: clamp(1.5rem, 4vw, 2rem); }
 h3 { font-size: clamp(1.25rem, 3.5vw, 1.5rem); }
 
 p {
-  margin-bottom: var(--spacing-4); line-height: 1.7; color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-4); /* Default paragraph spacing */
+  line-height: 1.7;
+  color: var(--color-text-secondary);
 }
-p:last-child { margin-bottom: 0; }
+/* Selectors like p:last-child can be tricky; manage spacing in components or with utility classes */
+
 
 a {
   color: var(--color-primary); text-decoration: none;
@@ -108,26 +112,26 @@ a {
   text-decoration-color: transparent;
 }
 a:hover,
-a:focus {
+a:focus { /* Combine hover and focus for consistency */
   color: var(--color-primary-hover); text-decoration-line: underline;
-  text-decoration-color: var(--color-primary-hover); outline: none;
+  text-decoration-color: var(--color-primary-hover); outline: none; /* Remove default focus outline if using custom */
 }
-*:focus:not(:focus-visible) { outline: none; box-shadow: none; }
-*:focus-visible {
+*:focus:not(:focus-visible) { outline: none; box-shadow: none; } /* Remove focus ring for mouse users */
+*:focus-visible { /* Style focus rings for keyboard users */
   outline: 2px solid var(--color-primary-focus); outline-offset: 2px;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-sm); /* Apply rounding to focus outline */
 }
 
 
-/* --- 4. Layout Helpers (NEEDED FOR (main)/layout.tsx) --- */
+/* --- 4. Layout Helpers (Utilities) --- */
 
 /* Basic Container */
 .container {
   width: 100%;
-  max-width: 1200px; /* Adjust as needed */
+  max-width: 1200px; /* Standard max width */
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--spacing-4); /* 1rem */
+  padding-left: var(--spacing-4); /* Default horizontal padding */
   padding-right: var(--spacing-4);
 }
 
@@ -137,7 +141,9 @@ a:focus {
 .flex-col { flex-direction: column; }
 .flex-row { flex-direction: row; }
 .flex-wrap { flex-wrap: wrap; }
+.flex-nowrap { flex-wrap: nowrap; } /* Added */
 .flex-grow { flex-grow: 1; } /* Crucial for main content area */
+.flex-shrink { flex-shrink: 1; } /* Added default shrink */
 .flex-shrink-0 { flex-shrink: 0; }
 
 /* Alignment */
@@ -155,73 +161,282 @@ a:focus {
 .justify-around { justify-content: space-around; }
 .justify-evenly { justify-content: space-evenly; }
 
-/* Gap (add more as needed) */
-.gap-1 { gap: var(--spacing-1); } .gap-2 { gap: var(--spacing-2); } .gap-3 { gap: var(--spacing-3); } .gap-4 { gap: var(--spacing-4); } .gap-6 { gap: var(--spacing-6); } .gap-8 { gap: var(--spacing-8); }
+/* Gap (Based on --spacing-unit) */
+.gap-1 { gap: var(--spacing-1); } .gap-2 { gap: var(--spacing-2); } .gap-3 { gap: var(--spacing-3); } .gap-4 { gap: var(--spacing-4); } .gap-5 { gap: var(--spacing-5); } .gap-6 { gap: var(--spacing-6); } .gap-8 { gap: var(--spacing-8); } .gap-10 { gap: var(--spacing-10); } .gap-12 { gap: var(--spacing-12); } /* Added more */
 
-/* Padding (add more as needed) */
-.p-1 { padding: var(--spacing-1); } .p-2 { padding: var(--spacing-2); } .p-3 { padding: var(--spacing-3); } .p-4 { padding: var(--spacing-4); } .p-6 { padding: var(--spacing-6); } .p-8 { padding: var(--spacing-8); }
-.px-4 { padding-left: var(--spacing-4); padding-right: var(--spacing-4); }
-.py-2 { padding-top: var(--spacing-2); padding-bottom: var(--spacing-2); } .py-4 { padding-top: var(--spacing-4); padding-bottom: var(--spacing-4); } .py-6 { padding-top: var(--spacing-6); padding-bottom: var(--spacing-6); } .py-8 { padding-top: var(--spacing-8); padding-bottom: var(--spacing-8); }
+/* Padding (Based on --spacing-unit) */
+.p-0 { padding: 0; } /* Added */
+.p-1 { padding: var(--spacing-1); } .p-2 { padding: var(--spacing-2); } .p-3 { padding: var(--spacing-3); } .p-4 { padding: var(--spacing-4); } .p-5 { padding: var(--spacing-5); } .p-6 { padding: var(--spacing-6); } .p-8 { padding: var(--spacing-8); } .p-10 { padding: var(--spacing-10); } .p-12 { padding: var(--spacing-12); } /* Added more */
+.px-1 { padding-left: var(--spacing-1); padding-right: var(--spacing-1); } .px-2 { padding-left: var(--spacing-2); padding-right: var(--spacing-2); } .px-3 { padding-left: var(--spacing-3); padding-right: var(--spacing-3); } .px-4 { padding-left: var(--spacing-4); padding-right: var(--spacing-4); } .px-6 { padding-left: var(--spacing-6); padding-right: var(--spacing-6); } .px-8 { padding-left: var(--spacing-8); padding-right: var(--spacing-8); }
+.py-1 { padding-top: var(--spacing-1); padding-bottom: var(--spacing-1); } .py-2 { padding-top: var(--spacing-2); padding-bottom: var(--spacing-2); } .py-3 { padding-top: var(--spacing-3); padding-bottom: var(--spacing-3); } .py-4 { padding-top: var(--spacing-4); padding-bottom: var(--spacing-4); } .py-5 { padding-top: var(--spacing-5); padding-bottom: var(--spacing-5); } .py-6 { padding-top: var(--spacing-6); padding-bottom: var(--spacing-6); } .py-8 { padding-top: var(--spacing-8); padding-bottom: var(--spacing-8); } .py-10 { padding-top: var(--spacing-10); padding-bottom: var(--spacing-10); } .py-12 { padding-top: var(--spacing-12); padding-bottom: var(--spacing-12); }
+.pt-1 { padding-top: var(--spacing-1); } /* Add others (pt, pb, pl, pr) as needed */
+.pt-2 { padding-top: var(--spacing-2); } .pb-2 { padding-bottom: var(--spacing-2); } .pl-2 { padding-left: var(--spacing-2); } .pr-2 { padding-right: var(--spacing-2); }
 .pt-4 { padding-top: var(--spacing-4); } .pb-4 { padding-bottom: var(--spacing-4); } .pl-4 { padding-left: var(--spacing-4); } .pr-4 { padding-right: var(--spacing-4); }
+.pt-6 { padding-top: var(--spacing-6); } .pb-6 { padding-bottom: var(--spacing-6); } .pl-6 { padding-left: var(--spacing-6); } .pr-6 { padding-right: var(--spacing-6); }
 
-/* Margin (add more as needed) */
-.m-auto { margin: auto; } .mx-auto { margin-left: auto; margin-right: auto; }
-.my-4 { margin-top: var(--spacing-4); margin-bottom: var(--spacing-4); }
-.mt-4 { margin-top: var(--spacing-4); } .mb-4 { margin-bottom: var(--spacing-4); } .mb-6 { margin-bottom: var(--spacing-6); } .mb-8 { margin-bottom: var(--spacing-8); }
-.ml-auto { margin-left: auto; } /* Needed for Navbar layout */
+
+/* Margin (Based on --spacing-unit) */
+.m-0 { margin: 0; } /* Added */
+.m-auto { margin: auto; } .mx-auto { margin-left: auto; margin-right: auto; } .my-auto { margin-top: auto; margin-bottom: auto; } /* Added */
+.m-1 { margin: var(--spacing-1); } .m-2 { margin: var(--spacing-2); } .m-3 { margin: var(--spacing-3); } .m-4 { margin: var(--spacing-4); } .m-6 { margin: var(--spacing-6); } .m-8 { margin: var(--spacing-8); }
+.mx-1 { margin-left: var(--spacing-1); margin-right: var(--spacing-1); } .mx-2 { margin-left: var(--spacing-2); margin-right: var(--spacing-2); } .mx-4 { margin-left: var(--spacing-4); margin-right: var(--spacing-4); }
+.my-1 { margin-top: var(--spacing-1); margin-bottom: var(--spacing-1); } .my-2 { margin-top: var(--spacing-2); margin-bottom: var(--spacing-2); } .my-4 { margin-top: var(--spacing-4); margin-bottom: var(--spacing-4); } .my-6 { margin-top: var(--spacing-6); margin-bottom: var(--spacing-6); } .my-8 { margin-top: var(--spacing-8); margin-bottom: var(--spacing-8); }
+.mt-1 { margin-top: var(--spacing-1); } .mt-2 { margin-top: var(--spacing-2); } .mt-3 { margin-top: var(--spacing-3); } .mt-4 { margin-top: var(--spacing-4); } .mt-6 { margin-top: var(--spacing-6); } .mt-8 { margin-top: var(--spacing-8); } .mt-10 { margin-top: var(--spacing-10); } .mt-12 { margin-top: var(--spacing-12); }
+.mb-1 { margin-bottom: var(--spacing-1); } .mb-2 { margin-bottom: var(--spacing-2); } .mb-3 { margin-bottom: var(--spacing-3); } .mb-4 { margin-bottom: var(--spacing-4); } .mb-6 { margin-bottom: var(--spacing-6); } .mb-8 { margin-bottom: var(--spacing-8); } .mb-10 { margin-bottom: var(--spacing-10); } .mb-12 { margin-bottom: var(--spacing-12); }
+.ml-1 { margin-left: var(--spacing-1); } .ml-2 { margin-left: var(--spacing-2); } .ml-4 { margin-left: var(--spacing-4); } .ml-auto { margin-left: auto; } /* Needed for Navbar layout */
+.mr-1 { margin-right: var(--spacing-1); } .mr-2 { margin-right: var(--spacing-2); } .mr-4 { margin-right: var(--spacing-4); } .mr-auto { margin-right: auto; }
+
 
 /* Sizing */
-.w-full { width: 100%; } .h-full { height: 100%; } .min-h-screen { min-height: 100vh; }
-.max-w-sm { max-width: 24rem; } .max-w-md { max-width: 28rem; } .max-w-lg { max-width: 32rem; } .max-w-xl { max-width: 36rem; } .max-w-prose { max-width: 65ch; } .max-w-none { max-width: none; }
+.w-auto { width: auto; } /* Added */
+.w-full { width: 100%; } .h-auto { height: auto; } /* Added */
+.h-full { height: 100%; } .min-h-screen { min-height: 100vh; }
+.max-w-sm { max-width: 24rem; } .max-w-md { max-width: 28rem; } .max-w-lg { max-width: 32rem; } .max-w-xl { max-width: 36rem; } .max-w-2xl { max-width: 42rem; } .max-w-3xl { max-width: 48rem; } .max-w-4xl { max-width: 56rem; } .max-w-5xl { max-width: 64rem; } .max-w-6xl { max-width: 72rem; } .max-w-7xl { max-width: 80rem; } /* Added more max-widths */
+.max-w-prose { max-width: 65ch; } .max-w-none { max-width: none; }
 
 /* Borders & Rounded Corners */
 .border { border-width: var(--border-width); } .border-t { border-top-width: var(--border-width); } .border-b { border-bottom-width: var(--border-width); } .border-l { border-left-width: var(--border-width); } .border-r { border-right-width: var(--border-width); }
+.border-border { border-color: var(--color-border); } /* Added utility for border color */
+.border-primary { border-color: var(--color-primary); } /* Added */
+.border-transparent { border-color: transparent; } /* Added */
+.rounded-none { border-radius: 0; } /* Added */
 .rounded-sm { border-radius: var(--border-radius-sm); } .rounded-md { border-radius: var(--border-radius-md); } .rounded-lg { border-radius: var(--border-radius-lg); } .rounded-full { border-radius: 9999px; }
 
 /* Text Alignment & Utils */
 .text-left { text-align: left; } .text-center { text-align: center; } .text-right { text-align: right; }
+.text-base { font-size: 1rem; line-height: 1.5rem; } /* Added */
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; } /* Added */
+.text-xl { font-size: 1.25rem; line-height: 1.75rem; } /* Added */
 .text-sm { font-size: 0.875rem; line-height: 1.25rem; } .text-xs { font-size: 0.75rem; line-height: 1rem; }
-.font-semibold { font-weight: 600; } .font-bold { font-weight: 700; } .italic { font-style: italic; }
+.font-normal { font-weight: 400; } /* Added */
+.font-medium { font-weight: 500; } /* Added */
+.font-semibold { font-weight: 600; } .font-bold { font-weight: 700; } .italic { font-style: italic; } .not-italic { font-style: normal; } /* Added */
+.uppercase { text-transform: uppercase; } /* Added */
+.lowercase { text-transform: lowercase; } /* Added */
+.capitalize { text-transform: capitalize; } /* Added */
+.underline { text-decoration-line: underline; } .line-through { text-decoration-line: line-through; } .no-underline { text-decoration-line: none; } /* Added */
+.text-primary { color: var(--color-primary); } /* Added */
+.text-secondary { color: var(--color-text-secondary); } /* Added */
+.text-muted { color: var(--color-text-muted); } /* Added */
+.text-white { color: #fff; } /* Added, use sparingly */
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .break-words { overflow-wrap: break-word; }
+.whitespace-nowrap { white-space: nowrap; } /* Added */
+.whitespace-pre-wrap { white-space: pre-wrap; } /* Added */
 
 /* Positioning & Display */
 .block { display: block; } .inline-block { display: inline-block; } .inline { display: inline; } .hidden { display: none; }
-.absolute { position: absolute; } .relative { position: relative; } .fixed { position: fixed; } .sticky { position: sticky; } /* For sticky navbar */
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.top-0 { top: 0; } /* For sticky navbar */
+.table { display: table; } .table-row { display: table-row; } .table-cell { display: table-cell; } /* Added */
+.absolute { position: absolute; } .relative { position: relative; } .fixed { position: fixed; } .sticky { position: sticky; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; } .inset-x-0 { left: 0; right: 0; } .inset-y-0 { top: 0; bottom: 0; } /* Added */
+.top-0 { top: 0; } .bottom-0 { bottom: 0; } .left-0 { left: 0; } .right-0 { right: 0; } /* Added */
 
 /* Z-Index */
 .z-0 { z-index: 0; } .z-10 { z-index: 10; } .z-20 { z-index: 20; } .z-30 { z-index: 30; } .z-40 { z-index: 40; } .z-50 { z-index: 50; }
 
 /* Effects */
-.shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); } .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); } .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); } .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); } .shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); }
-.opacity-50 { opacity: 0.5; } .opacity-75 { opacity: 0.75; }
+.shadow-sm { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); } .shadow-md { box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); } .shadow-lg { box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); } .shadow-xl { box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); } .shadow-2xl { box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25); } .shadow-inner { box-shadow: inset 0 2px 4px 0 rgb(0 0 0 / 0.05); } .shadow-none { box-shadow: none; } /* Added */
+.opacity-0 { opacity: 0; } .opacity-25 { opacity: 0.25; } .opacity-50 { opacity: 0.5; } .opacity-75 { opacity: 0.75; } .opacity-100 { opacity: 1; } /* Added more */
 .cursor-pointer { cursor: pointer; } .cursor-default { cursor: default; } .cursor-not-allowed { cursor: not-allowed; }
 
 /* Transitions */
 .transition { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-.duration-150 { transition-duration: 150ms; } .duration-200 { transition-duration: 200ms; } .duration-300 { transition-duration: 300ms; }
-.ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; } /* Added */
+.transition-opacity { transition-property: opacity; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; } /* Added */
+.transition-shadow { transition-property: box-shadow; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; } /* Added */
+.transition-transform { transition-property: transform; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; } /* Added */
+.duration-75 { transition-duration: 75ms; } .duration-100 { transition-duration: 100ms; } .duration-150 { transition-duration: 150ms; } .duration-200 { transition-duration: 200ms; } .duration-300 { transition-duration: 300ms; } .duration-500 { transition-duration: 500ms; } .duration-700 { transition-duration: 700ms; } .duration-1000 { transition-duration: 1000ms; } /* Added more durations */
+.ease-linear { transition-timing-function: linear; } /* Added */
+.ease-in { transition-timing-function: cubic-bezier(0.4, 0, 1, 1); } .ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); } .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); } /* Added */
 
 
 /* --- 5. Utility Classes (Specific Examples) --- */
-.visually-hidden {
+.visually-hidden { /* Use for accessible hiding */
   position: absolute !important; height: 1px; width: 1px;
   overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap; border: 0;
 }
 
-/* Responsive Helpers (Add more breakpoints as needed) */
-/* Example: Hide element on small screens, show on medium+ */
-.hidden-sm { display: block; } /* Default */
-@media (max-width: 767px) { /* md breakpoint - adjust as needed */
-    .hidden-sm { display: none; }
+/* Responsive Helpers (Add more breakpoints and classes as needed) */
+/* Small screens and up (default - mobile first) */
+
+/* Medium screens and up (e.g., tablets, 768px) */
+@media (min-width: 768px) {
+  .md\:flex { display: flex; }
+  .md\:inline-flex { display: inline-flex; }
+  .md\:block { display: block; }
+  .md\:inline-block { display: inline-block; }
+  .md\:hidden { display: none; }
+  .md\:flex-row { flex-direction: row; }
+  .md\:flex-col { flex-direction: column; }
+  .md\:items-start { align-items: flex-start; }
+  .md\:items-center { align-items: center; }
+  .md\:justify-between { justify-content: space-between; }
+  .md\:gap-8 { gap: var(--spacing-8); }
+  .md\:p-8 { padding: var(--spacing-8); }
+  .md\:px-8 { padding-left: var(--spacing-8); padding-right: var(--spacing-8); }
+  .md\:py-12 { padding-top: var(--spacing-12); padding-bottom: var(--spacing-12); }
+  .md\:text-left { text-align: left; }
+  /* Add more md: prefixed utilities as required */
 }
 
-/* Example: Show element only on medium+ screens */
-.block-md { display: none; } /* Default */
-@media (min-width: 768px) { /* md breakpoint - adjust as needed */
-    .block-md { display: block; }
-    .flex-md { display: flex; } /* Example responsive flex */
+/* Large screens and up (e.g., laptops, 1024px) */
+@media (min-width: 1024px) {
+  .lg\:p-12 { padding: var(--spacing-12); }
+  .lg\:gap-12 { gap: var(--spacing-12); }
+  .lg\:text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+  /* Add more lg: prefixed utilities as required */
 }
+
+/* Extra Large screens and up (e.g., desktops, 1280px) */
+@media (min-width: 1280px) {
+  /* Add xl: prefixed utilities as required */
+}
+
+
+/* === 6. Component-Specific Styles (Example) === */
+/* Example: Button Styles (can be applied via className="btn btn-primary") */
+.btn {
+  display: inline-flex; /* Use inline-flex for alignment */
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2) var(--spacing-4);
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border: var(--border-width) solid transparent;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap; /* Prevent wrapping */
+}
+
+.btn:active {
+  transform: scale(0.98); /* Slight press effect */
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary); /* Text color on primary button */
+  border-color: var(--color-primary);
+}
+.btn-primary:hover,
+.btn-primary:focus-visible {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
+  background-color: var(--color-border); /* Slightly darker on hover */
+  border-color: var(--color-text-secondary);
+}
+
+/* Example: Navbar specific styles */
+.navbar {
+    background-color: rgba(15, 23, 42, 0.8); /* Semi-transparent background (slate-900 @ 80%) */
+    backdrop-filter: blur(8px); /* Frosted glass effect */
+    border-bottom: var(--border-width) solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 40; /* Ensure it's above most content */
+    padding: var(--spacing-3) 0; /* Adjust vertical padding */
+}
+
+.nav-link {
+    color: var(--color-text-secondary);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--border-radius-sm);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+.nav-link:hover,
+.nav-link:focus-visible,
+.nav-link.active { /* Style for active link */
+    color: var(--color-text-primary);
+    background-color: var(--color-surface-alt);
+}
+
+
+/* === 7. Helldivers 2 Page Specific Layout === */
+/* Added section from previous step */
+
+/* Container for the top section (Links + Video) */
+.helldivers-top-section {
+  display: flex;
+  flex-direction: column; /* Stack vertically by default */
+  gap: 2rem; /* Space between items when stacked */
+  margin-bottom: 3rem; /* Space below this section */
+  align-items: center; /* Center items when stacked */
+}
+
+/* Left column holding Discord/Disboard links */
+.helldivers-left-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center button/links horizontally */
+  gap: 1rem; /* Space between button and links */
+  width: 100%; /* Take full width when stacked */
+  max-width: 380px; /* Limit width for aesthetics */
+  padding: 1rem 0;
+  flex-shrink: 0; /* Prevent shrinking when in row layout */
+}
+
+/* Right column holding the video */
+.helldivers-right-column {
+  width: 100%; /* Take full width when stacked */
+  flex-grow: 1; /* Allow growing when in row layout */
+  max-width: 896px; /* Max video width */
+}
+
+/* Media Query for side-by-side layout on larger screens (e.g., 768px) */
+@media (min-width: 768px) {
+  .helldivers-top-section {
+    flex-direction: row; /* Switch to side-by-side */
+    align-items: flex-start; /* Align items to the top */
+    gap: 2.5rem; /* Adjust gap for row layout */
+  }
+
+  .helldivers-left-column {
+    width: auto; /* Allow natural width or set a specific basis */
+    /* Consider adding flex-basis if needed: flex-basis: 300px; */
+    align-items: flex-start; /* Align links to the left */
+    max-width: none; /* Remove max-width constraint */
+  }
+
+  /* .helldivers-right-column { flex-grow: 1; is already set } */
+}
+
+/* Styling for the Discord Button (assign className="helldivers-discord-button") */
+.helldivers-discord-button {
+    display: inline-block; /* Changed from inline-flex if only text inside */
+    background-color: var(--color-primary, #22d3ee);
+    color: var(--color-on-primary, #1a1a2e);
+    padding: 0.8rem 1.75rem;
+    border-radius: 9999px; /* Pill shape */
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.helldivers-discord-button:hover {
+    background-color: var(--color-primary-hover, #06b6d4); /* Use updated hover color */
+    transform: scale(1.03);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Optional: Focus styles for accessibility */
+.helldivers-discord-button:focus-visible {
+    outline: 2px solid var(--color-primary-focus, #0891b2); /* Use updated focus color */
+    outline-offset: 2px;
+}
+
+/* === End Helldivers Specific === */

@@ -1,13 +1,12 @@
-// src/app/(main)/forum/page.tsx (Recommended Approach)
+// src/app/(main)/forum/page.tsx (Corrected)
 import Link from 'next/link';
 import dbConnect from '@/lib/dbConnect'; // Adjust path if needed
 import ForumCategoryModel, { IForumCategory } from '@/models/ForumCategory'; // Adjust path
 
 // --- Import the factory function from isomorphic-dompurify ---
 import createDOMPurify from 'isomorphic-dompurify';
-// Note: No need to import User model here as it's not directly used/populated
 
-// Function to fetch categories
+// Function to fetch categories (Keep as before)
 async function getCategories(): Promise<(Omit<IForumCategory, '_id' | 'createdAt' | 'updatedAt'> & { _id: string; createdAt: string; updatedAt: string })[]> {
   try {
     await dbConnect(); // Ensure connection is ready
@@ -27,8 +26,8 @@ export default async function ForumHomePage() {
   const categories = await getCategories();
 
   // --- Create the DOMPurify instance within the component ---
-  // This ensures it uses the correct environment (Node/JSDOM on server, Browser DOM on client)
-  const DOMPurify = createDOMPurify();
+  // Rename the variable holding the instance for clarity
+  const purifier = createDOMPurify();
 
   return (
     // Main container with padding and text colors
@@ -63,7 +62,9 @@ export default async function ForumHomePage() {
                  <p
                     className="text-sm text-slate-600 dark:text-slate-400 max-w-prose" // Limit width for readability
                     // --- Use the created instance's sanitize method ---
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(category.description || '') }}
+                    // VVVVVV CORRECTED LINE BELOW VVVVVV
+                    dangerouslySetInnerHTML={{ __html: purifier.sanitize(category.description || '') }}
+                    // ^^^^^^ CORRECTED LINE ABOVE ^^^^^^
                  />
               )}
             </Link>
