@@ -1,33 +1,46 @@
-// src/app/(main)/helldivers-2/partners/page.tsx
+// src/app/(main)/dune-awakening/partners/page.tsx
 import React from 'react';
-// Import Link from next/link is good practice even for external links if you might use it elsewhere
-import Link from 'next/link';
+import Link from 'next/link'; // Keep for internal links like the footer one
 import { FaDiscord, FaExternalLinkAlt } from 'react-icons/fa'; // Icons
 
 // --- Data Structure for Display ---
 interface PartnerDisplayData {
-    id: string;
+    id: string; // Use a unique identifier (e.g., placeholder ID or server ID)
     name: string;
     inviteLink: string;
 }
 
-// --- Hardcoded Partner Data (Placeholder) ---
-const placeholderPartners: PartnerDisplayData[] = [
-    { id: '1214787549655203862', name: 'GPT FLEET', inviteLink: 'https://discord.gg/eRJHYGVYm8' },
-    { id: '1305994434021687296', name: '225th "Python" SEAF Battalion', inviteLink: 'https://discord.gg/CqhePebXYZ' },
-    { id: '1221490168670715936', name: 'Heck Snorkelers', inviteLink: 'https://discord.gg/v4EFg6ptMA' },
-    { id: '1208728719963721779', name: 'Fenrir III "Wolf Pack"', inviteLink: 'https://discord.gg/tjmvffJdtf' },
-    { id: '1172948128509468742', name: 'Guardians Of Freedom', inviteLink: 'https://discord.gg/XQ4x8d6twq' },
-    { id: '1261556132640456764', name: "Kai's Commandos", inviteLink: 'https://discord.gg/4kc8ANvEhC' },
-    { id: '1309714539331325952', name: "Hazard Airborne Commandos", inviteLink: 'https://discord.gg/95scyhpexv' },
-    { id: '1314713069368250389', name: "D.S.S. Coalition Strike Force", inviteLink: 'https://discord.gg/mHMsEkF8yf' },
+// --- Hardcoded Partner Data (PLACEHOLDER - Replace with actual Dune partners) ---
+const placeholderDunePartners: PartnerDisplayData[] = [
+    {
+        id: 'dune-partner-1',
+        name: 'Arrakis Spice Traders Guild', // Example Name
+        inviteLink: 'https://discord.gg/example1' // Example Link
+    },
+    {
+        id: 'dune-partner-2',
+        name: 'Sietch Tabr Survivors', // Example Name
+        inviteLink: 'https://discord.gg/example2' // Example Link
+    },
+    {
+        id: 'dune-partner-3',
+        name: 'Caladan Veterans League', // Example Name
+        inviteLink: 'https://discord.gg/example3' // Example Link
+    },
+     {
+        id: 'gptfleet-main', // Include main fleet for cross-promotion?
+        name: 'GPT Fleet Command (Main)',
+        inviteLink: 'https://discord.gg/gptfleet'
+    },
+    // Add more placeholder partners as needed
 ];
 
 
-// --- Style Object (Corrected - REMOVED &:hover) ---
+// --- Style Object (Adopted from previous partner page) ---
 const styles: { [key: string]: React.CSSProperties } = {
+    // Using styles similar to the Helldivers partners page for consistency
     mainContainer: { maxWidth: '1000px', marginLeft: 'auto', marginRight: 'auto', padding: '2rem 1rem 4rem', fontFamily: 'var(--font-sans, sans-serif)', color: 'var(--color-text-primary)' },
-    pageTitle: { fontSize: 'clamp(1.8rem, 5vw, 2.25rem)', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--color-primary, #facc15)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem', textAlign: 'center', },
+    pageTitle: { fontSize: 'clamp(1.8rem, 5vw, 2.25rem)', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--color-primary, #f9a825)', /* Dune Theme Color */ borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem', textAlign: 'center', },
     introText: { color: 'var(--color-text-secondary)', marginBottom: '2.5rem', lineHeight: 1.7, textAlign: 'center', maxWidth: '70ch', marginInline: 'auto' },
     partnerListContainer: { display: 'flex', flexDirection: 'column', gap: '1.5rem', },
     partnerCard: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', padding: '1.5rem', gap: '1rem', },
@@ -39,36 +52,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     joinButtonIcon: { fontSize: '1em', },
     noPartnersText: { textAlign: 'center', padding: '3rem 1rem', color: 'var(--color-text-secondary)', fontSize: '1.1rem', },
     paragraph: { color: 'var(--color-text-secondary)', marginBottom: '1rem', lineHeight: 1.7, },
-    link: { // Corrected link style
-        color: 'var(--color-primary-hover)', // Base color (already hover color)
-        textDecoration: 'underline',
-        textUnderlineOffset: '2px',
-        transition: 'color 0.2s ease', // Transition for potential future base color changes
-    },
+    link: { color: 'var(--color-primary-hover, #fbc02d)', /* Dune hover */ textDecoration: 'underline', textUnderlineOffset: '2px', },
     concludingSection: { marginTop: '3rem', paddingTop: '1.5rem', borderTop: `1px solid var(--color-border)`, textAlign: 'center', },
 };
 
 // --- Main Component (Using placeholder data) ---
-export default function PartnersPage() {
-    const partners = placeholderPartners;
+export default function DunePartnersPage() {
+    // Use the hardcoded placeholder data
+    const partners = placeholderDunePartners;
+    // Link to the specific Dune discord
+    const duneDiscordLink = "https://discord.gg/gptdune";
 
     return (
         <main style={styles.mainContainer}>
-            <h1 style={styles.pageTitle}>GPT Fleet Alliance Partners</h1>
+            <h1 style={styles.pageTitle}>Dune: Awakening Alliance Partners</h1>
             <p style={styles.introText}>
-                We are proud to collaborate with dedicated communities across the galaxy. Explore our partners and join their ranks!
+                On the harsh sands of Arrakis, alliances are essential. Discover the Houses and communities partnered with the GPT Fleet's Dune Division.
             </p>
 
             <div style={styles.partnerListContainer}>
                 {partners.length > 0 ? (
                     partners.map((partner) => (
+                        // Partner Card
                         <article key={partner.id} style={styles.partnerCard}>
                             <div style={styles.partnerInfo}>
                                 <FaDiscord style={styles.partnerIcon} aria-hidden="true" />
                                 <div style={styles.partnerText}>
                                     <h2 style={styles.partnerName}>{partner.name}</h2>
+                                    {/* Optional: Add description if needed */}
                                 </div>
                             </div>
+                             {/* Use <a> for external Discord link */}
                             <a
                                 href={partner.inviteLink}
                                 target="_blank"
@@ -81,16 +95,17 @@ export default function PartnersPage() {
                     ))
                 ) : (
                     <p style={styles.noPartnersText}>
-                        No Alliance Partners are currently listed. Check back soon for updates!
+                        No Dune Alliance Partners are currently listed. Help us forge alliances!
                     </p>
                 )}
             </div>
 
-             <section style={styles.concludingSection}>
+             {/* Concluding Text */}
+            <section style={styles.concludingSection}>
                  <p style={styles.paragraph}>
-                    Interested in joining the GPT Fleet Alliance? Reach out to our leadership on the main{' '}
-                    {/* Use <a> for external link */}
-                    <a href="https://discord.gg/gptfleet" target="_blank" rel="noopener noreferrer" style={styles.link}>GPT Fleet Discord</a>.
+                    Wish to see your House or Sietch listed here? Discuss potential alliances with leadership on the{' '}
+                    {/* Use <a> tag for the external Discord link */}
+                    <a href={duneDiscordLink} target="_blank" rel="noopener noreferrer" style={styles.link}>GPT Dune Division Discord</a>.
                  </p>
              </section>
         </main>

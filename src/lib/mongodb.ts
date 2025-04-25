@@ -1,35 +1,41 @@
-// src/lib/mongodb.ts (Example utility)
+// src/lib/mongoClientPromise.ts
 import { MongoClient } from 'mongodb'
 
-if (!process.env.MONGODB_URI) {
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"')
 }
 
-const uri = process.env.MONGODB_URI
 let client: MongoClient
 let clientPromise: Promise<MongoClient>
 
 declare global {
     // eslint-disable-next-line no-var
-    var _mongoClientPromise: Promise<MongoClient> | undefined;
+    var _mongoClientPromiseForAuth: Promise<MongoClient> | undefined;
 }
+
+const options = {}; // Add any MongoClient options here if needed
 
 if (process.env.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value
   // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(uri)
-    global._mongoClientPromise = client.connect()
-    console.log("MongoDB: New connection created (Development).");
+  let globalWithMongo = global as typeof globalThis & {
+    _mongoClientPromiseForAuth: Promise<MongoClient> | undefined
   }
-  clientPromise = global._mongoClientPromise
+
+  if (!globalWithMongo._mongoClientPromiseForAuth) {
+    client = new MongoClient(MONGODB_URI, options)
+    globalWithMongo._mongoClientPromiseForAuth = client.connect()
+    console.log("MongoDB Client: New connection created for NextAuth (Development).");
+  }
+  clientPromise = globalWithMongo._mongoClientPromiseForAuth
 } else {
   // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri)
+  client = new MongoClient(MONGODB_URI, options)
   clientPromise = client.connect()
-   console.log("MongoDB: New connection created (Production).");
+   console.log("MongoDB Client: New connection created for NextAuth (Production).");
 }
 
-// Export a module-scoped MongoClient promise. By exporting
-// a module-scoped Promise, the connection can be shared across functions.
+// Export the promise resolving to the MongoClient
 export default clientPromise
