@@ -90,19 +90,21 @@ const Navbar = () => {
     const isDune = isClient && currentDivisionId === 'dune-awakening'; // Match ID used in AVAILABLE_GAMES
     if (isDune) {
       return [
-        { href: "/dune-awakening/classes", label: "Classes" },
+        { href: "/dune-awakening/merch", label: "Merch" },
+        { href: "/dune-awakening/worldpvp", label: "PVP" },
         { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/pvp", label: "PvP" },
-        { href: "/dune-awakening/resources", label: "Resources" },
-        { href: "/dune-awakening/guild", label: "Guild" },
+        { href: "/dune-awakening/market", label: "Market" },
+        { href: "/dune-awakening/partners", label: "Partners" },
+        { href: "/dune-awakening/studio", label: "Studio" },
       ];
     } else { // Default (Helldivers 2 or initial state)
       return [
+        { href: "/merch", label: "Merch" },
         { href: "/academy", label: "Academy" },
         { href: "/creators", label: "Creators" },
         { href: "/forum", label: "Forum" },
         { href: "/partners", label: "Partners" },
-        { href: "/studios", label: "Studios" },
+        { href: "/studio", label: "Studio" },
       ];
     }
   };
@@ -123,7 +125,7 @@ const Navbar = () => {
                <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
             ) : (
               // Display static text or a logo image here
-              "Divisions"
+              "GPT Divisions"
               // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
             )}
           </Link>
