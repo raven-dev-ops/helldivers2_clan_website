@@ -1,4 +1,4 @@
-// src/app/(main)/creators/page.tsx
+// src/app/(main)/helldivers-2/creators/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';

@@ -1,4 +1,4 @@
-// src/app/(main)/partners/page.tsx
+// src/app/(main)/helldivers-2/partners/page.tsx
 
 export default function PartnersPage() {
   return (

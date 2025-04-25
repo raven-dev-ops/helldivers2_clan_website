@@ -1,4 +1,4 @@
-// src/app/(main)/forum/[categoryId]/new-thread/page.tsx
+// src/app/(main)/helldivers-2/forum/[categoryId]/new-thread/page.tsx
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import mongoose from 'mongoose';

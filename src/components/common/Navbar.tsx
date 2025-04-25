@@ -90,7 +90,7 @@ const Navbar = () => {
     const isDune = isClient && currentDivisionId === 'dune-awakening'; // Match ID used in AVAILABLE_GAMES
     if (isDune) {
       return [
-        { href: "/dune-awakening/merch2", label: "Merch" },
+        { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/worldpvp", label: "PVP" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/market", label: "Market" },
@@ -99,12 +99,12 @@ const Navbar = () => {
       ];
     } else { // Default (Helldivers 2 or initial state)
       return [
-        { href: "/merch1", label: "Merch" },
-        { href: "/academy", label: "Academy" },
-        { href: "/creators", label: "Creators" },
-        { href: "/forum", label: "Forum" },
-        { href: "/partners", label: "Partners" },
-        { href: "/studio", label: "Studio" },
+        { href: "helldivers-2/merch", label: "Merch" },
+        { href: "helldivers-2/academy", label: "Academy" },
+        { href: "helldivers-2/creators", label: "Creators" },
+        { href: "helldivers-2/forum", label: "Forum" },
+        { href: "helldivers-2/partners", label: "Partners" },
+        { href: "helldivers-2/studio", label: "Studio" },
       ];
     }
   };

@@ -1,4 +1,4 @@
-// src/app/(main)/helldivers-2/merch1/page.tsx
+// src/app/(main)/helldivers-2/merch/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';

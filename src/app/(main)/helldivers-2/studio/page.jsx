@@ -1,4 +1,4 @@
-// src/app/(main)/studios/page.tsx
+// src/app/(main)/helldivers-2/studios/page.tsx
 
 export default function StudiosPage() {
     return (

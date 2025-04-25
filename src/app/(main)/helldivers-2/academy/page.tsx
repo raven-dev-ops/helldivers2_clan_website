@@ -1,4 +1,4 @@
-// src/app/(main)/academy/page.tsx
+// src/app/(main)/helldiver-2/academy/page.tsx
 
 // Assuming you might have a shared layout or styling that defines colors like
 // text-primary-foreground, text-secondary-foreground, text-accent, text-muted-foreground, bg-muted, bg-card, border-border
