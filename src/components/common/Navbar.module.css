@@ -1,242 +1,93 @@
 /* src/components/common/Navbar.module.css */
 
-/* --- Core Navbar Styles --- */
+/* --- Base Nav Structure --- */
 .nav {
-  background-color: var(--color-surface, #ffffff); /* Default fallback */
+  background-color: var(--color-surface, #ffffff);
   padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-  border-bottom: var(--border-width, 1px) solid var(--color-border, #e0e0e0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
-  position: sticky; /* Make navbar sticky */
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
   top: 0;
-  z-index: 50; /* Ensure it's above content but below modals */
+  z-index: 50;
 }
 
 .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1200px; /* Or your preferred max width */
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--spacing-2, 0.5rem); /* Add some padding for smaller screens */
+  padding-left: var(--spacing-2, 0.5rem);
   padding-right: var(--spacing-2, 0.5rem);
 }
 
-/* --- Logo Area & Dropdown --- */
+/* --- Logo Area --- */
 .logoArea {
   display: flex;
   align-items: center;
-  /* Allow it to shrink if needed, but prioritize desktop controls */
-  flex-shrink: 1;
-  min-width: 0; /* Prevents text overflow issues in flex children */
-  position: relative; /* Context for error message positioning if needed */
+  /* Removed position: relative as dropdown is gone */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
-/* Container for the button and the absolutely positioned dropdown */
-.dropdownContainer {
-  position: relative; /* CRITICAL: Positioning context for the dropdown */
-  display: inline-block; /* Or block */
-}
-
-/* The main dropdown trigger button */
-.logoDropdownButton {
-  display: inline-flex; /* Use inline-flex to wrap content tightly */
+/* NEW: Style for the link replacing the dropdown button */
+.logoLinkButton {
+  display: inline-flex; /* Use flex to align icon and text if needed */
   align-items: center;
-  gap: var(--spacing-2, 0.5rem); /* Space between text and icon */
+  gap: var(--spacing-2, 0.5rem);
   background-color: transparent;
-  border: none;
+  border: 1px solid transparent; /* Can add border for button look */
   padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-md, 4px);
   color: var(--color-text-primary, #333);
-  font-weight: 600; /* Make it slightly bolder */
-  font-size: 0.95rem;
+  font-weight: 600;
+  font-size: 1rem; /* Adjusted size slightly */
   cursor: pointer;
-  white-space: nowrap; /* Prevent text wrapping */
-  transition: background-color 0.2s ease, color 0.2s ease;
-  max-width: 100%; /* Prevent it from overflowing logoArea */
-}
-
-.logoDropdownButton:hover:not(:disabled) {
-  background-color: var(--color-surface-alt, #f5f5f5);
-}
-
-.logoDropdownButton:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-/* Text inside the dropdown trigger */
-.dropdownTriggerText {
-    overflow: hidden; /* Hide overflow */
-    text-overflow: ellipsis; /* Add ellipsis (...) */
-    white-space: nowrap; /* Ensure it stays on one line */
-    max-width: 150px; /* Adjust max-width as needed */
-    display: inline-block; /* Needed for text-overflow */
-    vertical-align: middle; /* Align with icons */
-}
-
-/* Chevron Icon in the trigger */
-.dropdownIcon {
-  color: var(--color-text-secondary, #555);
-  transition: transform 0.2s ease-in-out;
-  flex-shrink: 0; /* Prevent icon from shrinking */
-}
-.dropdownIconOpen {
-  transform: rotate(180deg);
-}
-
-/* Spinner Icon */
-.dropdownSpinner {
-    color: var(--color-primary, dodgerblue); /* Use primary color */
-    flex-shrink: 0; /* Prevent icon from shrinking */
-}
-.spinnerRotating {
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Loading/Selecting Text Styles */
-.loadingText,
-.selectingText {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-2, 0.5rem);
-    color: var(--color-text-secondary, #555);
-    font-style: italic;
-}
-
-/* Dropdown Menu List */
-.dropdownMenu {
-  position: absolute; /* CRITICAL: Absolute positioning */
-  top: calc(100% + 4px); /* Position below the button */
-  left: 0;
-  background-color: var(--color-surface, #fff);
-  border: var(--border-width, 1px) solid var(--color-border, #ccc);
-  border-radius: var(--border-radius-lg, 6px); /* Slightly larger radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Standard shadow */
-  padding: var(--spacing-2, 0.5rem) 0; /* Vertical padding */
-  margin: 0;
-  list-style: none;
-  min-width: 200px; /* Ensure reasonable minimum width */
-  max-width: 250px; /* Optional max width */
-  z-index: 60; /* Above navbar */
-  /* Add transitions if desired */
-  /* opacity: 1; */
-  /* visibility: visible; */
-  /* transition: opacity 0.1s ease-out, visibility 0.1s ease-out; */
-}
-
-/* Individual item button inside dropdown */
-.dropdownItem {
-  display: block;
-  width: 100%;
-  text-align: left;
-  background: none;
-  border: none;
-  padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem); /* Consistent padding */
-  cursor: pointer;
-  color: var(--color-text-primary, #333);
-  font-size: 0.9rem;
-  font-weight: 500;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: background-color 0.15s ease;
+  text-decoration: none; /* Remove link underline */
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.dropdownItem:hover:not(:disabled),
-.dropdownItem:focus-visible:not(:disabled) {
-  background-color: var(--color-surface-alt, #f0f0f0);
-  color: var(--color-primary, dodgerblue);
+/* NEW: Hover/focus state for the logo link */
+.logoLinkButton:hover,
+.logoLinkButton:focus-visible {
+  background-color: var(--color-surface-alt, #f5f5f5);
+  color: var(--color-primary, dodgerblue); /* Use your primary color */
+  border-color: var(--color-border, #e0e0e0); /* Example border on hover */
   outline: none;
 }
 
-.dropdownItem:disabled,
-.dropdownItemDisabled {
-   padding: var(--spacing-2, 0.5rem) var(--spacing-4, 1rem);
-   color: var(--color-text-disabled, #999);
-   cursor: default;
-   font-size: 0.9rem;
-   font-weight: 500;
-   background-color: transparent !important; /* Override hover */
-}
-.dropdownItemLabel {
-  /* No specific styles needed if text inherits from button */
+/* Spinner Style */
+.spinnerRotating {
+  animation: spin 1s linear infinite;
+  /* Optional: Adjust size/margin if needed */
+  width: 1em;
+  height: 1em;
+  /* margin-right: 0.5rem; */ /* If you have text next to it */
 }
 
-
-/* Static content for Unauthenticated state */
-.logoAreaStatic {
-    display: flex;
-    align-items: center;
-    padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem); /* Match button padding */
-}
-.staticLogoLink {
-    text-decoration: none;
-}
-.siteTitleStatic {
-    color: var(--color-primary, #333);
-    font-weight: 600; /* Match button weight */
-    font-size: 0.95rem; /* Match button size */
-    white-space: nowrap;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* Error message style */
-.globalErrorText {
-  color: var(--color-error, red);
-  font-size: 0.75rem;
-  margin-left: var(--spacing-2, 0.5rem);
-  /* Alternative positioning below the button */
-  /* position: absolute; */
-  /* top: 100%; */
-  /* left: 0; */
-  /* margin-top: 2px; */
-  white-space: nowrap;
-}
-
-/* --- Hamburger --- */
-.hamburger {
-  display: block; /* Show by default, hide on larger screens */
-  color: var(--color-text-secondary, #555);
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  padding: var(--spacing-2, 0.5rem);
-  border-radius: var(--border-radius-md, 4px);
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-.hamburger:hover {
-    background-color: var(--color-surface-alt, #f5f5f5);
-    color: var(--color-text-primary, #333);
-}
-
-/* --- Desktop Menu & Controls --- */
-.desktopControls {
-    display: none; /* Hidden on mobile */
-    align-items: center;
-    gap: var(--spacing-4, 1rem); /* Gap between menu and potential other controls */
-    flex-shrink: 0; /* Prevent controls from shrinking */
-}
-
+/* --- Desktop Menu --- */
 .desktopMenu {
   display: flex;
   align-items: center;
-  gap: var(--spacing-3, 0.75rem); /* Gap between links */
+  gap: var(--spacing-3, 0.75rem);
 }
 
+/* Style for links within the desktop menu */
 .link {
   color: var(--color-text-secondary, #555);
   text-decoration: none;
-  font-size: 0.9rem; /* Slightly smaller */
+  font-size: 0.9rem;
   font-weight: 500;
   padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-md, 4px);
   transition: color 0.2s ease, background-color 0.2s ease;
-  white-space: nowrap;
+  white-space: nowrap; /* Prevent links wrapping */
 }
 
 .link:hover,
@@ -246,135 +97,10 @@
   outline: none;
 }
 
-/* --- Mobile Menu Styles --- */
-.mobileMenu {
-  position: absolute; /* Position below navbar */
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: var(--color-surface, #fff);
-  border-top: var(--border-width, 1px) solid var(--color-border, #e0e0e0);
-  /* Add bottom border too for visual separation */
-  border-bottom: var(--border-width, 1px) solid var(--color-border, #e0e0e0);
-  padding: var(--spacing-2, 0.5rem) 0;
-  z-index: 40; /* Below navbar */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Softer shadow */
+/* Style for the currently active link (optional) */
+.activeLink {
+  color: var(--color-primary, dodgerblue); /* Use your primary color */
+  font-weight: 600;
+  /* background-color: var(--color-primary-light, #e0f7ff); */ /* Optional subtle background */
 }
 
-.mobileList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.mobileLink {
-  display: block;
-  padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-  color: var(--color-text-secondary, #555);
-  text-decoration: none;
-  font-weight: 500;
-  transition: background-color 0.2s ease, color 0.2s ease;
-}
-.mobileLink:hover {
-    background-color: var(--color-surface-alt, #f5f5f5);
-    color: var(--color-text-primary, #333);
-}
-
-/* Styles for Division display in Mobile Menu */
-.mobileDivisionDisplay {
-    padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-    color: var(--color-text-secondary, #555);
-    font-size: 0.9rem;
-    border-bottom: var(--border-width, 1px) solid var(--color-border-alt, #eee); /* Separator line */
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-2, 0.5rem);
-    flex-wrap: wrap; /* Allow wrapping if needed */
-}
-.mobileLabel {
-    font-weight: 600; /* Make label bold */
-    color: var(--color-text-primary, #333);
-}
-.mobileLoading {
-    font-style: italic;
-}
-.mobileValue {
-    font-weight: 500;
-}
-.mobileValueLink {
-    font-weight: 500;
-    color: var(--color-primary, dodgerblue); /* Make link stand out */
-    text-decoration: none;
-    cursor: pointer;
-}
-.mobileValueLink:hover {
-    text-decoration: underline;
-}
-.mobileSpinner {
-    /* Reuse dropdown spinner style or define specific */
-    color: var(--color-primary, dodgerblue);
-    font-size: 0.9em; /* Slightly smaller */
-    animation: spin 1s linear infinite; /* Reuse animation */
-}
-
-/* Styles for Change Division button in Mobile Menu */
-.mobileChangeDivision {
-    border-top: var(--border-width, 1px) solid var(--color-border-alt, #eee); /* Separator line */
-}
-.mobileChangeButton {
-    display: flex; /* Use flex to align text and icon */
-    align-items: center;
-    justify-content: space-between; /* Push icon to the right */
-    width: 100%;
-    text-align: left;
-    background: none;
-    border: none;
-    padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
-    font-size: inherit; /* Match mobileLink */
-    font-weight: 500; /* Match mobileLink */
-    color: var(--color-text-secondary, #555);
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-.mobileChangeButton:hover:not(:disabled) {
-    background-color: var(--color-surface-alt, #f5f5f5);
-    color: var(--color-text-primary, #333);
-}
-.mobileChangeButton:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-.mobileChevron {
-    color: var(--color-text-secondary, #555);
-    transition: transform 0.2s ease-in-out;
-    margin-left: var(--spacing-2, 0.5rem); /* Space before icon */
-}
-/* Note: .dropdownIconOpen class is reused for rotation */
-
-/* REMOVED: .mobileToggleContainer as ThemeToggle was removed */
-
-
-/* --- Media Query for Desktop --- */
-@media (min-width: 768px) { /* Or your preferred breakpoint */
-  .hamburger {
-    display: none; /* Hide hamburger */
-  }
-  .desktopControls {
-    display: flex; /* Show desktop controls wrapper */
-  }
-   .mobileMenu {
-     display: none; /* Hide mobile menu */
-   }
-}
-
-/* --- Visually Hidden (Optional) --- */
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
