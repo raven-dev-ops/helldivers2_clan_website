@@ -4,7 +4,6 @@ import { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   compiler: { styledComponents: true },
   eslint: {
-    // disables eslint errors from failing `next build`
     ignoreDuringBuilds: true,
   },
   images: {
@@ -12,20 +11,17 @@ const nextConfig: NextConfig = {
       // Keep your existing patterns
       { protocol: 'https', hostname: '**.behance.net' },
       { protocol: 'https', hostname: 'visitarrakis.com' },
+      { protocol: 'https', hostname: 'cdn.fourthwall.com' }, // Keep this one
 
-      // --- Add the Fourthwall CDN hostname ---
+      // --- Add the Twitch CDN hostname ---
       {
         protocol: 'https',
-        hostname: 'cdn.fourthwall.com',
-        // Optional: Add pathname if you want to restrict it further,
-        // otherwise it allows any path on this hostname.
-        // pathname: '/customization/**',
+        hostname: 'static-cdn.jtvnw.net', // <-- Add this hostname
+        // pathname: '/jtv_user_pictures/**', // Optional: Restrict path if desired
       },
       // --- End of addition ---
 
     ],
-    // Remove the older 'domains' array if you had it
-    // domains: [],
   },
 };
 

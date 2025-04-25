@@ -97,14 +97,13 @@ const Navbar = () => {
         { href: "/dune-awakening/partners", label: "Partners" },
         { href: "/dune-awakening/studio", label: "Studio" },
       ];
-    } else { // Default (Helldivers 2 or initial state)
+    } else { 
       return [
-        { href: "helldivers-2/merch", label: "Merch" },
-        { href: "helldivers-2/academy", label: "Academy" },
-        { href: "helldivers-2/creators", label: "Creators" },
-        { href: "helldivers-2/forum", label: "Forum" },
-        { href: "helldivers-2/partners", label: "Partners" },
-        { href: "helldivers-2/studio", label: "Studio" },
+        { href: "/helldivers-2/merch", label: "Merch" },
+        { href: "/helldivers-2/academy", label: "Academy" },
+        { href: "/helldivers-2/creators", label: "Creators" },
+        { href: "/helldivers-2/partners", label: "Partners" },
+        { href: "/helldivers-2/studio", label: "Studio" },
       ];
     }
   };
