@@ -2,15 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
-import BotAvatar from '@/components/BotAvatar'; // Adjust path if needed
+// Import client components
+import BotAvatar from '@/components/BotAvatar'; // For displaying avatar with error handling
+import BotCardActions from '@/components/BotCardActions'; // Handles Apply button/form logic
+// DB and Auth related imports
 import dbConnect from '@/lib/dbConnect';
-import BotModel, { IBotLean } from '@/models/Bot';
-import BotApplicationModel from '@/models/BotApplication';
+import BotModel, { IBotLean } from '@/models/Bot'; // Ensure models/Bot.ts exports IBotLean
+import BotApplicationModel from '@/models/BotApplication'; // Adjust path if needed
 import mongoose, { Types } from 'mongoose';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
+// Icons
 import { FaEnvelope, FaVideo, FaServer, FaCheckCircle, FaDiscord } from 'react-icons/fa';
-import styles from './StudioPage.module.css';
+// Styling
+import styles from './StudioPage.module.css'; // Assumes StudioPage.module.css is in the same directory
 
 // --- Interfaces ---
 interface BotDisplayData {
@@ -21,18 +26,17 @@ interface BotDisplayData {
     description?: string;
     serverCount: number;
     videoUrl?: string;
-    applyEmailSubject: string;
-    applyEmailBody: string;
-    hasApplied?: boolean;
-    isVerified?: boolean;
+    applyEmailSubject: string; // Still needed to pass to BotCardActions if form uses it
+    applyEmailBody: string; // Still needed to pass to BotCardActions if form uses it
+    hasApplied?: boolean; // Status fetched from DB initially
+    isVerified?: boolean; // For showing the checkmark
 }
 type ApplicationStatusMap = Record<string, boolean>;
 
 // --- Server-Side Data Fetching Functions ---
 async function getBots(): Promise<IBotLean[]> {
     try {
-        // *** Moved dbConnect inside try ***
-        await dbConnect();
+        await dbConnect(); // Connect inside try block
         const bots = await BotModel.find({})
                                     .sort({ order: 1, name: 1 })
                                     .lean<IBotLean>();
@@ -55,24 +59,24 @@ async function getUserApplicationStatuses(userId: string | undefined): Promise<A
         return {}; // Return empty object if userId is invalid
     }
     try {
-        // *** Moved dbConnect inside try ***
-        await dbConnect();
+        await dbConnect(); // Connect inside try block
+        // Assuming 'botId' in BotApplication model stores the 'botIdentifier' string from the Bot model
         const applications = await BotApplicationModel.find(
             { userId: new mongoose.Types.ObjectId(userId) },
-            'botId' // Assuming 'botId' links to 'botIdentifier'
+            'botId'
         ).lean();
 
         const statusMap: ApplicationStatusMap = {};
         if (Array.isArray(applications)) {
             applications.forEach(app => {
+                // Ensure app is an object and botId exists and is a string
                 if (app && typeof app === 'object' && typeof app.botId === 'string') {
                     statusMap[app.botId] = true;
                 }
             });
         } else {
             console.error("RUNTIME ERROR in getUserApplicationStatuses: Expected array, received:", typeof applications);
-            // Return empty map even if DB response is unexpected, to prevent errors later
-            return {};
+            return {}; // Return empty map to prevent errors later
         }
         return statusMap; // Return the populated (or empty) map
     } catch (error) {
@@ -95,7 +99,6 @@ export default async function StudioPage() {
     ]);
 
     // --- Transform Data for Display (with safety check) ---
-    // Use `botsFromDb || []` to ensure .map is called on an array even if getBots somehow fails unexpectedly
     const botsToDisplay: BotDisplayData[] = (botsFromDb || []).map((bot: IBotLean) => ({
         _id: bot._id.toString(),
         botIdentifier: bot.botIdentifier,
@@ -104,14 +107,15 @@ export default async function StudioPage() {
         discordClientId: bot.discordClientId,
         videoUrl: bot.videoUrl,
         serverCount: bot.serverCount ?? 0,
-        applyEmailSubject: bot.applyEmailSubject,
-        applyEmailBody: bot.applyEmailBody,
-        hasApplied: applicationStatuses[bot.botIdentifier] === true,
-        isVerified: true, // Replace with actual logic/data field later
+        applyEmailSubject: bot.applyEmailSubject, // Pass through needed data
+        applyEmailBody: bot.applyEmailBody,      // Pass through needed data
+        hasApplied: applicationStatuses[bot.botIdentifier] === true, // Initial status
+        // TODO: Replace 'true' with actual verification logic based on your data
+        isVerified: true, // Currently hardcoded to show checkmark for all bots
     }));
 
-    // Placeholder Video ID - Replace with your actual YouTube Video ID
-    const youtubeVideoId = "dQw4w9WgXcQ"; // Example: Rick Astley :)
+    // Your specific YouTube Video ID for instructions
+    const youtubeVideoId = "ea6P191gXLg";
 
     // --- JSX Rendering ---
     return (
@@ -141,44 +145,67 @@ export default async function StudioPage() {
                     <div className={styles.botListColumn}>
                         {botsToDisplay.length > 0 ? (
                             botsToDisplay.map((bot) => {
-                                const hasApplied = bot.hasApplied;
-                                const mailtoLink = `mailto:gptfleet@gmail.com?subject=${encodeURIComponent(bot.applyEmailSubject)}&body=${encodeURIComponent(bot.applyEmailBody)}`;
                                 const discordAvatarUrl = `https://cdn.discordapp.com/avatars/${bot.discordClientId}.png`;
+                                // Pass initial applied status to the client component
+                                const initialHasApplied = bot.hasApplied ?? false;
 
                                 return (
                                     <section key={bot.botIdentifier} className={styles.botCard}>
                                         <header className={styles.botHeader}>
                                             <div className={styles.botIconWrapper}>
-                                                <BotAvatar src={discordAvatarUrl} alt={`${bot.name} Discord Avatar`} width={64} height={64} className="rounded-full border-2 border-gray-500" />
+                                                <BotAvatar
+                                                    src={discordAvatarUrl}
+                                                    alt={`${bot.name} Discord Avatar`}
+                                                    width={64}
+                                                    height={64}
+                                                    className="rounded-full border-2 border-gray-500" // Pass minimal style needed
+                                                />
                                             </div>
                                             <div className={styles.botHeaderText}>
-                                                <h2 className={styles.botName}>
+                                                 <h2 className={styles.botName}>
                                                     <span className={styles.botNameText}>{bot.name}</span>
-                                                    {bot.isVerified && (<FaCheckCircle className={styles.verifiedIcon} aria-label="Verified Bot" title="Verified Bot" />)}
-                                                </h2>
-                                                <div className={styles.botStats}>
+                                                    {/* Render checkmark if bot is verified */}
+                                                    {bot.isVerified && (
+                                                        <FaCheckCircle
+                                                            className={styles.verifiedIcon}
+                                                            aria-label="Verified Bot"
+                                                            title="Verified Bot"
+                                                        />
+                                                    )}
+                                                 </h2>
+                                                 <div className={styles.botStats}>
                                                     <span className={styles.statItem} title={`${bot.serverCount} servers`}>
                                                         <FaServer className={styles.icon} aria-hidden="true" /> {bot.serverCount} Servers
                                                     </span>
                                                     <span className={styles.statItem} title={`Discord Application ID: ${bot.discordClientId}`}>
                                                         <FaDiscord className={styles.icon} aria-hidden="true"/> ID: {bot.discordClientId.substring(0, 6)}...
                                                     </span>
-                                                </div>
+                                                 </div>
                                             </div>
                                         </header>
                                         <div className={styles.botBody}>
                                             <div>
                                                 <p className={styles.botDescription}>{bot.description || 'No description available.'}</p>
-                                                {bot.videoUrl && (<div className={styles.videoLinkContainer}><a href={bot.videoUrl} target="_blank" rel="noopener noreferrer" className={styles.videoLink}><FaVideo className={styles.icon} aria-hidden="true" /> Watch Demo</a></div>)}
+                                                {bot.videoUrl && (
+                                                    <div className={styles.videoLinkContainer}>
+                                                        <a href={bot.videoUrl} target="_blank" rel="noopener noreferrer" className={styles.videoLink}>
+                                                            <FaVideo className={styles.icon} aria-hidden="true" /> Watch Demo
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </div>
-                                            <div className={styles.actionsContainer}>
-                                                {hasApplied ? (<button className={styles.appliedButton} disabled><FaCheckCircle className={styles.icon} /> Applied</button>) : (<a href={mailtoLink} className={styles.applyButtonLink}><FaEnvelope className={styles.icon} /> Apply to Use</a>)}
-                                            </div>
+                                            {/* === Use the BotCardActions Client Component === */}
+                                            {/* It handles showing Apply/Applied and the form */}
+                                            <BotCardActions
+                                                bot={bot} // Pass necessary bot data (name, identifier, etc.)
+                                                initialHasApplied={initialHasApplied} // Pass initial status from server
+                                            />
                                         </div>
                                     </section>
                                 );
                             })
                         ) : (
+                            // Message if no bots are found
                             <p className={styles.textParagraph}>
                                 No bots are currently available for application. Check back later!
                             </p>
@@ -187,20 +214,20 @@ export default async function StudioPage() {
 
                     {/* Right Column: YouTube Video */}
                     <div className={styles.videoColumn}>
-                        {/* Optional Title */}
+                        {/* Optional Title - Uncomment and style in CSS if desired */}
                         {/* <h3 className={styles.videoTitle}>How to Use Our Bots</h3> */}
                         <div className={styles.videoWrapper}>
                             <iframe
                                 className={styles.youtubeEmbed}
-                                src={`https://www.youtube.com/embed/ea6P191gXLg`}
-                                title="YouTube video player - Bot Instructions"
+                                src={`https://www.youtube.com/embed/${youtubeVideoId}`}
+                                title="YouTube video player - Bot Instructions" // Descriptive title
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerPolicy="strict-origin-when-cross-origin"
                                 allowFullScreen
                             ></iframe>
                         </div>
-                        {/* Optional description */}
+                        {/* Optional description - Uncomment and style in CSS if desired */}
                         {/* <p className={styles.videoDescription}>
                             Watch this video for a general overview of setting up and using GPT Fleet alliance bots.
                         </p> */}

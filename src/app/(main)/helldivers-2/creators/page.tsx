@@ -68,8 +68,7 @@ export default function CreatorsPage() {
   }
 
   return (
-    // Apply global container if needed, or use module specific one
-    // <main className={`container ${styles.pageContainer}`}>
+    // Use the page container class from the module
     <main className={styles.pageContainer}>
       <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
       <p className={styles.pageSubtitle}>
@@ -115,6 +114,7 @@ export default function CreatorsPage() {
                         width={64} height={64}
                         className={styles.profileImage} // Use class from module
                         onError={(e) => { e.currentTarget.src = '/images/placeholder.png'; }} // Fallback placeholder
+                        unoptimized // Good practice for external images not known at build time
                       />
                     ) : (
                       <div className={styles.profileImagePlaceholder}>

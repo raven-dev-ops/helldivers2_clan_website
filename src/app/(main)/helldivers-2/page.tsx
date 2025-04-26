@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { FaStar, FaDiscord, FaChevronDown, FaChevronUp } from 'react-icons/fa'; // Added Chevrons
+import { FaStar, FaDiscord, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 // Import Swiper React components
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -13,13 +13,14 @@ import { Navigation, EffectFade } from 'swiper/modules';
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
-// import 'swiper/css/pagination'; // Not used
 import 'swiper/css/effect-fade';
+
+// --- Import CSS Module ---
+import styles from './HelldiversPage.module.css';
 
 // --- Review Data Structure ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
-const reviews: Review[] = [
-    // --- Review Data (Keep as is) ---
+const reviews: Review[] = [ /* ... Review data ... */
     { id: 1, author: "joshgiff", title: "A Solid Growing Community", text: "I came across GPT fleet as a helldiver in a different discord server. We were offered to join a server that had a discord bot that would link other servers together to allow divers from across discord to link up and spread democracy together. So far in my experience it has been a safe, active and growing community to meet up and dive together. On times where I am not diving there is usually a group of people socializing in one of the voice chat channels and I have found that helpful for hobbying and hanging with other people. 10/10 would dive with them any day of the week.", rating: 5 },
     { id: 2, author: "charredviolet8771", title: "Democracy Approved", text: "I've been apart of the GPT Fleet for about three or four months now and the community has been so welcoming and encouraging. The folks here have given great advice and taught me so many things about Helldivers 2 that I would have struggled to figure out alone. I don't have to worry about folks being toxic towards me, which is great! I look forward to seeing where this awesome community goes in the future, and I highly recommend it as a place to learn/ hang out with your fellow Helldivers!", rating: 5 },
     { id: 3, author: "silverdolphin01", title: "Great Community", text: "I haven't been able to be as active as I'd like but this is a great community! I would definitely recommend to both new and experienced players!", rating: 5 },
@@ -41,8 +42,7 @@ const reviews: Review[] = [
 
 // --- YouTube Video Interface ---
 interface YoutubeVideo { id: string; embedUrl: string; }
-const youtubeVideos: YoutubeVideo[] = [
-    // --- YouTube Video Data (Keep as is) ---
+const youtubeVideos: YoutubeVideo[] = [ /* ... YouTube data ... */
     { id: '6NjteKyQJRg', embedUrl: 'https://www.youtube.com/embed/JLWX6PYgjxk?si=i3gVqDJiO3xScEyY' },
     { id: 'oYAwQdu6lVw', embedUrl: 'https://www.youtube.com/embed/ea6P191gXLg?si=CrIYJ1TEHfO-UKn1' },
     { id: 'R1UvBhGz0oY', embedUrl: 'https://www.youtube.com/embed/6NjteKyQJRg?si=ThN7AHNjwjGgI_XR' },
@@ -53,12 +53,11 @@ const youtubeVideos: YoutubeVideo[] = [
 
 // --- John Helldiver Challenge Data ---
 interface ChallengeLevelData {
-    id: string; // e.g., 'level-0'
+    id: string;
     levelTitle: string;
     details: string;
 }
-
-const challengeLevels: ChallengeLevelData[] = [
+const challengeLevels: ChallengeLevelData[] = [ /* ... Challenge data ... */
      { id: 'level-0', levelTitle: 'LEVEL 0 - Basic Clearance', details: `MISSION TYPE: Eradicate Automaton Forces (Fortress) / Purge Hatcheries (Mega Nest)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS: Solo\nEXTRACT:      Required` },
      { id: 'level-1', levelTitle: 'LEVEL 1 - Sabotage Proficiency', details: `MISSION TYPE: Sabotage Air Base / Destroy Command Bunkers / Sabotage Supply Bases (Orbital Cannon / Nuke Nursery)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS: Solo\nEXTRACT:      Required` },
      { id: 'level-2', levelTitle: 'LEVEL 2 - Resource Denial', details: `MISSION TYPE: Sabotage Air Base / Destroy Command Bunkers / Sabotage Supply Bases (Orbital Cannon / Nuke Nursery)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS:\n  - Solo\n  - No Stratagems (Eagle, Orbital, Support Wpns, Backpacks)\n  - No Resupply pod usage\nEXTRACT:      Required` },
@@ -71,87 +70,6 @@ const challengeLevels: ChallengeLevelData[] = [
      { id: 'level-9', levelTitle: 'LEVEL 9 - PRESTIGE #2: Automaton Hell Strike', details: `MISSION TYPE: Sabotage Supply Bases (Neutralize Orbital Cannons)\n\nOBJECTIVE:    Full Clear\n  - Complete Main Objective\n  - Complete ALL Side Objectives\n  - Destroy ALL Fabricators\n\nREQUIREMENTS:\n  - Solo\n  - No Deaths\n\nREQUIRED LOADOUT:\n  - Armor:     FS-05 Marksman (Exterminator)\n  - Primary:   PLAS-1 Scorcher (Plasma Punisher)\n  - Secondary: P-6 Senator Revolver\n  - Grenade:   G-10 Incendiary (Thermite)\n\nREQUIRED STRATAGEMS:\n  - Eagle Airstrike\n  - Orbital 120MM HE Barrage\n  - RS-422 Railgun\n  - A/MLS-4X Rocket Sentry\n\nEXTRACT:      Required` },
 ];
 
-// --- Style Object (Adding styles for expanders) ---
-const styles: { [key: string]: React.CSSProperties } = {
-    pageContainer: { maxWidth: '1200px', margin: '0 auto', padding: '0 1rem 4rem', color: 'var(--color-text-primary, #e0e0e0)', },
-    // YouTube Carousel
-    youtubeCarouselContainer: { marginBottom: '3rem', maxWidth: '1024px', marginLeft: 'auto', marginRight: 'auto', paddingTop: '2rem', },
-    youtubeSlide: { position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden', borderRadius: 'var(--border-radius-lg, 0.75rem)', boxShadow: '0 10px 20px rgba(0,0,0,0.3)', border: '1px solid var(--color-border, #334155)', backgroundColor: '#111', },
-    youtubeIframe: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' },
-    // Reviews Section
-    reviewSectionContainer: { position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '3rem', },
-    reviewCardsWrapper: { display: 'flex', gap: '1rem', width: '100%', justifyContent: 'center', alignItems: 'stretch', flexWrap: 'wrap', minHeight: '190px', opacity: 1, transition: 'opacity 0.6s ease-in-out', },
-    reviewCardsWrapperHidden: { opacity: 0, },
-    individualReviewCard: { flex: '1 1 300px', maxWidth: '350px', display: 'flex', flexDirection: 'column', padding: '1.25rem', backgroundColor: 'var(--color-surface-alt)', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--color-border)', textAlign: 'left', boxShadow: '0 2px 6px rgba(0,0,0,0.15)', },
-    reviewStars: { display: 'flex', gap: '0.25rem', color: '#facc15', marginBottom: '0.5rem' },
-    reviewTitle: { fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '0.5rem', lineHeight: 1.3 },
-    reviewText: { fontSize: '0.85rem', color: 'var(--color-text-secondary)', fontStyle: 'italic', marginBottom: '0.75rem', lineHeight: 1.5, flexGrow: 1, whiteSpace: 'pre-line', position: 'relative' },
-    reviewAuthor: { fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'right', marginTop: 'auto', paddingTop: '0.5rem' },
-    disboardLinkBottom: { display: 'block', textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '3px', marginTop: '0.5rem' },
-     // Discord icon
-     discordIconLink: { display: 'inline-block', marginLeft: '0.75rem', verticalAlign: 'middle', color: 'var(--color-primary)', transition: 'color 0.2s ease, transform 0.2s ease', },
-     discordIconLinkHover: { color: 'var(--color-primary-hover)', transform: 'scale(1.1)', },
-     discordIcon: { width: '1em', height: '1em', },
-     // General Sections
-     section: { marginBottom: '3rem', padding: '2rem', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--border-radius-lg)', boxShadow: '0 4px 10px rgba(0,0,0,0.15)', border: '1px solid var(--color-border)', },
-     sectionTitle: { fontSize: 'clamp(1.5rem, 4vw, 1.8rem)', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--color-primary)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem', display: 'flex', alignItems: 'center', },
-     paragraph: { color: 'var(--color-text-secondary)', marginBottom: '1.25rem', lineHeight: 1.7 },
-     strongText: { fontWeight: 600, color: 'var(--color-primary)' },
-     link: { color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '2px' },
-     codeBlock: { backgroundColor: 'var(--color-background-alt)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius-md)', padding: '1rem', fontSize: '0.9rem', fontFamily: 'var(--font-mono)', whiteSpace: 'pre-wrap', overflowX: 'auto', color: 'var(--color-text-secondary)', lineHeight: 1.5, },
-     subHeading: { fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-text-primary)', marginTop: '2rem', marginBottom: '1rem' },
-     ruleList: { listStyleType: 'decimal', paddingLeft: '1.75rem', marginBottom: '1.5rem', color: 'var(--color-text-secondary)' },
-     ruleListItem: { marginBottom: '0.6rem', lineHeight: 1.6 },
-
-     // --- Styles for Challenge Level Expanders ---
-     challengeLevelContainer: { // Wrapper for each collapsible level
-         border: '1px solid var(--color-border-alt)',
-         borderRadius: 'var(--border-radius-md)',
-         marginBottom: '1rem',
-         backgroundColor: 'var(--color-surface-alt)', // Slightly different background
-         overflow: 'hidden',
-     },
-     challengeHeader: {
-         display: 'flex',
-         justifyContent: 'space-between',
-         alignItems: 'center',
-         padding: '0.8rem 1.25rem', // Slightly less padding
-         cursor: 'pointer',
-         backgroundColor: 'var(--color-surface)', // Match main section bg
-         borderBottom: '1px solid var(--color-border-alt)',
-         transition: 'background-color 0.2s ease',
-     },
-     challengeHeaderHover: {
-         backgroundColor: 'var(--color-surface-hover)',
-     },
-     challengeLevelTitle: { // The "LEVEL X - Title" text
-         fontSize: '1.1rem', // Same as old .challengeLevel
-         fontWeight: 700, // Same as old .challengeLevel
-         color: 'var(--color-primary)', // Use primary color for title
-         margin: 0, // Remove default heading margin
-     },
-      expandIcon: { // Style for the chevron icon
-         fontSize: '1.1rem', color: 'var(--color-text-secondary)',
-         transition: 'transform 0.3s ease',
-     },
-     expandIconRotated: {
-         transform: 'rotate(180deg)',
-     },
-     challengeDetailsContent: { // The collapsible content area
-        maxHeight: '0', opacity: 0, overflow: 'hidden',
-        transition: 'max-height 0.5s ease-out, opacity 0.4s ease-in, padding 0.5s ease-out',
-        padding: '0 1.25rem', // Horizontal padding only when collapsed
-     },
-     challengeDetailsContentExpanded: {
-        maxHeight: '1000px', // Adjust max-height as needed
-        opacity: 1,
-        padding: '1rem 1.25rem 1.25rem', // Padding when expanded
-        transition: 'max-height 0.6s ease-in-out, opacity 0.5s ease-in 0.1s, padding 0.6s ease-in-out',
-     },
-     // --- End Expander Styles ---
-};
-
-
 // --- Main Component ---
 export default function HelldiversPage() {
     const discordServerLink = "https://discord.gg/gptfleet";
@@ -159,12 +77,7 @@ export default function HelldiversPage() {
 
     const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
     const [isReviewVisible, setIsReviewVisible] = useState(true);
-    const [discordIconHover, setDiscordIconHover] = useState(false);
-
-    // State for challenge level expansion
     const [expandedChallenges, setExpandedChallenges] = useState<Record<string, boolean>>({});
-    // State for challenge header hover
-    const [hoveredChallenge, setHoveredChallenge] = useState<string | null>(null);
 
     // Toggle function for challenge expanders
     const toggleChallengeExpansion = (challengeId: string) => {
@@ -174,7 +87,6 @@ export default function HelldiversPage() {
         }));
     };
 
-
     // Effect for cycling reviews
     useEffect(() => {
         if (reviews.length <= 3) return;
@@ -183,115 +95,128 @@ export default function HelldiversPage() {
             setTimeout(() => {
                 setCurrentReviewStartIndex((prevIndex) => (prevIndex + 3 >= reviews.length ? 0 : prevIndex + 3));
                 setIsReviewVisible(true);
-            }, 600);
-        }, 10000);
+            }, 600); // Matches CSS transition duration
+        }, 10000); // Cycle every 10 seconds
         return () => clearInterval(intervalId);
-    }, []);
+    }, []); // Empty dependency array ensures this runs only once on mount
 
     const reviewsToShow = reviews.slice(currentReviewStartIndex, currentReviewStartIndex + 3);
-    const discordIconFinalStyle = { ...styles.discordIconLink, ...(discordIconHover ? styles.discordIconLinkHover : {}) };
-    const reviewWrapperFinalStyle = { ...styles.reviewCardsWrapper, ...(!isReviewVisible ? styles.reviewCardsWrapperHidden : {}) };
 
-    // --- Render Logic ---
+    // --- Render Logic (Using CSS Modules) ---
     return (
-        <div style={styles.pageContainer}>
+        // Apply styles from the imported module
+        <div className={styles.pageContainer}>
 
-            {/* YouTube Carousel */}
-            <div style={styles.youtubeCarouselContainer}>
+            {/* === About Section === */}
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>
+                    About GPT HELLDIVERS 2
+                    <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" aria-label="Join the GPT Discord" title="Join the GPT Discord" className={styles.discordIconLink}>
+                        <FaDiscord className={styles.discordIcon} />
+                    </Link>
+                </h2>
+                <p className={styles.paragraph}> Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2 Division! We are a rapidly growing, multi-game community focused on creating a non-toxic, mature, and fun environment for gamers. Whether you're a fresh recruit dropping onto Malevelon Creek for the first time or a seasoned Super Citizen spreading managed democracy across the galaxy, you have a place here. </p>
+                <p className={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
+            </section>
+
+            {/* === YouTube Carousel === */}
+            <div className={styles.youtubeCarouselContainer}>
                 <Swiper
                     modules={[Navigation, EffectFade]} effect="fade" fadeEffect={{ crossFade: true }}
-                    spaceBetween={30} slidesPerView={1} navigation={true} loop={true} className="helldivers-youtube-swiper"
+                    spaceBetween={30} slidesPerView={1} navigation={true} loop={true} className="helldivers-youtube-swiper" /* Keep global class for swiper specific overrides if needed */
                 >
                     {youtubeVideos.map((video) => (
                         <SwiperSlide key={video.id}>
-                            <div style={styles.youtubeSlide}>
-                                <iframe style={styles.youtubeIframe} src={video.embedUrl} title={`YouTube video player for ${video.id}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin"></iframe>
+                            <div className={styles.youtubeSlide}>
+                                <iframe className={styles.youtubeIframe} src={video.embedUrl} title={`YouTube video player for ${video.id}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin"></iframe>
                             </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </div>
 
-            {/* About Section */}
-            <section style={styles.section}>
-                <h2 style={styles.sectionTitle}>
-                    About GPT HELLDIVERS 2
-                    <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" aria-label="Join the GPT Discord" title="Join the GPT Discord" style={discordIconFinalStyle} onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}>
-                        <FaDiscord style={styles.discordIcon} />
-                    </Link>
-                </h2>
-                 <p style={styles.paragraph}> Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2 Division! We are a rapidly growing, multi-game community focused on creating a non-toxic, mature, and fun environment for gamers. Whether you're a fresh recruit dropping onto Malevelon Creek for the first time or a seasoned Super Citizen spreading managed democracy across the galaxy, you have a place here. </p>
-                 <p style={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
+            {/* === New/Veteran Sections === */}
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>New to the Fight?</h2>
+                <p className={styles.paragraph}> Just bought the game? Feeling overwhelmed by Bile Titans or Hulks? Don't worry, we've all been there! GPT offers a supportive environment for new players. Ask questions, team up with experienced members who can show you the ropes (and the best ways to avoid friendly fire... mostly!), and learn the basics without fear of judgment. </p>
+                <p className={styles.paragraph}> We have dedicated channels for LFG, tips, and loadout discussions. Joining voice chat is encouraged for better coordination during missions, but not mandatory if you prefer text. Find squadmates for anything from trivial difficulty farming to your first Helldive attempt! </p>
+            </section>
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Seasoned Veterans Welcome!</h2>
+                <p className={styles.paragraph}> Think you've seen it all? Mastered the art of the 500kg bomb? Looking for a consistent group to tackle Difficulty 9+ operations and coordinate advanced strategies? GPT is home to many experienced Helldivers eager to push the limits and contribute to the Galactic War effort effectively. </p>
+                <p className={styles.paragraph}> Coordinate multi-squad planetary operations, share your high-level strategies, participate in community-organized challenges (like the John Helldiver Course!), or simply find reliable teammates who understand the importance of covering flanks and calling out patrols. Help mentor newer players or form elite squads for the toughest challenges the galaxy throws at us. </p>
             </section>
 
-            {/* --- NEW/VETERAN SECTIONS MOVED HERE --- */}
-            <section style={styles.section}>
-                 <h2 style={styles.sectionTitle}>New to the Fight?</h2>
-                 <p style={styles.paragraph}> Just bought the game? Feeling overwhelmed by Bile Titans or Hulks? Don't worry, we've all been there! GPT offers a supportive environment for new players. Ask questions, team up with experienced members who can show you the ropes (and the best ways to avoid friendly fire... mostly!), and learn the basics without fear of judgment. </p>
-                 <p style={styles.paragraph}> We have dedicated channels for LFG, tips, and loadout discussions. Joining voice chat is encouraged for better coordination during missions, but not mandatory if you prefer text. Find squadmates for anything from trivial difficulty farming to your first Helldive attempt! </p>
-            </section>
-            <section style={styles.section}>
-                 <h2 style={styles.sectionTitle}>Seasoned Veterans Welcome!</h2>
-                 <p style={styles.paragraph}> Think you've seen it all? Mastered the art of the 500kg bomb? Looking for a consistent group to tackle Difficulty 9+ operations and coordinate advanced strategies? GPT is home to many experienced Helldivers eager to push the limits and contribute to the Galactic War effort effectively. </p>
-                 <p style={styles.paragraph}> Coordinate multi-squad planetary operations, share your high-level strategies, participate in community-organized challenges (like the John Helldiver Course!), or simply find reliable teammates who understand the importance of covering flanks and calling out patrols. Help mentor newer players or form elite squads for the toughest challenges the galaxy throws at us. </p>
-            </section>
-            {/* --- END NEW/VETERAN SECTIONS --- */}
+            {/* === John Helldiver Course Section === */}
+            <section className={styles.section}>
+                 <h2 className={styles.sectionTitle}>John Helldiver Course & Challenges</h2>
+                 <p className={`${styles.paragraph} ${styles.textItalic}`} style={{textAlign: 'center', marginBottom: '2rem'}}> {/* Use multiple classes */}
+                     <strong className={styles.strongText}>NO SEED FARMING</strong> - HELLDIVERS DO NOT CHERRY PICK MISSIONS TO WIN, WE JUST WIN.
+                 </p>
+                 <p className={styles.paragraph}>
+                     Ready to prove your mettle, Helldiver? The John Helldiver Course is a series of increasingly difficult solo challenges designed to test your skill, strategy, and adherence to Super Earth protocol. You MUST submit your videos in the <code className={styles.inlineCode}>#🪖｜training</code> channel on our Discord for review and verification by <code className={styles.inlineCode}>@JOHN HELLDIVER</code>. Respect the community and the challenge rules, or face the consequences (potentially airlocking).
+                 </p>
+                 {/* Use subsection card for Rules */}
+                 <div className={styles.subsectionCard}>
+                    <h3 className={styles.subHeading}>Rules & Requirements:</h3> {/* Use SubHeading style */}
+                    <ul className={`${styles.styledList} ${styles.decimal}`}> {/* Use List styles */}
+                        <li className={styles.listItem}>If it's on the map, it's in play... *unless* the specific challenge level states otherwise.</li>
+                        <li className={styles.listItem}>Video submissions must be one continuous, unedited recording... No cuts, splits, speed-ups...</li>
+                        <li className={styles.listItem}>Mission privacy must be set to <strong className={styles.strongText}>Invite Only</strong>...</li>
+                    </ul>
+                 </div>
 
-            {/* John Helldiver Course Section */}
-            <section style={styles.section}>
-                 <h2 style={styles.sectionTitle}>John Helldiver Course & Challenges</h2>
-                 <p style={{...styles.paragraph, fontStyle: 'italic', textAlign: 'center', marginBottom: '2rem'}}> <strong style={styles.strongText}>NO SEED FARMING</strong> - HELLDIVERS DO NOT CHERRY PICK MISSIONS TO WIN, WE JUST WIN. </p>
-                 <p style={styles.paragraph}> Ready to prove your mettle, Helldiver? The John Helldiver Course is a series of increasingly difficult solo challenges designed to test your skill, strategy, and adherence to Super Earth protocol. You MUST submit your videos in the <code style={{color: 'var(--color-primary)'}}>#🪖｜training</code> channel on our Discord for review and verification by <code style={{color: 'var(--color-primary)'}}>@JOHN HELLDIVER</code>. Respect the community and the challenge rules, or face the consequences (potentially airlocking). </p>
-                 <h3 style={styles.subHeading}>Rules & Requirements:</h3>
-                 <ul style={styles.ruleList}>
-                     <li style={styles.ruleListItem}>If it's on the map, it's in play. This includes SEAF Artillery, SAM sites, static Machine Gun emplacements, discoverable Ammo caches, Break Action Shotguns found in the world, and all mission-specific stratagems (e.g., Hellbomb, Seismic Probe Drill, etc.), *unless* the specific challenge level states otherwise.</li>
-                     <li style={styles.ruleListItem}>Video submissions must be one continuous, unedited recording of the entire mission attempt from start to finish (including loading screens if possible, definitely the results screen). No cuts, splits, speed-ups, additional commentary clips, or meme edits are allowed within the gameplay footage.</li>
-                     <li style={styles.ruleListItem}>Mission privacy must be set to <strong style={styles.strongText}>Invite Only</strong> to ensure a true solo attempt without random joiners.</li>
-                 </ul>
+                 {/* Use subsection card for Difficulty Order */}
+                 <div className={styles.subsectionCard}>
+                    <h3 className={styles.subHeading}>Order of Difficulty (Super Helldive - Difficulty 10):</h3>
+                    <p className={styles.paragraph}>Target enemy faction: Automaton (Bots) or Terminids (Bugs).</p>
 
-                 <h3 style={styles.subHeading}>Order of Difficulty (Super Helldive - Difficulty 10):</h3>
-                 <p style={styles.paragraph}>Target enemy faction: Automaton (Bots) or Terminids (Bugs).</p>
-
-                 {/* --- Challenge Levels as Expanders --- */}
-                 {challengeLevels.map((challenge) => {
-                     const isExpanded = !!expandedChallenges[challenge.id];
-                     const isHovered = hoveredChallenge === challenge.id;
-                     return (
-                        <div key={challenge.id} style={styles.challengeLevelContainer}>
-                            <div
-                                style={{ ...styles.challengeHeader, ...(isHovered ? styles.challengeHeaderHover : {}), borderBottom: isExpanded ? `1px solid ${styles.challengeHeader.borderBottomColor}` : 'none' }}
-                                onClick={() => toggleChallengeExpansion(challenge.id)}
-                                onMouseEnter={() => setHoveredChallenge(challenge.id)}
-                                onMouseLeave={() => setHoveredChallenge(null)}
-                                role="button" aria-expanded={isExpanded} aria-controls={`challenge-content-${challenge.id}`}
-                                tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleChallengeExpansion(challenge.id)}
-                            >
-                                <h4 style={styles.challengeLevelTitle}>{challenge.levelTitle}</h4>
-                                <FaChevronDown style={{...styles.expandIcon, ...(isExpanded ? styles.expandIconRotated : {})}} aria-hidden="true"/>
+                    {/* Challenge Levels as Expanders */}
+                    {challengeLevels.map((challenge) => {
+                        const isExpanded = !!expandedChallenges[challenge.id];
+                        return (
+                            <div key={challenge.id} className={styles.challengeLevelContainer}>
+                                <div
+                                    className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`} /* Add conditional border class */
+                                    onClick={() => toggleChallengeExpansion(challenge.id)}
+                                    role="button" aria-expanded={isExpanded} aria-controls={`challenge-content-${challenge.id}`}
+                                    tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleChallengeExpansion(challenge.id)}
+                                >
+                                    <h4 className={styles.challengeLevelTitle}>{challenge.levelTitle}</h4>
+                                    <FaChevronDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`} aria-hidden="true"/> {/* Conditional rotation */}
+                                </div>
+                                <div
+                                    id={`challenge-content-${challenge.id}`}
+                                    className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`} /* Conditional expansion */
+                                >
+                                    {/* Use codeBlock style for preformatted text */}
+                                    <pre className={styles.codeBlock}>{challenge.details}</pre>
+                                </div>
                             </div>
-                            <div
-                                id={`challenge-content-${challenge.id}`}
-                                style={{ ...styles.challengeDetailsContent, ...(isExpanded ? styles.challengeDetailsContentExpanded : {}) }}
-                            >
-                                <pre style={styles.codeBlock}>{challenge.details}</pre>
-                            </div>
-                        </div>
-                     );
-                 })}
+                        );
+                    })}
+                 </div>
             </section>
-            {/* --- Reviews Section (Remains at Bottom) --- */}
-            <div style={styles.reviewSectionContainer}>
-                <div style={reviewWrapperFinalStyle}>
+
+            {/* === Reviews Section === */}
+            <div className={styles.reviewSectionContainer}>
+                {/* Conditional class for fade effect */}
+                <div className={`${styles.reviewCardsWrapper} ${!isReviewVisible ? styles.reviewCardsWrapperHidden : ''}`}>
                     {reviewsToShow.map((review) => (
-                        <div key={review.id} style={styles.individualReviewCard}>
-                            <div style={styles.reviewStars}> {Array.from({ length: review.rating }).map((_, i) => (<FaStar key={i} />))} </div>
-                            <h3 style={styles.reviewTitle}>{review.title}</h3>
-                            <p style={styles.reviewText}>"{review.text}"</p>
-                            <p style={styles.reviewAuthor}>- {review.author}</p>
+                        <div key={review.id} className={styles.individualReviewCard}>
+                            <div className={styles.reviewStars}> {Array.from({ length: review.rating }).map((_, i) => (<FaStar key={i} />))} </div>
+                            <h3 className={styles.reviewTitle}>{review.title}</h3>
+                            {/* Apply paragraph for review text */}
+                            <p className={styles.reviewText}>"{review.text}"</p>
+                            <p className={styles.reviewAuthor}>- {review.author}</p>
                         </div>
                     ))}
                 </div>
-                {reviewSourceLink && ( <Link href={reviewSourceLink} target="_blank" rel="noopener noreferrer" style={styles.disboardLinkBottom}> Disboard Reviews </Link> )}
+                {reviewSourceLink && (
+                    <Link href={reviewSourceLink} target="_blank" rel="noopener noreferrer" className={styles.disboardLinkBottom}>
+                        Disboard Reviews
+                    </Link>
+                )}
             </div>
 
         </div> // End pageContainer

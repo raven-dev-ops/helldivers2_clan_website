@@ -2,8 +2,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import styles from './MerchPage.module.css'; // Import the CSS Module
 
-// --- Type Definitions (Remain the same) ---
+// --- Type Definitions ---
 type ProductVariant = {
   id: string; name?: string; options?: { id: string; name: string }[];
   unitPrice: { value: number; currency: string; };
@@ -12,25 +13,36 @@ type ProductImage = { id: string; url: string; altText?: string; };
 type Product = { id: string; name: string; description: string; slug: string; images: ProductImage[]; variants: ProductVariant[]; };
 type Collection = { id: string; name: string; slug: string; };
 
-// --- Helper Function to Decode HTML Entities (Remains the same) ---
-function decodeHtmlEntities(text: string): string {
-  if (!text) return '';
-  let decodedText = text;
-  decodedText = decodedText.replace(/&/g, '&');
-  decodedText = decodedText.replace(/</g, '<');
-  decodedText = decodedText.replace(/>/g, '>');
-  decodedText = decodedText.replace(/"/g, '"');
-  decodedText = decodedText.replace(/'/g, "'");
-  decodedText = decodedText.replace(/'/g, "'");
-  return decodedText;
+// Define a basic type for the raw product data from API
+interface RawProductData {
+    id?: string;
+    name?: string;
+    description?: string;
+    slug?: string;
+    images?: any[];
+    variants?: any[];
 }
 
-// --- Server Component (Data Fetching Logic Remains the Same) ---
+// --- Helper Function to Decode HTML Entities (Server-side safe) ---
+function decodeHtmlEntities(text: string): string {
+    if (typeof text !== 'string') return '';
+    // Basic replacements - consider a library like 'he' for full coverage if needed
+    return text
+        .replace(/&/g, '&')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '"')
+        .replace(/'/g, "'")
+        .replace(/'/g, "'"); // Another common entity for single quote
+}
+
+
+// --- Server Component ---
 export default async function HelldiversMerchPage() {
   const token = process.env.STOREFRONT_API_TOKEN;
   let products: Product[] = [];
   let errorOccurred = false;
-  let errorMessage = 'Failed to load products.';
+  let errorMessage = 'Failed to load products.'; // Default error message
 
   if (!token) {
     console.error('Error: STOREFRONT_API_TOKEN environment variable is not set.');
@@ -43,80 +55,116 @@ export default async function HelldiversMerchPage() {
         console.log('Fetching collections...');
         const colRes = await fetch(
           `https://storefront-api.fourthwall.com/v1/collections?storefront_token=${token}`,
-          { next: { revalidate: 60 } } // Or cache: 'no-store'
+          { next: { revalidate: 3600 } } // Revalidate every hour
         );
-        if (!colRes.ok) throw new Error(`Collections fetch failed: ${colRes.status} ${colRes.statusText}`);
+        if (!colRes.ok) {
+            const errorBody = await colRes.text();
+            console.error(`Collections fetch failed: ${colRes.status} ${colRes.statusText}`, errorBody);
+            throw new Error(`Collections fetch failed: ${colRes.status}`);
+        }
         const colData = await colRes.json();
         const collections: Collection[] = colData.results || [];
         console.log(`Found ${collections.length} collections.`);
 
-        const targetCollectionSlug = 'all'; // ** CHANGE IF NEEDED **
+        const targetCollectionSlug = 'all';
         const targetCollection = collections.find(col => col.slug === targetCollectionSlug) || (collections.length > 0 ? collections[0] : null);
 
         if (!targetCollection) {
-             console.warn('No target collection found or store has no collections.');
+             console.warn(`Target collection '${targetCollectionSlug}' not found or store has no collections.`);
         } else {
           console.log(`Fetching products for collection: ${targetCollection.name} (slug: ${targetCollection.slug})...`);
           const prodRes = await fetch(
             `https://storefront-api.fourthwall.com/v1/collections/${targetCollection.slug}/products?storefront_token=${token}`,
-            { next: { revalidate: 60 } } // Or cache: 'no-store'
+             { next: { revalidate: 3600 } }
           );
-          if (!prodRes.ok) throw new Error(`Products fetch failed: ${prodRes.status} ${prodRes.statusText}`);
+          if (!prodRes.ok) {
+              const errorBody = await prodRes.text();
+              console.error(`Products fetch failed: ${prodRes.status} ${prodRes.statusText}`, errorBody);
+              throw new Error(`Products fetch failed: ${prodRes.status}`);
+          }
           const prodData = await prodRes.json();
-          // Ensure data structure matches Product[] before assignment
-          products = (prodData.results || []).map((p: any) => ({ // Add basic mapping/validation if API structure varies
-              id: p.id,
-              name: p.name,
-              description: p.description,
-              slug: p.slug,
-              images: p.images || [],
-              variants: p.variants || []
-          }));
-          console.log(`Fetched ${products.length} products.`);
+
+          products = (prodData.results || []).map((p: RawProductData): Product => ({
+              id: p?.id || `unknown-${Math.random().toString(36).substring(2, 9)}`,
+              name: p?.name || 'Unnamed Product',
+              description: p?.description || '',
+              slug: p?.slug || '',
+              images: Array.isArray(p?.images) ? p.images.map((img: any) => ({
+                  id: img?.id || `img-${Math.random().toString(36).substring(2, 9)}`,
+                  url: img?.url || '',
+                  altText: img?.altText || ''
+              })).filter(img => img.url) : [],
+              variants: Array.isArray(p?.variants) ? p.variants.map((v: any) => ({
+                  id: v?.id || `var-${Math.random().toString(36).substring(2, 9)}`,
+                  name: v?.name,
+                  options: v?.options,
+                  unitPrice: {
+                      value: typeof v?.unitPrice?.value === 'number' ? v.unitPrice.value : 0,
+                      currency: v?.unitPrice?.currency || 'USD'
+                  }
+              })).filter(v => v.unitPrice.value > 0) : [],
+          }))
+          .filter((p: Product): p is Product => !!p.slug && p.variants.length > 0); // Type param added here
+
+          console.log(`Fetched ${products.length} valid products.`);
         }
       } catch (err: unknown) {
-        if (err instanceof Error) {
-            console.error('Error fetching Fourthwall products:', err.message);
-            errorMessage = `Failed to load products. Please try again later.`;
-        } else {
-            console.error('An unexpected error occurred:', err);
-            errorMessage = 'An unexpected error occurred.';
-        }
-        errorOccurred = true;
+         // --- *** FIXED the catch block *** ---
+         if (err instanceof Error) {
+             console.error('Error fetching Fourthwall products:', err.message);
+             // Assign a specific string message
+             errorMessage = `Failed to load products due to a network or API error. Please try again later. (Details: ${err.message})`;
+         } else {
+             console.error('An unexpected error occurred:', err);
+             // Assign a generic string message
+             errorMessage = 'An unexpected error occurred while loading products.';
+         }
+         errorOccurred = true;
+         products = []; // Ensure products is empty on error
+         // --- *** End Fix *** ---
       }
   }
 
-  // --- Render the UI (Using CSS Classes) ---
+  // --- Render the UI ---
   return (
-    <main className="merch-main-container"> {/* Use class */}
-      <h1 className="merch-page-title"> {/* Use class */}
+    <main className={styles.merchMainContainer}>
+      <h1 className={styles.merchPageTitle}>
         GPT HD2 Merch
       </h1>
 
       {errorOccurred ? (
-        <div className="merch-error-text">{errorMessage}</div> /* Use class */
-      ) : products.length === 0 ? (
-        <div className="merch-message-text">No products available in this collection.</div> /* Use class */
+        <div className={styles.merchErrorText}>{errorMessage}</div>
+      ) : products.length === 0 && !errorOccurred ? (
+        <div className={styles.merchMessageText}>No products available in this collection.</div>
       ) : (
-        <div className="merch-product-list-container"> {/* Use class */}
+        <div className={styles.merchProductListContainer}>
           {products.map((product, index) => {
-            // Price calculation (remains same)
+            // Price calculation
             let formattedPrice = '';
-            if (product.variants?.[0]?.unitPrice) {
-              const priceInfo = product.variants[0].unitPrice;
-              const priceValue = priceInfo.value; // Assuming value is in major units
+            const firstVariant = product.variants?.[0];
+            if (firstVariant?.unitPrice && typeof firstVariant.unitPrice.value === 'number') {
+              const priceInfo = firstVariant.unitPrice;
+              const priceValue = priceInfo.value;
               try {
                   formattedPrice = new Intl.NumberFormat('en-US', {
                     style: 'currency', currency: priceInfo.currency || 'USD',
                   }).format(priceValue);
               } catch {
-                  formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency}`;
+                  formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency || 'USD'}`;
               }
             }
 
             const imageUrl = product.images?.[0]?.url;
-            const decodedDescription = product.description ? decodeHtmlEntities(product.description) : '';
-            const cleanDescription = decodedDescription.replace(/<[^>]*>?/gm, '') || 'No description available.';
+            const imageAlt = product.images?.[0]?.altText || product.name || 'Product image';
+            let cleanDescription = 'No description available.';
+             if (product.description) {
+                try {
+                    cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '');
+                } catch (e) {
+                    console.warn("Could not decode/clean description for", product.name, e);
+                    cleanDescription = product.description.replace(/<[^>]*>?/gm, '');
+                }
+             }
 
             return (
               <Link
@@ -124,34 +172,35 @@ export default async function HelldiversMerchPage() {
                 href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="merch-product-card-link" // Use class
+                className={styles.merchProductCardLink}
                 title={`View ${product.name} in store`}
               >
-                <div className="merch-image-container"> {/* Use class */}
+                <div className={styles.merchImageContainer}>
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
-                      alt={product.name || 'Product image'}
+                      alt={imageAlt}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="merch-product-image" // Use class
+                      className={styles.merchProductImage}
                       priority={index < 4}
+                      style={{ objectFit: 'cover' }}
                     />
                   ) : (
-                    <div className="merch-image-placeholder"> {/* Use class */}
-                      No Image Available
+                    <div className={styles.merchImagePlaceholder}>
+                      No Image
                     </div>
                   )}
                 </div>
-                <div className="merch-details-container"> {/* Use class */}
-                  <h2 className="merch-product-name" title={product.name}> {/* Use class */}
+                <div className={styles.merchDetailsContainer}>
+                  <h2 className={styles.merchProductName} title={product.name}>
                     {product.name}
                   </h2>
-                  <p className="merch-product-description"> {/* Use class */}
-                    {cleanDescription}
+                  <p className={styles.merchProductDescription}>
+                    {cleanDescription || 'No description available.'}
                   </p>
                   {formattedPrice && (
-                    <p className="merch-product-price"> {/* Use class */}
+                    <p className={styles.merchProductPrice}>
                       {formattedPrice}
                     </p>
                   )}
