@@ -1,0 +1,306 @@
+/* src/app/(main)/helldivers-2/studio/StudioPage.module.css */
+
+/* --- Base Layout and Typography --- */
+.studioMainContainer {
+    padding: 1rem 2rem; /* Default padding */
+    background-color: #111827; /* bg-gray-900 */
+    color: #e5e7eb; /* text-gray-200 */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+/* Medium screens and up */
+@media (min-width: 768px) {
+    .studioMainContainer {
+        padding: 2rem; /* Larger padding */
+    }
+}
+
+.studioPageTitle {
+    font-size: 1.875rem; line-height: 2.25rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    margin-bottom: 1rem; /* mb-4 */
+    color: #facc15; /* text-yellow-400 */
+    text-align: center; /* text-center */
+}
+/* Medium screens and up */
+@media (min-width: 768px) { .studioPageTitle { font-size: 2.25rem; line-height: 2.5rem; } } /* md:text-4xl */
+
+.studioIntroText {
+    font-size: 1rem; line-height: 1.5rem; /* text-base */
+    color: #d1d5db; /* text-gray-300 */
+    margin-bottom: 2rem; /* mb-8 */
+    max-width: 56rem; /* max-w-3xl */
+    margin-left: auto; margin-right: auto;
+    text-align: center; /* text-center */
+}
+/* Medium screens and up */
+@media (min-width: 768px) { .studioIntroText { font-size: 1.125rem; line-height: 1.75rem; } } /* md:text-lg */
+
+.signInPrompt {
+    background-color: #1f2937; /* bg-gray-800 */
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    text-align: center; /* text-center */
+    margin-bottom: 2rem; /* mb-8 */
+    max-width: 28rem; /* max-w-md */
+    margin-left: auto; margin-right: auto;
+}
+
+.textLink {
+    color: #facc15; /* text-yellow-400 */
+    font-weight: 600; /* font-semibold */
+    text-decoration: underline;
+}
+.textLink:hover { color: #fde047; /* hover:text-yellow-300 */ }
+
+
+/* === Wrapper for Centering the Grid === */
+.gridWrapper {
+    display: flex;
+    justify-content: center; /* Center the grid container horizontally */
+    width: 100%;
+    padding-left: 1rem;  /* Side padding for the wrapper */
+    padding-right: 1rem;
+    box-sizing: border-box;
+}
+
+/* --- DEPRECATED Grid Styles --- */
+/* .studioBotListContainer { ... grid styles ... } */
+/* .noBotsMessage { ... grid-column span ... } */
+
+
+/* --- Two-Column Flex Layout --- */
+.contentWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-top: 2rem;
+}
+
+/* --- Left Column: Bot List --- */
+.botListColumn {
+    flex: 2;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- Right Column: Video --- */
+.videoColumn {
+    flex: 1;
+    min-width: 300px;
+    position: sticky;
+    top: 2rem;
+    align-self: flex-start;
+}
+
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    background-color: #000;
+    border-radius: 0.5rem;
+    width: 100%;
+}
+
+.youtubeEmbed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.videoTitle { /* Optional */
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600;
+    color: #e5e7eb; /* text-gray-200 */
+    margin-bottom: 0.75rem;
+}
+
+.videoDescription { /* Optional */
+    font-size: 0.875rem; /* text-sm */
+    color: #9ca3af; /* text-gray-400 */
+    margin-top: 0.75rem;
+    line-height: 1.4;
+}
+
+/* --- Individual Bot Card Styles --- */
+.botCard {
+    background-color: #1f2937;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.botHeader {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: #374151;
+    border-bottom: 1px solid #4b5563;
+}
+
+.botIconWrapper {
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.botHeaderText {
+    flex-grow: 1;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.botName {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem; line-height: 1.75rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.botNameText {
+     white-space: nowrap;
+     overflow: hidden;
+     text-overflow: ellipsis;
+     display: inline-block;
+     max-width: calc(100% - 2em);
+}
+
+.verifiedIcon {
+    color: #22c55e;
+    margin-left: 0.4rem;
+    font-size: 0.9em;
+    flex-shrink: 0;
+}
+
+.botStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-start;
+    /* justify-content: center; */ /* Uncomment to center stats */
+    align-items: center;
+    font-size: 0.875rem; line-height: 1.25rem;
+    color: #9ca3af;
+    margin-top: 0.25rem;
+}
+
+.statItem {
+    display: flex;
+    align-items: center;
+}
+.statItem .icon {
+    margin-right: 0.25rem;
+    flex-shrink: 0;
+}
+
+.botBody {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.botDescription {
+    color: #d1d5db;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.videoLinkContainer { margin-bottom: 1rem; }
+
+.videoLink {
+    color: #60a5fa;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    text-decoration: none;
+}
+.videoLink:hover { color: #93c5fd; }
+.videoLink .icon { margin-right: 0.375rem; }
+
+
+/* --- Action Buttons --- */
+.actionsContainer {
+    margin-top: 1rem;
+    /* *** ADDED: Center the inline-flex buttons *** */
+    text-align: center;
+}
+
+.applyButtonLink, .appliedButton {
+    /* *** REMOVED width: 100% *** */
+    font-weight: 600;
+    /* *** Adjusted padding for non-full-width button *** */
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.375rem;
+    /* *** CHANGED to inline-flex *** */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+.applyButtonLink .icon, .appliedButton .icon { margin-right: 0.5rem; }
+
+.applyButtonLink {
+    /* display: block; */ /* REMOVED - now inline-flex */
+    /* text-align: center; */ /* REMOVED - handled by justify-content */
+    background-color: #f59e0b;
+    color: #1f2937;
+    transition: background-color 0.2s ease-in-out;
+}
+.applyButtonLink:hover { background-color: #facc15; }
+
+.appliedButton {
+    background-color: #16a34a;
+    color: #ffffff;
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Fallback Text */
+.textParagraph {
+    text-align: center;
+    color: #9ca3af;
+    padding: 2rem 0;
+}
+.noBotsMessage { /* No specific styles needed now */ }
+
+/* Generic Icon Style */
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Responsive adjustments for the two-column layout */
+@media (max-width: 767px) {
+    .contentWrapper {
+        flex-direction: column;
+        align-items: center;
+    }
+    .botListColumn, .videoColumn {
+        flex-basis: 100%;
+        max-width: 600px;
+        width: 100%;
+        position: static;
+    }
+     .videoColumn {
+        margin-top: 2rem;
+    }
+}

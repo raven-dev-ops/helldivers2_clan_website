@@ -215,7 +215,7 @@ export default function HelldiversPage() {
             {/* About Section */}
             <section style={styles.section}>
                 <h2 style={styles.sectionTitle}>
-                    About the Taskforce
+                    About GPT HELLDIVERS 2
                     <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" aria-label="Join the GPT Discord" title="Join the GPT Discord" style={discordIconFinalStyle} onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}>
                         <FaDiscord style={styles.discordIcon} />
                     </Link>
@@ -278,72 +278,7 @@ export default function HelldiversPage() {
                         </div>
                      );
                  })}
-                 {/* --- End Challenge Level Expanders --- */}
-
-                 {/* Prestige Section (Kept outside expanders for now) */}
-                 <h3 style={{...styles.subHeading, marginTop: '2.5rem'}}>Prestige John Helldiver Challenges</h3>
-                 <p style={styles.paragraph}>Created by John Helldivers.</p>
-                 {/* Prestige challenges could also be made into expanders using the same pattern if desired */}
-                 <div style={styles.challengeLevelContainer}> {/* Example using same container style */}
-                     <h4 style={{...styles.challengeLevelTitle, padding: '0.8rem 1.25rem', backgroundColor: 'var(--color-surface)' }}>LEVEL 8 - PRESTIGE #1: Terminid Spawn Camp</h4> {/* Non-clickable header */}
-                     <pre style={styles.codeBlock}>{`
-MISSION TYPE: Sabotage Supply Bases (Nuke Nursery) OR Purge Hatcheries (Terminid Drill)
-
-OBJECTIVE:    Full Clear
-  - Complete Main Objective
-  - Complete ALL Side Objectives
-  - Destroy ALL Fabricators / Bug Holes
-
-REQUIRED LOADOUT:
-  - Armor:     B-01 Tactical
-  - Primary:   AR-23E Liberator Explosive (Adjudicator)
-  - Secondary: GP-31 Grenade Pistol (Verdict)
-  - Grenade:   G-12 High Explosive (Impact)
-
-REQUIRED STRATAGEMS:
-  - Eagle Strafing Run
-  - Eagle Airstrike
-  - Orbital Precision Strike
-  - RS-422 Railgun
-
-REQUIREMENTS:
-  - Solo
-EXTRACT:      Required
-                    `}</pre>
-                 </div>
-                 <div style={styles.challengeLevelContainer}>
-                    <h4 style={{...styles.challengeLevelTitle, padding: '0.8rem 1.25rem', backgroundColor: 'var(--color-surface)' }}>LEVEL 9 - PRESTIGE #2: Automaton Hell Strike</h4>
-                     <pre style={styles.codeBlock}>{`
-MISSION TYPE: Sabotage Supply Bases (Neutralize Orbital Cannons)
-
-OBJECTIVE:    Full Clear
-  - Complete Main Objective
-  - Complete ALL Side Objectives
-  - Destroy ALL Fabricators
-
-REQUIREMENTS:
-  - Solo
-  - No Deaths
-
-REQUIRED LOADOUT:
-  - Armor:     FS-05 Marksman (Exterminator)
-  - Primary:   PLAS-1 Scorcher (Plasma Punisher)
-  - Secondary: P-6 Senator Revolver
-  - Grenade:   G-10 Incendiary (Thermite)
-
-REQUIRED STRATAGEMS:
-  - Eagle Airstrike
-  - Orbital 120MM HE Barrage
-  - RS-422 Railgun
-  - A/MLS-4X Rocket Sentry
-
-EXTRACT:      Required
-                    `}</pre>
-                 </div>
-
             </section>
-            {/* END JOHN HELLDIVER COURSE SECTION */}
-
             {/* --- Reviews Section (Remains at Bottom) --- */}
             <div style={styles.reviewSectionContainer}>
                 <div style={reviewWrapperFinalStyle}>

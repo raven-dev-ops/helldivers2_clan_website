@@ -126,7 +126,7 @@ const Navbar = () => {
                <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
             ) : (
               // Display static text or a logo image here
-              "GPT DIVISIONS"
+              "GPT GAMES"
               // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
             )}
           </Link>
