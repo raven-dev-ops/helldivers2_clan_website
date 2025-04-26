@@ -1,7 +1,7 @@
 // src/app/(main)/dune-awakening/studio/page.tsx
 import React from 'react';
 // Adjust path to your shared CSS module
-import styles from '/PlaceholderPage.module.css';
+import styles from 'PlaceholderPage.module.css';
 
 export default async function DuneStudioPage() {
   return (

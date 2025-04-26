@@ -1,7 +1,7 @@
 // src/app/(main)/dune-awakening/merch/page.tsx
 import React from 'react';
 // Adjust path to your shared CSS module
-import styles from '/PlaceholderPage.module.css';
+import styles from 'PlaceholderPage.module.css';
 
 export default async function DuneMerchPage() {
   return (
