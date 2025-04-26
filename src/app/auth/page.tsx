@@ -207,14 +207,11 @@ export default function AuthPage() {
         {/* Login Card */}
         <div style={styles.card}>
           <Image src="/images/gpd_logo0.png" alt="GPD Logo" width={1080} height={1080} style={styles.logo} priority /> {/* VERIFY PATH */}
-          <h1 style={styles.title}>Galactic Phantom Division</h1>
-          <p style={styles.subtitle}>Authenticate using a secure account.</p>
+          <h1 style={styles.title}>GPT GAMING</h1>
+          <p style={styles.subtitle}>Authenticate using Discord.</p>
           <div style={styles.buttonGroup}>
             <button onClick={() => { handleInteraction(); signIn('discord', { callbackUrl: '/' }); }} style={discordFinalStyle} onMouseEnter={() => setDiscordHover(true)} onMouseLeave={() => setDiscordHover(false)} onFocus={() => setDiscordFocus(true)} onBlur={() => setDiscordFocus(false)}>
               <FaDiscord style={styles.buttonIcon} /> Continue with Discord
-            </button>
-            <button onClick={() => { handleInteraction(); signIn('google', { callbackUrl: '/' }); }} style={googleFinalStyle} onMouseEnter={() => setGoogleHover(true)} onMouseLeave={() => setGoogleHover(false)} onFocus={() => setGoogleFocus(true)} onBlur={() => setGoogleFocus(false)}>
-              <FaGoogle style={styles.buttonIcon} /> Continue with Google
             </button>
           </div>
         </div>
