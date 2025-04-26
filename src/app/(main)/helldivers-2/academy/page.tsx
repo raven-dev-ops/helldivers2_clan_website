@@ -214,8 +214,8 @@ export default function AcademyPage() {
                 <div className={styles.subsectionCard}>
                     <h3 className={styles.subsectionTitle}>Phase 3: Officer Review & Promotion (End of Cadet Training)</h3>
                     <p className={styles.textParagraph}> Cadets completing Phase 2 schedule a 1-hour VC Officer Interview/Onboarding. </p>
-                    <p className={styles.textParagraph}> Interview Panel: Cadet, assigned DO/FC, <strong className={styles.textStrong}>PrizedRichard</strong>, and a third party. </p>
-                    <p className={styles.textParagraph}> Cadets coordinate scheduling with their DO/FC and <strong className={styles.textStrong}>PrizedRichard</strong> (Timezone: GMT). </p>
+                    <p className={styles.textParagraph}> Interview Panel: Cadet, assigned DO/FC, <strong className={styles.textStrong}>Josh Giff</strong>, and a third party. </p>
+                    <p className={styles.textParagraph}> Cadets coordinate scheduling with their DO/FC and <strong className={styles.textStrong}>Josh Giff</strong> (Timezone: GMT). </p>
                 </div>
             </section>
 
