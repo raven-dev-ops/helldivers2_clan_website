@@ -1,0 +1,48 @@
+/* src/styles/PlaceholderPage.module.css */
+/* Or src/app/(main)/dune-awakening/PlaceholderPage.module.css */
+
+.pageContainer {
+    padding: 2rem 1rem 4rem; /* Default padding */
+    background-color: #111827; /* bg-gray-900 */
+    color: #e5e7eb; /* text-gray-200 */
+    min-height: calc(100vh - 80px); /* Adjust 80px based on your actual navbar height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    box-sizing: border-box;
+  }
+  @media (min-width: 768px) {
+      .pageContainer {
+          padding: 3rem 1rem 4rem; /* More top padding */
+      }
+  }
+  
+  .pageTitle {
+    font-size: clamp(1.8rem, 5vw, 2.25rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #e59f0d; /* Dune-like Orange/Gold */
+    border-bottom: 1px solid #4a3a22; /* Darker Dune border */
+    padding-bottom: 0.75rem;
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  .introText {
+    text-align: center;
+    color: #bdae93; /* Sandy text color */
+    margin-bottom: 2.5rem;
+    max-width: 65ch;
+    line-height: 1.6;
+    font-size: 1rem;
+  }
+  @media (min-width: 768px) { .introText { font-size: 1.125rem; } }
+  
+  .placeholderText {
+    text-align: center;
+    font-size: 1.125rem;
+    color: #8a7e68; /* Muted sandy color */
+    margin-top: 3rem;
+    font-style: italic;
+  }
