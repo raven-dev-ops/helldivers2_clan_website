@@ -39,6 +39,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "src/app/(main)/helldivers-2/studio/page.jsx"  ],
   "exclude": ["node_modules"]
 }

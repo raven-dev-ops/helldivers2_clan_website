@@ -47,7 +47,8 @@ async function dbConnect(): Promise<Mongoose> {
   // If no promise exists, create one
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false, // Recommended for serverless/edge
+      bufferCommands: false,
+      dbName: 'GPTHellbot',
     };
 
     // console.log('DB Cache: Creating new connection promise');
