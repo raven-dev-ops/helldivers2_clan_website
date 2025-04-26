@@ -1,7 +1,6 @@
 // src/app/(main)/dune-awakening/merch/page.tsx
 import React from 'react';
-// Adjust path to your shared CSS module
-import styles from 'PlaceholderPage.module.css';
+import styles from '../PlaceholderPage.module.css'; // Go up one directory
 
 export default async function DuneMerchPage() {
   return (
@@ -13,7 +12,6 @@ export default async function DuneMerchPage() {
       <p className={styles.placeholderText}>
         The Dune: Awakening merchandise collection is being curated. Watch this space!
       </p>
-      {/* Add any other placeholder elements if needed */}
     </main>
   );
 }

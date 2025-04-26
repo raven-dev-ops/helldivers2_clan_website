@@ -1,7 +1,6 @@
 // src/app/(main)/dune-awakening/studio/page.tsx
 import React from 'react';
-// Adjust path to your shared CSS module
-import styles from 'PlaceholderPage.module.css';
+import styles from '../PlaceholderPage.module.css'; // Go up one directory
 
 export default async function DuneStudioPage() {
   return (
@@ -13,7 +12,6 @@ export default async function DuneStudioPage() {
       <p className={styles.placeholderText}>
         Studio features for Dune: Awakening are currently under development. Check back soon!
       </p>
-      {/* Add any other placeholder elements if needed */}
     </main>
   );
 }

@@ -1,56 +1,64 @@
 // src/app/api/users/[userId]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+// Potentially import necessary DB functions or models
+// import { getUserById } from '@/lib/userActions'; // Example
 
-interface UserRouteParams {
-  params: {
-    userId: string;
-  };
+// Define the interface for the parameters within the context object
+// This clearly specifies the shape of `params`
+interface RouteParams {
+  userId: string;
 }
 
-// We’ll handle GET, PUT, DELETE as an example
+// Define the expected context object structure passed as the second argument
+// This uses the RouteParams interface
+interface HandlerContext {
+  params: RouteParams;
+}
+
+// GET Handler for /api/users/[userId]
 export async function GET(
-  _req: NextRequest,
-  { params }: UserRouteParams
-) {
-  console.log(`[GET /api/users/${params.userId}]`);
-  const { userId } = params;
+  request: NextRequest, // Use NextRequest
+  context: HandlerContext // Use the refined context type
+): Promise<NextResponse> { // <<< Explicitly define the return type Promise<NextResponse>
 
-  // Example: fetch user from DB
-  // const user = await UserModel.findById(userId);
-  const user = { id: userId, name: 'Some User' };
+  // Destructure userId from context.params
+  // TypeScript should correctly infer userId as string here
+  const { userId } = context.params;
 
-  if (!user) {
-    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  // --- Basic Validation (Example) ---
+  if (!userId || typeof userId !== 'string') {
+      return NextResponse.json({ message: 'Invalid User ID provided' }, { status: 400 });
   }
-  return NextResponse.json(user);
+
+  console.log(`Fetching data for user ID: ${userId}`); // Logging for debug
+
+  try {
+    // --- Your Core Logic ---
+    // Example: Fetch user data from your database
+    // const user = await getUserById(userId);
+    const user = { id: userId, name: `User ${userId}`, email: `user${userId}@example.com` }; // Placeholder data
+
+    if (!user) {
+      // If user not found in DB
+      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+    }
+
+    // --- Success Response ---
+    // Return the fetched user data
+    return NextResponse.json(user, { status: 200 });
+
+  } catch (error) {
+    // --- Error Handling ---
+    console.error(`Error fetching user ${userId}:`, error);
+    // Return a generic server error response
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+  }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: UserRouteParams
-) {
-  console.log(`[PUT /api/users/${params.userId}]`);
-  const { userId } = params;
-  const updateData = await req.json();
-
-  // Example: update user in DB
-  // await UserModel.findByIdAndUpdate(userId, updateData);
-
-  return NextResponse.json({
-    message: `User ${userId} updated`,
-    updateData,
-  });
-}
-
-export async function DELETE(
-  _req: NextRequest,
-  { params }: UserRouteParams
-) {
-  console.log(`[DELETE /api/users/${params.userId}]`);
-  const { userId } = params;
-
-  // Example: delete user in DB
-  // await UserModel.findByIdAndDelete(userId);
-
-  return NextResponse.json({ message: `User ${userId} deleted` });
-}
+// --- Optional: Add other HTTP method handlers (POST, PUT, DELETE) ---
+// export async function PUT(request: NextRequest, context: HandlerContext): Promise<NextResponse> {
+//   // ... implementation ...
+// }
+// export async function DELETE(request: NextRequest, context: HandlerContext): Promise<NextResponse> {
+//   // ... implementation ...
+// }

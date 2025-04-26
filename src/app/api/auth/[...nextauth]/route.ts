@@ -1,162 +1,118 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
-// Import necessary types from next-auth, using AdapterUser alias for clarity
-import type { NextAuthOptions, Session, User as AdapterUser } from 'next-auth'; // Removed Profile, Account as not directly used here
-import type { JWT } from 'next-auth/jwt'; // Import JWT type
+import type { NextAuthOptions, Session, User as AdapterUser } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 
 // --- Import Adapter and Client Promise ---
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import clientPromise from "@/lib/dbClientPromise"; // <-- Use the native driver promise
+import clientPromise from "@/lib/dbClientPromise"; // Ensure this path is correct
 
 // --- Environment Variable Validation ---
 const requiredEnvVars = [
     'DISCORD_CLIENT_ID', 'DISCORD_CLIENT_SECRET',
     'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET',
     'NEXTAUTH_SECRET', 'MONGODB_URI',
-    // 'NEXTAUTH_URL' // Recommended for production
 ];
-
-// Use a more robust check and provide default for NEXTAUTH_SECRET in dev
 requiredEnvVars.forEach((varName) => {
     if (!process.env[varName]) {
         if (varName === 'NEXTAUTH_SECRET' && process.env.NODE_ENV !== 'production') {
             console.warn(`\x1b[33m%s\x1b[0m`, `⚠️ WARNING: Environment variable ${varName} is not set. Using default for development.`);
-            // Provide a default only for dev secret, others must be set
             if (!process.env.NEXTAUTH_SECRET) process.env.NEXTAUTH_SECRET = 'temp-dev-secret-12345';
         } else {
-            // Throw error during build/startup if required vars (except dev secret) are missing
             throw new Error(`Missing required environment variable: ${varName}`);
         }
     }
 });
-
-// Ensure NEXTAUTH_URL is set, especially for production OAuth callbacks
 if (!process.env.NEXTAUTH_URL && process.env.NODE_ENV === 'production') {
     console.warn(`\x1b[33m%s\x1b[0m`, `⚠️ WARNING: Environment variable NEXTAUTH_URL is not set. OAuth callbacks may fail in production.`);
 }
 
 
-// --- Define Auth Options ---
-export const authOptions: NextAuthOptions = {
-  // --- Database Adapter ---
-  // Connects NextAuth to MongoDB via the official adapter
-  // ** Use the imported clientPromise from dbClientPromise.ts **
+// --- Define Auth Options (REMOVE 'export' from this line) ---
+const authOptions: NextAuthOptions = { // <<<<< REMOVED 'export' HERE
   adapter: MongoDBAdapter(clientPromise, {
-      // Optional: Specify database name if not parsed from MONGODB_URI
-      // databaseName: process.env.MONGODB_DB_NAME
-      // collections: {} // You can customize collection names here if needed
+      // databaseName: process.env.MONGODB_DB_NAME // Optional
   }),
-
-  // --- Authentication Providers ---
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
       clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-      // Optional: Define required Discord scopes
-      // authorization: { params: { scope: 'identify email guilds' } },
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // Optional: Define required Google scopes
-      // authorization: { params: { scope: 'openid email profile' } },
     }),
-    // Add other providers here if needed
   ],
-
-  // --- Session Strategy ---
   session: {
-    // Use JSON Web Tokens (JWT) stored in a cookie.
-    strategy: "jwt",
-    // Optional: Session duration settings (in seconds)
-    // maxAge: 30 * 24 * 60 * 60, // 30 days (default)
-    // updateAge: 24 * 60 * 60, // 1 day (default)
+    strategy: "jwt", // Using JWT sessions, adapter handles User/Account persistence
   },
-
-  // --- Callbacks ---
-  // Customize JWT and Session objects
   callbacks: {
-    // 1. jwt callback: Runs when JWT is created/updated.
-    async jwt({ token, user, account, profile, isNewUser }: {
-        token: JWT;
-        user?: AdapterUser; // User object from database/provider on first sign in
-        account?: any; // Provider account info (tokens, etc.)
-        profile?: any; // Provider profile info
-        isNewUser?: boolean; // Flag for new user registration
-    }) {
-      // Persist the user's MongoDB _id onto the token on initial sign-in
+    // JWT callback adds DB user ID to the token
+    async jwt({ token, user }) { // Simplified params when adapter is used with JWT
+      // On initial sign-in, 'user' is the DB user object from the adapter.
       if (user?.id) {
-        token.id = user.id; // user.id comes from the AdapterUser type (_id from DB)
+        token.id = user.id; // Add DB user ID (_id) to JWT token
+        // token.role = user.role // Add role if defined on DB User and needed in token
       }
-      // Example: Persist provider access token if needed (e.g., for API calls later)
-      // if (account?.access_token) {
-      //   token.accessToken = account.access_token;
-      // }
-      return token; // Return the token (saved in cookie)
+      return token;
     },
-
-    // 2. session callback: Runs when session is accessed.
-    async session({ session, token }: { session: Session; token: JWT }) {
-      // Add properties from the token (retrieved via JWT strategy) to the session object.
-      // Make sure to extend the Session['user'] type in a `next-auth.d.ts` file
-      // to include the 'id' property for type safety.
+    // Session callback adds properties from token to the session object
+    async session({ session, token }) {
+      // 'token' has the 'id' (and potentially 'role') added in the jwt callback.
+      // The Session interface must be augmented in next-auth.d.ts
       if (token?.id && session.user) {
-        session.user.id = token.id as string; // Add database ID to session.user
+        session.user.id = token.id as string; // Add DB user ID to session
+        // session.user.role = token.role // Add role if defined on token and needed in session
       }
-      // if (token?.accessToken && session.user) {
-      //    (session.user as any).accessToken = token.accessToken; // Example for custom prop
-      // }
-      return session; // Return the augmented session object
+      return session;
     },
   },
-
-  // --- Other Core Options ---
-  secret: process.env.NEXTAUTH_SECRET!, // Non-null assertion OK due to check above
+  secret: process.env.NEXTAUTH_SECRET!,
   pages: {
-    signIn: '/auth', // Path to your custom sign-in page
-    // error: '/auth/error', // Optional error page
-    // verifyRequest: '/auth/verify-request', // Optional Email provider page
-    // signOut: '/auth/signout', // Optional custom signout page
+    signIn: '/auth',
   },
-  // Enable debug logs ONLY in development
   debug: process.env.NODE_ENV === 'development',
 };
 
 // --- Export NextAuth Handlers ---
-// This sets up the /api/auth/* routes (e.g., /api/auth/signin/discord)
+// Initialize NextAuth with the options defined above
 const handler = NextAuth(authOptions);
+// Export only the handlers for GET/POST requests
 export { handler as GET, handler as POST };
 
 
-// --- Type Augmentation (Create this file if it doesn't exist) ---
-// File: src/types/next-auth.d.ts
+// --- Type Augmentation Reminder ---
+// IMPORTANT: You MUST have a correctly defined src/types/next-auth.d.ts file
+//            for the session callback to work without type errors and for
+//            client-side code to recognize session.user.id.
+//
+// Create/ensure src/types/next-auth.d.ts contains:
 /*
-import 'next-auth';
-import 'next-auth/jwt';
+import { DefaultSession, DefaultUser } from "next-auth";
+import { DefaultJWT, JWT } from "next-auth/jwt";
 
-declare module 'next-auth' {
-  // Extend session.user
-  interface Session {
-    user?: {
-      id?: string | null; // Add the id field
-    } & DefaultSession['user']; // Keep default fields (name, email, image)
-  }
-
-  // Extend the User type returned by the adapter/provider if needed
-  interface User {
-     // Add custom fields returned from your adapter's user model
-     // Example: role?: string;
+declare module "next-auth/jwt" {
+  // Add fields from JWT callback to token payload
+  interface JWT extends DefaultJWT {
+    id: string; // Non-optional ID from DB user
+    // role?: string;
   }
 }
 
-declare module 'next-auth/jwt' {
-  // Extend the JWT token payload
-  interface JWT {
-    id?: string | null; // Add the id field
-    // Example: role?: string;
-    // Example: accessToken?: string;
+declare module "next-auth" {
+  // Add fields from Session callback to session.user
+  interface Session {
+    user: {
+      id: string; // Non-optional ID from DB user
+      // role?: string;
+    } & DefaultSession["user"]; // Keep default fields
   }
+
+  // Optional: Extend User type if adapter provides extra fields needed in JWT callback
+  // interface User extends DefaultUser {
+  //   role?: string;
+  // }
 }
 */

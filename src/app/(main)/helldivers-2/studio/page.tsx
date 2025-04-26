@@ -11,7 +11,7 @@ import BotModel, { IBotLean } from '@/models/Bot'; // Ensure models/Bot.ts expor
 import BotApplicationModel from '@/models/BotApplication'; // Adjust path if needed
 import mongoose, { Types } from 'mongoose';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
+import { authOptions } from '@/lib/authOptions';
 // Icons
 import { FaEnvelope, FaVideo, FaServer, FaCheckCircle, FaDiscord } from 'react-icons/fa';
 // Styling
