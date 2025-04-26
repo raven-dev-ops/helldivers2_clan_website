@@ -5,73 +5,27 @@ import React from 'react';
 
 // --- Type Definitions (Remain the same) ---
 type ProductVariant = {
-  id: string;
-  name?: string;
-  options?: { id: string; name: string }[];
-  unitPrice: {
-    value: number; // Assume this is now in MAJOR units (e.g., dollars)
-    currency: string;
-  };
+  id: string; name?: string; options?: { id: string; name: string }[];
+  unitPrice: { value: number; currency: string; };
 };
+type ProductImage = { id: string; url: string; altText?: string; };
+type Product = { id: string; name: string; description: string; slug: string; images: ProductImage[]; variants: ProductVariant[]; };
+type Collection = { id: string; name: string; slug: string; };
 
-type ProductImage = {
-  id: string;
-  url: string;
-  altText?: string;
-};
-
-type Product = {
-  id: string;
-  name: string;
-  description: string; // Raw HTML/text from API
-  slug: string;
-  images: ProductImage[];
-  variants: ProductVariant[];
-};
-
-type Collection = {
-    id: string;
-    name: string;
-    slug: string;
-};
-
-// --- Style Object (Remains the same) ---
-const styles: { [key: string]: React.CSSProperties } = {
-  mainContainer: { maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem', fontFamily: 'var(--font-sans, sans-serif)', },
-  pageTitle: { fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center', color: 'var(--color-primary, #facc15)', },
-  productListContainer: { display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center', },
-  productCardLink: { display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-surface, #ffffff)', borderRadius: 'var(--border-radius-lg, 8px)', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', overflow: 'hidden', border: '1px solid var(--color-border, #e0e0e0)', textDecoration: 'none', color: 'inherit', flex: '1 1 300px', maxWidth: '350px', transition: 'box-shadow 0.3s ease-in-out', },
-  imageContainer: { position: 'relative', width: 'F0%', aspectRatio: '1 / 1', overflow: 'hidden', },
-  productImage: { objectFit: 'cover', },
-  imagePlaceholder: { width: '100%', aspectRatio: '1 / 1', backgroundColor: 'var(--color-surface-alt, #f0f0f0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted, #999)', },
-  detailsContainer: { padding: '1rem', display: 'flex', flexDirection: 'column', flexGrow: 1, },
-  productName: { fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--color-text-primary, #333)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', },
-  productDescription: { fontSize: '0.9rem', color: 'var(--color-text-secondary, #666)', marginBottom: '1rem', flexGrow: 1, lineHeight: 1.5, maxHeight: '4.5em', overflow: 'hidden', whiteSpace: 'pre-line' /* Render newlines if present after tag stripping */ },
-  productPrice: { fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--color-text-primary, #333)', marginTop: 'auto', },
-  messageText: { textAlign: 'center', padding: '4rem 1rem', color: 'var(--color-text-secondary, #666)', fontSize: '1.1rem', },
-  errorText: { textAlign: 'center', padding: '4rem 1rem', color: 'var(--color-error, #dc2626)', fontSize: '1.1rem', fontWeight: 500, }
-};
-
-// --- Helper Function to Decode HTML Entities ---
-// Note: This runs server-side, so window is not available. Basic replacement is used.
+// --- Helper Function to Decode HTML Entities (Remains the same) ---
 function decodeHtmlEntities(text: string): string {
-  if (!text) return ''; // Handle null or undefined input
-
-  // Replace entities one by one, ensuring the full entity is matched
+  if (!text) return '';
   let decodedText = text;
-  decodedText = decodedText.replace(/&/g, '&');  // Ampersand first
+  decodedText = decodedText.replace(/&/g, '&');
   decodedText = decodedText.replace(/</g, '<');
   decodedText = decodedText.replace(/>/g, '>');
   decodedText = decodedText.replace(/"/g, '"');
-  decodedText = decodedText.replace(/'/g, "'"); // Numeric entity for single quote
-  decodedText = decodedText.replace(/'/g, "'"); // Named entity for single quote
-  // Add more replacements here if needed for other entities like  , etc.
-  // decodedText = decodedText.replace(/ /g, ' ');
-
+  decodedText = decodedText.replace(/'/g, "'");
+  decodedText = decodedText.replace(/'/g, "'");
   return decodedText;
 }
 
-// --- Server Component ---
+// --- Server Component (Data Fetching Logic Remains the Same) ---
 export default async function HelldiversMerchPage() {
   const token = process.env.STOREFRONT_API_TOKEN;
   let products: Product[] = [];
@@ -89,7 +43,7 @@ export default async function HelldiversMerchPage() {
         console.log('Fetching collections...');
         const colRes = await fetch(
           `https://storefront-api.fourthwall.com/v1/collections?storefront_token=${token}`,
-          { next: { revalidate: 60 } }
+          { next: { revalidate: 60 } } // Or cache: 'no-store'
         );
         if (!colRes.ok) throw new Error(`Collections fetch failed: ${colRes.status} ${colRes.statusText}`);
         const colData = await colRes.json();
@@ -100,20 +54,27 @@ export default async function HelldiversMerchPage() {
         const targetCollection = collections.find(col => col.slug === targetCollectionSlug) || (collections.length > 0 ? collections[0] : null);
 
         if (!targetCollection) {
-             console.warn('No target collection found.');
+             console.warn('No target collection found or store has no collections.');
         } else {
           console.log(`Fetching products for collection: ${targetCollection.name} (slug: ${targetCollection.slug})...`);
           const prodRes = await fetch(
             `https://storefront-api.fourthwall.com/v1/collections/${targetCollection.slug}/products?storefront_token=${token}`,
-            { next: { revalidate: 60 } }
+            { next: { revalidate: 60 } } // Or cache: 'no-store'
           );
           if (!prodRes.ok) throw new Error(`Products fetch failed: ${prodRes.status} ${prodRes.statusText}`);
           const prodData = await prodRes.json();
-          products = prodData.results || [];
+          // Ensure data structure matches Product[] before assignment
+          products = (prodData.results || []).map((p: any) => ({ // Add basic mapping/validation if API structure varies
+              id: p.id,
+              name: p.name,
+              description: p.description,
+              slug: p.slug,
+              images: p.images || [],
+              variants: p.variants || []
+          }));
           console.log(`Fetched ${products.length} products.`);
         }
       } catch (err: unknown) {
-        // ... (error handling remains the same)
         if (err instanceof Error) {
             console.error('Error fetching Fourthwall products:', err.message);
             errorMessage = `Failed to load products. Please try again later.`;
@@ -125,78 +86,72 @@ export default async function HelldiversMerchPage() {
       }
   }
 
-  // --- Render the UI ---
+  // --- Render the UI (Using CSS Classes) ---
   return (
-    <main style={styles.mainContainer}>
-      <h1 style={styles.pageTitle}>
+    <main className="merch-main-container"> {/* Use class */}
+      <h1 className="merch-page-title"> {/* Use class */}
+        Helldivers 2 Division Merch
       </h1>
 
       {errorOccurred ? (
-        <div style={styles.errorText}>{errorMessage}</div>
+        <div className="merch-error-text">{errorMessage}</div> /* Use class */
       ) : products.length === 0 ? (
-        <div style={styles.messageText}>No products available in this collection.</div>
+        <div className="merch-message-text">No products available in this collection.</div> /* Use class */
       ) : (
-        <div style={styles.productListContainer}>
+        <div className="merch-product-list-container"> {/* Use class */}
           {products.map((product, index) => {
-            // --- PRICE FIX ---
+            // Price calculation (remains same)
             let formattedPrice = '';
             if (product.variants?.[0]?.unitPrice) {
               const priceInfo = product.variants[0].unitPrice;
-              // *** REMOVED division by 100 ***
-              const priceValue = priceInfo.value;
+              const priceValue = priceInfo.value; // Assuming value is in major units
               try {
                   formattedPrice = new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: priceInfo.currency || 'USD',
-                  }).format(priceValue); // Use the value directly
+                    style: 'currency', currency: priceInfo.currency || 'USD',
+                  }).format(priceValue);
               } catch {
-                  // Fallback using the raw value
                   formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency}`;
               }
             }
 
             const imageUrl = product.images?.[0]?.url;
-
-            // --- DESCRIPTION FIX ---
-            // Decode entities first, then strip tags (basic strip)
             const decodedDescription = product.description ? decodeHtmlEntities(product.description) : '';
             const cleanDescription = decodedDescription.replace(/<[^>]*>?/gm, '') || 'No description available.';
 
             return (
               <Link
                 key={product.id}
-                href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`} // Make sure URL is correct
-                target="_blank" // Added target blank
+                href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
+                target="_blank"
                 rel="noopener noreferrer"
-                style={styles.productCardLink}
+                className="merch-product-card-link" // Use class
                 title={`View ${product.name} in store`}
               >
-                <div style={styles.imageContainer}>
+                <div className="merch-image-container"> {/* Use class */}
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
                       alt={product.name || 'Product image'}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      style={styles.productImage}
+                      className="merch-product-image" // Use class
                       priority={index < 4}
                     />
                   ) : (
-                    <div style={styles.imagePlaceholder}>
+                    <div className="merch-image-placeholder"> {/* Use class */}
                       No Image Available
                     </div>
                   )}
                 </div>
-                <div style={styles.detailsContainer}>
-                  <h2 style={styles.productName} title={product.name}>
+                <div className="merch-details-container"> {/* Use class */}
+                  <h2 className="merch-product-name" title={product.name}> {/* Use class */}
                     {product.name}
                   </h2>
-                  {/* Use the cleaned and decoded description */}
-                  <p style={styles.productDescription}>
+                  <p className="merch-product-description"> {/* Use class */}
                     {cleanDescription}
                   </p>
                   {formattedPrice && (
-                    <p style={styles.productPrice}>
+                    <p className="merch-product-price"> {/* Use class */}
                       {formattedPrice}
                     </p>
                   )}

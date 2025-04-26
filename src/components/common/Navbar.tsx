@@ -90,6 +90,7 @@ const Navbar = () => {
     const isDune = isClient && currentDivisionId === 'dune-awakening'; // Match ID used in AVAILABLE_GAMES
     if (isDune) {
       return [
+        { href: "/dune-awakening", label: "Home" },
         { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/worldpvp", label: "PVP" },
         { href: "/dune-awakening/factions", label: "Factions" },
@@ -99,6 +100,7 @@ const Navbar = () => {
       ];
     } else { 
       return [
+        { href: "/helldivers-2", label: "Home" },
         { href: "/helldivers-2/merch", label: "Merch" },
         { href: "/helldivers-2/academy", label: "Academy" },
         { href: "/helldivers-2/creators", label: "Creators" },
@@ -124,7 +126,7 @@ const Navbar = () => {
                <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
             ) : (
               // Display static text or a logo image here
-              "GPT Divisions"
+              "GPT DIVISIONS"
               // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
             )}
           </Link>

@@ -19,7 +19,7 @@ export interface IServerListing extends Document {
 
 const ServerListingSchema = new Schema<IServerListing>(
   {
-    discord_server_id: { type: String, required: true, unique: true },
+    discord_server_id: { type: String, required: true, unique: true, index: true }, // Added index
     discord_server_name: { type: String, required: true },
     discord_invite_link: { type: String, required: true },
     gpt_channel_id: { type: String },
@@ -30,12 +30,19 @@ const ServerListingSchema = new Schema<IServerListing>(
     stats_log_channel_id: { type: String },
     leaderboard_channel_id: { type: String },
   },
-  { timestamps: true } // Adds createdAt and updatedAt
+  {
+    timestamps: true, // Adds createdAt and updatedAt
+    // --- Explicitly define the collection name ---
+    collection: 'Server_Listing', 
+  }
 );
+
+// Optional: Add index for sorting if you use discord_server_name frequently
+ServerListingSchema.index({ discord_server_name: 1 });
 
 // Prevent model overwrite during HMR
 const ServerListingModel =
   (mongoose.models.ServerListing as Model<IServerListing>) ||
-  mongoose.model<IServerListing>("ServerListing", ServerListingSchema);
+  mongoose.model<IServerListing>("ServerListing", ServerListingSchema); // Keep model name "ServerListing"
 
 export default ServerListingModel;
