@@ -127,13 +127,13 @@ export default function AcademyPage() {
 
   return (
     <main className="academy-main-container"> {/* Use Class */}
-      <h1 className="academy-page-title">GPT Fleet Academy</h1> {/* Use Class */}
+      <h1 className="academy-page-title">GPT HD2 Academy</h1> {/* Use Class */}
 
       {/* --- Academy Introduction --- */}
        <section className="content-section"> {/* Use Class */}
-          <h2 className="content-section-title">Welcome Recruit!</h2> {/* Use Class */}
+          <h2 className="content-section-title">Welcome Cadet or General!</h2> {/* Use Class */}
           <p className="text-paragraph"> The GPT Fleet Academy is your primary training ground for becoming an effective Helldiver within our ranks. Here, you'll learn the core principles, operational protocols, and the code that binds our fleet together. </p> {/* Use Class */}
-           <p className="text-paragraph"> Whether you're mastering basic stratagems, learning advanced squad tactics, or preparing for the demanding <strong className="text-strong">John Helldiver Course</strong> (details found on the <Link href="/helldivers-2" className="text-link">main Helldivers page</Link>), the Academy provides the foundation. Our goal is not just victory, but victory achieved with honor, discipline, and camaraderie. </p> {/* Use Class */}
+           <p className="text-paragraph"> Whether you're mastering basic stratagems, learning advanced squad tactics, or preparing for the demanding <strong className="text-strong">John Helldiver Course</strong> (details found on the <Link href="/helldivers-2" className="text-link">Home</Link>) page, the Academy provides the foundation. Our goal is not just victory, but victory achieved with honor, discipline, and camaraderie. </p> {/* Use Class */}
            <p className="text-paragraph"> Familiarize yourself with the <strong className="text-strong">GPT Fleet Code of Conduct</strong>, detailed in the expandable section below. Understanding and adhering to these articles is mandatory for all members seeking progression and participation in organized fleet operations. For Super Earth! </p> {/* Use Class */}
       </section>
 

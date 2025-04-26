@@ -426,3 +426,407 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 }
 
 /* === End Merch Page Styles === */
+
+/* === Partners Page Styles === */
+
+.partners-main-container {
+  max-width: 1200px; /* Adjusted max-width slightly */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1rem 4rem;
+  font-family: var(--font-sans, sans-serif);
+  color: var(--color-text-primary);
+}
+
+.partners-page-title {
+  font-size: clamp(1.8rem, 5vw, 2.25rem);
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--color-primary, #facc15); /* Helldivers Theme */
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+  text-align: center;
+}
+
+.partners-intro-text {
+  color: var(--color-text-secondary);
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 70ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Use CSS Grid for the main list layout */
+.partners-grid {
+  display: grid;
+  gap: 1.5rem; /* Control spacing between cards */
+  /* Responsive columns: 1 on small, 2 on medium, 3 on large */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Auto-fill columns */
+}
+
+/* Refine columns for specific breakpoints if needed */
+/* @media (min-width: 768px) {
+    .partners-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+    .partners-grid { grid-template-columns: repeat(3, 1fr); }
+} */
+
+
+.partner-card { /* Style for each individual partner card */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
+}
+.partner-card:hover {
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.partner-card-header {
+  display: flex;
+  flex-direction: row; /* Always row */
+  align-items: center; /* Align items vertically */
+  gap: 1rem;
+  padding: 1rem 1.5rem; /* Adjusted padding */
+  background-color: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border-alt);
+}
+
+.partner-icon-container {
+  flex-shrink: 0;
+}
+
+/* Styles passed to PartnerIconClient component as props */
+/* partnerIconStyle and partnerIconPlaceholderStyle objects in page.tsx */
+
+/* Placeholder style defined in page.tsx style object */
+/* .partner-icon-placeholder { ... } */
+
+.partner-header-text {
+  flex-grow: 1;
+  min-width: 0; /* Prevent overflow */
+  text-align: left; /* Align text left */
+}
+
+.partner-name {
+  font-size: 1.15rem; /* Slightly smaller */
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.1rem; /* Less space */
+  /* Truncate if needed */
+  /* overflow: hidden; text-overflow: ellipsis; white-space: nowrap; */
+}
+
+.partner-stats {
+  font-size: 0.8rem; /* Smaller stats */
+  color: var(--color-text-secondary);
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping if space is tight */
+  gap: 0.75rem; /* Space between stats */
+  align-items: center;
+  justify-content: flex-start; /* Align left */
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+
+.partner-card-body {
+  padding: 1rem 1.5rem 1.5rem; /* Adjusted padding */
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Make body take remaining space */
+  gap: 0.75rem; /* Space between description and button */
+}
+
+.partner-description {
+  font-size: 0.875rem; /* Slightly smaller description */
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  flex-grow: 1; /* Take available space */
+  margin-bottom: 1rem; /* Space before button */
+  /* Optional line clamp */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.partner-description-empty {
+  font-size: 0.875rem;
+  color: var(--color-text-muted); /* Muted color */
+  font-style: italic;
+  flex-grow: 1;
+  margin-bottom: 1rem;
+}
+
+.join-button-link { /* Class for the <a> tag */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Center content in button */
+  gap: 0.5rem;
+  background-color: #5865F2; /* Discord Blurple */
+  color: #ffffff;
+  padding: 0.5rem 1rem; /* Slightly smaller padding */
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: 0.875rem; /* Smaller text */
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  align-self: flex-start; /* Align left */
+  margin-top: auto; /* Push to bottom */
+}
+.join-button-link:hover {
+    background-color: #4752C4; /* Darker Blurple */
+    transform: translateY(-1px);
+}
+.join-button-icon {
+  font-size: 1em;
+}
+
+/* No Partners / Concluding Text */
+.no-partners-text {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--color-text-secondary); font-size: 1.1rem;
+}
+.concluding-section {
+  margin-top: 3rem; padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border); text-align: center;
+}
+.text-paragraph { /* Reusable paragraph class */
+    color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.7;
+}
+.text-link { /* Reusable link class */
+    color: var(--color-primary-hover); text-decoration: underline; text-underline-offset: 2px;
+}
+.text-link:hover { color: var(--color-primary); }
+.icon { /* General icon style */
+    margin-right: 0.3rem; display: inline-block; vertical-align: middle;
+    font-size: 0.9em; color: var(--color-text-muted);
+}
+/* --- End Partners Page Styles --- */
+
+/* === Studio Page Styles === */
+
+.studio-main-container {
+  max-width: 1000px; /* Max width for content */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 1rem 4rem;
+  font-family: var(--font-sans, sans-serif);
+  color: var(--color-text-primary);
+}
+
+.studio-page-title {
+  font-size: clamp(1.8rem, 5vw, 2.25rem);
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: var(--color-primary, #facc15); /* Helldivers Theme */
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+  text-align: center;
+}
+
+.studio-intro-text {
+  color: var(--color-text-secondary);
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 70ch; /* Limit width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.studio-bot-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Space between bot cards */
+}
+
+.bot-card { /* Reusable card style */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Clip corners/shadows */
+  transition: box-shadow 0.2s ease;
+}
+.bot-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.bot-header {
+  display: flex;
+  flex-direction: column; /* Stack on mobile */
+  align-items: center; /* Center on mobile */
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: var(--color-surface-alt);
+  border-bottom: 1px solid var(--color-border-alt);
+  text-align: center;
+}
+@media (min-width: 640px) { /* Row layout on wider screens */
+    .bot-header {
+        flex-direction: row;
+        text-align: left;
+    }
+}
+
+.bot-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--color-border);
+}
+
+.bot-icon-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
+  font-size: 2rem;
+  color: var(--color-text-muted);
+}
+
+.bot-header-text {
+  flex-grow: 1;
+  min-width: 0; /* Prevent overflow */
+}
+
+.bot-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.bot-stats {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center; /* Center stats below name on mobile */
+}
+@media (min-width: 640px) {
+    .bot-stats {
+        justify-content: flex-start; /* Align left on wider screens */
+    }
+}
+.bot-stats .stat-item { /* Reuse stat item style */
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+.bot-stats .stat-item .icon { /* Reuse icon style */
+    margin-right: 0.3rem; display: inline-block; vertical-align: middle;
+    font-size: 0.9em; color: var(--color-text-muted);
+}
+
+
+.bot-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow body to grow */
+}
+
+.bot-description {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  flex-grow: 1; /* Push actions to bottom */
+}
+
+.video-link-container {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+/* Reuse text-link class from globals */
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.video-link:hover {
+    color: var(--color-primary); /* Specific hover if needed */
+}
+
+
+.actions-container {
+  display: flex;
+  justify-content: center;
+  margin-top: auto; /* Push to bottom */
+  padding-top: 1rem;
+}
+
+/* Reuse .btn and .btn-primary */
+.apply-button-link { /* Style the <a> tag like a button */
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.6rem 1.2rem; border-radius: var(--border-radius-md);
+    font-weight: 600; font-size: 0.9rem; text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); transition: background-color 0.2s ease, transform 0.1s ease;
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+}
+.apply-button-link:hover {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+}
+.apply-button-link svg { /* Style icon inside */
+    margin-right: 0.5rem;
+}
+
+
+.applied-button { /* Style the disabled button */
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  padding: 0.6rem 1.2rem;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: default;
+  opacity: 0.7;
+}
+.applied-button svg { /* Style icon inside */
+    margin-right: 0.5rem;
+}
+
+
+.sign-in-prompt {
+  text-align: center; padding: 3rem 1rem;
+  color: var(--color-text-secondary); font-size: 1.1rem;
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+  margin-top: 2rem; /* Add margin if shown alone */
+}
+/* Reuse .text-link */
+
+/* --- End Studio Page Styles --- */

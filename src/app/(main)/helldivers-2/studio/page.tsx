@@ -1,141 +1,134 @@
-// src/app/(main)/helldivers-2/studio/page.tsx // <<< ENSURE .tsx EXTENSION
+// src/app/(main)/helldivers-2/studio/page.tsx
 
 import React from 'react';
-import Link from 'next/link'; // For internal links if needed
+import Link from 'next/link';
 import Image from 'next/image';
-import dbConnect from '@/lib/dbConnect'; // Ensure correct path
-import BotApplicationModel from '@/models/BotApplication'; // Import your model
-import mongoose from 'mongoose';
+import dbConnect from '@/lib/dbConnect';
+// --- Import Bot model and the IBotLean interface for lean results ---
+import BotModel, { IBotLean } from '@/models/Bot'; // Ensure this path and export are correct
+import BotApplicationModel from '@/models/BotApplication'; // Adjust path if needed
+import mongoose, { Types } from 'mongoose'; // Import Types for ObjectId
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"; // Adjust path if needed
-import { FaEnvelope, FaVideo, FaServer, FaCheckCircle } from 'react-icons/fa'; // Icons
+import { FaEnvelope, FaVideo, FaServer, FaCheckCircle, FaDiscord } from 'react-icons/fa';
 
 // --- Data Structure for Bot Display ---
-interface BotData {
-    id: string; // Unique identifier for the bot (used for application tracking)
+interface BotDisplayData {
+    _id: string; // Document id as string
+    botIdentifier: string;
     name: string;
-    iconUrl: string; // Path relative to /public folder
-    description: string;
-    serverCount: number; // Static for now, fetch dynamically later
-    videoUrl?: string; // Optional YouTube/Vimeo embed URL or link
+    discordClientId: string;
+    iconUrl?: string;
+    description?: string;
+    serverCount: number; // Ensure it's always a number
+    videoUrl?: string;
     applyEmailSubject: string;
     applyEmailBody: string;
+    hasApplied?: boolean;
 }
 
-// --- Hardcoded Bot Data (Replace with actual bot info) ---
-const botsData: BotData[] = [
-    {
-        id: 'gpt-lfg-linker-v1',
-        name: 'GPT LFG Linker',
-        iconUrl: '/images/bots/lfg-bot-icon.png', // Placeholder path
-        description: 'Connects LFG channels across multiple partnered Discord servers, allowing Helldivers to easily find squads across the GPT Fleet Alliance.',
-        serverCount: 5, // Example static count
-        videoUrl: 'https://www.youtube.com/embed/your_lfg_video_id', // Example embed URL
-        applyEmailSubject: 'Application for GPT LFG Linker Bot',
-        applyEmailBody: `Hello GPT Fleet,\n\nI am the owner of the Discord server listed below and would like to apply to integrate the GPT LFG Linker bot.\n\nMy Discord User ID: [Your Discord User ID - Find in Discord Settings > Advanced > Turn on Developer Mode, then right-click your name > Copy User ID]\nMy Discord Server Name: [Your Server Name]\nMy Discord Server ID: [Your Server ID - Find via Server Settings > Widget > Server ID, or enable Dev Mode and right-click server icon > Copy Server ID]\n\nPlease review our server for partnership.\n\nThanks,\n[Your Name]`,
-    },
-    {
-        id: 'gpt-stats-tracker-v1',
-        name: 'GPT Stat Tracker',
-        iconUrl: '/images/bots/stats-bot-icon.png', // Placeholder path
-        description: 'Tracks Helldivers 2 mission stats, progress, and contributions for members within partnered servers, displaying leaderboards and detailed reports.',
-        serverCount: 3, // Example static count
-        videoUrl: 'https://www.youtube.com/embed/your_stats_video_id', // Example embed URL
-        applyEmailSubject: 'Application for GPT Stat Tracker Bot',
-        applyEmailBody: `Hello GPT Fleet,\n\nI am the owner of the Discord server listed below and would like to apply to integrate the GPT Stat Tracker bot.\n\nMy Discord User ID: [Your Discord User ID - Find in Discord Settings > Advanced > Turn on Developer Mode, then right-click your name > Copy User ID]\nMy Discord Server Name: [Your Server Name]\nMy Discord Server ID: [Your Server ID - Find via Server Settings > Widget > Server ID, or enable Dev Mode and right-click server icon > Copy Server ID]\n\nPlease review our server for partnership.\n\nThanks,\n[Your Name]`,
-    },
-    // Add more bots here
-];
+// --- Type for Application Status Map ---
+type ApplicationStatusMap = Record<string, boolean>; // { [botIdentifier: string]: boolean }
 
-// --- Type for Application Status ---
-type ApplicationStatusMap = Record<string, boolean>; // { [botId: string]: boolean } -> true if applied
+// --- Server-Side Data Fetching Functions ---
 
-// --- Server-Side Data Fetching Function ---
-async function getUserApplicationStatuses(userId: string | undefined): Promise<ApplicationStatusMap> {
-    if (!userId) return {}; // Not logged in, cannot have applied
-
-    // Validate if userId is a valid ObjectId before querying
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        console.warn("Invalid userId format for fetching application status:", userId);
-        return {};
-    }
-
+/**
+ * Fetches Bot definitions from the database as plain JavaScript objects.
+ * Uses the IBotLean interface for typing.
+ */
+async function getBots(): Promise<IBotLean[]> { // Function signature expects IBotLean[]
     await dbConnect();
     try {
-        // Ensure BotApplicationModel is imported and correct
+        const bots = await BotModel.find({})
+                                    .sort({ order: 1, name: 1 })
+                                    .lean<IBotLean>(); // Type hint for the lean result
+
+        // OPTIONAL BUT RECOMMENDED: Add a runtime check to be safe
+        if (!Array.isArray(bots)) {
+            console.error("RUNTIME ERROR in getBots: Expected an array from BotModel.find().lean(), but received type:", typeof bots);
+            return []; // Fulfill the Promise<IBotLean[]> signature
+        }
+
+        // *** Add type assertion here to override incorrect TS inference ***
+        return bots as IBotLean[];
+    } catch (error) {
+        console.error("Failed to fetch bots:", error);
+        return []; // Return empty array matching Promise<IBotLean[]>
+    }
+}
+
+
+/**
+ * Fetches the application statuses for a given user.
+ */
+async function getUserApplicationStatuses(userId: string | undefined): Promise<ApplicationStatusMap> {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return {};
+    }
+    await dbConnect();
+    try {
         const applications = await BotApplicationModel.find(
-            { userId: new mongoose.Types.ObjectId(userId) }, // Query by user ID
-            'botId' // Select only the botId field
+            { userId: new mongoose.Types.ObjectId(userId) },
+            'botId'
         ).lean();
 
         const statusMap: ApplicationStatusMap = {};
-        applications.forEach(app => {
-            // Ensure app and app.botId exist before assigning
-            if (app && app.botId) {
-                statusMap[app.botId] = true; // Mark botId as applied for
-            }
-        });
+        // Ensure applications is an array before iterating
+        if (Array.isArray(applications)) {
+             applications.forEach(app => {
+                if (app && typeof app === 'object' && app.botId) {
+                    statusMap[String(app.botId)] = true;
+                }
+            });
+        } else {
+             console.error("RUNTIME ERROR in getUserApplicationStatuses: Expected an array, received:", typeof applications);
+        }
         return statusMap;
     } catch (error) {
-        console.error("Failed to fetch user application statuses:", error);
-        return {}; // Return empty map on error
+        console.error("Failed to fetch application statuses:", error);
+        return {};
     }
 }
 
-// --- Style Object (Removed invalid styles) ---
-const styles: { [key: string]: React.CSSProperties } = {
-    mainContainer: { maxWidth: '1000px', marginLeft: 'auto', marginRight: 'auto', padding: '2rem 1rem 4rem', fontFamily: 'var(--font-sans, sans-serif)', color: 'var(--color-text-primary)' },
-    pageTitle: { fontSize: 'clamp(1.8rem, 5vw, 2.25rem)', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--color-primary, #facc15)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem', textAlign: 'center', },
-    introText: { color: 'var(--color-text-secondary)', marginBottom: '2.5rem', lineHeight: 1.7, textAlign: 'center', maxWidth: '70ch', marginInline: 'auto' },
-    botListContainer: { display: 'flex', flexDirection: 'column', gap: '2rem', },
-    botCard: { display: 'flex', flexDirection: 'column', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--border-radius-lg)', border: '1px solid var(--color-border)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)', overflow: 'hidden', },
-    botHeader: { // Container for Icon, Name, Stats
-        display: 'flex',
-        flexDirection: 'column', // Stack header items on small screens
-        alignItems: 'center', // Center items when stacked
-        gap: '1rem',
-        padding: '1.5rem',
-        backgroundColor: 'var(--color-surface-alt)',
-        borderBottom: '1px solid var(--color-border-alt)',
-        textAlign: 'center',
-        // Responsive row layout needs CSS Modules/Tailwind
-    },
-    botIcon: { width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0, border: '2px solid var(--color-border)' },
-    botIconPlaceholder: { width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--color-background)', border: '2px solid var(--color-border)', fontSize: '2rem', color: 'var(--color-text-muted)' },
-    botHeaderText: { flexGrow: 1, minWidth: 0 },
-    botName: { fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '0.25rem', },
-    botStats: { fontSize: '0.9rem', color: 'var(--color-text-secondary)', display: 'flex', gap: '0.75rem', alignItems: 'center', justifyContent: 'center' },
-    statItem: { display: 'flex', alignItems: 'center', gap: '0.3rem' },
-    botBody: { padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1 },
-    botDescription: { color: 'var(--color-text-secondary)', marginBottom: '1.5rem', lineHeight: 1.6, flexGrow: 1 },
-    videoLinkContainer: { marginBottom: '1.5rem', textAlign: 'center', },
-    videoLink: { display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary-hover)', textDecoration: 'none', fontWeight: 500, fontSize: '0.9rem', },
-    actionsContainer: { display: 'flex', justifyContent: 'center', marginTop: 'auto', paddingTop: '1rem', },
-    applyButtonLink: { display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)', padding: '0.6rem 1.2rem', borderRadius: 'var(--border-radius-md)', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)', transition: 'background-color 0.2s ease, transform 0.1s ease', },
-    appliedButton: { display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--color-surface-alt)', border: '1px solid var(--color-border)', color: 'var(--color-text-muted)', padding: '0.6rem 1.2rem', borderRadius: 'var(--border-radius-md)', fontWeight: 600, fontSize: '0.9rem', cursor: 'default', opacity: 0.7, },
-    signInPrompt: { textAlign: 'center', padding: '3rem 1rem', color: 'var(--color-text-secondary)', fontSize: '1.1rem', backgroundColor: 'var(--color-surface)', borderRadius:'var(--border-radius-lg)', border: '1px solid var(--color-border)' },
-    link: { color: 'var(--color-primary-hover)', textDecoration: 'underline', textUnderlineOffset: '2px', },
-};
-
-// --- Main Component ---
+// --- Main React Server Component ---
 export default async function StudioPage() {
     const session = await getServerSession(authOptions);
-    // Make sure session.user.id is correctly typed in your next-auth.d.ts
     const userId = session?.user?.id as string | undefined;
 
-    const applicationStatuses = await getUserApplicationStatuses(userId);
+    const [botsFromDb, applicationStatuses] = await Promise.all([
+        getBots(), // Fetches IBotLean[]
+        getUserApplicationStatuses(userId)
+    ]);
 
+    // Transform the fetched bot data (IBotLean) into BotDisplayData
+    const botsToDisplay: BotDisplayData[] = botsFromDb.map((bot: IBotLean) => ({
+        _id: bot._id.toString(), // Convert ObjectId to string
+        botIdentifier: bot.botIdentifier,
+        name: bot.name,
+        description: bot.description,
+        discordClientId: bot.discordClientId,
+        iconUrl: bot.iconUrl,
+        videoUrl: bot.videoUrl,
+        serverCount: bot.serverCount ?? 0,
+        applyEmailSubject: bot.applyEmailSubject,
+        applyEmailBody: bot.applyEmailBody,
+        hasApplied: applicationStatuses[bot.botIdentifier] === true,
+    }));
+
+    // --- JSX Rendering ---
     return (
-        <main style={styles.mainContainer}>
-            <h1 style={styles.pageTitle}>GPT Fleet Bot Studio</h1>
-            <p style={styles.introText}>
+        <main className="studio-main-container p-4 md:p-8 bg-gray-900 text-gray-200 min-h-screen">
+            <h1 className="studio-page-title text-3xl md:text-4xl font-bold mb-4 text-yellow-400 text-center">
+                GPT HD2 Bot Studio
+            </h1>
+            <p className="studio-intro-text text-base md:text-lg text-gray-300 mb-8 max-w-3xl mx-auto text-center">
                 Explore the custom bots developed by GPT Fleet, designed to enhance gameplay and community management for Helldivers 2 servers within our Alliance. Server Owners can apply to integrate these tools.
             </p>
 
             {!session?.user && (
-                 <div style={styles.signInPrompt}>
+                 <div className="sign-in-prompt bg-gray-800 p-4 rounded-lg text-center mb-8 max-w-md mx-auto">
                     Please{' '}
-                    <Link href={`/api/auth/signin?callbackUrl=/helldivers-2/studio`} style={styles.link}>
+                    <Link href={`/api/auth/signin?callbackUrl=/helldivers-2/studio`} className="text-link text-yellow-400 hover:text-yellow-300 font-semibold underline">
                         sign in
                     </Link>
                     {' '}to view application status and apply for bots.
@@ -143,58 +136,80 @@ export default async function StudioPage() {
             )}
 
             {session?.user && (
-                <div style={styles.botListContainer}>
-                    {botsData.map((bot) => {
-                        const hasApplied = applicationStatuses[bot.id] === true;
-                        const mailtoLink = `mailto:gptfleet@gmail.com?subject=${encodeURIComponent(bot.applyEmailSubject)}&body=${encodeURIComponent(bot.applyEmailBody)}`;
+                <div className="studio-bot-list-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {botsToDisplay.length > 0 ? (
+                        botsToDisplay.map((bot) => {
+                            const hasApplied = bot.hasApplied;
+                            const mailtoLink = `mailto:gptfleet@gmail.com?subject=${encodeURIComponent(bot.applyEmailSubject)}&body=${encodeURIComponent(bot.applyEmailBody)}`;
 
-                        return (
-                            <section key={bot.id} style={styles.botCard}>
-                                <header style={styles.botHeader}>
-                                    {bot.iconUrl ? (
-                                        <Image
-                                            src={bot.iconUrl}
-                                            alt={`${bot.name} Icon`}
-                                            width={80}
-                                            height={80}
-                                            style={styles.botIcon}
-                                        />
-                                    ) : (
-                                        <div style={styles.botIconPlaceholder}>?</div>
-                                    )}
-                                    <div style={styles.botHeaderText}>
-                                        <h2 style={styles.botName}>{bot.name}</h2>
-                                        <div style={styles.botStats}>
-                                            <span style={styles.statItem} title={`${bot.serverCount} servers currently using this bot`}>
-                                                <FaServer aria-hidden="true" /> {bot.serverCount} Servers
-                                            </span>
-                                        </div>
-                                    </div>
-                                </header>
-                                <div style={styles.botBody}>
-                                    <p style={styles.botDescription}>{bot.description}</p>
-                                    {bot.videoUrl && (
-                                        <div style={styles.videoLinkContainer}>
-                                            <a href={bot.videoUrl} target="_blank" rel="noopener noreferrer" style={styles.videoLink}>
-                                                <FaVideo aria-hidden="true" /> Watch Demo Video
-                                            </a>
-                                        </div>
-                                    )}
-                                    <div style={styles.actionsContainer}>
-                                        {hasApplied ? (
-                                            <button style={styles.appliedButton} disabled>
-                                               <FaCheckCircle style={{marginRight: '0.5rem'}}/> Applied
-                                            </button>
+                            return (
+                                <section key={bot.botIdentifier} className="bot-card bg-gray-800 rounded-lg shadow-lg overflow-hidden flex flex-col">
+                                    <header className="bot-header flex items-center p-4 bg-gray-700 border-b border-gray-600">
+                                        {bot.iconUrl ? (
+                                            <Image
+                                                src={bot.iconUrl}
+                                                alt={`${bot.name} Icon`}
+                                                width={64}
+                                                height={64}
+                                                className="bot-icon rounded-full mr-4 border-2 border-gray-500"
+                                                onError={(e) => {
+                                                    const target = e.target as HTMLImageElement;
+                                                    target.onerror = null;
+                                                    target.src = '/images/placeholder.png';
+                                                 }}
+                                            />
                                         ) : (
-                                            <a href={mailtoLink} style={styles.applyButtonLink}>
-                                                <FaEnvelope style={{marginRight: '0.5rem'}}/> Apply to Use
-                                            </a>
+                                            <div className="bot-icon-placeholder w-16 h-16 rounded-full mr-4 bg-gray-600 flex items-center justify-center text-xl font-bold text-gray-400 border-2 border-gray-500">
+                                                ?
+                                            </div>
                                         )}
+                                        <div className="bot-header-text flex-grow">
+                                            <h2 className="bot-name text-xl font-semibold text-white">{bot.name}</h2>
+                                            <div className="bot-stats flex items-center text-sm text-gray-400 mt-1 space-x-3">
+                                                <span className="stat-item flex items-center" title={`${bot.serverCount} servers currently using this bot`}>
+                                                    <FaServer className="icon mr-1" aria-hidden="true" /> {bot.serverCount} Servers
+                                                </span>
+                                                <span className="stat-item flex items-center" title={`Bot Application ID: ${bot.discordClientId}`}>
+                                                    <FaDiscord className="icon mr-1" aria-hidden="true"/> ID: {bot.discordClientId.substring(0, 6)}...
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </header>
+
+                                    <div className="bot-body p-4 flex-grow flex flex-col justify-between">
+                                        <div>
+                                            <p className="bot-description text-gray-300 mb-4">
+                                                {bot.description || 'No description available.'}
+                                            </p>
+                                            {bot.videoUrl && (
+                                                <div className="video-link-container mb-4">
+                                                    <a href={bot.videoUrl} target="_blank" rel="noopener noreferrer" className="video-link text-link text-blue-400 hover:text-blue-300 inline-flex items-center">
+                                                        <FaVideo className="icon mr-2" aria-hidden="true" /> Watch Demo Video
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="actions-container mt-4">
+                                            {hasApplied ? (
+                                                <button className="applied-button w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-md flex items-center justify-center opacity-70 cursor-not-allowed" disabled>
+                                                   <FaCheckCircle className="mr-2" /> Applied
+                                                </button>
+                                            ) : (
+                                                <a href={mailtoLink} className="apply-button-link w-full block text-center bg-yellow-500 hover:bg-yellow-400 text-gray-900 font-semibold py-2 px-4 rounded-md transition duration-200 flex items-center justify-center">
+                                                    <FaEnvelope className="mr-2" /> Apply to Use
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </section>
-                        );
-                    })}
+                                </section>
+                            );
+                        })
+                    ) : (
+                         <p className="text-paragraph text-center text-gray-400 md:col-span-2 lg:col-span-3">
+                            No bots are currently available for application. Check back later!
+                         </p>
+                    )}
                 </div>
             )}
         </main>

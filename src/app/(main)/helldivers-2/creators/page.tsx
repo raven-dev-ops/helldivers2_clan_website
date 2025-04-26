@@ -71,7 +71,7 @@ export default function CreatorsPage() {
     // Apply global container if needed, or use module specific one
     // <main className={`container ${styles.pageContainer}`}>
     <main className={styles.pageContainer}>
-      <h1 className={styles.pageTitle}>Community Creators</h1>
+      <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
       <p className={styles.pageSubtitle}>
         Discover or connect with content creators in the GPT community.
       </p>

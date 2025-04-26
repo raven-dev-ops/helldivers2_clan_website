@@ -90,7 +90,7 @@ export default async function HelldiversMerchPage() {
   return (
     <main className="merch-main-container"> {/* Use class */}
       <h1 className="merch-page-title"> {/* Use class */}
-        Helldivers 2 Division Merch
+        GPT HD2 Merch
       </h1>
 
       {errorOccurred ? (
