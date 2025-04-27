@@ -13,7 +13,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-coverflow';
 
 // Import the GameCard component
-import GameCard from '@/components/common/GameCard'; // Adjust path if needed
+import GameCard from '@/app/components/common/GameCard'; // Adjust path if needed
 
 // --- Define Type for Game Division Data ---
 interface GameDivision {

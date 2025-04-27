@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
 import { themes } from '@/lib/theme'; // Or wherever you keep it
-import GlobalStyle from '@/components/GlobalStyle';
+import GlobalStyle from '@/app/components/GlobalStyle';
 
 export default function ThemeWrapper({ children }: { children: React.ReactNode }) {
   const { status } = useSession();

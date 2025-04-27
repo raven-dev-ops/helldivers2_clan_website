@@ -1,7 +1,7 @@
 // src/app/(main)/layout.tsx (Cleaned up - Requires classes in globals.css)
 
-import Navbar from '@/components/common/Navbar'; // Adjust path if needed
-import Footer from '@/components/common/Footer'; // Adjust path if needed
+import Navbar from '@/app/components/common/Navbar'; // Adjust path if needed
+import Footer from '@/app/components/common/Footer'; // Adjust path if needed
 // ThemeToggle is inside Navbar or Footer
 
 export default function MainAppLayout({

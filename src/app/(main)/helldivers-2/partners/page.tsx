@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 // Import the client component we created
-import PartnerIcon from '@/components/partners/PartnerIconClient'; // Adjust path as needed
+import PartnerIcon from '@/app/components/partners/PartnerIconClient'; // Adjust path as needed
 import dbConnect from '@/lib/dbConnect';
 import ServerListingModel, { IServerListing } from '@/models/ServerListing';
 import mongoose from 'mongoose';

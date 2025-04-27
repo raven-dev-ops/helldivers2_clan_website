@@ -3,8 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 // Import client components
-import BotAvatar from '@/components/BotAvatar'; // For displaying avatar with error handling
-import BotCardActions from '@/components/BotCardActions'; // Handles Apply button/form logic
+import BotAvatar from '@/app/components/BotAvatar'; // For displaying avatar with error handling
+import BotCardActions from '@/app/components/BotCardActions'; // Handles Apply button/form logic
 // DB and Auth related imports
 import dbConnect from '@/lib/dbConnect';
 import BotModel, { IBotLean } from '@/models/Bot'; // Ensure models/Bot.ts exports IBotLean

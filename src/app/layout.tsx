@@ -2,8 +2,8 @@
 import type { Metadata } from "next";
 import { Inter } from 'next/font/google';
 import './globals.css'; // Your global styles
-import StyledComponentsRegistry from '@/components/StyledComponentsRegistry'; // Adjust path if needed
-import AuthProvider from '@/components/providers/AuthProvider'; // Adjust path if needed
+import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'; // Adjust path if needed
+import AuthProvider from '@/app/components/providers/AuthProvider'; // Adjust path if needed
 
 const inter = Inter({ subsets: ['latin'] });
 
