@@ -200,7 +200,7 @@ export default function AcademyPage() {
                     <h3 className={styles.subsectionTitle}>Phase 1: Cadet Orientation (7 Days)</h3>
                     <p className={styles.textParagraph}> Achieve <strong className={styles.textStrong}>Class A Citizen</strong> status by meeting initial standards. </p>
                     <ul className={`${styles.styledList} ${styles.disc}`}>
-                        <li className={styles.listItem}>Complete 1 Operation OR 3 recorded missions with a <code className={styles.inlineCode}>@DEMOCRACY OFFICERS</code> or <code className={styles.inlineCode}>@FLEET COMMANDER</code>.</li>
+                        <li className={styles.listItem}>Complete 1 Operation OR 3 recorded missions with a <code className={styles.inlineCode}>@DEMOCRACY OFFICERS</code> or <code className={styles.inlineCode}>@FLEET COMMANDER</code>, you must 2-Factor Auth your account to be an Officer.</li>
                     </ul>
                     <p className={`${styles.textItalic} ${styles.textParagraph}`}> We aim to get you a place on the leaderboard! </p>
                 </div>
