@@ -66,6 +66,7 @@ export async function GET() {
     const channelNames = [ // Keep this list manageable or pass via query params
         'galacticphantomtaskforce',
         'kevindanilooo',
+        'mrhellpod',
         'mrswimson',
         'charredviolet',
         'javy1402',
