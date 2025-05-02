@@ -71,6 +71,9 @@ export async function GET() {
         'javy1402',
         'gingercynic',
         'chappzs',
+        'popekingx',
+        'mr_black_snow',
+        'thywizz',
     ];
 
     if (!TWITCH_CLIENT_ID) {
