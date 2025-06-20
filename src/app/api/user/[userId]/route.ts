@@ -6,7 +6,11 @@ import mongoose from 'mongoose';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 
-export async function GET( request: NextRequest,  { params }: { params: { userId: string } } ) {
+interface Params {
+  params: { userId: string };
+}
+
+export async function GET( request: NextRequest,  { params }: Params ) {
   const { userId } = params;
 
   try {
