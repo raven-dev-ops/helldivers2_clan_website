@@ -4,11 +4,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 
 import dbConnect from '@/lib/dbConnect';
-import User from '@/models/User'; // Adjust the import path as needed
+import User from '@/models/User';
+
+interface UserParams {
+  params: { userId: string };
+}
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { userId: string } }
+  request: NextRequest, { params }: UserParams
 ) {
   const { userId } = params;
 
