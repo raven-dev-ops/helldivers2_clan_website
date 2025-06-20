@@ -1,13 +1,18 @@
 // src/app/api/user/[userId]/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
-import mongoose from 'mongoose';
 
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 
-export async function GET( request: NextRequest, { params }: { params: { userId: string } } ) {
-  const { userId } = params;
+interface Context {
+  params: {
+    userId: string;
+  };
+}
+
+export async function GET( request: NextRequest, context: Context ) {
+  const { userId } = context.params;
 
   try {
     await dbConnect();
