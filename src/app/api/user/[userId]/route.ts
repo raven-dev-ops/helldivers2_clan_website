@@ -5,14 +5,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 
-interface Context {
-  params: {
-    userId: string;
-  };
-}
-
-export async function GET( request: NextRequest, context: Context ) {
-  const { userId } = context.params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { userId: string } } // Directly type the second argument
+) {
+  const { userId } = params;
 
   try {
     await dbConnect();
