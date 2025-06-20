@@ -8,7 +8,7 @@ import User from '@/models/User';
 export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } } // Directly type the second argument
-) {
+): Promise<NextResponse> {
   const { userId } = params;
 
   try {
