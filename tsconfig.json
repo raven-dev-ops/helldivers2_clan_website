@@ -1,7 +1,7 @@
 {
-  "compilerOptions": {
+    "compilerOptions": {
     // Target modern JS
-    "target": "ES2017",
+    "target": "ES2022",
     "lib": ["dom", "dom.iterable", "esnext"],
 
     // Core TS settings
