@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 
-export async function GET( request: NextRequest, { params }: { params: { userId: string } } ): Promise<NextResponse> {
+export async function GET(req: NextRequest, { params }: { params: { userId: string } }): Promise<NextResponse> {
 
   const { userId } = params;
 
