@@ -1,13 +1,11 @@
 {
   "compilerOptions": {
-    // Target modern JS
     "target": "ES2022",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    // Core TS settings
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -15,21 +13,18 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    // Next.js recommended settings
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    // For path alias
     "baseUrl": ".",
     "paths": {
       "@/*": [
         "src/*"
       ]
     },
-    // Next.js plugin
     "plugins": [
       {
         "name": "next"
