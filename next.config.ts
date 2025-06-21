@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    typedRoutes: false, // Correctly disables experimental typed routes
+    typedRoutes: false,
   },
   images: {
     remotePatterns: [
