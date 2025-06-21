@@ -1,5 +1,8 @@
 // src/app/layout.tsx (FIXED - Ensure NO Whitespace)
 import type { Metadata } from "next";
+import 'swiper/css'; // Import base Swiper CSS
+import 'swiper/css/navigation'; // Import Swiper Navigation module CSS
+import 'swiper/css/pagination'; // Import Swiper Pagination module CSS
 import { Inter } from 'next/font/google';
 import './globals.css'; // Your global styles
 import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'; // Adjust path if needed
