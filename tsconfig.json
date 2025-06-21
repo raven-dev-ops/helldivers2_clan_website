@@ -1,9 +1,12 @@
 {
-    "compilerOptions": {
+  "compilerOptions": {
     // Target modern JS
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
-
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     // Core TS settings
     "allowJs": true,
     "skipLibCheck": true,
@@ -12,7 +15,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-
     // Next.js recommended settings
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -20,13 +22,13 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-
     // For path alias
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": [
+        "src/*"
+      ]
     },
-
     // Next.js plugin
     "plugins": [
       {
@@ -35,10 +37,13 @@
     ]
   },
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    "next-env.d.ts",
+    "src/app/(main)/helldivers-2/studio/page.jsx",
     ".next/types/**/*.ts"
-, "src/app/(main)/helldivers-2/studio/page.jsx"  ],
-  "exclude": ["node_modules"]
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

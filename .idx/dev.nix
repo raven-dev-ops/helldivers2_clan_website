@@ -3,6 +3,7 @@
   packages = [
     pkgs.nodejs_20
     pkgs.heroku
+    pkgs.docker
   ];
   idx.extensions = [
     
