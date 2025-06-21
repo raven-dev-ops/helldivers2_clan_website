@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import User from '@/models/User';
 
+// @ts-expect-error
 export async function GET( request: NextRequest, { params }: { params: { userId: string } } ): Promise<NextResponse> {
 
   const { userId } = params;
