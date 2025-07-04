@@ -106,7 +106,6 @@ const Navbar = () => {
       return [
         { href: "/helldivers-2", label: "Home" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
-        { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/creators", label: "Creators" },
         { href: "/helldivers-2/merch", label: "Merch" },
       ];
