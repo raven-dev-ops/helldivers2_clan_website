@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/authOptions";
+import { getAuthOptions } from "@/lib/authOptions";
 import mongoose from "mongoose";
 import dbConnect from "@/lib/dbConnect";
 import ForumThreadModel from "@/models/ForumThread";
@@ -40,7 +40,7 @@ const DeleteThreadSchema = z.object({
 // --- Edit Post Action ---
 export async function editPost(prevState: any, formData: FormData) {
   await dbConnect();
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(getAuthOptions());
   if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
 
   const validation = EditPostSchema.safeParse({
@@ -88,7 +88,7 @@ export async function editPost(prevState: any, formData: FormData) {
 // --- Delete Post Action ---
 export async function deletePost(prevState: any, formData: FormData) {
   await dbConnect();
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(getAuthOptions());
   if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
 
   const validation = DeletePostSchema.safeParse({ postId: formData.get('postId') });
@@ -123,7 +123,7 @@ export async function deletePost(prevState: any, formData: FormData) {
 // --- Delete Thread Action ---
 export async function deleteThread(prevState: any, formData: FormData) {
   await dbConnect();
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(getAuthOptions());
   if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
 
   const validation = DeleteThreadSchema.safeParse({ threadId: formData.get('threadId') });
@@ -161,7 +161,7 @@ export async function deleteThread(prevState: any, formData: FormData) {
 // TODO: Implement editThread similarly...
 export async function editThread(prevState: any, formData: FormData) {
   await dbConnect();
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(getAuthOptions());
   if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
 
   const validation = EditThreadSchema.safeParse({
