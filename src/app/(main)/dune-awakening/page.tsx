@@ -457,7 +457,28 @@ export default function DuneAwakeningPage() {
     return (
         <div style={styles.pageContainer}>
 
-            {/* YouTube Carousel */}
+            {/* Introduction Section */}
+            <section style={styles.section}>
+                <h1 style={styles.sectionTitle}>
+                    About GPT Dune: Awakening
+                    <Link
+                        href={discordServerLink} target="_blank" rel="noopener noreferrer"
+                        aria-label="Join the Dune: Awakening Discord" title="Join the Dune: Awakening Discord"
+                        style={discordIconFinalStyle}
+                        onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}
+                    >
+                        <FaDiscord style={styles.discordIcon} />
+                    </Link>
+                </h1>
+                <p style={styles.paragraph}>
+                    Welcome, adventurer, to the harsh deserts of Arrakis. In Dune: Awakening, your survival and success depend not only on your wits and gear but also on the specialized training you undertake and the allies you choose. The Galactic Phantom Taskforce (GPT) Dune Division offers a haven.
+                </p>
+                <p style={styles.paragraph}>
+                    This guide provides an overview of the known playable classes or specializations available. Below, you'll also find information about our community and how we operate on Arrakis. Choose your path wisely, learn its strengths and weaknesses, and remember that adaptability is key to surviving the dangers of Dune. Click on a class below to expand its details.
+                </p>
+            </section>
+
+            {/* YouTube Carousel (Moved below Introduction) */}
             <div style={styles.youtubeCarouselContainer}>
                 <Swiper
                     modules={[Navigation, EffectFade]}
@@ -487,26 +508,6 @@ export default function DuneAwakeningPage() {
                     })}
                 </Swiper>
             </div>
- {/* Introduction Section */}
- <section style={styles.section}>
- <h1 style={styles.sectionTitle}>
- About GPT Dune: Awakening
- <Link
- href={discordServerLink} target="_blank" rel="noopener noreferrer"
- aria-label="Join the Dune: Awakening Discord" title="Join the Dune: Awakening Discord"
- style={discordIconFinalStyle}
- onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}
- >
- <FaDiscord style={styles.discordIcon} />
- </Link>
- </h1>
- <p style={styles.paragraph}>
- Welcome, adventurer, to the harsh deserts of Arrakis. In Dune: Awakening, your survival and success depend not only on your wits and gear but also on the specialized training you undertake and the allies you choose. The Galactic Phantom Taskforce (GPT) Dune Division offers a haven.
- </p>
- <p style={styles.paragraph}>
- This guide provides an overview of the known playable classes or specializations available. Below, you'll also find information about our community and how we operate on Arrakis. Choose your path wisely, learn its strengths and weaknesses, and remember that adaptability is key to surviving the dangers of Dune. Click on a class below to expand its details.
- </p>
- </section>
 
  {/* --- New Player Section --- */}
  <section style={styles.section}>
