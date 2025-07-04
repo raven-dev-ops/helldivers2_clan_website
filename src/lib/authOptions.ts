@@ -3,11 +3,11 @@ import type { NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import clientPromise from '@/lib/mongoClientPromise';
+import getMongoClientPromise from '@/lib/mongoClientPromise';
 
 export function getAuthOptions(): NextAuthOptions {
   return {
-    adapter: MongoDBAdapter(clientPromise),
+    adapter: MongoDBAdapter(getMongoClientPromise()),
     providers: [
       DiscordProvider({
         clientId: process.env.DISCORD_CLIENT_ID!,
