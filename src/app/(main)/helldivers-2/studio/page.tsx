@@ -11,7 +11,8 @@ import BotModel, { IBotLean } from '@/models/Bot'; // Ensure models/Bot.ts expor
 import BotApplicationModel from '@/models/BotApplication'; // Adjust path if needed
 import mongoose, { Types } from 'mongoose';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from '@/lib/authOptions';
+import { getAuthOptions } from '@/lib/authOptions';
+
 // Icons
 import { FaEnvelope, FaVideo, FaServer, FaCheckCircle, FaDiscord } from 'react-icons/fa';
 // Styling
@@ -89,7 +90,7 @@ async function getUserApplicationStatuses(userId: string | undefined): Promise<A
 
 // --- Main React Server Component ---
 export default async function StudioPage() {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     const userId = session?.user?.id as string | undefined;
 
     // Fetch data concurrently

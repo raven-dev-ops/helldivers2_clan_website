@@ -1,7 +1,7 @@
 // src/app/api/applications/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from '@/lib/authOptions';
+import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import BotApplicationModel from '@/models/BotApplication'; // Adjust path
 import mongoose from 'mongoose';
@@ -15,7 +15,7 @@ interface ApplicationRequestBody {
 }
 
 export async function POST(request: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
 
     // 1. Check Authentication
     if (!session?.user?.id || !mongoose.Types.ObjectId.isValid(session.user.id)) {
