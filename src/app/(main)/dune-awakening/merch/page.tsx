@@ -1,5 +1,4 @@
 // src/app/(main)/dune-awakening/merch/page.tsx
-// src/app/(main)/dune-awakening/merch/page.tsx
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
