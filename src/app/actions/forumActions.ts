@@ -159,3 +159,50 @@ export async function deleteThread(prevState: any, formData: FormData) {
 }
 
 // TODO: Implement editThread similarly...
+export async function editThread(prevState: any, formData: FormData) {
+  await dbConnect();
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
+
+  const validation = EditThreadSchema.safeParse({
+    threadId: formData.get('threadId'),
+    title: formData.get('title'),
+  });
+
+  if (!validation.success) {
+    return {
+      status: 'error',
+      message: 'Invalid input.',
+      errors: validation.error.flatten().fieldErrors,
+    };
+  }
+
+  const { threadId, title } = validation.data;
+  const userId = new mongoose.Types.ObjectId(session.user.id);
+  const threadObjectId = new mongoose.Types.ObjectId(threadId);
+
+  try {
+    const thread = await ForumThreadModel.findById(threadObjectId);
+    if (!thread) return { status: 'error', message: 'Thread not found.' };
+
+    // --- Permission Check (Author or Admin/Mod) ---
+    const user = await UserModel.findById(userId);
+    const canEdit = user?.role === 'admin' || user?.role === 'moderator';
+    if (!thread.authorId?.equals(userId) && !canEdit) {
+      return { status: 'error', message: 'Permission denied.' };
+    }
+
+    // Sanitize user input
+    const sanitizedTitle = DOMPurify.sanitize(title);
+    thread.title = sanitizedTitle;
+    await thread.save();
+
+    revalidatePath(`/forum/[categoryId]/${threadId}`, 'page');
+    revalidatePath(`/forum/${thread.categoryId}`);
+    return { status: 'success', message: 'Thread updated!' };
+
+  } catch (error) {
+    console.error("Error editing thread:", error);
+    return { status: 'error', message: 'Database error editing thread.' };
+  }
+}
