@@ -87,9 +87,16 @@ const Navbar = () => {
 
   // --- Define Nav Items ---
   const getNavItems = (): NavItem[] => {
-    const isDune = isClient && currentDivisionId === 'dune-awakening'; // Match ID used in AVAILABLE_GAMES
-    if (isDune) {
+    // Check if the current path starts with /dune-awakening
+    if (pathname.startsWith('/dune-awakening')) {
       return [
+        { href: "/dune-awakening", label: "Home" },
+        { href: "/dune-awakening/factions", label: "Factions" },
+        { href: "/dune-awakening/creators", label: "Creators" },
+        { href: "/dune-awakening/merch", label: "Merch" },
+      ];
+    } else if (isClient && currentDivisionId === 'dune-awakening') {
+       return [
         { href: "/dune-awakening", label: "Home" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/creators", label: "Creators" },
