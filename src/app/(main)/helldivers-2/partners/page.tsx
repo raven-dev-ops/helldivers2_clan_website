@@ -1,5 +1,7 @@
 // src/app/(main)/helldivers-2/partners/page.tsx
 
+export const dynamic = 'force-dynamic';
+
 import React from 'react';
 import Link from 'next/link';
 // Import the client component we created

@@ -1,5 +1,7 @@
 // src/app/(main)/helldivers-2/studio/page.tsx
 
+// src/app/(main)/helldivers-2/studio/page.tsx
+
 import React from 'react';
 import Link from 'next/link';
 // Import client components
@@ -17,6 +19,8 @@ import { getAuthOptions } from '@/lib/authOptions';
 import { FaEnvelope, FaVideo, FaServer, FaCheckCircle, FaDiscord } from 'react-icons/fa';
 // Styling
 import styles from './StudioPage.module.css'; // Assumes StudioPage.module.css is in the same directory
+
+export const dynamic = 'force-dynamic';
 
 // --- Interfaces ---
 interface BotDisplayData {
