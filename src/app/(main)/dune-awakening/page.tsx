@@ -480,33 +480,43 @@ export default function DuneAwakeningPage() {
                     ))}
                 </Swiper>
             </div>
+ {/* Introduction Section */}
+ <section style={styles.section}>
+ <h1 style={styles.sectionTitle}>
+ About GPT Dune: Awakening
+ <Link
+ href={discordServerLink} target="_blank" rel="noopener noreferrer"
+ aria-label="Join the Dune: Awakening Discord" title="Join the Dune: Awakening Discord"
+ style={discordIconFinalStyle}
+ onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}
+ >
+ <FaDiscord style={styles.discordIcon} />
+ </Link>
+ </h1>
+ <p style={styles.paragraph}>
+ Welcome, adventurer, to the harsh deserts of Arrakis. In Dune: Awakening, your survival and success depend not only on your wits and gear but also on the specialized training you undertake and the allies you choose. The Galactic Phantom Taskforce (GPT) Dune Division offers a haven.
+ </p>
+ <p style={styles.paragraph}>
+ This guide provides an overview of the known playable classes or specializations available. Below, you'll also find information about our community and how we operate on Arrakis. Choose your path wisely, learn its strengths and weaknesses, and remember that adaptability is key to surviving the dangers of Dune. Click on a class below to expand its details.
+ </p>
+ </section>
 
-            {/* Introduction Section */}
-            <section style={styles.section}>
-                <h1 style={styles.sectionTitle}>
-                    About GPT Dune: Awakening 
-                    <Link
-                         href={discordServerLink} target="_blank" rel="noopener noreferrer"
-                         aria-label="Join the Dune: Awakening Discord" title="Join the Dune: Awakening Discord"
-                         style={discordIconFinalStyle}
-                         onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}
-                    >
-                        <FaDiscord style={styles.discordIcon} />
-                    </Link>
-                </h1>
-                 <p style={styles.paragraph}>
-                     Welcome, adventurer, to the harsh deserts of Arrakis. In Dune: Awakening, your survival and success depend not only on your wits and gear but also on the specialized training you undertake and the allies you choose. The Galactic Phantom Taskforce (GPT) Dune Division offers a haven.
-                 </p>
-                 <p style={styles.paragraph}>
-                     This guide provides an overview of the known playable classes or specializations available. Below, you'll also find information about our community and how we operate on Arrakis. Choose your path wisely, learn its strengths and weaknesses, and remember that adaptability is key to surviving the dangers of Dune. Click on a class below to expand its details.
-                  </p>
-            </section>
+ {/* --- New Player Section --- */}
+ <section style={styles.section}>
+ <h2 style={styles.sectionTitle}>New to Arrakis?</h2>
+ <p style={styles.paragraph}>
+ Feeling the heat? Overwhelmed by the sandworms or the scarcity of water? GPT is here to help. We offer a supportive environment for those taking their first steps onto the shifting sands. Learn the essentials of survival, crafting, and navigation without fear of judgment.
+ </p>
+ <p style={styles.paragraph}>
+ Our experienced members can guide you through finding resources, understanding faction dynamics, and joining your first group expeditions. Ask questions, find mentors, and discover the secrets of the desert alongside friendly faces. Check our Discord for guides and LFG channels!
+ </p>
+ </section>
 
-            {/* Class Sections */}
-            {duneClasses.map((duneClass) => {
-                 const isExpanded = !!expandedClasses[duneClass.id];
-                 const isHovered = hoveredClass === duneClass.id;
-                 return (
+ {/* Class Sections */}
+ {duneClasses.map((duneClass) => {
+ const isExpanded = !!expandedClasses[duneClass.id];
+ const isHovered = hoveredClass === duneClass.id;
+ return (
                     <div key={duneClass.id} style={styles.classSection}>
                         <div
                             style={{ ...styles.classHeader, ...(isHovered ? styles.classHeaderHover : {}) }}
@@ -561,17 +571,6 @@ export default function DuneAwakeningPage() {
                     </div>
                 );
             })}
-
-             {/* --- New Player Section --- */}
-            <section style={styles.section}>
-                 <h2 style={styles.sectionTitle}>New to Arrakis?</h2>
-                 <p style={styles.paragraph}>
-                    Feeling the heat? Overwhelmed by the sandworms or the scarcity of water? GPT is here to help. We offer a supportive environment for those taking their first steps onto the shifting sands. Learn the essentials of survival, crafting, and navigation without fear of judgment.
-                 </p>
-                 <p style={styles.paragraph}>
-                     Our experienced members can guide you through finding resources, understanding faction dynamics, and joining your first group expeditions. Ask questions, find mentors, and discover the secrets of the desert alongside friendly faces. Check our Discord for guides and LFG channels!
-                 </p>
-            </section>
 
             {/* --- Community & Partnership Section --- */}
             <section style={styles.section}>
