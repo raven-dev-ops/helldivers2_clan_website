@@ -3,7 +3,7 @@
 
 import { z } from "zod";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/authOptions";
 import mongoose from "mongoose";
 import dbConnect from "@/lib/dbConnect";
 import ForumThreadModel from "@/models/ForumThread";
