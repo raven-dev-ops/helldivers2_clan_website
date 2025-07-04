@@ -410,7 +410,7 @@ const styles = {
 
 // --- Main Component ---
 export default function DuneAwakeningPage() {
-    const discordServerLink = "https://discord.gg/gptdune";
+    const discordServerLink = "https://discord.gg/QjxHdhmfc6";
     // *** Replace with your actual Dune community Disboard link ***
     const reviewSourceLink = "YOUR_DISBOARD_LINK_HERE"; // Or set back to null if none exists
 
@@ -419,6 +419,7 @@ export default function DuneAwakeningPage() {
     const [hoveredClass, setHoveredClass] = useState<string | null>(null);
     const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
     const [isReviewVisible, setIsReviewVisible] = useState(true);
+    const [activeIndex, setActiveIndex] = useState(0); // State to track active slide
 
     const toggleClassExpansion = (classId: string) => {
         setExpandedClasses(prev => ({
@@ -463,21 +464,27 @@ export default function DuneAwakeningPage() {
                     effect="fade" fadeEffect={{ crossFade: true }}
                     spaceBetween={30} slidesPerView={1}
                     navigation={true} loop={true}
+                    onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)} // Update state on slide change
                     className="dune-youtube-swiper"
                 >
-                    {youtubeVideos.map((video) => (
-                        <SwiperSlide key={video.id}>
-                            <div style={styles.youtubeSlide}>
-                                <iframe
-                                    style={styles.youtubeIframe} src={video.embedUrl}
-                                    title={`YouTube video player for ${video.id}`}
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen loading="lazy"
-                                    referrerPolicy="strict-origin-when-cross-origin"
-                                ></iframe>
-                            </div>
-                        </SwiperSlide>
-                    ))}
+                    {youtubeVideos.map((video, index) => {
+                        const isActive = index === activeIndex; // Check if this slide is active
+                        return (
+                            <SwiperSlide key={video.id}>
+                                <div style={styles.youtubeSlide}>
+                                    {isActive && ( // Conditionally render iframe only if active
+                                        <iframe
+                                            style={styles.youtubeIframe} src={video.embedUrl}
+                                            title={`YouTube video player for ${video.id}`}
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowFullScreen // No need for loading="lazy" if only active one is rendered
+                                            referrerPolicy="strict-origin-when-cross-origin"
+                                        ></iframe>
+                                    )}
+                                </div>
+                            </SwiperSlide>
+                        );
+                    })}
                 </Swiper>
             </div>
  {/* Introduction Section */}
