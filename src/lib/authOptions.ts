@@ -1,47 +1,36 @@
-// src/lib/authOptions.ts
-import type { NextAuthOptions, Session } from 'next-auth';
-import type { JWT } from 'next-auth/jwt';
+import type { NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
-import { AdapterUser } from 'next-auth/adapters';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 
-import clientPromise from '@/lib/mongoClientPromise'; // ✅ Use the consistent shared client
+import clientPromise from '@/lib/mongoClientPromise';
 
-export const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(clientPromise),
-  providers: [
-    DiscordProvider({
-      clientId: process.env.DISCORD_CLIENT_ID!,
-      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
-  session: {
-    strategy: 'jwt',
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      // ✅ Stronger type: user?.id must exist to set token.id
-      if (user) {
-        token.id = (user as AdapterUser).id;
-      }
-      return token;
+export function getAuthOptions(): NextAuthOptions {
+  return {
+    adapter: MongoDBAdapter(clientPromise),
+    providers: [
+      DiscordProvider({
+        clientId: process.env.DISCORD_CLIENT_ID!,
+        clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+      }),
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
+    ],
+    session: { strategy: 'jwt' },
+    callbacks: {
+      async jwt({ token, user }) {
+        if (user?.id) token.id = user.id;
+        return token;
+      },
+      async session({ session, token }) {
+        if (session.user && token.id) session.user.id = token.id as string;
+        return session;
+      },
     },
-    async session({ session, token }) {
-      // ✅ Add id to session.user if available
-      if (session.user && token?.id) {
-        (session.user as { id: string }).id = token.id as string;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: '/auth',
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
-};
+    secret: process.env.NEXTAUTH_SECRET,
+    pages: { signIn: '/auth' },
+    debug: process.env.NODE_ENV === 'development',
+  };
+}
