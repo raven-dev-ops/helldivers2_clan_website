@@ -92,20 +92,13 @@ const Navbar = () => {
       return [
         { href: "/dune-awakening", label: "Home" },
         { href: "/dune-awakening/merch", label: "Merch" },
-        { href: "/dune-awakening/worldpvp", label: "PVP" },
-        { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/market", label: "Market" },
-        { href: "/dune-awakening/partners", label: "Partners" },
-        { href: "/dune-awakening/studio", label: "Studio" },
+        { href: "/dune-awakening/factions", label: "Creators" },
       ];
     } else { 
       return [
         { href: "/helldivers-2", label: "Home" },
         { href: "/helldivers-2/merch", label: "Merch" },
-        { href: "/helldivers-2/academy", label: "Academy" },
         { href: "/helldivers-2/creators", label: "Creators" },
-        { href: "/helldivers-2/partners", label: "Partners" },
-        { href: "/helldivers-2/studio", label: "Studio" },
       ];
     }
   };
