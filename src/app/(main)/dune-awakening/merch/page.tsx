@@ -1,6 +1,6 @@
 // src/app/(main)/dune-awakening/merch/page.tsx
 import React from 'react';
-import styles from '../PlaceholderPage.module.css'; // Go up one directory
+import styles from '../DunePage.module.css'; // Go up one directory
 
 export default async function DuneMerchPage() {
   return (
