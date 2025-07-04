@@ -1,12 +1,11 @@
-// src/lib/dbConnect.ts
 import mongoose, { Mongoose } from 'mongoose';
 
-// Import all your models so they're registered
+// Import all your Mongoose models once to prevent OverwriteModelError in dev.
 import '@/models/User';
 import '@/models/ForumCategory';
 import '@/models/ForumThread';
 import '@/models/ForumPost';
-// ...add any additional model imports here
+// Add more as needed...
 
 interface MongooseCache {
   conn: Mongoose | null;
@@ -22,24 +21,19 @@ if (!global.mongoose_cache) {
   global.mongoose_cache = { conn: null, promise: null };
 }
 
-let cached: MongooseCache = global.mongoose_cache;
+const cached = global.mongoose_cache;
 
 /**
- * Connects to MongoDB using a cached connection if possible.
- * Only attempts to connect when called, not at module load.
+ * Connect to MongoDB with connection caching for serverless.
  */
 async function dbConnect(): Promise<Mongoose> {
-  // Return cached connection if already connected
   if (cached.conn) {
     return cached.conn;
   }
 
-  // Make sure the URI is set ONLY when we try to connect
   const MONGODB_URI = process.env.MONGODB_URI;
   if (!MONGODB_URI) {
-    throw new Error(
-      'Please define the MONGODB_URI environment variable inside .env.local or in your deployment platform.'
-    );
+    throw new Error('Please define the MONGODB_URI environment variable.');
   }
 
   if (!cached.promise) {
@@ -47,23 +41,19 @@ async function dbConnect(): Promise<Mongoose> {
       bufferCommands: false,
       dbName: 'GPTHellbot',
     };
-    cached.promise = mongoose.connect(MONGODB_URI, opts)
-      .then((mongooseInstance) => mongooseInstance)
-      .catch((error) => {
-        cached.promise = null; // Clear promise on error
-        console.error('MongoDB connection error:', error);
-        throw error;
-      });
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => mongooseInstance);
   }
 
   try {
     cached.conn = await cached.promise;
-  } catch (e) {
+  } catch (error) {
     cached.promise = null;
-    throw e;
+    console.error('MongoDB connection error:', error);
+    throw error;
   }
 
-  return cached.conn!;
+  return cached.conn;
 }
 
 export default dbConnect;

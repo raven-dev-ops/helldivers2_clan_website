@@ -1,19 +1,15 @@
 // src/lib/authOptions.ts
-import type { NextAuthOptions, Session, User as AdapterUser } from 'next-auth';
+import type { NextAuthOptions, Session } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
+import { AdapterUser } from 'next-auth/adapters';
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
 
-import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
-import { getMongoClientPromise } from "@/lib/dbClientPromise";
-
-// Always call the function to get the client promise
-const clientPromise = getMongoClientPromise();
+import clientPromise from '@/lib/mongoClientPromise'; // ✅ Use the consistent shared client
 
 export const authOptions: NextAuthOptions = {
-  adapter: MongoDBAdapter(clientPromise, {
-      // databaseName: process.env.MONGODB_DB_NAME // Optional
-  }),
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
     DiscordProvider({
       clientId: process.env.DISCORD_CLIENT_ID!,
@@ -25,25 +21,27 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.id) {
-        token.id = user.id;
+      // ✅ Stronger type: user?.id must exist to set token.id
+      if (user) {
+        token.id = (user as AdapterUser).id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token?.id && session.user) {
-        session.user.id = token.id as string;
+      // ✅ Add id to session.user if available
+      if (session.user && token?.id) {
+        (session.user as { id: string }).id = token.id as string;
       }
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET!,
   pages: {
     signIn: '/auth',
   },
+  secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
 };
