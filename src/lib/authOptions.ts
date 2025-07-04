@@ -3,7 +3,6 @@ import type { NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-
 import clientPromise from '@/lib/mongoClientPromise';
 
 export function getAuthOptions(): NextAuthOptions {
