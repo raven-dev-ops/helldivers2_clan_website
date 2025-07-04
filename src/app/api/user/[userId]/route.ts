@@ -1,9 +1,12 @@
+// src/app/api/user/[userId]/route.ts
+
+import { NextResponse } from 'next/server';
+
 export async function GET(
   request: Request,
- context: { params: { userId: string } }
+  context: { params: { userId: string } }
 ) {
   const { userId } = context.params;
-  return new Response(JSON.stringify({ userId }), {
-    headers: { 'Content-Type': 'application/json' },
-  });
+
+  return NextResponse.json({ userId });
 }
