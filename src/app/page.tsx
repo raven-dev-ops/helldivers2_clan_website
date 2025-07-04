@@ -27,7 +27,7 @@ interface GameDivision {
 // --- Data for Game Divisions (with Explicit Type) ---
 const gameDivisions: GameDivision[] = [ // Added type annotation
   { id: 'helldivers2', title: "Helldivers 2", imageUrl: "/images/helldivers2-select-card.jpg", href: "/helldivers-2", comingSoon: false },
-  { id: 'dune',        title: "Dune: Awakening",    imageUrl: "/images/dune-awakening-select-card.jpg", href: "/dune-awakening",    comingSoon: true  },
+  { id: 'dune',        title: "Dune: Awakening",    imageUrl: "/images/dune-awakening-select-card.jpg", href: "/dune-awakening",    comingSoon: false  },
   { id: 'future0',     title: "Vote August 2025",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future0",           comingSoon: true  },
   { id: 'future1',     title: "Vote Febuary 2026",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future1",           comingSoon: true  },
   { id: 'future2',     title: "Vote August 2026",      imageUrl: "/images/placeholder-select-card.jpg",   href: "/future2",           comingSoon: true  },
