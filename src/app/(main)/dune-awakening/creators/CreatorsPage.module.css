@@ -39,13 +39,11 @@
   /* --- Loading / Error / No Results --- */
   .loadingContainer,
   .noCreatorsContainer {
-    text-align: center;
     padding: 4rem 1rem; /* More vertical padding */
   }
   
   .loadingText,
   .noCreatorsText {
-    font-size: 1.125rem;
     color: #9ca3af; /* text-gray-400 */
   }
   
@@ -160,11 +158,7 @@
     /* Added overflow hidden for perfect circle */
     overflow: hidden;
   }
-  
-  .profileImagePlaceholder {
-     /* Keep gray bg, icon color below */
-  }
-  
+
   .placeholderIcon {
     color: #9ca3af; /* text-gray-400 */
     font-size: 1.875rem;
@@ -233,9 +227,11 @@
     font-size: 0.875rem;
     line-height: 1.6;
     color: #d1d5db; /* text-gray-300 */
-    margin-top: 0.75rem; /* Adjusted space */
-    /* Line Clamp */
+  margin-top: 0.75rem;
+  /* Standard Line Clamp */
+  line-clamp: 3; /* Standard property */
     overflow: hidden;
+  /* Vendor Prefixed Line Clamp for broader compatibility */
     display: -webkit-box;
     -webkit-line-clamp: 3; /* Limit to 3 lines */
     -webkit-box-orient: vertical;
@@ -246,6 +242,3 @@
     color: #9ca3af; /* text-gray-400 */
   }
   
-  /* No Creators State - inherits styles from container */
-  .noCreatorsContainer { /* Existing styles are fine */ }
-  .noCreatorsText { /* Existing styles are fine */ }
