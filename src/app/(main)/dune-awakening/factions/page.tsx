@@ -1,3 +1,4 @@
+// src/app/(main)/factions/page.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -17,13 +18,13 @@ interface Faction {
   comparison?: string;
 }
 
-// --- Full Faction Data ---
+// --- Faction Data ---
 const duneFactions: Faction[] = [
   {
     id: "atreides",
     name: "House Atreides",
     summary: "The noble house valuing honor, loyalty, and justice.",
-    imageUrl: "", // optional image
+    imageUrl: "",
     lore: `House Atreides is renowned for its moral integrity...`,
     role: `In Dune: Awakening, House Atreides is one of the two player-alignable factions...`,
     gameplay: `Choosing Atreides grants access to unique rewards...`,
@@ -119,7 +120,7 @@ const choosingFactionAdvice = {
   summary: `In summary, every faction and organization contributes to a living Arrakis...`,
 };
 
-// --- Styles ---
+// --- Styles (copy your DunePage.module.css structure for final implementation) ---
 const styles = {
   pageContainer: {
     maxWidth: "1200px",
@@ -133,6 +134,7 @@ const styles = {
     padding: "1.5rem",
     backgroundColor: "#1f2937",
     borderRadius: "0.75rem",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
     border: "1px solid #374151",
   } as React.CSSProperties,
   sectionTitle: {
@@ -158,6 +160,7 @@ const styles = {
     border: "1px solid #4b5563",
     borderRadius: "0.5rem",
     backgroundColor: "#273140",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
   } as React.CSSProperties,
   factionHeader: {
     display: "flex",
@@ -167,17 +170,20 @@ const styles = {
     cursor: "pointer",
     backgroundColor: "#1f2937",
     borderBottom: "1px solid #4b5563",
+    transition: "background-color 0.2s",
   } as React.CSSProperties,
   factionTitle: {
     fontSize: "1.3rem",
     fontWeight: 600,
     color: "#f9a825",
+    margin: 0,
   } as React.CSSProperties,
   factionSummary: {
     fontSize: "0.9rem",
     color: "#b0b0b0",
     marginTop: "0.25rem",
     fontStyle: "italic",
+    marginBottom: 0,
   } as React.CSSProperties,
   expandIcon: {
     fontSize: "1.2rem",
@@ -191,13 +197,14 @@ const styles = {
     maxHeight: "0",
     opacity: 0,
     overflow: "hidden",
-    transition: "max-height 0.5s ease-out, opacity 0.4s ease-in",
+    transition: "max-height 0.5s ease-out, opacity 0.4s ease-in, padding 0.5s ease-out",
     padding: "0 1.25rem",
   } as React.CSSProperties,
   collapsibleContentExpanded: {
-    maxHeight: "10000px",
+    maxHeight: "5000px",
     opacity: 1,
     padding: "1.5rem 1.25rem",
+    transition: "max-height 0.8s, opacity 0.6s, padding 0.8s",
   } as React.CSSProperties,
   factionContentContainer: {
     backgroundColor: "#1f2937",
@@ -205,6 +212,7 @@ const styles = {
     borderRadius: "0.5rem",
     marginTop: "1rem",
     border: "1px solid #4b5563",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.10)",
   } as React.CSSProperties,
   subHeading: {
     fontSize: "1.15rem",
@@ -272,8 +280,7 @@ export default function DuneFactionsPage() {
       <section style={styles.section}>
         <h1 style={styles.sectionTitle}>Factions of Dune: Awakening</h1>
         <p style={styles.paragraph}>
-          Dune: Awakening is set in an alternate Dune timeline, creating a
-          unique political landscape on Arrakis...
+          Dune: Awakening is set in an alternate Dune timeline, creating a unique political landscape on Arrakis...
         </p>
       </section>
 
@@ -284,20 +291,24 @@ export default function DuneFactionsPage() {
             <div
               style={styles.factionHeader}
               onClick={() => toggleFactionExpansion(faction.id)}
+              role="button"
+              tabIndex={0}
+              aria-expanded={expanded}
+              aria-controls={`content-${faction.id}`}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleFactionExpansion(faction.id)}
             >
               <div>
                 <h2 style={styles.factionTitle}>{faction.name}</h2>
                 <p style={styles.factionSummary}>{faction.summary}</p>
               </div>
               {expanded ? (
-                <FaChevronUp
-                  style={{ ...styles.expandIcon, ...styles.expandIconRotated }}
-                />
+                <FaChevronUp style={{ ...styles.expandIcon, ...styles.expandIconRotated }} />
               ) : (
                 <FaChevronDown style={styles.expandIcon} />
               )}
             </div>
             <div
+              id={`content-${faction.id}`}
               style={{
                 ...styles.collapsibleContent,
                 ...(expanded ? styles.collapsibleContentExpanded : {}),
