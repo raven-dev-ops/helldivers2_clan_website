@@ -236,190 +236,40 @@ const duneClasses: DuneClass[] = [
     },
 ];
 
+// --- FINAL TIPS ---
 const finalTips = `All classes in Dune: Awakening share one important feature: you are not permanently locked into only those abilities. As confirmed by Funcom, you can eventually learn every school’s skills by finding trainers in the world, allowing mix-and-match builds. Your starting class (Mentor choice) only defines your initial ability and early playstyle, but you can grow beyond it. That said, each class provides a distinct flavor and specialization to anchor your character. For maximum effectiveness, consider combining strengths: e.g., a Swordmaster who later learns a Mentat’s scan becomes a deadly bounty hunter, or a Mentat who picks up a Trooper’s grenade skill gains offensive punch. Play around with what suits you. Whether you choose the brute force of the Swordmaster, the subtle manipulations of the Bene Gesserit, the high-tech tactics of the Mentat, the raw firepower of the Trooper, or the survival savvy of the Planetologist, mastering your class in Dune: Awakening will be a journey as epic as traversing the deserts of Arrakis itself. Adapt, experiment, and above all – remember that the slow blade penetrates the shield. Good luck, adventurer, and may Shai-Hulud pass you by when you need it most!`;
 
-// --- YouTube Video Interface ---
-interface YoutubeVideo {
-    id: string;
-    embedUrl: string;
-}
-
-// --- YouTube Video Data (DUNE SPECIFIC - REPLACE WITH ACTUAL VIDEOS) ---
+// --- YOUTUBE DATA ---
+interface YoutubeVideo { id: string; embedUrl: string; }
 const youtubeVideos: YoutubeVideo[] = [
-    { id: 'DuneAwakeningTrailer1', embedUrl: 'https://www.youtube.com/embed/plw2gxf7Coc?si=6jvS0yPyjY39Hyww' },
-    { id: 'DuneGameplayReveal', embedUrl: 'https://www.youtube.com/embed/r8lxVDqoHLQ?si=OmYVnWHeEmKv4EPL' },
-    { id: 'DuneSurvivalMechanics', embedUrl: 'https://www.youtube.com/embed/UA4Q8dTuIio?si=aN77qr5ihaBplfnu' },
-    // Add more relevant Dune: Awakening videos
+    { id: "DuneAwakeningTrailer1", embedUrl: "https://www.youtube.com/embed/plw2gxf7Coc?si=6jvS0yPyjY39Hyww" },
+    { id: "DuneGameplayReveal", embedUrl: "https://www.youtube.com/embed/r8lxVDqoHLQ?si=OmYVnWHeEmKv4EPL" },
+    { id: "DuneSurvivalMechanics", embedUrl: "https://www.youtube.com/embed/UA4Q8dTuIio?si=aN77qr5ihaBplfnu" },
 ];
 
-// --- Review Data Structure ---
+// --- REVIEWS ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
-
-// --- Review Data (PLACEHOLDER - REPLACE WITH DUNE COMMUNITY REVIEWS) ---
 const reviews: Review[] = [
-    // Add actual reviews if available
     { id: 1, author: "ArrakisExplorer", title: "Promising Survival Mechanics", text: "Really looking forward to the survival aspects shown. Managing water and avoiding worms looks intense! Hope the community building is strong.", rating: 5 },
     { id: 2, author: "SpiceTrader88", title: "Potential for Deep Faction Play", text: "The idea of House politics and CHOAM influencing the world has me hooked. If they pull off the faction rivalries, this could be huge.", rating: 4 },
     { id: 3, author: "SandWalker", title: "Visually Stunning Arrakis", text: "From the previews, the depiction of Arrakis looks incredible. The scale of the desert and the storms seem spot on. Cautiously optimistic about performance.", rating: 5 },
-    { id: 4, author: "Duke_Fan", title: "Great Roleplay Potential!", text: "Heard about the community roleplay with 'Duke Richard' and the Fremen council. Sounds like a fun, unique group that values story.", rating: 5},
-    { id: 5, author: "SchematicSeeker", title: "Neutral Trading Hub?", text: "Looking for a reliable place to trade schematics without getting ripped off by big clans. If this group is truly neutral and has integrity, count me in.", rating: 5},
-    { id: 6, author: "DesertNomad", title: "Casual & Hardcore Welcome", text: "Good to see a community aiming to bridge the gap between casual players and hardcore survivalists. Merit-based sounds fair.", rating: 4},
+    { id: 4, author: "Duke_Fan", title: "Great Roleplay Potential!", text: "Heard about the community roleplay with 'Duke Richard' and the Fremen council. Sounds like a fun, unique group that values story.", rating: 5 },
+    { id: 5, author: "SchematicSeeker", title: "Neutral Trading Hub?", text: "Looking for a reliable place to trade schematics without getting ripped off by big clans. If this group is truly neutral and has integrity, count me in.", rating: 5 },
+    { id: 6, author: "DesertNomad", title: "Casual & Hardcore Welcome", text: "Good to see a community aiming to bridge the gap between casual players and hardcore survivalists. Merit-based sounds fair.", rating: 4 }
 ];
 
+// --- STYLES ---
+import styles from './DunePage.module.css';
 
-// --- Style Object (Merged) ---
-const styles = {
-    pageContainer: {
-        maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem 4rem',
-        color: 'var(--color-text-primary, #e0e0e0)',
-        fontFamily: 'var(--font-sans, sans-serif)',
-    },
-    // YouTube Carousel
-    youtubeCarouselContainer: {
-        marginBottom: '3rem', maxWidth: '1024px', marginLeft: 'auto', marginRight: 'auto',
-    },
-    youtubeSlide: {
-        position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden',
-        borderRadius: 'var(--border-radius-lg, 0.75rem)',
-        boxShadow: '0 10px 20px rgba(0,0,0,0.3)',
-        border: '1px solid var(--color-border, #374151)',
-        backgroundColor: '#111',
-    } as React.CSSProperties,
-    youtubeIframe: {
-        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none'
-    } as React.CSSProperties,
-    // General Sections
-    section: {
-        marginBottom: '2.5rem', padding: '1.5rem',
-        backgroundColor: 'var(--color-surface, #1f2937)',
-        borderRadius: 'var(--border-radius-lg, 0.75rem)',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-        border: '1px solid var(--color-border, #374151)',
-    } as React.CSSProperties,
-    sectionTitle: {
-        fontSize: 'clamp(1.6rem, 4vw, 2rem)',
-        fontWeight: 700, marginBottom: '1.5rem',
-        color: 'var(--color-primary, #f9a825)',
-        borderBottom: '1px solid var(--color-border, #374151)', paddingBottom: '0.75rem',
-        display: 'flex', alignItems: 'center', gap: '0.75rem',
-    } as React.CSSProperties,
-    paragraph: { color: 'var(--color-text-secondary, #b0b0b0)', marginBottom: '1.25rem', lineHeight: 1.7 } as React.CSSProperties,
-    strongText: { fontWeight: 600, color: 'var(--color-text-primary, #e0e0e0)' } as React.CSSProperties, // Adjusted for better contrast
-    link: { color: 'var(--color-primary-hover, #fbc02d)', textDecoration: 'underline', textUnderlineOffset: '3px' } as React.CSSProperties,
-    // Discord Icon
-    discordIconLink: {
-        display: 'inline-block', verticalAlign: 'middle',
-        color: 'var(--color-primary, #f9a825)',
-        transition: 'color 0.2s ease, transform 0.2s ease',
-        fontSize: '1.1em',
-    } as React.CSSProperties,
-    discordIconLinkHover: {
-        color: 'var(--color-primary-hover, #fbc02d)', transform: 'scale(1.1)',
-    } as React.CSSProperties,
-    discordIcon: {
-         width: '1em', height: '1em', display: 'block',
-     } as React.CSSProperties,
-    // Collapsible Class Sections
-    classSection: {
-        marginBottom: '1.5rem',
-        border: '1px solid var(--color-border-alt, #4b5563)',
-        borderRadius: 'var(--border-radius-md, 0.5rem)',
-        backgroundColor: 'var(--color-surface-alt, #273140)',
-        overflow: 'hidden',
-    } as React.CSSProperties,
-    classHeader: {
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '1rem 1.25rem', cursor: 'pointer',
-        backgroundColor: 'var(--color-surface, #1f2937)',
-        borderBottom: '1px solid var(--color-border-alt, #4b5563)',
-        transition: 'background-color 0.2s ease',
-    } as React.CSSProperties,
-    classHeaderHover: {
-        backgroundColor: 'var(--color-surface-hover, #374151)',
-    } as React.CSSProperties,
-    classTitle: {
-        fontSize: '1.3rem', fontWeight: 600, color: 'var(--color-primary, #f9a825)', margin: 0,
-    } as React.CSSProperties,
-    classSummary: {
-        fontSize: '0.9rem', color: 'var(--color-text-secondary, #b0b0b0)',
-        margin: '0.25rem 0 0 0', fontStyle: 'italic',
-    } as React.CSSProperties,
-    expandIcon: {
-        fontSize: '1.2rem', color: 'var(--color-text-secondary, #b0b0b0)',
-        transition: 'transform 0.3s ease',
-    } as React.CSSProperties,
-    expandIconRotated: {
-        transform: 'rotate(180deg)',
-    } as React.CSSProperties,
-    collapsibleContent: {
-        maxHeight: '0', opacity: 0, overflow: 'hidden',
-        transition: 'max-height 0.5s ease-out, opacity 0.4s ease-in, padding 0.5s ease-out',
-        padding: '0 1.25rem',
-    } as React.CSSProperties,
-    collapsibleContentExpanded: {
-        maxHeight: '5000px', opacity: 1, padding: '1.5rem 1.25rem',
-        transition: 'max-height 0.8s ease-in-out, opacity 0.6s ease-in 0.1s, padding 0.8s ease-in-out',
-    } as React.CSSProperties,
-    // Content Inside Collapsible
-    subHeading: {
-        fontSize: '1.15rem', fontWeight: 600, color: 'var(--color-text-primary, #e0e0e0)',
-        marginTop: '1.5rem', marginBottom: '0.75rem',
-        borderBottom: '1px dashed var(--color-border-alt, #4b5563)', paddingBottom: '0.4rem',
-    } as React.CSSProperties,
-    contentList: {
-        listStylePosition: 'outside', paddingLeft: '1.5rem', marginBottom: '1.25rem',
-        color: 'var(--color-text-secondary, #b0b0b0)',
-    } as React.CSSProperties,
-    listItem: { marginBottom: '0.6rem', lineHeight: 1.6 } as React.CSSProperties,
-    abilityName: { fontWeight: 600, color: 'var(--color-text-primary, #e0e0e0)' } as React.CSSProperties,
-    abilityDetails: { fontSize: '0.85rem', fontStyle: 'italic', marginLeft: '1rem', display: 'block', marginTop: '0.25rem' } as React.CSSProperties,
-    equipmentCategory: { fontWeight: 600, color: 'var(--color-text-primary, #e0e0e0)', display: 'block', marginBottom: '0.25rem'} as React.CSSProperties,
-    // Reviews Section
-    reviewSectionContainer: {
-        position: 'relative', display: 'flex', flexDirection: 'column',
-        alignItems: 'center', gap: '1.5rem', marginTop: '3rem',
-    } as React.CSSProperties,
-    reviewCardsWrapper: {
-        display: 'flex', gap: '1rem', width: '100%', justifyContent: 'center',
-        alignItems: 'stretch', flexWrap: 'wrap', minHeight: '190px',
-        opacity: 1, transition: 'opacity 0.6s ease-in-out',
-    } as React.CSSProperties,
-    reviewCardsWrapperHidden: {
-        opacity: 0,
-    } as React.CSSProperties,
-    individualReviewCard: {
-        flex: '1 1 300px', maxWidth: '350px', display: 'flex', flexDirection: 'column',
-        padding: '1.25rem', backgroundColor: 'var(--color-surface-alt, #273140)',
-        borderRadius: 'var(--border-radius-md, 0.5rem)', border: '1px solid var(--color-border-alt, #4b5563)',
-        textAlign: 'left', boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-    } as React.CSSProperties,
-    reviewStars: { display: 'flex', gap: '0.25rem', color: '#facc15', marginBottom: '0.5rem' } as React.CSSProperties,
-    reviewTitle: { fontSize: '1rem', fontWeight: 600, color: 'var(--color-text-primary)', marginBottom: '0.5rem', lineHeight: 1.3 } as React.CSSProperties,
-    reviewText: {
-        fontSize: '0.85rem', color: 'var(--color-text-secondary)', fontStyle: 'italic',
-        marginBottom: '0.75rem', lineHeight: 1.5, flexGrow: 1,
-        whiteSpace: 'pre-line', position: 'relative'
-    } as React.CSSProperties,
-    reviewAuthor: { fontSize: '0.75rem', color: 'var(--color-text-muted)', textAlign: 'right', marginTop: 'auto', paddingTop: '0.5rem' } as React.CSSProperties,
-    disboardLinkBottom: {
-        display: 'block', textAlign: 'center', fontSize: '0.9rem',
-        color: 'var(--color-primary-hover, #fbc02d)', textDecoration: 'underline', textUnderlineOffset: '3px',
-        marginTop: '0.5rem',
-    } as React.CSSProperties,
-};
-
-// --- Main Component ---
+// --- PAGE COMPONENT ---
 export default function DuneAwakeningPage() {
     const discordServerLink = "https://discord.gg/QjxHdhmfc6";
-    // *** Replace with your actual Dune community Disboard link ***
-    const reviewSourceLink = "YOUR_DISBOARD_LINK_HERE"; // Or set back to null if none exists
+    const reviewSourceLink = null; // Add Disboard link if available
 
     const [expandedClasses, setExpandedClasses] = useState<Record<string, boolean>>({});
-    const [discordIconHover, setDiscordIconHover] = useState(false);
-    const [hoveredClass, setHoveredClass] = useState<string | null>(null);
     const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
     const [isReviewVisible, setIsReviewVisible] = useState(true);
-    const [activeIndex, setActiveIndex] = useState(0); // State to track active slide
+    const [activeIndex, setActiveIndex] = useState(0);
 
     const toggleClassExpansion = (classId: string) => {
         setExpandedClasses(prev => ({
@@ -443,64 +293,58 @@ export default function DuneAwakeningPage() {
         return () => clearInterval(intervalId);
     }, []);
 
-    const discordIconFinalStyle = {
-        ...styles.discordIconLink,
-        ...(discordIconHover ? styles.discordIconLinkHover : {})
-    };
-
     const reviewsToShow = reviews.slice(currentReviewStartIndex, currentReviewStartIndex + 3);
-    const reviewWrapperFinalStyle = {
-        ...styles.reviewCardsWrapper,
-        ...(!isReviewVisible ? styles.reviewCardsWrapperHidden : {})
-    };
 
     return (
-        <div style={styles.pageContainer}>
+        <div className={styles.pageContainer}>
 
-            {/* Introduction Section */}
-            <section style={styles.section}>
-                <h1 style={styles.sectionTitle}>
+            {/* === About Section === */}
+            <section className={styles.section}>
+                <h1 className={styles.sectionTitle}>
                     About GPT Dune: Awakening
                     <Link
                         href={discordServerLink} target="_blank" rel="noopener noreferrer"
                         aria-label="Join the Dune: Awakening Discord" title="Join the Dune: Awakening Discord"
-                        style={discordIconFinalStyle}
-                        onMouseEnter={() => setDiscordIconHover(true)} onMouseLeave={() => setDiscordIconHover(false)}
+                        className={styles.discordIconLink}
                     >
-                        <FaDiscord style={styles.discordIcon} />
+                        <FaDiscord className={styles.discordIcon} />
                     </Link>
                 </h1>
-                <p style={styles.paragraph}>
+                <p className={styles.paragraph}>
                     Welcome, adventurer, to the harsh deserts of Arrakis. In Dune: Awakening, your survival and success depend not only on your wits and gear but also on the specialized training you undertake and the allies you choose. The Galactic Phantom Taskforce (GPT) Dune Division offers a haven.
                 </p>
-                <p style={styles.paragraph}>
+                <p className={styles.paragraph}>
                     This guide provides an overview of the known playable classes or specializations available. Below, you'll also find information about our community and how we operate on Arrakis. Choose your path wisely, learn its strengths and weaknesses, and remember that adaptability is key to surviving the dangers of Dune. Click on a class below to expand its details.
                 </p>
             </section>
 
-            {/* YouTube Carousel (Moved below Introduction) */}
-            <div style={styles.youtubeCarouselContainer}>
+            {/* === YouTube Carousel === */}
+            <div className={styles.youtubeCarouselContainer}>
                 <Swiper
                     modules={[Navigation, EffectFade]}
-                    effect="fade" fadeEffect={{ crossFade: true }}
-                    spaceBetween={30} slidesPerView={1}
-                    navigation={true} loop={true}
-                    onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)} // Update state on slide change
+                    effect="fade"
+                    fadeEffect={{ crossFade: true }}
+                    spaceBetween={30}
+                    slidesPerView={1}
+                    navigation={true}
+                    loop={true}
+                    onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
                     className="dune-youtube-swiper"
                 >
                     {youtubeVideos.map((video, index) => {
-                        const isActive = index === activeIndex; // Check if this slide is active
+                        const isActive = index === activeIndex;
                         return (
                             <SwiperSlide key={video.id}>
-                                <div style={styles.youtubeSlide}>
-                                    {isActive && ( // Conditionally render iframe only if active
+                                <div className={styles.youtubeSlide}>
+                                    {isActive && (
                                         <iframe
-                                            style={styles.youtubeIframe} src={video.embedUrl}
+                                            className={styles.youtubeIframe}
+                                            src={video.embedUrl}
                                             title={`YouTube video player for ${video.id}`}
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                            allowFullScreen // No need for loading="lazy" if only active one is rendered
+                                            allowFullScreen
                                             referrerPolicy="strict-origin-when-cross-origin"
-                                        ></iframe>
+                                        />
                                     )}
                                 </div>
                             </SwiperSlide>
@@ -509,138 +353,139 @@ export default function DuneAwakeningPage() {
                 </Swiper>
             </div>
 
- {/* --- New Player Section --- */}
- <section style={styles.section}>
- <h2 style={styles.sectionTitle}>New to Arrakis?</h2>
- <p style={styles.paragraph}>
- Feeling the heat? Overwhelmed by the sandworms or the scarcity of water? GPT is here to help. We offer a supportive environment for those taking their first steps onto the shifting sands. Learn the essentials of survival, crafting, and navigation without fear of judgment.
- </p>
- <p style={styles.paragraph}>
- Our experienced members can guide you through finding resources, understanding faction dynamics, and joining your first group expeditions. Ask questions, find mentors, and discover the secrets of the desert alongside friendly faces. Check our Discord for guides and LFG channels!
- </p>
- </section>
+            {/* === New Player Section === */}
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>New to Arrakis?</h2>
+                <p className={styles.paragraph}>
+                    Feeling the heat? Overwhelmed by the sandworms or the scarcity of water? GPT is here to help. We offer a supportive environment for those taking their first steps onto the shifting sands. Learn the essentials of survival, crafting, and navigation without fear of judgment.
+                </p>
+                <p className={styles.paragraph}>
+                    Our experienced members can guide you through finding resources, understanding faction dynamics, and joining your first group expeditions. Ask questions, find mentors, and discover the secrets of the desert alongside friendly faces. Check our Discord for guides and LFG channels!
+                </p>
+            </section>
 
- {/* Class Sections */}
- {duneClasses.map((duneClass) => {
- const isExpanded = !!expandedClasses[duneClass.id];
- const isHovered = hoveredClass === duneClass.id;
- return (
-                    <div key={duneClass.id} style={styles.classSection}>
+            {/* === Class Sections (Collapsible) === */}
+            {duneClasses.map((duneClass) => {
+                const isExpanded = !!expandedClasses[duneClass.id];
+                return (
+                    <div key={duneClass.id} className={styles.factionCard}>
                         <div
-                            style={{ ...styles.classHeader, ...(isHovered ? styles.classHeaderHover : {}) }}
+                            className={styles.factionHeader}
                             onClick={() => toggleClassExpansion(duneClass.id)}
-                            onMouseEnter={() => setHoveredClass(duneClass.id)}
-                            onMouseLeave={() => setHoveredClass(null)}
-                            role="button" aria-expanded={isExpanded} aria-controls={`content-${duneClass.id}`}
-                            tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleClassExpansion(duneClass.id)}
+                            role="button"
+                            aria-expanded={isExpanded}
+                            aria-controls={`content-${duneClass.id}`}
+                            tabIndex={0}
+                            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleClassExpansion(duneClass.id)}
                         >
                             <div>
-                                <h2 style={styles.classTitle}>{duneClass.name}</h2>
-                                <p style={styles.classSummary}>{duneClass.summary}</p>
+                                <h2 className={styles.factionCardTitle}>{duneClass.name}</h2>
+                                <p className={styles.factionSummary}>{duneClass.summary}</p>
                             </div>
                             {isExpanded
-                                ? <FaChevronUp style={{...styles.expandIcon, ...styles.expandIconRotated}} aria-label="Collapse section"/>
-                                : <FaChevronDown style={styles.expandIcon} aria-label="Expand section"/>
-                            }
+                                ? <FaChevronUp className={`${styles.expandIcon} ${styles.rotated}`} aria-label="Collapse section" />
+                                : <FaChevronDown className={styles.expandIcon} aria-label="Expand section" />}
                         </div>
-                        <div id={`content-${duneClass.id}`} style={{ ...styles.collapsibleContent, ...(isExpanded ? styles.collapsibleContentExpanded : {}) }}>
-                            {/* Collapsed content for Lore, Abilities, Styles, Strategies, Equip, Pros/Cons, Rec For */}
-                            <h3 style={styles.subHeading}>Lore & Background</h3>
-                            <p style={styles.paragraph}>{duneClass.lore}</p>
-                            <h3 style={styles.subHeading}>Abilities</h3>
-                            <ul style={styles.contentList}>
-                                {duneClass.abilities.map((ability, index) => ( <li key={index} style={styles.listItem}><span style={styles.abilityName}>{ability.name}:</span> {ability.description}{ability.details && <span style={styles.abilityDetails}>{ability.details}</span>}</li> ))}
+                        <div id={`content-${duneClass.id}`} className={`${styles.factionContentContainer} ${isExpanded ? styles.collapsibleContentExpanded : ""}`} style={{ display: isExpanded ? 'block' : 'none' }}>
+                            <h3 className={styles.subHeading}>Lore & Background</h3>
+                            <p className={styles.paragraph}>{duneClass.lore}</p>
+                            <h3 className={styles.subHeading}>Abilities</h3>
+                            <ul className={styles.ruleList}>
+                                {duneClass.abilities.map((ability, idx) => (
+                                    <li key={idx} className={styles.ruleListItem}>
+                                        <span className={styles.strongText}>{ability.name}:</span> {ability.description}
+                                        {ability.details && <span className={styles.abilityDetails}> {ability.details}</span>}
+                                    </li>
+                                ))}
                             </ul>
-                            <h3 style={styles.subHeading}>Combat Style</h3>
-                            <h4 style={{...styles.subHeading, fontSize: '1rem', marginTop: '0.5rem', borderBottom: 'none', paddingBottom: 0}}>Solo</h4>
-                            <p style={styles.paragraph}>{duneClass.combatStyleSolo}</p>
-                            <h4 style={{...styles.subHeading, fontSize: '1rem', marginTop: '0.5rem', borderBottom: 'none', paddingBottom: 0}}>Group</h4>
-                            <p style={styles.paragraph}>{duneClass.combatStyleGroup}</p>
-                            <h3 style={styles.subHeading}>Strategies</h3>
-                             <h4 style={{...styles.subHeading, fontSize: '1rem', marginTop: '0.5rem', borderBottom: 'none', paddingBottom: 0}}>PvE</h4>
-                            <p style={styles.paragraph}>{duneClass.pveStrategies}</p>
-                            <h4 style={{...styles.subHeading, fontSize: '1rem', marginTop: '0.5rem', borderBottom: 'none', paddingBottom: 0}}>PvP</h4>
-                            <p style={styles.paragraph}>{duneClass.pvpStrategies}</p>
-                            <h3 style={styles.subHeading}>Recommended Equipment</h3>
-                             <ul style={styles.contentList}>
-                                {duneClass.equipment.map((equip, index) => ( <li key={index} style={styles.listItem}><span style={styles.equipmentCategory}>{equip.category}:</span> {equip.description}</li> ))}
+                            <h3 className={styles.subHeading}>Combat Style</h3>
+                            <h4 className={styles.challengeLevelTitle}>Solo</h4>
+                            <p className={styles.paragraph}>{duneClass.combatStyleSolo}</p>
+                            <h4 className={styles.challengeLevelTitle}>Group</h4>
+                            <p className={styles.paragraph}>{duneClass.combatStyleGroup}</p>
+                            <h3 className={styles.subHeading}>Strategies</h3>
+                            <h4 className={styles.challengeLevelTitle}>PvE</h4>
+                            <p className={styles.paragraph}>{duneClass.pveStrategies}</p>
+                            <h4 className={styles.challengeLevelTitle}>PvP</h4>
+                            <p className={styles.paragraph}>{duneClass.pvpStrategies}</p>
+                            <h3 className={styles.subHeading}>Recommended Equipment</h3>
+                            <ul className={styles.ruleList}>
+                                {duneClass.equipment.map((equip, idx) => (
+                                    <li key={idx} className={styles.ruleListItem}>
+                                        <span className={styles.strongText}>{equip.category}:</span> {equip.description}
+                                    </li>
+                                ))}
                             </ul>
-                            <h3 style={styles.subHeading}>Pros</h3>
-                            <ul style={{...styles.contentList, listStyleType: 'disc'}}>
-                                {duneClass.pros.map((pro, index) => ( <li key={index} style={styles.listItem}>{pro}</li> ))}
+                            <h3 className={styles.subHeading}>Pros</h3>
+                            <ul className={styles.ruleList}>
+                                {duneClass.pros.map((pro, idx) => (<li key={idx} className={styles.ruleListItem}>{pro}</li>))}
                             </ul>
-                            <h3 style={styles.subHeading}>Cons</h3>
-                            <ul style={{...styles.contentList, listStyleType: 'disc'}}>
-                                {duneClass.cons.map((con, index) => ( <li key={index} style={styles.listItem}>{con}</li> ))}
+                            <h3 className={styles.subHeading}>Cons</h3>
+                            <ul className={styles.ruleList}>
+                                {duneClass.cons.map((con, idx) => (<li key={idx} className={styles.ruleListItem}>{con}</li>))}
                             </ul>
-                             <h3 style={styles.subHeading}>Recommended For</h3>
-                            <p style={styles.paragraph}>{duneClass.recommendedFor}</p>
+                            <h3 className={styles.subHeading}>Recommended For</h3>
+                            <p className={styles.paragraph}>{duneClass.recommendedFor}</p>
                         </div>
                     </div>
                 );
             })}
 
-            {/* --- Community & Partnership Section --- */}
-            <section style={styles.section}>
-                 <h2 style={styles.sectionTitle}>Community & Partnership</h2>
-                 <p style={styles.paragraph}>
-                    GPT aims to be more than just a clan; we are an established community built on <strong style={styles.strongText}>integrity and trust</strong>. We welcome both casual explorers and hardcore survivors, operating as a merit-based group at heart. We foster a unique atmosphere with satirical roleplay featuring our noble "Duke Richard," the prowess of "Muad'Dib" (our champion fighter), and the wisdom of our council of Fremen Elders and refugees.
-                 </p>
-                 <p style={styles.paragraph}>
-                    We envision our community as a <strong style={styles.strongText}>neutral trading ground</strong> for the Dune market. We encourage the open sharing of schematics and resources, providing a safe and reliable hub away from the grasp of larger, potentially domineering factions. If you seek fair trade and collaboration, look no further.
-                 </p>
-                 <p style={styles.paragraph}>
-                    Our ultimate goal aligns with the Fremen dream: to see Arrakis restored and its people thrive. We stand against tyrannical clans and hateful groups unwilling to let the spice flow freely for the benefit of all. If your group shares these values or seeks a dependable ally and trading partner, <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" style={styles.link}>reach out to us on Discord</Link>.
-                 </p>
+            {/* === Community & Partnership === */}
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Community & Partnership</h2>
+                <p className={styles.paragraph}>
+                    GPT aims to be more than just a clan; we are an established community built on <strong className={styles.strongText}>integrity and trust</strong>. We welcome both casual explorers and hardcore survivors, operating as a merit-based group at heart. We foster a unique atmosphere with satirical roleplay featuring our noble "Duke Richard," the prowess of "Muad'Dib" (our champion fighter), and the wisdom of our council of Fremen Elders and refugees.
+                </p>
+                <p className={styles.paragraph}>
+                    We envision our community as a <strong className={styles.strongText}>neutral trading ground</strong> for the Dune market. We encourage the open sharing of schematics and resources, providing a safe and reliable hub away from the grasp of larger, potentially domineering factions. If you seek fair trade and collaboration, look no further.
+                </p>
+                <p className={styles.paragraph}>
+                    Our ultimate goal aligns with the Fremen dream: to see Arrakis restored and its people thrive. We stand against tyrannical clans and hateful groups unwilling to let the spice flow freely for the benefit of all. If your group shares these values or seeks a dependable ally and trading partner, <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" className={styles.link}>reach out to us on Discord</Link>.
+                </p>
             </section>
 
-             {/* Final Tips Section */}
-            <section style={styles.section}>
-                 <h2 style={{...styles.sectionTitle, fontSize: '1.5rem'}}>Final Tips & Adaptability</h2>
-                 <p style={styles.paragraph}>
-                     {finalTips}
-                  </p>
+            {/* === Final Tips === */}
+            <section className={styles.section}>
+                <h2 className={styles.sectionTitle}>Final Tips & Adaptability</h2>
+                <p className={styles.paragraph}>{finalTips}</p>
             </section>
 
-            {/* --- Reviews Section --- */}
-             <div style={styles.reviewSectionContainer}>
-                {/* Optional Title: <h2 style={{...styles.sectionTitle, borderBottom: 'none', marginBottom: '0'}}>Community Feedback</h2> */}
-                 <div style={reviewWrapperFinalStyle}>
+            {/* === Reviews Section === */}
+            <div className={styles.reviewSectionContainer}>
+                <div className={`${styles.reviewCardsWrapper} ${!isReviewVisible ? styles.reviewCardsWrapperHidden : ""}`}>
                     {reviewsToShow.length > 0 ? (
                         reviewsToShow.map((review) => (
-                            <div key={review.id} style={styles.individualReviewCard}>
-                                <div style={styles.reviewStars}>
+                            <div key={review.id} className={styles.individualReviewCard}>
+                                <div className={styles.reviewStars}>
                                     {Array.from({ length: Math.max(0, Math.min(5, review.rating)) }).map((_, i) => (<FaStar key={i} />))}
-                                    {Array.from({ length: Math.max(0, 5 - review.rating) }).map((_, i) => (<FaStar key={`empty-${i}`} style={{ opacity: 0.3 }}/>))}
+                                    {Array.from({ length: Math.max(0, 5 - review.rating) }).map((_, i) => (<FaStar key={`empty-${i}`} style={{ opacity: 0.3 }} />))}
                                 </div>
-                                <h3 style={styles.reviewTitle}>{review.title}</h3>
-                                <p style={styles.reviewText}>"{review.text}"</p>
-                                <p style={styles.reviewAuthor}>- {review.author}</p>
+                                <h3 className={styles.reviewTitle}>{review.title}</h3>
+                                <p className={styles.reviewText}>"{review.text}"</p>
+                                <p className={styles.reviewAuthor}>- {review.author}</p>
                             </div>
                         ))
                     ) : (
-                        <p style={styles.paragraph}>No community reviews available yet.</p>
+                        <p className={styles.paragraph}>No community reviews available yet.</p>
                     )}
-                 </div>
-
-                {/* Link to Disboard or review source */}
-                {reviewSourceLink && reviewSourceLink !== "YOUR_DISBOARD_LINK_HERE" ? ( // Check if it's not the placeholder
+                </div>
+                {/* Disboard link or placeholder */}
+                {reviewSourceLink ? (
                     <Link
                         href={reviewSourceLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={styles.disboardLinkBottom}
+                        className={styles.disboardLinkBottom}
                     >
                         Read More Dune Reviews on Disboard
                     </Link>
                 ) : (
-                    <p style={{...styles.paragraph, textAlign: 'center', fontSize: '0.9rem', marginTop: '0.5rem' }}>
-                       Reviews powered by Disboard (Link coming soon!)
+                    <p className={styles.paragraph} style={{ textAlign: "center", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+                        Reviews powered by Disboard (Link coming soon!)
                     </p>
                 )}
             </div>
-
-
-        </div> // End pageContainer
+        </div>
     );
 }
