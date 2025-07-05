@@ -1,0 +1,111 @@
+.pageContainer {
+ max-width: 1200px;
+ margin: 0 auto;
+ padding: 3rem 1rem 4rem;
+ color: #e5e7eb;
+ background-color: #111827;
+ min-height: 100vh;
+}
+
+.section {
+ margin-bottom: 3rem;
+ padding: 2rem;
+ background-color: #1f2937;
+ border-radius: 0.5rem;
+ box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+ border: 1px solid #374151;
+}
+
+.sectionTitle {
+ font-size: clamp(1.5rem, 4vw, 1.8rem);
+ font-weight: 600;
+ margin-bottom: 1.5rem;
+ color: #facc15;
+ border-bottom: 1px solid #4b5563;
+ padding-bottom: 0.75rem;
+}
+
+.paragraph {
+ color: #d1d5db;
+ margin-bottom: 1.25rem;
+ line-height: 1.7;
+ font-size: 0.95rem;
+}
+
+@media (min-width: 768px) { .paragraph { font-size: 1rem; } }
+
+.strongText {
+ font-weight: 600;
+ color: #facc15;
+}
+
+.link {
+ color: #fde047;
+ text-decoration: underline;
+ text-underline-offset: 2px;
+ transition: color 0.2s ease;
+}
+
+.link:hover {
+ color: #facc15;
+}
+
+.subHeading {
+ font-size: 1.25rem;
+ font-weight: 600;
+ color: #ffffff;
+ margin-top: 2rem;
+ margin-bottom: 1rem;
+}
+
+/* --- Faction Cards --- */
+.factionCardContainer {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 1.5rem;
+ justify-content: center;
+ margin-top: 2rem;
+}
+
+.factionCard {
+ flex: 1 1 300px; /* Allow cards to grow/shrink, with a base of 300px */
+ max-width: 400px; /* Max width for larger screens */
+ background-color: #1f2937; /* bg-gray-800 */
+ border: 1px solid #374151; /* border-gray-700 */
+ border-radius: 0.5rem; /* rounded-md */
+ padding: 1.5rem;
+ display: flex;
+ flex-direction: column;
+ box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.factionCardTitle {
+ font-size: 1.5rem;
+ font-weight: 700;
+ color: #facc15; /* text-yellow-400 */
+ margin-bottom: 1rem;
+ padding-bottom: 0.5rem;
+ border-bottom: 1px dashed #4b5563; /* border-gray-600 */
+}
+
+.factionCardText {
+ color: #d1d5db; /* text-gray-300 */
+ font-size: 0.95rem;
+ line-height: 1.6;
+ margin-bottom: 1rem;
+ flex-grow: 1; /* Push button/link to bottom */
+}
+
+.factionCardLink {
+ display: inline-block;
+ margin-top: auto; /* Push link to bottom */
+ color: #fde047; /* text-yellow-300 */
+ text-decoration: underline;
+ text-underline-offset: 2px;
+ font-size: 0.9rem;
+ transition: color 0.2s ease;
+}
+
+.factionCardLink:hover {
+ color: #facc15; /* text-yellow-400 */
+}

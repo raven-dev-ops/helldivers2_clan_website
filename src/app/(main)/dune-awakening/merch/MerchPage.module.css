@@ -1,7 +1,7 @@
 /* src/app/(main)/helldivers-2/merch/MerchPage.module.css */
 
 /* --- Base Page Layout (Mirrors Creators Page) --- */
-.merchMainContainer {
+.pageContainer { /* Renamed for consistency */
     max-width: 1200px; /* Consistent max-width */
     margin: 0 auto;
     padding: 2rem 1rem 4rem; /* Adjusted top padding */
@@ -12,7 +12,7 @@
   }
   @media (min-width: 768px) {
       .merchMainContainer { padding: 3rem 1rem 4rem; } /* More top padding on wider screens */
-  }
+ }
   
   .merchPageTitle {
     font-size: clamp(1.8rem, 5vw, 2.25rem);
@@ -21,6 +21,7 @@
     text-align: center;
     color: #facc15; /* text-yellow-400 */
     border-bottom: 1px solid #374151; /* border-gray-700 */
+    margin-bottom: 1.5rem; /* Consistent bottom margin */
     padding-bottom: 0.75rem;
   }
   
@@ -39,14 +40,12 @@
   */
   
   /* --- Loading / Error / No Results (Mirrors Creators Page) --- */
-  .merchMessageText, /* Combined no products/loading text */
-  .loadingText {
+  .messageText { /* Combined no products/loading text */
     font-size: 1.125rem;
     color: #9ca3af; /* text-gray-400 */
   }
   
-  .merchMessageContainer, /* Renamed for consistency */
-  .loadingContainer {
+  .messageContainer { /* Renamed for consistency */
     text-align: center;
     padding: 4rem 1rem;
   }
@@ -54,7 +53,7 @@
   @keyframes pulse { 50% { opacity: 0.5; } }
   .loadingText { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
   
-  .merchErrorText { /* Keep specific error styling */
+  .errorText { /* Keep specific error styling */
     text-align: center;
     color: #fca5a5; /* text-red-300 */
     background-color: rgba(239, 68, 68, 0.15); /* Slightly stronger red bg */
@@ -71,18 +70,18 @@
   */
   
   /* --- Product Grid (Mirrors Creators Grid) --- */
-  .merchProductListContainer {
+  .productListContainer { /* Renamed for consistency */
     display: grid;
     gap: 1.5rem;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
-  @media (min-width: 640px) { .merchProductListContainer { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;} }
-  @media (min-width: 1024px) { .merchProductListContainer { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;} }
-  @media (min-width: 1280px) { .merchProductListContainer { gap: 2.5rem; } }
+  @media (min-width: 640px) { .productListContainer { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;} }
+  @media (min-width: 1024px) { .productListContainer { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem;} }
+  @media (min-width: 1280px) { .productListContainer { gap: 2.5rem; } }
   
   
   /* --- Product Card Link (Mirrors Creator Card) --- */
-  .merchProductCardLink {
+  .productCardLink { /* Renamed for consistency */
       display: flex;
       flex-direction: column;
       background-color: #1f2937; /* bg-gray-800 */
@@ -95,13 +94,13 @@
       transition: box-shadow 0.3s ease, transform 0.2s ease;
       height: 100%; /* Fill grid cell */
   }
-  .merchProductCardLink:hover {
+  .productCardLink:hover {
       box-shadow: 0 10px 15px rgba(0,0,0, 0.2);
       transform: translateY(-3px); /* Lift effect */
   }
   
   /* --- Image Area (Mirrors Embed Wrapper styling where applicable) --- */
-  .merchImageContainer {
+  .imageContainer { /* Renamed for consistency */
       position: relative;
       width: 100%;
       aspect-ratio: 1 / 1; /* Keep square for products */
@@ -110,12 +109,12 @@
       border-bottom: 1px solid #4b5563; /* border-gray-600 */
   }
   
-  .merchProductImage {
+  .productImage { /* Renamed for consistency */
       object-fit: cover;
       transition: transform 0.3s ease;
   }
-  .merchProductCardLink:hover .merchProductImage { transform: scale(1.05); }
-  
+  .productCardLink:hover .productImage { transform: scale(1.05); }
+
   .merchImagePlaceholder {
       display: flex;
       align-items: center;
@@ -129,16 +128,16 @@
   }
   
   /* --- Details Area (Mirrors Info Section) --- */
-  .merchDetailsContainer {
+  .detailsContainer { /* Renamed for consistency */
       padding: 1rem 1.5rem 1.5rem; /* Match infoSection padding */
       display: flex;
       flex-direction: column;
       flex-grow: 1; /* Match infoSection growth */
   }
-  
+
   /* No header section needed like creators */
-  
-  .merchProductName {
+
+  .productName { /* Renamed for consistency */
       /* Mirrors channelNameLink style */
       font-size: 1.25rem;
       font-weight: 600;
@@ -155,10 +154,10 @@
  line-clamp: 2; /* Standard property */
   }
   /* No hover needed for product name */
-  
+
   /* No channelUrlLink equivalent needed */
-  
-  .merchProductDescription {
+
+  .productDescription { /* Renamed for consistency */
       /* Mirrors descriptionText style */
       font-size: 0.875rem;
       line-height: 1.6;
@@ -180,8 +179,8 @@
     color: #9ca3af;
   }
   */
-  
-  .merchProductPrice {
+
+  .productPrice { /* Renamed for consistency */
       font-size: 1rem;
       font-weight: 700;
       color: #facc15; /* text-yellow-400 */
