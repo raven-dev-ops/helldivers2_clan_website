@@ -109,3 +109,10 @@
 .factionCardLink:hover {
  color: #facc15; /* text-yellow-400 */
 }
+
+.factionContentContainer {
+ padding: 1.5rem 1.25rem; /* Same padding as collapsibleContentExpanded */
+ background-color: #1f2937; /* bg-gray-800 - or a slightly lighter shade if needed */
+ border-radius: 0.5rem; /* Match outer border-radius if desired */
+ margin-top: 1rem; /* Space from the header if needed */
+}

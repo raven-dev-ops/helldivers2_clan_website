@@ -1,4 +1,4 @@
-// src/app/(main)/helldivers-2/creators/page.tsx
+// src/app/(main)/dune-awakening/creators/page.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -70,7 +70,7 @@ export default function CreatorsPage() {
   return (
     // Use the page container class from the module
     <main className={styles.pageContainer}>
-      <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
+      <h1 className={styles.pageTitle}>GPT DUNE: AWAKENING Creators</h1>
       <p className={styles.pageSubtitle}>
         Discover or connect with content creators in the GPT community.
       </p>

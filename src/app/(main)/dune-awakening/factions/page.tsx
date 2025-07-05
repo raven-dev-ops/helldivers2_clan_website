@@ -26,7 +26,6 @@ const duneFactions: Faction[] = [
         id: 'atreides',
         name: 'House Atreides',
         summary: 'The noble house valuing honor, loyalty, and justice.',
-        imageUrl: '/images/dune/atreides-market.jpg', // Placeholder - replace with actual path if available
         lore: `House Atreides is renowned for its moral integrity, honor, and loyalty, traits that have earned them great respect in the Imperium. Led by Duke Leto Atreides, this Great House has “served the Imperium for ten millennia” with a reputation for nobility and just rule. In the classic Dune lore, House Atreides comes from the ocean planet Caladan and values the loyalty of its people and allies. They have a longstanding feud with House Harkonnen, an ancient vendetta spanning thousands of years.\n\nIn Dune: Awakening’s alternate timeline, Lady Jessica (Leto’s concubine and a Bene Gesserit) bore a daughter (named Ariste) instead of a son (Paul), allowing Jessica to foresee and thwart Dr. Yueh’s treachery. As a result, Duke Leto survived the attempted coup on Arrakis, and House Atreides was not wiped out. Now the Atreides remain a major power on Arrakis, evenly matched in an ongoing war against the Harkonnens for the future of the planet. This conflict is formally a War of Assassins – a sanctioned, limited war of attrition and intrigue, rather than open battlefield slaughter. Lore-wise, Atreides forces are known for discipline and loyalty, and their leadership strives to do what is right for the people of Arrakis, earning goodwill among inhabitants.`,
         role: `In Dune: Awakening, House Atreides is one of the two player-alignable factions at launch. Players can choose to join the Atreides faction through the guild system, effectively becoming agents of House Atreides on Arrakis. The Atreides control territory (likely the city of Arrakeen or nearby regions) and are locked in the struggle for control of Spice against Harkonnen forces. Atreides presence provides a relative safe haven for players – expect Atreides-held settlements or outposts where the rule of law and honor is upheld.\n\nThe Atreides influence on Arrakis also means players aligned with them might encounter supportive NPCs (e.g. local villages trusting Atreides agents) and storylines involving defending the populace or forging alliances. Their political goal in-game is to win the upper hand both on the battlefield and in the Landsraad (the council of Great Houses). In the game’s dynamic events, Atreides leaders may call on players to complete objectives that sway other Houses’ support – for example, securing a large haul of Spice to win a Landsraad vote. Overall, Atreides represents the “protagonist” side of the conflict, emphasizing honor and protection.`,
         gameplay: `Choosing Atreides grants access to unique rewards and styles that reflect their noble ethos. Funcom has confirmed that aligning with a faction unlocks unique equipment, vehicles, and building pieces for players. For Atreides players, this likely means Atreides-themed armor and outfits (stylish, military gear in House colors), perhaps ornithopters or vehicles in Atreides design, and building components inspired by Atreides architecture (sleek, well-lit structures with decorative Caladanian aesthetics). The concept art suggests Atreides settlements feature open plazas and orderly markets, potentially translating to player bases.\n\nIn combat and strategy, Atreides faction might lend itself to defensive and supportive mechanics. Atreides gear might favor balanced protection and efficient weaponry. Players may receive more NPC assistance or easier diplomacy due to their reputation. House Atreides’ emphasis on strategy and coalition-building encourages forming player alliances (guilds) and coordinating large-scale events. The faction progression system allows players to rise in ranks, performing missions for Duke Leto or Lady Jessica and influencing faction-wide outcomes.`,
@@ -37,7 +36,6 @@ const duneFactions: Faction[] = [
         id: 'harkonnen',
         name: 'House Harkonnen',
         summary: 'The brutal house driven by ambition, fear, and ruthless tactics.',
-        imageUrl: '/images/dune/harkonnen-fortress.jpg', // Placeholder - replace with actual path if available
         lore: `In stark contrast to the Atreides, House Harkonnen embodies brutality, cunning, and ruthless ambition. Originating from the industrial world of Giedi Prime, the Harkonnens are infamous for cruel tyranny and using fear as a tool of control. Led by the devious Baron Vladimir Harkonnen, they have hated House Atreides for millennia.\n\nIn Dune: Awakening’s alternate history, the Harkonnens' attempt to annihilate House Atreides failed due to Lady Jessica’s intervention. The conflict now continues as a protracted War of Assassins. The Baron and his nephews (Rabban and Feyd-Rautha) remain intent on seizing Arrakis’s riches. Harkonnen forces employ terror tactics, brutal oppression, and tactical deceit (poisons, assassins, sabotage). Their dark aesthetic broadcasts their philosophy: fear is the mind-killer – of their enemies. Their past rule of Arrakis was marked by cruelty, earning Fremen hatred. They likely control Carthag or other strategic locations, occupying heavily fortified bases.`,
         role: `House Harkonnen is the second player-alignable faction. Players joining Harkonnen serve the Baron's interests: aggressive expansion, sabotage of Atreides, and amassing Spice by any means. They provide the antagonistic force, instigating conflict and raiding resources. Missions may involve assassinations, terrorizing villages, or seizing Spice sites. Harkonnen competes politically through intimidation and dirty tricks. They control heavily defended bases, potentially featuring las-cannons and ornithopter pads. Harkonnen NPC presence makes controlled regions dangerous for enemies but supportive for allies. Their harsh rule can victimize neutral parties, creating dynamic events.`,
         gameplay: `Aligning with Harkonnen grants intimidating faction gear: heavy, spiked battle armor, grim helmets, and high-power weaponry. Vehicles might favor armor and firepower. Base-building allows for dark, oppressive, fortified structures with potential defenses like cannons. Gameplay encourages PvP and combat. Quests may push players to raid or duel rivals. Political objectives might involve coercion or theft. The internal culture rewards ruthlessness (bonuses for kills/assassinations). However, this breeds dissent: "Harkonnen Traitors" (NPC enemies) exist, hinting at potential mutiny or faction infighting quests. Harkonnen gameplay is tailored for wielding brute force and fear.`,
@@ -216,6 +214,13 @@ const styles = {
         opacity: 1, padding: '1.5rem 1.25rem',
         transition: 'max-height 1s ease-in-out, opacity 0.6s ease-in 0.1s, padding 1s ease-in-out', // Slower transition for long content
     } as React.CSSProperties,
+    factionContentContainer: {
+        backgroundColor: 'var(--color-surface, #1f2937)', // Use the same surface color as other sections
+        padding: '1.5rem', // Add padding to the content
+        borderRadius: 'var(--border-radius-md, 0.5rem)', // Match the outer container radius
+        marginTop: '1rem', // Add some space between the header and content
+        border: '1px solid var(--color-border-alt, #4b5563)', // Add a border
+    } as React.CSSProperties,
     // Content inside collapsible section
     subHeading: {
         fontSize: '1.15rem', fontWeight: 600, color: 'var(--color-text-primary, #e0e0e0)',
@@ -338,35 +343,33 @@ export default function DuneFactionsPage() {
                             id={`content-${faction.id}`}
                             style={{ ...styles.collapsibleContent, ...(isExpanded ? styles.collapsibleContentExpanded : {}) }}
                         >
-                            {faction.imageUrl && (
-                                <Image
-                                    src={faction.imageUrl}
-                                    alt={`${faction.name} illustrative image`}
-                                    width={600} // Provide appropriate default width
-                                    height={338} // Provide appropriate default height (16:9 ratio example)
-                                    style={styles.factionImage}
-                                    priority={faction.id === 'atreides' || faction.id === 'harkonnen'} // Prioritize loading images for main factions
-                                    unoptimized={faction.imageUrl.startsWith('/')} // Consider if using external URLs later
-                                />
-                            )}
-                            <h3 style={styles.subHeading}>Lore & Background</h3>
-                            {renderParagraph(faction.lore)}
+                            {/* Add the new container div */}
+                            <div style={styles.factionContentContainer}>
+                                {faction.imageUrl && (
+                                    <Image
+                                        src={faction.imageUrl}
+                                        alt={`${faction.name} illustrative image`}
+                                        width={600} // Provide appropriate default width
+                                        height={338} // Provide appropriate default height (16:9 ratio example)
+                                        style={styles.factionImage}
+                                        priority={faction.id === 'atreides' || faction.id === 'harkonnen'} // Prioritize loading images for main factions
+                                        unoptimized={faction.imageUrl.startsWith('/')} // Consider if using external URLs later
+                                    />
+                                )}
+                                <h3 style={styles.subHeading}>Lore & Background</h3>
+                                {renderParagraph(faction.lore)}
 
-                            <h3 style={styles.subHeading}>Role in the Game</h3>
-                            {renderParagraph(faction.role)}
+                                <h3 style={styles.subHeading}>Role in the Game</h3>
+                                {renderParagraph(faction.role)}
 
-                            <h3 style={styles.subHeading}>Gameplay Implications</h3>
-                            {renderParagraph(faction.gameplay)}
+                                <h3 style={styles.subHeading}>Gameplay Implications</h3>
+                                {renderParagraph(faction.gameplay)}
 
-                            <h3 style={styles.subHeading}>Ideal Playstyle</h3>
-                            {renderParagraph(faction.idealPlaystyle)}
+                                <h3 style={styles.subHeading}>Ideal Playstyle</h3>
+                                {renderParagraph(faction.idealPlaystyle)}
 
-                            {faction.comparison && (
-                                <>
-                                    <h3 style={styles.subHeading}>Comparison</h3>
-                                    {renderParagraph(faction.comparison)}
-                                </>
-                            )}
+                                {faction.comparison && (<><h3 style={styles.subHeading}>Comparison</h3>{renderParagraph(faction.comparison)}</>)}
+                            </div>
                         </div>
                     </div>
                 );

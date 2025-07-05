@@ -123,7 +123,7 @@ export default async function DuneMerchPage() {
   }
 
   return (
-    <main className={styles.pageContainer}>
+    <div className={styles.pageContainer}> {/* Changed main to div */}
       <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Merch</h1>
 
       {errorOccurred ? (
@@ -132,7 +132,7 @@ export default async function DuneMerchPage() {
         <div className={styles.merchMessageText}>No products available in this collection.</div>
       ) : (
         <div className={styles.merchProductListContainer}>
-          {products.map((product, index) => {
+          {products.map((product, index) => { // This maps over products, each result is a product card
             let formattedPrice = '';
             const firstVariant = product.variants?.[0];
             if (firstVariant?.unitPrice && typeof firstVariant.unitPrice.value === 'number') {
@@ -196,6 +196,6 @@ export default async function DuneMerchPage() {
           })}
         </div>
       )}
-    </main>
+    </div> // Changed main to div
   );
 }

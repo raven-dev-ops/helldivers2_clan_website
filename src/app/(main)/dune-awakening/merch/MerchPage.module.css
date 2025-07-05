@@ -10,6 +10,13 @@
     min-height: 100vh;
     box-sizing: border-box;
   }
+
+/* Added: Main content container for background layer */
+ .merchContentContainer {
+    background-color: #1f2937; /* bg-gray-800 - Use a darker background for the content layer */
+    border-radius: 0.5rem; /* rounded-lg */
+    padding: 1.5rem; /* Add padding inside the container */
+ }
   @media (min-width: 768px) {
       .merchMainContainer { padding: 3rem 1rem 4rem; } /* More top padding on wider screens */
  }
