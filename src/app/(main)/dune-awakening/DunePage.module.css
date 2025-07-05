@@ -277,7 +277,7 @@
 }
 .factionContentContainer {
   padding: 1.5rem 1.25rem;
-  background-color: #1f2937;
+  background-color: #2d3a47; /* Slightly darker background for distinction */
   border-radius: 0.5rem;
   margin-top: 1rem;
 }
@@ -298,6 +298,21 @@
   text-align: center;
   color: #bdae93;
   margin-bottom: 2.5rem;
+  max-width: 70ch;
+  line-height: 1.7;
+  font-size: 1.1rem;
+}
+@media (min-width: 768px) {
+  .introText {
+    font-size: 1.25rem;
+  }
+}
+
+/* Collapsible content styles */
+.collapsibleContent {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
   max-width: 65ch;
   line-height: 1.6;
   font-size: 1rem;
@@ -309,4 +324,11 @@
   color: #8a7e68;
   margin-top: 3rem;
   font-style: italic;
+}
+.collapsibleContentExpanded {
+  max-height: 20000px; /* A large value to ensure content is visible */
+  overflow: visible;
+  opacity: 1;
+  transition: max-height 1s ease-in-out, opacity 0.6s ease-in 0.1s; /* Match duration with padding removed */
+  padding-top: 1rem; /* Add back padding for expanded state if removed */
 }
