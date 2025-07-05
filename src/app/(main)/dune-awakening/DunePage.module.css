@@ -1,310 +1,312 @@
-/* Or src/app/(main)/dune-awakening/DunePage.module.css */
-
+/* --- Base Page Layout --- */
 .pageContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 3rem 1rem 4rem;
-    color: #e5e7eb;
-    background-color: #111827;
-    min-height: 100vh;
-    box-sizing: border-box;
-  }
-
-/* --- YouTube Carousel --- */
-.youtubeCarouselContainer {
-    margin-bottom: 3rem;
-    max-width: 1024px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem 4rem;
+  color: #e5e7eb;
+  background-color: #111827;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
-.youtubeSlide {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    border-radius: 0.75rem;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-    border: 1px solid #374151;
-    background-color: #111827;
-}
-.youtubeIframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-/* --- Reviews Section --- */
-.reviewSectionContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    margin-top: 3rem;
-}
-.reviewCardsWrapper {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-    justify-content: center;
-    align-items: stretch;
-    flex-wrap: wrap;
-    min-height: 190px;
-    opacity: 1;
-    transition: opacity 0.6s ease-in-out;
-  }
-.reviewCardsWrapperHidden {
-    opacity: 0;
-  }
-.individualReviewCard {
-    flex: 1 1 300px;
-    max-width: 350px;
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    background-color: #1f2937;
-    border-radius: 0.5rem;
-    border: 1px solid #374151;
-    text-align: left;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  }
-.reviewStars {
-    display: flex;
-    gap: 0.25rem;
-    color: #facc15;
-    margin-bottom: 0.5rem;
-  }
-.reviewTitle {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-  }
-.reviewText {
-    font-size: 0.85rem;
-    color: #d1d5db;
-    font-style: italic;
-    margin-bottom: 0.75rem;
-    line-height: 1.5;
-    flex-grow: 1;
-    white-space: pre-line;
-    position: relative;
-  }
-.reviewAuthor {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    text-align: right;
-    margin-top: auto;
-    padding-top: 0.5rem;
-  }
-.disboardLinkBottom {
-    display: block;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #fde047;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    margin-top: 0.5rem;
-    transition: color 0.2s ease;
-  }
-.disboardLinkBottom:hover {
-    color: #facc15;
-  }
-
-/* --- Discord Icon Link --- */
-.discordIconLink {
-    display: inline-block;
-    margin-left: 0.75rem;
-    vertical-align: middle;
-    color: #facc15;
-    transition: color 0.2s ease, transform 0.2s ease;
-  }
-.discordIconLink:hover {
-    color: #fde047;
-    transform: scale(1.1);
-  }
-.discordIcon {
-    width: 1em;
-    height: 1em;
-  }
 
 /* --- General Sections --- */
 .section {
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background-color: #1f2937;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    border: 1px solid #374151;
-  }
+  margin-bottom: 3rem;
+  padding: 2rem;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 1px solid #374151;
+}
+
 .sectionTitle {
-    font-size: clamp(1.5rem, 4vw, 1.8rem);
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: #facc15;
-    border-bottom: 1px solid #4b5563;
-    padding-bottom: 0.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #facc15;
+  border-bottom: 1px solid #4b5563;
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .paragraph {
-    color: #d1d5db;
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-    font-size: 0.95rem;
-  }
-  @media (min-width: 768px) { .paragraph { font-size: 1rem; } }
+  color: #d1d5db;
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+@media (min-width: 768px) {
+  .paragraph { font-size: 1rem; }
+}
 
 .strongText {
-    font-weight: 600;
-    color: #facc15;
-  }
+  font-weight: 600;
+  color: #facc15;
+}
+
 .link {
-    color: #fde047;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color 0.2s ease;
-  }
+  color: #fde047;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
 .link:hover {
-    color: #facc15;
-  }
+  color: #facc15;
+}
 
-/* --- Code Block (for challenge details) --- */
-.codeBlock {
-    background-color: #111827;
-    border: 1px solid #374151;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    font-size: 0.9rem;
-    font-family: monospace;
-    white-space: pre-wrap;
-    overflow-x: auto;
-    color: #d1d5db;
-    line-height: 1.5;
-  }
-.inlineCode {
-    background-color: #374151;
-    border: 1px solid #4b5563;
-    border-radius: 0.25rem;
-    padding: 0.15em 0.4em;
-    font-size: 0.85em;
-    font-family: monospace;
-    color: #e5e7eb;
-  }
-
-
-/* --- Headings within sections --- */
 .subHeading {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #ffffff;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-/* Re-use subHeading style for challenge level titles */
-.challengeLevelTitle {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #facc15;
-    margin: 0;
-  }
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
 
+/* --- YouTube Carousel (if needed) --- */
+.youtubeCarouselContainer {
+  margin-bottom: 3rem;
+  max-width: 1024px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 2rem;
+}
+.youtubeSlide {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  border: 1px solid #374151;
+  background-color: #111827;
+}
+.youtubeIframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* --- Review Section (Optional) --- */
+.reviewSectionContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.reviewCardsWrapper {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  min-height: 190px;
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
+.reviewCardsWrapperHidden {
+  opacity: 0;
+}
+.individualReviewCard {
+  flex: 1 1 300px;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.25rem;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  border: 1px solid #374151;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.reviewStars {
+  display: flex;
+  gap: 0.25rem;
+  color: #facc15;
+  margin-bottom: 0.5rem;
+}
+.reviewTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+}
+.reviewText {
+  font-size: 0.85rem;
+  color: #d1d5db;
+  font-style: italic;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  flex-grow: 1;
+  white-space: pre-line;
+  position: relative;
+}
+.reviewAuthor {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: right;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+.disboardLinkBottom {
+  display: block;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #fde047;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-top: 0.5rem;
+  transition: color 0.2s ease;
+}
+.disboardLinkBottom:hover {
+  color: #facc15;
+}
+
+/* --- Discord Icon Link --- */
+.discordIconLink {
+  display: inline-block;
+  margin-left: 0.75rem;
+  vertical-align: middle;
+  color: #facc15;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.discordIconLink:hover {
+  color: #fde047;
+  transform: scale(1.1);
+}
+.discordIcon {
+  width: 1em;
+  height: 1em;
+}
+
+/* --- Code Block --- */
+.codeBlock {
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  font-family: monospace;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  color: #d1d5db;
+  line-height: 1.5;
+}
+.inlineCode {
+  background-color: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 0.25rem;
+  padding: 0.15em 0.4em;
+  font-size: 0.85em;
+  font-family: monospace;
+  color: #e5e7eb;
+}
 
 /* --- Lists --- */
 .ruleList {
-    list-style-type: decimal;
-    padding-left: 1.75rem;
-    margin-bottom: 1.5rem;
-    color: #d1d5db;
-  }
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: #d1d5db;
+}
 .ruleListItem {
-    margin-bottom: 0.6rem;
-    line-height: 1.6;
-  }
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
+}
 
-/* --- Styles for Challenge Level Expanders --- */
-.challengeLevelContainer {
-    border: 1px solid #4b5563;
-    border-radius: 0.375rem;
-    margin-bottom: 1rem;
-    background-color: #374151;
-    overflow: hidden;
-  }
-.challengeHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 1.25rem;
-    cursor: pointer;
-    background-color: #4b5563;
-    border-bottom: 1px solid #374151;
-    transition: background-color 0.2s ease, border-color 0.3s ease;
-  }
-.challengeHeader.noBorderBottom {
-    border-bottom-color: transparent;
-  }
-.challengeHeader:hover {
-    background-color: #525f76;
-  }
+/* --- Expander & Card Patterns (for Factions etc) --- */
+.factionCardContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
 
+.factionCard {
+  flex: 1 1 320px;
+  max-width: 430px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  margin-bottom: 2rem;
+}
+.factionCardTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #facc15;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #4b5563;
+}
+.factionSummary {
+  color: #b0b0b0;
+  font-size: 0.96rem;
+  font-style: italic;
+  margin-bottom: 1.1rem;
+}
+.factionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
 .expandIcon {
-    font-size: 1.1rem;
-    color: #d1d5db;
-    transition: transform 0.3s ease;
-    flex-shrink: 0;
-    margin-left: 1rem;
-  }
+  font-size: 1.15rem;
+  color: #d1d5db;
+  transition: transform 0.3s ease;
+  margin-left: 1rem;
+}
 .expandIcon.rotated {
-    transform: rotate(180deg);
-  }
+  transform: rotate(180deg);
+}
+.factionContentContainer {
+  padding: 1.5rem 1.25rem;
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
 
-.challengeDetailsContent {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: max-height 0.5s ease-out, opacity 0.4s ease-in, padding 0.5s ease-out;
-    padding: 0 1.25rem;
-    background-color: #374151;
-  }
-.challengeDetailsContent.expanded {
-    max-height: 1000px;
-    opacity: 1;
-    padding: 1rem 1.25rem 1.25rem;
-    transition: max-height 0.6s ease-in-out, opacity 0.5s ease-in 0.1s, padding 0.6s ease-in-out;
-  }
-
-  .pageTitle {
-    font-size: clamp(1.8rem, 5vw, 2.25rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    text-align: center;
-    color: #e59f0d; /* Dune-like Orange/Gold */
-    border-bottom: 1px solid #4a3a22; /* Darker Dune border */
-    padding-bottom: 0.75rem;
-    max-width: 800px;
-    width: 100%;
-  }
-  
-  .introText {
-    text-align: center;
-    color: #bdae93; /* Sandy text color */
-    margin-bottom: 2.5rem;
-    max-width: 65ch;
-    line-height: 1.6;
-    font-size: 1rem;
-  }
-  @media (min-width: 768px) { .introText { font-size: 1.125rem; } }
-  
-  .placeholderText {
-    text-align: center;
-    font-size: 1.125rem;
-    color: #8a7e68; /* Muted sandy color */
-    margin-top: 3rem;
-    font-style: italic;
-  }
+/* --- Dune Themed Specials --- */
+.pageTitle {
+  font-size: clamp(1.8rem, 5vw, 2.25rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #e59f0d;
+  border-bottom: 1px solid #4a3a22;
+  padding-bottom: 0.75rem;
+  max-width: 800px;
+  width: 100%;
+}
+.introText {
+  text-align: center;
+  color: #bdae93;
+  margin-bottom: 2.5rem;
+  max-width: 65ch;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+@media (min-width: 768px) { .introText { font-size: 1.125rem; } }
+.placeholderText {
+  text-align: center;
+  font-size: 1.125rem;
+  color: #8a7e68;
+  margin-top: 3rem;
+  font-style: italic;
+}
