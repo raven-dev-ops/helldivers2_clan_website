@@ -1,21 +1,33 @@
-// src/app/(main)/dune-awakening/merch/page.tsx
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-// Assuming you have a MerchPage.module.css in this directory, or adjust path
 import styles from './MerchPage.module.css';
 
-// ✅ Force dynamic so build never tries to statically prerender
+// ✅ Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
 
-// --- Type Definitions ---
+// --- Types ---
 type ProductVariant = {
-  id: string; name?: string; options?: { id: string; name: string }[];
-  unitPrice: { value: number; currency: string; };
+  id: string;
+  name?: string;
+  options?: { id: string; name: string }[];
+  unitPrice: { value: number; currency: string };
 };
-type ProductImage = { id: string; url: string; altText?: string; };
-type Product = { id: string; name: string; description: string; slug: string; images: ProductImage[]; variants: ProductVariant[]; };
-type Collection = { id: string; name: string; slug: string; };
+
+type ProductImage = { id: string; url: string; altText?: string };
+
+type Product = {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
+  images: ProductImage[];
+  variants: ProductVariant[];
+};
+
+type Collection = { id: string; name: string; slug: string };
 
 interface RawProductData {
   id?: string;
@@ -30,12 +42,11 @@ interface RawProductData {
 function decodeHtmlEntities(text: string): string {
   if (typeof text !== 'string') return '';
   return text
-    .replace(/&/g, '&')
-    .replace(/</g, '<')
-    .replace(/>/g, '>')
-    .replace(/"/g, '"')
-    .replace(/'/g, "'")
-    .replace(/'/g, "'");
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
 }
 
 // --- Server Component ---
@@ -46,119 +57,104 @@ export default async function DuneMerchPage() {
   let errorMessage = 'Failed to load products.';
 
   if (!token) {
-    console.error('Error: STOREFRONT_API_TOKEN environment variable is not set.');
+    console.error('❌ STOREFRONT_API_TOKEN not set.');
     errorOccurred = true;
-    errorMessage = 'Store configuration error. Please contact support.';
+    errorMessage = 'Store config error. Please contact support.';
   }
 
   if (!errorOccurred) {
     try {
-      console.log('Fetching collections...');
+      console.log('🔍 Fetching collections...');
       const colRes = await fetch(
         `https://storefront-api.fourthwall.com/v1/collections?storefront_token=${token}`,
         { next: { revalidate: 3600 } }
       );
       if (!colRes.ok) {
-        const errorBody = await colRes.text();
-        console.error(`Collections fetch failed: ${colRes.status} ${colRes.statusText}`, errorBody);
+        console.error(`❌ Collections fetch failed: ${colRes.status}`);
         throw new Error(`Collections fetch failed: ${colRes.status}`);
       }
       const colData = await colRes.json();
       const collections: Collection[] = colData.results || [];
-      console.log(`Found ${collections.length} collections.`);
+      console.log(`✅ Found ${collections.length} collections.`);
 
-      const targetCollectionSlug = 'all'; // Or change to your specific Dune collection slug
-      const targetCollection = collections.find(col => col.slug === targetCollectionSlug) || (collections.length > 0 ? collections[0] : null);
+      const targetCollectionSlug = 'all'; // Or set your specific slug
+      const targetCollection = collections.find(c => c.slug === targetCollectionSlug) || collections[0] || null;
 
       if (!targetCollection) {
-        console.warn(`Target collection '${targetCollectionSlug}' not found or store has no collections.`);
+        console.warn(`⚠️ No collection found.`);
       } else {
-        console.log(`Fetching products for collection: ${targetCollection.name} (slug: ${targetCollection.slug})...`);
+        console.log(`🔍 Fetching products for: ${targetCollection.name}`);
         const prodRes = await fetch(
           `https://storefront-api.fourthwall.com/v1/collections/${targetCollection.slug}/products?storefront_token=${token}`,
           { next: { revalidate: 3600 } }
         );
         if (!prodRes.ok) {
-          const errorBody = await prodRes.text();
-          console.error(`Products fetch failed: ${prodRes.status} ${prodRes.statusText}`, errorBody);
+          console.error(`❌ Products fetch failed: ${prodRes.status}`);
           throw new Error(`Products fetch failed: ${prodRes.status}`);
         }
-        const prodData = await prodRes.json();
 
+        const prodData = await prodRes.json();
         products = (prodData.results || []).map((p: RawProductData): Product => ({
           id: p?.id || `unknown-${Math.random().toString(36).substring(2, 9)}`,
           name: p?.name || 'Unnamed Product',
           description: p?.description || '',
           slug: p?.slug || '',
-          images: Array.isArray(p?.images) ? p.images.map((img: any) => ({
-            id: img?.id || `img-${Math.random().toString(36).substring(2, 9)}`,
-            url: img?.url || '',
-            altText: img?.altText || ''
-          })).filter(img => img.url) : [],
-          variants: Array.isArray(p?.variants) ? p.variants.map((v: any) => ({
-            id: v?.id || `var-${Math.random().toString(36).substring(2, 9)}`,
-            name: v?.name,
-            options: v?.options,
-            unitPrice: {
-              value: typeof v?.unitPrice?.value === 'number' ? v.unitPrice.value : 0,
-              currency: v?.unitPrice?.currency || 'USD'
-            }
-          })).filter(v => v.unitPrice.value > 0) : [],
-        }))
-        .filter((p: Product): p is Product => !!p.slug && p.variants.length > 0);
+          images: Array.isArray(p?.images)
+            ? p.images.map((img: any) => ({
+                id: img?.id || `img-${Math.random().toString(36).substring(2, 9)}`,
+                url: img?.url || '',
+                altText: img?.altText || ''
+              })).filter(img => img.url)
+            : [],
+          variants: Array.isArray(p?.variants)
+            ? p.variants.map((v: any) => ({
+                id: v?.id || `var-${Math.random().toString(36).substring(2, 9)}`,
+                name: v?.name,
+                options: v?.options,
+                unitPrice: {
+                  value: typeof v?.unitPrice?.value === 'number' ? v.unitPrice.value : 0,
+                  currency: v?.unitPrice?.currency || 'USD'
+                }
+              })).filter(v => v.unitPrice.value > 0)
+            : [],
+        })).filter((p: Product): p is Product => !!p.slug && p.variants.length > 0);
 
-        console.log(`Fetched ${products.length} valid products.`);
+        console.log(`✅ Fetched ${products.length} valid products.`);
       }
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Error fetching Fourthwall products:', err.message);
-        errorMessage = `Failed to load products due to a network or API error. (Details: ${err.message})`;
-      } else {
-        console.error('An unexpected error occurred:', err);
-        errorMessage = 'An unexpected error occurred while loading products.';
-      }
+      console.error('❌ Fetch error:', err);
       errorOccurred = true;
-      products = [];
+      errorMessage = 'An error occurred while loading products.';
     }
   }
 
   return (
-    <div className={styles.pageContainer}> {/* Changed main to div */}
+    <div className={styles.pageContainer}>
       <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Merch</h1>
 
       {errorOccurred ? (
         <div className={styles.merchErrorText}>{errorMessage}</div>
-      ) : products.length === 0 && !errorOccurred ? (
-        <div className={styles.merchMessageText}>No products available in this collection.</div>
+      ) : products.length === 0 ? (
+        <div className={styles.merchMessageText}>No products found.</div>
       ) : (
         <div className={styles.merchProductListContainer}>
-          {products.map((product, index) => { // This maps over products, each result is a product card
+          {products.map((product, index) => {
+            const firstVariant = product.variants[0];
+            const priceInfo = firstVariant?.unitPrice;
             let formattedPrice = '';
-            const firstVariant = product.variants?.[0];
-            if (firstVariant?.unitPrice && typeof firstVariant.unitPrice.value === 'number') {
-              const priceInfo = firstVariant.unitPrice;
-              const priceValue = priceInfo.value;
+            if (priceInfo) {
               try {
                 formattedPrice = new Intl.NumberFormat('en-US', {
                   style: 'currency',
-                  currency: priceInfo.currency || 'USD',
-                }).format(priceValue);
+                  currency: priceInfo.currency,
+                }).format(priceInfo.value);
               } catch {
-                formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency || 'USD'}`;
+                formattedPrice = `$${priceInfo.value.toFixed(2)} ${priceInfo.currency}`;
               }
             }
 
             const imageUrl = product.images?.[0]?.url;
-            const imageAlt = product.images?.[0]?.altText || product.name || 'Product image';
-            let cleanDescription = 'No description available.';
-            if (product.description) {
-              try {
-                cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '');
-              } catch (e) {
-                console.warn("Could not decode/clean description for", product.name, e);
-                cleanDescription = product.description.replace(/<[^>]*>?/gm, '');
-              }
-            }
+            const cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '') || 'No description available.';
 
             return (
               <Link
@@ -167,13 +163,13 @@ export default async function DuneMerchPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.merchProductCardLink}
-                title={`View ${product.name} in store`}
+                title={`View ${product.name}`}
               >
                 <div className={styles.merchImageContainer}>
                   {imageUrl ? (
                     <Image
                       src={imageUrl}
-                      alt={imageAlt}
+                      alt={product.images?.[0]?.altText || product.name || 'Product'}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className={styles.merchProductImage}
@@ -185,7 +181,7 @@ export default async function DuneMerchPage() {
                   )}
                 </div>
                 <div className={styles.merchDetailsContainer}>
-                  <h2 className={styles.merchProductName} title={product.name}>{product.name}</h2>
+                  <h2 className={styles.merchProductName}>{product.name}</h2>
                   <p className={styles.merchProductDescription}>{cleanDescription}</p>
                   {formattedPrice && (
                     <p className={styles.merchProductPrice}>{formattedPrice}</p>
@@ -196,6 +192,6 @@ export default async function DuneMerchPage() {
           })}
         </div>
       )}
-    </div> // Changed main to div
+    </div>
   );
 }
