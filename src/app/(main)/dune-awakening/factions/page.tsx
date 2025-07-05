@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import styles from "./FactionsPage.module.css";
 
 // --- Faction Type ---
 interface Faction {
@@ -120,123 +121,6 @@ const choosingFactionAdvice = {
   summary: `In summary, every faction and organization contributes to a living Arrakis...`,
 };
 
-// --- Styles (copy your DunePage.module.css structure for final implementation) ---
-const styles = {
-  pageContainer: {
-    maxWidth: "1200px",
-    margin: "0 auto",
-    padding: "2rem 1rem 4rem",
-    color: "#e0e0e0",
-    fontFamily: "sans-serif",
-  },
-  section: {
-    marginBottom: "2.5rem",
-    padding: "1.5rem",
-    backgroundColor: "#1f2937",
-    borderRadius: "0.75rem",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-    border: "1px solid #374151",
-  } as React.CSSProperties,
-  sectionTitle: {
-    fontSize: "clamp(1.6rem, 4vw, 2rem)",
-    fontWeight: 700,
-    marginBottom: "1.5rem",
-    color: "#f9a825",
-    borderBottom: "1px solid #374151",
-    paddingBottom: "0.75rem",
-  } as React.CSSProperties,
-  paragraph: {
-    marginBottom: "1.25rem",
-    lineHeight: 1.7,
-    whiteSpace: "pre-line",
-    color: "#b0b0b0",
-  } as React.CSSProperties,
-  strongText: {
-    fontWeight: 600,
-    color: "#e0e0e0",
-  } as React.CSSProperties,
-  factionSection: {
-    marginBottom: "1.5rem",
-    border: "1px solid #4b5563",
-    borderRadius: "0.5rem",
-    backgroundColor: "#273140",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-  } as React.CSSProperties,
-  factionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "1rem 1.25rem",
-    cursor: "pointer",
-    backgroundColor: "#1f2937",
-    borderBottom: "1px solid #4b5563",
-    transition: "background-color 0.2s",
-  } as React.CSSProperties,
-  factionTitle: {
-    fontSize: "1.3rem",
-    fontWeight: 600,
-    color: "#f9a825",
-    margin: 0,
-  } as React.CSSProperties,
-  factionSummary: {
-    fontSize: "0.9rem",
-    color: "#b0b0b0",
-    marginTop: "0.25rem",
-    fontStyle: "italic",
-    marginBottom: 0,
-  } as React.CSSProperties,
-  expandIcon: {
-    fontSize: "1.2rem",
-    color: "#b0b0b0",
-    transition: "transform 0.3s ease",
-  } as React.CSSProperties,
-  expandIconRotated: {
-    transform: "rotate(180deg)",
-  } as React.CSSProperties,
-  collapsibleContent: {
-    maxHeight: "0",
-    opacity: 0,
-    overflow: "hidden",
-    transition: "max-height 0.5s ease-out, opacity 0.4s ease-in, padding 0.5s ease-out",
-    padding: "0 1.25rem",
-  } as React.CSSProperties,
-  collapsibleContentExpanded: {
-    maxHeight: "5000px",
-    opacity: 1,
-    padding: "1.5rem 1.25rem",
-    transition: "max-height 0.8s, opacity 0.6s, padding 0.8s",
-  } as React.CSSProperties,
-  factionContentContainer: {
-    backgroundColor: "#1f2937",
-    padding: "1.5rem",
-    borderRadius: "0.5rem",
-    marginTop: "1rem",
-    border: "1px solid #4b5563",
-    boxShadow: "0 2px 6px rgba(0,0,0,0.10)",
-  } as React.CSSProperties,
-  subHeading: {
-    fontSize: "1.15rem",
-    fontWeight: 600,
-    color: "#e0e0e0",
-    marginTop: "1.5rem",
-    marginBottom: "0.75rem",
-    borderBottom: "1px dashed #4b5563",
-    paddingBottom: "0.4rem",
-  } as React.CSSProperties,
-  choiceAdviceParagraph: {
-    marginBottom: "1rem",
-    lineHeight: 1.7,
-    whiteSpace: "pre-line",
-    color: "#b0b0b0",
-  } as React.CSSProperties,
-  choiceAdviceHeading: {
-    fontWeight: 700,
-    color: "#e0e0e0",
-    display: "block",
-    marginBottom: "0.25rem",
-  } as React.CSSProperties,
-};
-
 // --- Main Component ---
 export default function DuneFactionsPage() {
   const [expandedFactions, setExpandedFactions] = useState<Record<string, boolean>>({});
@@ -247,12 +131,12 @@ export default function DuneFactionsPage() {
   const renderParagraph = (text?: string) => {
     if (!text) return null;
     return (
-      <p style={styles.paragraph}>
-        {text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
+      <p className={styles.paragraph}>
+        {text.split(/(\*\*.*?\*\*)/g).map((part, i) => // Split by bold markers
           part.startsWith("**") && part.endsWith("**") ? (
-            <strong key={i} style={styles.strongText}>
-              {part.slice(2, -2)}
-            </strong>
+          <strong key={i} className={styles.strongText}>
+            {part.slice(2, -2)}
+          </strong>
           ) : (
             part
           )
@@ -262,10 +146,10 @@ export default function DuneFactionsPage() {
   };
 
   const renderChoiceAdvice = (text: string) => (
-    <p style={styles.choiceAdviceParagraph}>
-      {text.split(/(\*\*.*?\*\*)/g).map((part, i) =>
+    <p className={styles.choiceAdviceParagraph}>
+      {text.split(/(\*\*.*?\*\*)/g).map((part, i) => // Split by bold markers
         part.startsWith("**") && part.endsWith("**") ? (
-          <span key={i} style={styles.choiceAdviceHeading}>
+          <span key={i} className={styles.choiceAdviceHeading}>
             {part.slice(2, -2)}
           </span>
         ) : (
@@ -276,45 +160,40 @@ export default function DuneFactionsPage() {
   );
 
   return (
-    <div style={styles.pageContainer}>
-      <section style={styles.section}>
-        <h1 style={styles.sectionTitle}>Factions of Dune: Awakening</h1>
-        <p style={styles.paragraph}>
-          Dune: Awakening is set in an alternate Dune timeline, creating a unique political landscape on Arrakis...
+    <div className={styles.pageContainer}>
+      <section className={styles.section}>
+        <h1 className={styles.sectionTitle}>Factions of Dune: Awakening</h1>
+        <p className={styles.paragraph}>
+          Dune: Awakening is set in an alternate Dune timeline, creating a unique political landscape on Arrakis... {/* Introductory paragraph */}
         </p>
       </section>
-
+      {/* Map over each faction to create a collapsible section */}
       {duneFactions.map((faction) => {
         const expanded = expandedFactions[faction.id];
         return (
-          <div key={faction.id} style={styles.factionSection}>
+          <div key={faction.id} className={styles.factionSection}>
             <div
-              style={styles.factionHeader}
+              className={styles.factionHeader}
               onClick={() => toggleFactionExpansion(faction.id)}
               role="button"
               tabIndex={0}
-              aria-expanded={expanded}
+              aria-expanded={!!expanded}
               aria-controls={`content-${faction.id}`}
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleFactionExpansion(faction.id)}
             >
               <div>
-                <h2 style={styles.factionTitle}>{faction.name}</h2>
-                <p style={styles.factionSummary}>{faction.summary}</p>
+                <h2 className={styles.factionTitle}>{faction.name}</h2> {/* Faction name as title */}
+                <p className={styles.factionSummary}>{faction.summary}</p> {/* Faction summary */}
               </div>
               {expanded ? (
-                <FaChevronUp style={{ ...styles.expandIcon, ...styles.expandIconRotated }} />
-              ) : (
-                <FaChevronDown style={styles.expandIcon} />
-              )}
+                <FaChevronUp className={`${styles.expandIcon} ${styles.expandIconRotated}`} aria-label="Collapse section" />
+              ) : (<FaChevronDown className={styles.expandIcon} aria-label="Expand section" />)}
             </div>
             <div
               id={`content-${faction.id}`}
-              style={{
-                ...styles.collapsibleContent,
-                ...(expanded ? styles.collapsibleContentExpanded : {}),
-              }}
+              className={`${styles.collapsibleContent} ${expanded ? styles.collapsibleContentExpanded : ''}`}
             >
-              <div style={styles.factionContentContainer}>
+              <div className={styles.factionContentContainer}>
                 {faction.imageUrl && (
                   <Image
                     src={faction.imageUrl}
@@ -323,17 +202,17 @@ export default function DuneFactionsPage() {
                     height={338}
                   />
                 )}
-                <h3 style={styles.subHeading}>Lore & Background</h3>
+                <h3 className={styles.subHeading}>Lore & Background</h3>
                 {renderParagraph(faction.lore)}
-                <h3 style={styles.subHeading}>Role in the Game</h3>
+                <h3 className={styles.subHeading}>Role in the Game</h3>
                 {renderParagraph(faction.role)}
-                <h3 style={styles.subHeading}>Gameplay Implications</h3>
+                <h3 className={styles.subHeading}>Gameplay Implications</h3>
                 {renderParagraph(faction.gameplay)}
-                <h3 style={styles.subHeading}>Ideal Playstyle</h3>
+                <h3 className={styles.subHeading}>Ideal Playstyle</h3>
                 {renderParagraph(faction.idealPlaystyle)}
                 {faction.comparison && (
                   <>
-                    <h3 style={styles.subHeading}>Comparison</h3>
+                    <h3 className={styles.subHeading}>Comparison</h3>
                     {renderParagraph(faction.comparison)}
                   </>
                 )}
@@ -343,17 +222,15 @@ export default function DuneFactionsPage() {
         );
       })}
 
-      <section style={styles.section}>
-        <h2 style={styles.sectionTitle}>{choosingFactionAdvice.title}</h2>
-        <p style={styles.paragraph}>{choosingFactionAdvice.introduction}</p>
+      <section className={styles.section}>
+        <h2 className={styles.sectionTitle}>{choosingFactionAdvice.title}</h2>
+        <p className={styles.paragraph}>{choosingFactionAdvice.introduction}</p>
         {renderChoiceAdvice(choosingFactionAdvice.newPlayers)}
         {renderChoiceAdvice(choosingFactionAdvice.experiencedPlayers)}
         {renderChoiceAdvice(choosingFactionAdvice.neutralTraders)}
         {renderChoiceAdvice(choosingFactionAdvice.futureExpansions)}
         {renderChoiceAdvice(choosingFactionAdvice.personalPref)}
-        <p style={{ ...styles.paragraph, marginTop: "1.5rem" }}>
-          {choosingFactionAdvice.summary}
-        </p>
+        <p className={styles.paragraph}>{choosingFactionAdvice.summary}</p>
       </section>
     </div>
   );

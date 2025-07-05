@@ -369,10 +369,10 @@ export default function DuneAwakeningPage() {
                 const isExpanded = !!expandedClasses[duneClass.id];
                 return (
                     <div key={duneClass.id} className={styles.factionCard}>
-                        <div
+                        <div 
                             className={styles.factionHeader}
                             onClick={() => toggleClassExpansion(duneClass.id)}
-                            role="button"
+                            role="button" 
                             aria-expanded={isExpanded}
                             aria-controls={`content-${duneClass.id}`}
                             tabIndex={0}
@@ -383,11 +383,11 @@ export default function DuneAwakeningPage() {
                                 <p className={styles.factionSummary}>{duneClass.summary}</p>
                             </div>
                             {isExpanded
-                                ? <FaChevronUp className={`${styles.expandIcon} ${styles.rotated}`} aria-label="Collapse section" />
-                                : <FaChevronDown className={styles.expandIcon} aria-label="Expand section" />}
-                        </div>
-                        <div id={`content-${duneClass.id}`} className={`${styles.factionContentContainer} ${isExpanded ? styles.collapsibleContentExpanded : ""}`} style={{ display: isExpanded ? 'block' : 'none' }}>
-                            <h3 className={styles.subHeading}>Lore & Background</h3>
+                                ? <FaChevronUp className={`${styles.expandIcon} ${styles.rotated}`} aria-label="Collapse section"/>
+                                : <FaChevronDown className={styles.expandIcon} aria-label="Expand section"/>}
+                        </div> 
+                        <div id={`content-${duneClass.id}`} className={`${styles.factionContentContainer} ${isExpanded ? styles.collapsibleContentExpanded : ""}`}>
+                            <h3 className={styles.subHeading}>Lore & Background</h3> 
                             <p className={styles.paragraph}>{duneClass.lore}</p>
                             <h3 className={styles.subHeading}>Abilities</h3>
                             <ul className={styles.ruleList}>
@@ -483,7 +483,7 @@ export default function DuneAwakeningPage() {
                 ) : (
                     <p className={styles.paragraph} style={{ textAlign: "center", fontSize: "0.9rem", marginTop: "0.5rem" }}>
                         Reviews powered by Disboard (Link coming soon!)
-                    </p>
+                    </p> 
                 )}
             </div>
         </div>
