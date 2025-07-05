@@ -1,118 +1,151 @@
 .pageContainer {
- max-width: 1200px;
- margin: 0 auto;
- padding: 3rem 1rem 4rem;
- color: #e5e7eb;
- background-color: #111827;
- min-height: 100vh;
-}
-
-.section {
- margin-bottom: 3rem;
- padding: 2rem;
- background-color: #1f2937;
- border-radius: 0.5rem;
- box-shadow: 0 4px 10px rgba(0,0,0,0.15);
- border: 1px solid #374151;
-}
-
-.sectionTitle {
- font-size: clamp(1.5rem, 4vw, 1.8rem);
- font-weight: 600;
- margin-bottom: 1.5rem;
- color: #facc15;
- border-bottom: 1px solid #4b5563;
- padding-bottom: 0.75rem;
-}
-
-.paragraph {
- color: #d1d5db;
- margin-bottom: 1.25rem;
- line-height: 1.7;
- font-size: 0.95rem;
-}
-
-@media (min-width: 768px) { .paragraph { font-size: 1rem; } }
-
-.strongText {
- font-weight: 600;
- color: #facc15;
-}
-
-.link {
- color: #fde047;
- text-decoration: underline;
- text-underline-offset: 2px;
- transition: color 0.2s ease;
-}
-
-.link:hover {
- color: #facc15;
-}
-
-.subHeading {
- font-size: 1.25rem;
- font-weight: 600;
- color: #ffffff;
- margin-top: 2rem;
- margin-bottom: 1rem;
-}
-
-/* --- Faction Cards --- */
-.factionCardContainer {
- display: flex;
- flex-wrap: wrap;
- gap: 1.5rem;
- justify-content: center;
- margin-top: 2rem;
-}
-
-.factionCard {
- flex: 1 1 300px; /* Allow cards to grow/shrink, with a base of 300px */
- max-width: 400px; /* Max width for larger screens */
- background-color: #1f2937; /* bg-gray-800 */
- border: 1px solid #374151; /* border-gray-700 */
- border-radius: 0.5rem; /* rounded-md */
- padding: 1.5rem;
- display: flex;
- flex-direction: column;
- box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.factionCardTitle {
- font-size: 1.5rem;
- font-weight: 700;
- color: #facc15; /* text-yellow-400 */
- margin-bottom: 1rem;
- padding-bottom: 0.5rem;
- border-bottom: 1px dashed #4b5563; /* border-gray-600 */
-}
-
-.factionCardText {
- color: #d1d5db; /* text-gray-300 */
- font-size: 0.95rem;
- line-height: 1.6;
- margin-bottom: 1rem;
- flex-grow: 1; /* Push button/link to bottom */
-}
-
-.factionCardLink {
- display: inline-block;
- margin-top: auto; /* Push link to bottom */
- color: #fde047; /* text-yellow-300 */
- text-decoration: underline;
- text-underline-offset: 2px;
- font-size: 0.9rem;
- transition: color 0.2s ease;
-}
-
-.factionCardLink:hover {
- color: #facc15; /* text-yellow-400 */
-}
-
-.factionContentContainer {
- padding: 1.5rem 1.25rem; /* Same padding as collapsibleContentExpanded */
- background-color: #1f2937; /* bg-gray-800 - or a slightly lighter shade if needed */
- border-radius: 0.5rem; /* Match outer border-radius if desired */
- margin-top: 1rem; /* Space from the header if needed */
-}
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 1rem 4rem;
+    color: #e5e7eb;
+    background-color: #111827;
+    min-height: 100vh;
+  }
+  
+  .section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background-color: #1f2937;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+    border: 1px solid #374151;
+  }
+  
+  .sectionTitle {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #facc15;
+    border-bottom: 1px solid #4b5563;
+    padding-bottom: 0.75rem;
+  }
+  
+  .paragraph {
+    color: #d1d5db;
+    margin-bottom: 1.25rem;
+    line-height: 1.7;
+    font-size: 0.98rem;
+  }
+  
+  @media (min-width: 768px) {
+    .paragraph { font-size: 1.07rem; }
+  }
+  
+  .strongText {
+    font-weight: 600;
+    color: #fde047;
+  }
+  
+  .link {
+    color: #fde047;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.2s ease;
+  }
+  .link:hover {
+    color: #facc15;
+  }
+  
+  .subHeading {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px dashed #4b5563;
+    padding-bottom: 0.4rem;
+  }
+  
+  /* --- Faction Card / Collapsible Section --- */
+  .factionSection {
+    margin-bottom: 1.5rem;
+    border: 1px solid #4b5563;
+    border-radius: 0.5rem;
+    background-color: #273140;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: box-shadow 0.25s;
+  }
+  
+  .factionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.4rem;
+    cursor: pointer;
+    background-color: #1f2937;
+    border-bottom: 1px solid #4b5563;
+    transition: background-color 0.18s;
+  }
+  
+  .factionHeader:hover,
+  .factionHeader:focus-visible {
+    background-color: #232b3b;
+  }
+  
+  .factionTitle {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #facc15;
+    margin: 0;
+  }
+  
+  .factionSummary {
+    font-size: 0.92rem;
+    color: #b0b0b0;
+    margin-top: 0.22rem;
+    font-style: italic;
+    margin-bottom: 0;
+  }
+  
+  .expandIcon {
+    font-size: 1.2rem;
+    color: #b0b0b0;
+    transition: transform 0.3s;
+  }
+  
+  .expandIconRotated {
+    transform: rotate(180deg);
+  }
+  
+  .collapsibleContent {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height 0.5s cubic-bezier(0.65,0,0.35,1),
+      opacity 0.35s cubic-bezier(0.6,0,0.4,1),
+      padding 0.45s cubic-bezier(0.65,0,0.35,1);
+    padding: 0 1.25rem;
+  }
+  
+  .collapsibleContentExpanded {
+    max-height: 5000px;
+    opacity: 1;
+    padding: 1.5rem 1.25rem;
+    transition:
+      max-height 0.8s cubic-bezier(0.65,0,0.35,1),
+      opacity 0.6s cubic-bezier(0.6,0,0.4,1) 0.1s,
+      padding 0.8s cubic-bezier(0.65,0,0.35,1);
+  }
+  
+  .factionContentContainer {
+    background-color: #1f2937;
+    padding: 1.5rem 1.25rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    border: 1px solid #4b5563;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  }
+  
+  /* Optional: highlight on expand */
+  .factionSection:has(.collapsibleContentExpanded) {
+    box-shadow: 0 6px 18px rgba(255, 215, 64, 0.08), 0 2px 8px rgba(0,0,0,0.18);
+  }
+  
+  /* --- End Faction Card/Collapsible --- */
+  
