@@ -26,6 +26,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.className} dark`}>
       {/* NO WHITESPACE HERE */}
       <head>
+        <meta name="google-adsense-account" content="ca-pub-9638852588228916"></meta>
         <script src="https://accounts.google.com/gsi/client" async></script>
         {/* Head content (meta tags, links) goes here. No whitespace directly inside <head> either. */}
       </head>
