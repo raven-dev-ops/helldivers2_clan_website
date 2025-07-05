@@ -365,71 +365,73 @@ export default function DuneAwakeningPage() {
             </section>
 
             {/* === Class Sections (Collapsible) === */}
-            {duneClasses.map((duneClass) => {
-                const isExpanded = !!expandedClasses[duneClass.id];
-                return (
-                    <div key={duneClass.id} className={styles.factionCard}>
-                        <div 
-                            className={styles.factionHeader}
-                            onClick={() => toggleClassExpansion(duneClass.id)}
-                            role="button" 
-                            aria-expanded={isExpanded}
-                            aria-controls={`content-${duneClass.id}`}
-                            tabIndex={0}
-                            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleClassExpansion(duneClass.id)}
-                        >
-                            <div>
-                                <h2 className={styles.factionCardTitle}>{duneClass.name}</h2>
-                                <p className={styles.factionSummary}>{duneClass.summary}</p>
+            <div className={styles.classSectionsContainer}>
+                {duneClasses.map((duneClass) => {
+                    const isExpanded = !!expandedClasses[duneClass.id];
+                    return (
+                        <div key={duneClass.id} className={styles.factionCard}>
+                            <div
+                                className={styles.factionHeader}
+                                onClick={() => toggleClassExpansion(duneClass.id)}
+                                role="button"
+                                aria-expanded={isExpanded}
+                                aria-controls={`content-${duneClass.id}`}
+                                tabIndex={0}
+                                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleClassExpansion(duneClass.id)}
+                            >
+                                <div>
+                                    <h2 className={styles.factionCardTitle}>{duneClass.name}</h2>
+                                    <p className={styles.factionSummary}>{duneClass.summary}</p>
+                                </div>
+                                {isExpanded
+                                    ? <FaChevronUp className={`${styles.expandIcon} ${styles.rotated}`} aria-label="Collapse section"/>
+                                    : <FaChevronDown className={styles.expandIcon} aria-label="Expand section"/>}
                             </div>
-                            {isExpanded
-                                ? <FaChevronUp className={`${styles.expandIcon} ${styles.rotated}`} aria-label="Collapse section"/>
-                                : <FaChevronDown className={styles.expandIcon} aria-label="Expand section"/>}
-                        </div> 
-                        <div id={`content-${duneClass.id}`} className={`${styles.factionContentContainer} ${isExpanded ? styles.collapsibleContentExpanded : ""}`}>
-                            <h3 className={styles.subHeading}>Lore & Background</h3> 
-                            <p className={styles.paragraph}>{duneClass.lore}</p>
-                            <h3 className={styles.subHeading}>Abilities</h3>
-                            <ul className={styles.ruleList}>
-                                {duneClass.abilities.map((ability, idx) => (
-                                    <li key={idx} className={styles.ruleListItem}>
-                                        <span className={styles.strongText}>{ability.name}:</span> {ability.description}
-                                        {ability.details && <span className={styles.abilityDetails}> {ability.details}</span>}
-                                    </li>
-                                ))}
-                            </ul>
-                            <h3 className={styles.subHeading}>Combat Style</h3>
-                            <h4 className={styles.challengeLevelTitle}>Solo</h4>
-                            <p className={styles.paragraph}>{duneClass.combatStyleSolo}</p>
-                            <h4 className={styles.challengeLevelTitle}>Group</h4>
-                            <p className={styles.paragraph}>{duneClass.combatStyleGroup}</p>
-                            <h3 className={styles.subHeading}>Strategies</h3>
-                            <h4 className={styles.challengeLevelTitle}>PvE</h4>
-                            <p className={styles.paragraph}>{duneClass.pveStrategies}</p>
-                            <h4 className={styles.challengeLevelTitle}>PvP</h4>
-                            <p className={styles.paragraph}>{duneClass.pvpStrategies}</p>
-                            <h3 className={styles.subHeading}>Recommended Equipment</h3>
-                            <ul className={styles.ruleList}>
-                                {duneClass.equipment.map((equip, idx) => (
-                                    <li key={idx} className={styles.ruleListItem}>
-                                        <span className={styles.strongText}>{equip.category}:</span> {equip.description}
-                                    </li>
-                                ))}
-                            </ul>
-                            <h3 className={styles.subHeading}>Pros</h3>
-                            <ul className={styles.ruleList}>
-                                {duneClass.pros.map((pro, idx) => (<li key={idx} className={styles.ruleListItem}>{pro}</li>))}
-                            </ul>
-                            <h3 className={styles.subHeading}>Cons</h3>
-                            <ul className={styles.ruleList}>
-                                {duneClass.cons.map((con, idx) => (<li key={idx} className={styles.ruleListItem}>{con}</li>))}
-                            </ul>
-                            <h3 className={styles.subHeading}>Recommended For</h3>
-                            <p className={styles.paragraph}>{duneClass.recommendedFor}</p>
+                            <div id={`content-${duneClass.id}`} className={`${styles.factionContentContainer} ${isExpanded ? styles.collapsibleContentExpanded : ""}`}>
+                                <h3 className={styles.subHeading}>Lore & Background</h3>
+                                <p className={styles.paragraph}>{duneClass.lore}</p>
+                                <h3 className={styles.subHeading}>Abilities</h3>
+                                <ul className={styles.ruleList}>
+                                    {duneClass.abilities.map((ability, idx) => (
+                                        <li key={idx} className={styles.ruleListItem}>
+                                            <span className={styles.strongText}>{ability.name}:</span> {ability.description}
+                                            {ability.details && <span className={styles.abilityDetails}> {ability.details}</span>}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <h3 className={styles.subHeading}>Combat Style</h3>
+                                <h4 className={styles.challengeLevelTitle}>Solo</h4>
+                                <p className={styles.paragraph}>{duneClass.combatStyleSolo}</p>
+                                <h4 className={styles.challengeLevelTitle}>Group</h4>
+                                <p className={styles.paragraph}>{duneClass.combatStyleGroup}</p>
+                                <h3 className={styles.subHeading}>Strategies</h3>
+                                <h4 className={styles.challengeLevelTitle}>PvE</h4>
+                                <p className={styles.paragraph}>{duneClass.pveStrategies}</p>
+                                <h4 className={styles.challengeLevelTitle}>PvP</h4>
+                                <p className={styles.paragraph}>{duneClass.pvpStrategies}</p>
+                                <h3 className={styles.subHeading}>Recommended Equipment</h3>
+                                <ul className={styles.ruleList}>
+                                    {duneClass.equipment.map((equip, idx) => (
+                                        <li key={idx} className={styles.ruleListItem}>
+                                            <span className={styles.strongText}>{equip.category}:</span> {equip.description}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <h3 className={styles.subHeading}>Pros</h3>
+                                <ul className={styles.ruleList}>
+                                    {duneClass.pros.map((pro, idx) => (<li key={idx} className={styles.ruleListItem}>{pro}</li>))}
+                                </ul>
+                                <h3 className={styles.subHeading}>Cons</h3>
+                                <ul className={styles.ruleList}>
+                                    {duneClass.cons.map((con, idx) => (<li key={idx} className={styles.ruleListItem}>{con}</li>))}
+                                </ul>
+                                <h3 className={styles.subHeading}>Recommended For</h3>
+                                <p className={styles.paragraph}>{duneClass.recommendedFor}</p>
+                            </div>
                         </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
 
             {/* === Community & Partnership === */}
             <section className={styles.section}>
