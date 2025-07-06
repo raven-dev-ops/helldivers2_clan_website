@@ -82,12 +82,13 @@ export default function HelldiversPage() {
             {/* === About Section === */}
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
-                    About GPT HELLDIVERS 2
+                    GPT HELLDIVERS 2
                     <Link href={discordServerLink} target="_blank" rel="noopener noreferrer" aria-label="Join the GPT Discord" title="Join the GPT Discord" className={styles.discordIconLink}>
                         <FaDiscord className={styles.discordIcon} />
                     </Link>
                 </h2>
                 <p className={styles.paragraph}> Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2 Division! We are a rapidly growing, multi-game community focused on creating a non-toxic, mature, and fun environment for gamers. Whether you're a fresh recruit dropping onto Malevelon Creek for the first time or a seasoned Super Citizen spreading managed democracy across the galaxy, you have a place here. </p>
+ <img src="/images/ultrasad.gif" alt="Ultra Sad Helldiver" className={styles.ultraSadImage} />
                 <p className={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
             </section>
 
@@ -113,11 +114,13 @@ export default function HelldiversPage() {
                 <p className={styles.paragraph}> Just bought the game? Feeling overwhelmed by Bile Titans or Hulks? Don't worry, we've all been there! GPT offers a supportive environment for new players. Ask questions, team up with experienced members who can show you the ropes (and the best ways to avoid friendly fire... mostly!), and learn the basics without fear of judgment. </p>
                 <p className={styles.paragraph}> We have dedicated channels for LFG, tips, and loadout discussions. Joining voice chat is encouraged for better coordination during missions, but not mandatory if you prefer text. Find squadmates for anything from trivial difficulty farming to your first Helldive attempt! </p>
             </section>
+            <img src="/images/helldiver_poster.gif" alt="New to the Fight" className={styles.helldiverPosterImage} />
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>Seasoned Veterans Welcome!</h2>
                 <p className={styles.paragraph}> Think you've seen it all? Mastered the art of the 500kg bomb? Looking for a consistent group to tackle Difficulty 9+ operations and coordinate advanced strategies? GPT is home to many experienced Helldivers eager to push the limits and contribute to the Galactic War effort effectively. </p>
                 <p className={styles.paragraph}> Coordinate multi-squad planetary operations, share your high-level strategies, participate in community-organized challenges (like the John Helldiver Course!), or simply find reliable teammates who understand the importance of covering flanks and calling out patrols. Help mentor newer players or form elite squads for the toughest challenges the galaxy throws at us. </p>
             </section>
+            <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.veteranImage} />
 
             {/* === Reviews Section === */}
             <div className={styles.reviewSectionContainer}>
