@@ -88,11 +88,12 @@ export default function HelldiversPage() {
                     </Link>
                 </h2>
                 <p className={styles.paragraph}> Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2 Division! We are a rapidly growing, multi-game community focused on creating a non-toxic, mature, and fun environment for gamers. Whether you're a fresh recruit dropping onto Malevelon Creek for the first time or a seasoned Super Citizen spreading managed democracy across the galaxy, you have a place here. </p>
-                <div className={styles.imageContainer}>
-                    <img src="/images/ultrasad.gif" alt="Ultra Sad Helldiver" className={styles.centeredImage} />
-                </div>
                 <p className={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
             </section>
+
+            <div className={styles.imageContainer}>
+                    <img src="/images/ultrasad.gif" alt="Ultra Sad Helldiver" className={styles.centeredImage} />
+            </div>
 
             {/* === YouTube Carousel === */}
             <div className={styles.youtubeCarouselContainer}>
