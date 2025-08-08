@@ -41,12 +41,12 @@ function HeaderButton({
   );
 }
 
-export default function HelldiversLeaderboard() {
-  const [data, setData] = useState<LeaderboardRow[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+export default function HelldiversLeaderboard({ initialData }: { initialData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] } }) {
+  const [data, setData] = useState<LeaderboardRow[]>(initialData?.results || []);
+  const [loading, setLoading] = useState<boolean>(!initialData);
   const [error, setError] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortField>('Kills');
-  const [sortDir, setSortDir] = useState<SortDir>('desc');
+  const [sortBy, setSortBy] = useState<SortField>(initialData?.sortBy || 'Kills');
+  const [sortDir, setSortDir] = useState<SortDir>(initialData?.sortDir || 'desc');
 
   const toggleSort = (field: SortField) => {
     if (field === sortBy) {
