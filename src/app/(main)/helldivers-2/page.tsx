@@ -1,22 +1,15 @@
 // src/app/(main)/helldivers-2/page.tsx
-"use client";
-
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
-import { FaStar, FaDiscord } from 'react-icons/fa';
-
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react';
-// Import Swiper modules
-import { Navigation, EffectFade } from 'swiper/modules';
-
-// Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/effect-fade';
+import React from 'react';
+import { FaDiscord } from 'react-icons/fa';
 
 // --- Import CSS Module ---
 import styles from './HelldiversPage.module.css';
+import dynamic from 'next/dynamic';
+
+const Leaderboard = dynamic(() => import('@/app/(main)/helldivers-2/LeaderboardServer'));
+const YoutubeCarousel = dynamic(() => import('@/app/(main)/helldivers-2/YoutubeCarousel'));
+const ReviewsRotator = dynamic(() => import('@/app/(main)/helldivers-2/ReviewsRotator'));
 
 // --- Review Data Structure ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
@@ -56,29 +49,8 @@ export default function HelldiversPage() {
     const discordServerLink = "https://discord.gg/gptfleet";
     const reviewSourceLink = "https://disboard.org/server/1214787549655203862";
 
-    const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
-    const [isReviewVisible, setIsReviewVisible] = useState(true);
-
-    // Effect for cycling reviews
-    useEffect(() => {
-        if (reviews.length <= 3) return;
-        const intervalId = setInterval(() => {
-            setIsReviewVisible(false);
-            setTimeout(() => {
-                setCurrentReviewStartIndex((prevIndex) => (prevIndex + 3 >= reviews.length ? 0 : prevIndex + 3));
-                setIsReviewVisible(true);
-            }, 600); // Matches CSS transition duration
-        }, 10000); // Cycle every 10 seconds
-        return () => clearInterval(intervalId);
-    }, []); // Empty dependency array ensures this runs only once on mount
-
-    const reviewsToShow = reviews.slice(currentReviewStartIndex, currentReviewStartIndex + 3);
-
-    // --- Render Logic (Using CSS Modules) ---
     return (
-        // Apply styles from the imported module
         <div className={styles.pageContainer}>
-
             {/* === About Section === */}
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
@@ -96,20 +68,7 @@ export default function HelldiversPage() {
             </div>
 
             {/* === YouTube Carousel === */}
-            <div className={styles.youtubeCarouselContainer}>
-                <Swiper
-                    modules={[Navigation, EffectFade]} effect="fade" fadeEffect={{ crossFade: true }}
-                    spaceBetween={30} slidesPerView={1} navigation={true} loop={true} className="helldivers-youtube-swiper" /* Keep global class for swiper specific overrides if needed */
-                >
-                    {youtubeVideos.map((video) => (
-                        <SwiperSlide key={video.id}>
-                            <div className={styles.youtubeSlide}>
-                                <iframe className={styles.youtubeIframe} src={video.embedUrl} title={`YouTube video player for ${video.id}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin"></iframe>
-                            </div>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-            </div>
+            <YoutubeCarousel videos={youtubeVideos} />
 
             {/* === New/Veteran Sections === */}
             <section className={styles.section}>
@@ -128,27 +87,15 @@ export default function HelldiversPage() {
             <div className={styles.imageContainer}>
  <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.centeredImage} />
             </div>
-            {/* === Reviews Section === */}
-            <div className={styles.reviewSectionContainer}>
-                {/* Conditional class for fade effect */}
-                <div className={`${styles.reviewCardsWrapper} ${!isReviewVisible ? styles.reviewCardsWrapperHidden : ''}`}>
-                    {reviewsToShow.map((review) => (
-                        <div key={review.id} className={styles.individualReviewCard}>
-                            <div className={styles.reviewStars}> {Array.from({ length: review.rating }).map((_, i) => (<FaStar key={i} />))} </div>
-                            <h3 className={styles.reviewTitle}>{review.title}</h3>
-                            {/* Apply paragraph for review text */}
-                            <p className={styles.reviewText}>"{review.text}"</p>
-                            <p className={styles.reviewAuthor}>- {review.author}</p>
-                        </div>
-                    ))}
-                </div>
-                {reviewSourceLink && (
-                    <Link href={reviewSourceLink} target="_blank" rel="noopener noreferrer" className={styles.disboardLinkBottom}>
-                        Disboard Reviews
-                    </Link>
-                )}
+
+            {/* === Leaderboard Section === */}
+            <div className="content-section">
+                <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
+                <Leaderboard />
             </div>
 
-        </div> // End pageContainer
+            {/* === Reviews Section === */}
+            <ReviewsRotator reviews={reviews} reviewSourceLink={reviewSourceLink} />
+        </div>
     );
 }
