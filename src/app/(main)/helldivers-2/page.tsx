@@ -17,6 +17,9 @@ import 'swiper/css/effect-fade';
 
 // --- Import CSS Module ---
 import styles from './HelldiversPage.module.css';
+import dynamic from 'next/dynamic';
+
+const Leaderboard = dynamic(() => import('@/app/components/leaderboard/HelldiversLeaderboard'), { ssr: false });
 
 // --- Review Data Structure ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
@@ -128,6 +131,14 @@ export default function HelldiversPage() {
             <div className={styles.imageContainer}>
  <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.centeredImage} />
             </div>
+            {/* === Leaderboard Section === */}
+            {/* Shared content-section styles from globals.css to ensure consistent look */}
+            <div className="content-section">
+                <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
+                {/* Helldivers Leaderboard Component */}
+                <Leaderboard />
+            </div>
+
             {/* === Reviews Section === */}
             <div className={styles.reviewSectionContainer}>
                 {/* Conditional class for fade effect */}
