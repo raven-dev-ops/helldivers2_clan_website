@@ -62,6 +62,9 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   const [lifetimeSortBy, setLifetimeSortBy] = useState<SortField>(initialLifetimeData?.sortBy || 'Kills');
   const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(initialLifetimeData?.sortDir || 'desc');
 
+  const [monthSearch, setMonthSearch] = useState<string>('');
+  const [lifetimeSearch, setLifetimeSearch] = useState<string>('');
+
   const toggleMonthSort = (field: SortField) => {
     if (field === monthSortBy) {
       setMonthSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
@@ -126,13 +129,29 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
-  function Table({ title, rows, loading, error, activeSort, onSort, showAverages }: { title: string; rows: LeaderboardRow[]; loading: boolean; error: string | null; activeSort: { sortBy: SortField; sortDir: SortDir }; onSort: (f: SortField) => void; showAverages?: boolean }) {
+  function Table({ title, rows, loading, error, activeSort, onSort, showAverages, searchTerm, onSearch }: { title: string; rows: LeaderboardRow[]; loading: boolean; error: string | null; activeSort: { sortBy: SortField; sortDir: SortDir }; onSort: (f: SortField) => void; showAverages?: boolean; searchTerm: string; onSearch: (v: string) => void; }) {
     const hasAverages = showAverages && rows.length > 0 && (
       typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
     );
+
+    const normalizedQuery = searchTerm.trim().toLowerCase();
+    const filteredRows = normalizedQuery
+      ? rows.filter(r => (r.player_name || '').toLowerCase().includes(normalizedQuery))
+      : rows;
+
     return (
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">{title}</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <input
+            aria-label={`Search ${title} by player name`}
+            placeholder="Search by player name..."
+            value={searchTerm}
+            onChange={(e) => onSearch(e.target.value)}
+            className="input"
+            style={{ maxWidth: 320 }}
+          />
+        </div>
         {error && <p className="text-paragraph">Error: {error}</p>}
         {loading ? (
           <p className="text-paragraph">Loading leaderboard…</p>
@@ -180,14 +199,11 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
                       <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
                     </th>
                   )}
-                  <th className="th">
-                    <HeaderButton label="Clan" sortKey="clan_name" activeSort={activeSort} onSort={onSort} />
-                  </th>
                   <th className="th">Submitted</th>
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
+                {filteredRows.map((row) => (
                   <tr key={row.id}>
                     <td className="td text-center">{row.rank}</td>
                     <td className="td">{row.player_name}</td>
@@ -200,10 +216,14 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
                     {hasAverages && <td className="td text-right">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
                     <td className="td text-right">{row.Deaths}</td>
                     {hasAverages && <td className="td text-right">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
-                    <td className="td">{row.clan_name || ''}</td>
                     <td className="td">{row.submitted_at ? new Date(row.submitted_at).toLocaleString() : ''}</td>
                   </tr>
                 ))}
+                {!filteredRows.length && (
+                  <tr>
+                    <td className="td" colSpan={hasAverages ? 11 : 9}>No matching players.</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -222,6 +242,8 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         activeSort={monthActiveSort}
         onSort={toggleMonthSort}
         showAverages={false}
+        searchTerm={monthSearch}
+        onSearch={setMonthSearch}
       />
 
       <Table
@@ -232,6 +254,8 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         activeSort={lifetimeActiveSort}
         onSort={toggleLifetimeSort}
         showAverages={true}
+        searchTerm={lifetimeSearch}
+        onSearch={setLifetimeSearch}
       />
     </div>
   );
