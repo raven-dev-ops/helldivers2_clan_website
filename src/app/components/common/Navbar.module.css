@@ -52,7 +52,7 @@
 .logoLinkButton:hover,
 .logoLinkButton:focus-visible {
   background-color: var(--color-surface-alt, #f5f5f5);
-  color: var(--color-primary, dodgerblue); /* Use your primary color */
+  color: var(--color-primary, #facc15); /* Use your primary color */
   border-color: var(--color-border, #e0e0e0); /* Example border on hover */
   outline: none;
 }
@@ -80,10 +80,10 @@
 
 /* Style for links within the desktop menu */
 .link {
-  color: var(--color-text-secondary, #555);
+  color: var(--color-primary, #facc15); /* Default nav link color to yellow */
   text-decoration: none;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-md, 4px);
   transition: color 0.2s ease, background-color 0.2s ease;
@@ -92,15 +92,15 @@
 
 .link:hover,
 .link:focus-visible {
-  color: var(--color-text-primary, #333);
+  color: var(--color-primary-hover, #f59e0b);
   background-color: var(--color-surface-alt, #f5f5f5);
   outline: none;
 }
 
 /* Style for the currently active link (optional) */
 .activeLink {
-  color: var(--color-primary, dodgerblue); /* Use your primary color */
-  font-weight: 600;
+  color: var(--color-primary, #facc15);
+  font-weight: 700;
   /* background-color: var(--color-primary-light, #e0f7ff); */ /* Optional subtle background */
 }
 
