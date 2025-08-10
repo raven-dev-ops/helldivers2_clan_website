@@ -58,6 +58,7 @@ function LeaderboardTableSection({
   showTotals = true,
   searchTerm,
   onSearch,
+  sectionId,
 }: {
   title: string;
   rows: LeaderboardRow[];
@@ -69,6 +70,7 @@ function LeaderboardTableSection({
   showTotals?: boolean;
   searchTerm: string;
   onSearch: (v: string) => void;
+  sectionId?: string;
 }) {
   const hasAverages = showAverages && rows.length > 0 && (
     typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
@@ -85,7 +87,7 @@ function LeaderboardTableSection({
     + (hasAverages ? 4 : 0) /* averages: avg kills, avg shots fired, avg shots hit, avg deaths */;
 
   return (
-    <section className="content-section">
+    <section id={sectionId} className="content-section">
       <h2 className="content-section-title with-border-bottom leaderboard-title">{title}</h2>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <input
@@ -280,6 +282,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         showTotals={true}
         searchTerm={monthSearch}
         onSearch={setMonthSearch}
+        sectionId="monthly"
       />
 
       <LeaderboardTableSection
@@ -293,6 +296,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         showTotals={true}
         searchTerm={lifetimeTotalsSearch}
         onSearch={setLifetimeTotalsSearch}
+        sectionId="total"
       />
 
       <LeaderboardTableSection
@@ -306,6 +310,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         showTotals={false}
         searchTerm={lifetimeAveragesSearch}
         onSearch={setLifetimeAveragesSearch}
+        sectionId="average"
       />
     </div>
   );
