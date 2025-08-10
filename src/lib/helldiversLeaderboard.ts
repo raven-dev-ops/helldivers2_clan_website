@@ -10,6 +10,10 @@ export const VALID_SORT_FIELDS = [
   'player_name',
   'clan_name',
   'submitted_at',
+  'Avg Kills',
+  'Avg Shots Fired',
+  'Avg Shots Hit',
+  'Avg Deaths',
 ] as const;
 
 export type SortField = typeof VALID_SORT_FIELDS[number];
@@ -177,6 +181,10 @@ export async function fetchHelldiversLeaderboard(options?: {
       case 'player_name': sortStageLifetime['player_name'] = dir; break;
       case 'clan_name': sortStageLifetime['clan_name'] = dir; break;
       case 'submitted_at': sortStageLifetime['lastSubmittedAt'] = dir; break;
+      case 'Avg Kills': sortStageLifetime['avgKills'] = dir; break;
+      case 'Avg Shots Fired': sortStageLifetime['avgShotsFired'] = dir; break;
+      case 'Avg Shots Hit': sortStageLifetime['avgShotsHit'] = dir; break;
+      case 'Avg Deaths': sortStageLifetime['avgDeaths'] = dir; break;
       default: sortStageLifetime['totalKills'] = dir; break;
     }
 

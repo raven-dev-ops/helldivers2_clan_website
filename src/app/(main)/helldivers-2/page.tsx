@@ -51,6 +51,12 @@ export default function HelldiversPage() {
 
     return (
         <div className={styles.pageContainer}>
+            {/* === Leaderboard Section (moved to top) === */}
+            <div className="content-section">
+                <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
+                <Leaderboard />
+            </div>
+
             {/* === About Section === */}
             <section className={styles.section}>
                 <h2 className={styles.sectionTitle}>
@@ -86,12 +92,6 @@ export default function HelldiversPage() {
             </section>
             <div className={styles.imageContainer}>
  <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.centeredImage} />
-            </div>
-
-            {/* === Leaderboard Section === */}
-            <div className="content-section">
-                <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
-                <Leaderboard />
             </div>
 
             {/* === Reviews Section === */}
