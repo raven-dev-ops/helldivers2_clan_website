@@ -137,7 +137,7 @@ function LeaderboardTableSection({
                     <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
                   </th>
                 )}
-                <th className="th col-submitted">Submitted</th>
+                {/* Submitted column removed */}
               </tr>
             </thead>
             <tbody>
@@ -154,12 +154,12 @@ function LeaderboardTableSection({
                   {hasAverages && <td className="td text-right col-avg-shots-hit">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
                   <td className="td text-right col-deaths">{row.Deaths}</td>
                   {hasAverages && <td className="td text-right col-avg-deaths">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
-                  <td className="td col-submitted">{row.submitted_at ? new Date(row.submitted_at).toLocaleString() : ''}</td>
+                  {/* Submitted cell removed */}
                 </tr>
               ))}
               {!filteredRows.length && (
                 <tr>
-                  <td className="td" colSpan={hasAverages ? 11 : 9}>No matching players.</td>
+                  <td className="td" colSpan={hasAverages ? 11 : 7}>No matching players.</td>
                 </tr>
               )}
             </tbody>

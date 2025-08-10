@@ -50,12 +50,7 @@ export default function HelldiversPage() {
 
     return (
         <div className={styles.pageContainer}>
-            {/* === Leaderboard CTA === */}
-            <div className="content-section">
-                <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
-                <p className="text-paragraph">View our community leaderboards, sortable by kills, accuracy, and more.</p>
-                <Link href="/helldivers-2/leaderboard" className={styles.link}>Open Leaderboards →</Link>
-            </div>
+            {/* Leaderboard CTA removed per request */}
 
             {/* === About Section === */}
             <section className={styles.section}>
