@@ -3,7 +3,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 
-type SortField = 'Kills' | 'Accuracy' | 'Shots Fired' | 'Shots Hit' | 'Deaths' | 'player_name' | 'clan_name' | 'submitted_at';
+type SortField = 'Kills' | 'Accuracy' | 'Shots Fired' | 'Shots Hit' | 'Deaths' | 'player_name' | 'clan_name' | 'submitted_at' | 'Avg Kills' | 'Avg Shots Fired' | 'Avg Shots Hit' | 'Avg Deaths';
 
 type SortDir = 'asc' | 'desc';
 
@@ -148,22 +148,38 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
                   <th className="th text-right">
                     <HeaderButton label="Kills" sortKey="Kills" activeSort={activeSort} onSort={onSort} />
                   </th>
-                  {hasAverages && <th className="th text-right">Avg Kills</th>}
+                  {hasAverages && (
+                    <th className="th text-right">
+                      <HeaderButton label="Avg Kills" sortKey="Avg Kills" activeSort={activeSort} onSort={onSort} />
+                    </th>
+                  )}
                   <th className="th text-right">
                     <HeaderButton label="Accuracy" sortKey="Accuracy" activeSort={activeSort} onSort={onSort} />
                   </th>
                   <th className="th text-right">
                     <HeaderButton label="Shots Fired" sortKey="Shots Fired" activeSort={activeSort} onSort={onSort} />
                   </th>
-                  {hasAverages && <th className="th text-right">Avg Shots Fired</th>}
+                  {hasAverages && (
+                    <th className="th text-right">
+                      <HeaderButton label="Avg Shots Fired" sortKey="Avg Shots Fired" activeSort={activeSort} onSort={onSort} />
+                    </th>
+                  )}
                   <th className="th text-right">
                     <HeaderButton label="Shots Hit" sortKey="Shots Hit" activeSort={activeSort} onSort={onSort} />
                   </th>
-                  {hasAverages && <th className="th text-right">Avg Shots Hit</th>}
+                  {hasAverages && (
+                    <th className="th text-right">
+                      <HeaderButton label="Avg Shots Hit" sortKey="Avg Shots Hit" activeSort={activeSort} onSort={onSort} />
+                    </th>
+                  )}
                   <th className="th text-right">
                     <HeaderButton label="Deaths" sortKey="Deaths" activeSort={activeSort} onSort={onSort} />
                   </th>
-                  {hasAverages && <th className="th text-right">Avg Deaths</th>}
+                  {hasAverages && (
+                    <th className="th text-right">
+                      <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
+                    </th>
+                  )}
                   <th className="th">
                     <HeaderButton label="Clan" sortKey="clan_name" activeSort={activeSort} onSort={onSort} />
                   </th>
