@@ -7,7 +7,6 @@ import { FaDiscord } from 'react-icons/fa';
 import styles from './HelldiversPage.module.css';
 import dynamic from 'next/dynamic';
 
-const Leaderboard = dynamic(() => import('@/app/(main)/helldivers-2/LeaderboardServer'));
 const YoutubeCarousel = dynamic(() => import('@/app/(main)/helldivers-2/YoutubeCarousel'));
 const ReviewsRotator = dynamic(() => import('@/app/(main)/helldivers-2/ReviewsRotator'));
 
@@ -51,10 +50,11 @@ export default function HelldiversPage() {
 
     return (
         <div className={styles.pageContainer}>
-            {/* === Leaderboard Section (moved to top) === */}
+            {/* === Leaderboard CTA === */}
             <div className="content-section">
                 <h2 className="content-section-title with-border-bottom">Community Leaderboards</h2>
-                <Leaderboard />
+                <p className="text-paragraph">View our community leaderboards, sortable by kills, accuracy, and more.</p>
+                <Link href="/helldivers-2/leaderboard" className={styles.link}>Open Leaderboards →</Link>
             </div>
 
             {/* === About Section === */}
