@@ -14,6 +14,7 @@ export const VALID_SORT_FIELDS = [
 
 export type SortField = typeof VALID_SORT_FIELDS[number];
 export type SortDir = 'asc' | 'desc';
+export type LeaderboardScope = 'month' | 'lifetime';
 
 export interface HelldiversLeaderboardRow {
   rank: number;
@@ -35,14 +36,24 @@ function getDbName(): string {
   return process.env.MONGODB_DB || 'GPTHellbot';
 }
 
+function getMonthRange(monthZeroIndexed: number, year: number) {
+  const start = new Date(Date.UTC(year, monthZeroIndexed, 1, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(year, monthZeroIndexed + 1, 1, 0, 0, 0, 0));
+  return { start, end };
+}
+
 export async function fetchHelldiversLeaderboard(options?: {
   sortBy?: SortField;
   sortDir?: SortDir;
   limit?: number;
+  scope?: LeaderboardScope;
+  month?: number; // 1-12, optional when scope==='month'
+  year?: number; // 4-digit year, optional when scope==='month'
 }): Promise<{ sortBy: SortField; sortDir: SortDir; limit: number; results: HelldiversLeaderboardRow[] }> {
   const sortBy = (options?.sortBy && VALID_SORT_FIELDS.includes(options.sortBy) ? options.sortBy : 'Kills') as SortField;
   const sortDir: SortDir = options?.sortDir === 'asc' ? 'asc' : 'desc';
   const limit = options?.limit && options.limit > 0 ? Math.min(options.limit, 500) : 100;
+  const scope: LeaderboardScope = options?.scope === 'lifetime' ? 'lifetime' : 'month';
 
   const client = await getMongoClientPromise();
   const db = client.db(getDbName());
@@ -67,6 +78,14 @@ export async function fetchHelldiversLeaderboard(options?: {
       }
     },
   ];
+
+  if (scope === 'month') {
+    const now = new Date();
+    const monthProvided = options?.month && options.month >= 1 && options.month <= 12 ? options.month : (now.getUTCMonth() + 1);
+    const yearProvided = options?.year && options.year >= 1970 ? options.year : now.getUTCFullYear();
+    const { start, end } = getMonthRange(monthProvided - 1, yearProvided);
+    pipeline.push({ $match: { submittedAtDate: { $gte: start, $lt: end } } });
+  }
 
   const sortStage: Record<string, 1 | -1> = {};
   const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1;
@@ -107,7 +126,8 @@ export async function fetchHelldiversLeaderboard(options?: {
     }
   });
 
-  const cursor = db.collection('User_Stats').aggregate(pipeline, { allowDiskUse: true });
+  const collectionName = scope === 'lifetime' ? 'Lifetime_Stats' : 'User_Stats';
+  const cursor = db.collection(collectionName).aggregate(pipeline, { allowDiskUse: true });
   const results = await cursor.toArray();
 
   const formatted: HelldiversLeaderboardRow[] = results.map((doc: any, index: number) => ({

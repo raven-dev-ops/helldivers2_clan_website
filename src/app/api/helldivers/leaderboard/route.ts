@@ -9,12 +9,19 @@ export async function GET(req: NextRequest) {
     const sortByParam = (url.searchParams.get('sortBy') || 'Kills') as SortField;
     const sortDirParam = (url.searchParams.get('sortDir') || 'desc').toLowerCase();
     const limitParam = parseInt(url.searchParams.get('limit') || '100', 10);
+    const scopeParam = (url.searchParams.get('scope') || 'month').toLowerCase();
+    const monthParam = url.searchParams.get('month');
+    const yearParam = url.searchParams.get('year');
 
     const sortBy: SortField = VALID_SORT_FIELDS.includes(sortByParam) ? sortByParam : 'Kills';
     const sortDir: 1 | -1 = sortDirParam === 'asc' ? 1 : -1;
     const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 500) : 100;
 
-    const data = await fetchHelldiversLeaderboard({ sortBy, sortDir: sortDir === 1 ? 'asc' : 'desc', limit });
+    const scope = scopeParam === 'lifetime' ? 'lifetime' : 'month';
+    const month = monthParam ? parseInt(monthParam, 10) : undefined;
+    const year = yearParam ? parseInt(yearParam, 10) : undefined;
+
+    const data = await fetchHelldiversLeaderboard({ sortBy, sortDir: sortDir === 1 ? 'asc' : 'desc', limit, scope, month, year });
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Error fetching helldivers leaderboard:', error);
