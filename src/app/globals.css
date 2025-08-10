@@ -209,6 +209,10 @@ tbody tr:last-child .td { border-bottom: none; }
 .content-section { margin-bottom: 2.5rem; padding: 1.5rem; background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius-lg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
 .content-section-title { font-size: clamp(1.5rem, 4vw, 1.875rem); font-weight: 600; color: var(--color-text-primary); margin-bottom: 1rem; }
 .content-section-title.with-border-bottom { margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border); }
+
+/* Leaderboard specific: make titles yellow like navbar text */
+.leaderboard-title { color: var(--color-primary, #facc15); }
+
 .subsection-card { margin-bottom: 2rem; padding: 1.5rem; background-color: var(--color-surface-alt); border: 1px solid var(--color-border-alt); border-radius: var(--border-radius-lg); }
 .content-section > .subsection-card:last-child { margin-bottom: 0; }
 .subsection-title { font-size: clamp(1.25rem, 3.5vw, 1.5rem); font-weight: 600; color: var(--color-primary, #facc15); margin-bottom: 0.75rem; }
