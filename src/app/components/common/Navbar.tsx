@@ -105,6 +105,7 @@ const Navbar = () => {
     } else { 
       return [
         { href: "/helldivers-2", label: "Home" },
+        { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
         { href: "/helldivers-2/merch", label: "Merch" },
@@ -137,11 +138,15 @@ const Navbar = () => {
 
         {/* Desktop Menu Links */}
         <div className={styles.desktopMenu}>
-          {standardNavItems.map(({ href, label }) => (
-            <Link key={href} href={href} className={isClient && pathname === href ? styles.activeLink : ''}>
-              {label}
-            </Link>
-          ))}
+          {standardNavItems.map(({ href, label }) => {
+            const isActive = isClient && pathname === href;
+            const linkClass = `${styles.link} ${isActive ? styles.activeLink : ''}`;
+            return (
+              <Link key={href} href={href} className={linkClass}>
+                {label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>

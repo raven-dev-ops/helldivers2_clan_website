@@ -46,6 +46,130 @@ function HeaderButton({
   );
 }
 
+// Moved outside to avoid remounting on each parent render (prevents input blur)
+function LeaderboardTableSection({
+  title,
+  rows,
+  loading,
+  error,
+  activeSort,
+  onSort,
+  showAverages,
+  searchTerm,
+  onSearch,
+}: {
+  title: string;
+  rows: LeaderboardRow[];
+  loading: boolean;
+  error: string | null;
+  activeSort: { sortBy: SortField; sortDir: SortDir };
+  onSort: (f: SortField) => void;
+  showAverages?: boolean;
+  searchTerm: string;
+  onSearch: (v: string) => void;
+}) {
+  const hasAverages = showAverages && rows.length > 0 && (
+    typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
+  );
+
+  const normalizedQuery = searchTerm.trim().toLowerCase();
+  const filteredRows = normalizedQuery
+    ? rows.filter(r => (r.player_name || '').toLowerCase().includes(normalizedQuery))
+    : rows;
+
+  return (
+    <section className="content-section">
+      <h2 className="content-section-title with-border-bottom">{title}</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+        <input
+          aria-label={`Search ${title} by player name`}
+          placeholder="Search by player name..."
+          value={searchTerm}
+          onChange={(e) => onSearch(e.target.value)}
+          className="input"
+          style={{ maxWidth: 320 }}
+        />
+      </div>
+      {error && <p className="text-paragraph">Error: {error}</p>}
+      {loading ? (
+        <p className="text-paragraph">Loading leaderboard…</p>
+      ) : (
+        <div className="table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th className="th text-center col-rank" style={{ width: 56 }}>#</th>
+                <th className="th col-player">
+                  <HeaderButton label="Player" sortKey="player_name" activeSort={activeSort} onSort={onSort} />
+                </th>
+                <th className="th text-right col-kills">
+                  <HeaderButton label="Kills" sortKey="Kills" activeSort={activeSort} onSort={onSort} />
+                </th>
+                {hasAverages && (
+                  <th className="th text-right col-avg-kills">
+                    <HeaderButton label="Avg Kills" sortKey="Avg Kills" activeSort={activeSort} onSort={onSort} />
+                  </th>
+                )}
+                <th className="th text-right col-accuracy">
+                  <HeaderButton label="Accuracy" sortKey="Accuracy" activeSort={activeSort} onSort={onSort} />
+                </th>
+                <th className="th text-right col-shots-fired">
+                  <HeaderButton label="Shots Fired" sortKey="Shots Fired" activeSort={activeSort} onSort={onSort} />
+                </th>
+                {hasAverages && (
+                  <th className="th text-right col-avg-shots-fired">
+                    <HeaderButton label="Avg Shots Fired" sortKey="Avg Shots Fired" activeSort={activeSort} onSort={onSort} />
+                  </th>
+                )}
+                <th className="th text-right col-shots-hit">
+                  <HeaderButton label="Shots Hit" sortKey="Shots Hit" activeSort={activeSort} onSort={onSort} />
+                </th>
+                {hasAverages && (
+                  <th className="th text-right col-avg-shots-hit">
+                    <HeaderButton label="Avg Shots Hit" sortKey="Avg Shots Hit" activeSort={activeSort} onSort={onSort} />
+                  </th>
+                )}
+                <th className="th text-right col-deaths">
+                  <HeaderButton label="Deaths" sortKey="Deaths" activeSort={activeSort} onSort={onSort} />
+                </th>
+                {hasAverages && (
+                  <th className="th text-right col-avg-deaths">
+                    <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
+                  </th>
+                )}
+                <th className="th col-submitted">Submitted</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRows.map((row) => (
+                <tr key={row.id}>
+                  <td className="td text-center col-rank">{row.rank}</td>
+                  <td className="td col-player">{row.player_name}</td>
+                  <td className="td text-right col-kills">{row.Kills}</td>
+                  {hasAverages && <td className="td text-right col-avg-kills">{typeof row.AvgKills === 'number' ? row.AvgKills.toFixed(1) : ''}</td>}
+                  <td className="td text-right col-accuracy">{row.Accuracy}</td>
+                  <td className="td text-right col-shots-fired">{row.ShotsFired}</td>
+                  {hasAverages && <td className="td text-right col-avg-shots-fired">{typeof row.AvgShotsFired === 'number' ? row.AvgShotsFired.toFixed(1) : ''}</td>}
+                  <td className="td text-right col-shots-hit">{row.ShotsHit}</td>
+                  {hasAverages && <td className="td text-right col-avg-shots-hit">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
+                  <td className="td text-right col-deaths">{row.Deaths}</td>
+                  {hasAverages && <td className="td text-right col-avg-deaths">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
+                  <td className="td col-submitted">{row.submitted_at ? new Date(row.submitted_at).toLocaleString() : ''}</td>
+                </tr>
+              ))}
+              {!filteredRows.length && (
+                <tr>
+                  <td className="td" colSpan={hasAverages ? 11 : 9}>No matching players.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function HelldiversLeaderboard({ initialMonthData, initialLifetimeData }: { initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] } }) {
   const [monthData, setMonthData] = useState<LeaderboardRow[]>(initialMonthData?.results || []);
   const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(initialLifetimeData?.results || []);
@@ -129,112 +253,9 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
-  function Table({ title, rows, loading, error, activeSort, onSort, showAverages, searchTerm, onSearch }: { title: string; rows: LeaderboardRow[]; loading: boolean; error: string | null; activeSort: { sortBy: SortField; sortDir: SortDir }; onSort: (f: SortField) => void; showAverages?: boolean; searchTerm: string; onSearch: (v: string) => void; }) {
-    const hasAverages = showAverages && rows.length > 0 && (
-      typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
-    );
-
-    const normalizedQuery = searchTerm.trim().toLowerCase();
-    const filteredRows = normalizedQuery
-      ? rows.filter(r => (r.player_name || '').toLowerCase().includes(normalizedQuery))
-      : rows;
-
-    return (
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">{title}</h2>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-          <input
-            aria-label={`Search ${title} by player name`}
-            placeholder="Search by player name..."
-            value={searchTerm}
-            onChange={(e) => onSearch(e.target.value)}
-            className="input"
-            style={{ maxWidth: 320 }}
-          />
-        </div>
-        {error && <p className="text-paragraph">Error: {error}</p>}
-        {loading ? (
-          <p className="text-paragraph">Loading leaderboard…</p>
-        ) : (
-          <div className="table-container">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th className="th text-center" style={{ width: 64 }}>#</th>
-                  <th className="th">
-                    <HeaderButton label="Player" sortKey="player_name" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  <th className="th text-right">
-                    <HeaderButton label="Kills" sortKey="Kills" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  {hasAverages && (
-                    <th className="th text-right">
-                      <HeaderButton label="Avg Kills" sortKey="Avg Kills" activeSort={activeSort} onSort={onSort} />
-                    </th>
-                  )}
-                  <th className="th text-right">
-                    <HeaderButton label="Accuracy" sortKey="Accuracy" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  <th className="th text-right">
-                    <HeaderButton label="Shots Fired" sortKey="Shots Fired" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  {hasAverages && (
-                    <th className="th text-right">
-                      <HeaderButton label="Avg Shots Fired" sortKey="Avg Shots Fired" activeSort={activeSort} onSort={onSort} />
-                    </th>
-                  )}
-                  <th className="th text-right">
-                    <HeaderButton label="Shots Hit" sortKey="Shots Hit" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  {hasAverages && (
-                    <th className="th text-right">
-                      <HeaderButton label="Avg Shots Hit" sortKey="Avg Shots Hit" activeSort={activeSort} onSort={onSort} />
-                    </th>
-                  )}
-                  <th className="th text-right">
-                    <HeaderButton label="Deaths" sortKey="Deaths" activeSort={activeSort} onSort={onSort} />
-                  </th>
-                  {hasAverages && (
-                    <th className="th text-right">
-                      <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
-                    </th>
-                  )}
-                  <th className="th">Submitted</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredRows.map((row) => (
-                  <tr key={row.id}>
-                    <td className="td text-center">{row.rank}</td>
-                    <td className="td">{row.player_name}</td>
-                    <td className="td text-right">{row.Kills}</td>
-                    {hasAverages && <td className="td text-right">{typeof row.AvgKills === 'number' ? row.AvgKills.toFixed(1) : ''}</td>}
-                    <td className="td text-right">{row.Accuracy}</td>
-                    <td className="td text-right">{row.ShotsFired}</td>
-                    {hasAverages && <td className="td text-right">{typeof row.AvgShotsFired === 'number' ? row.AvgShotsFired.toFixed(1) : ''}</td>}
-                    <td className="td text-right">{row.ShotsHit}</td>
-                    {hasAverages && <td className="td text-right">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
-                    <td className="td text-right">{row.Deaths}</td>
-                    {hasAverages && <td className="td text-right">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
-                    <td className="td">{row.submitted_at ? new Date(row.submitted_at).toLocaleString() : ''}</td>
-                  </tr>
-                ))}
-                {!filteredRows.length && (
-                  <tr>
-                    <td className="td" colSpan={hasAverages ? 11 : 9}>No matching players.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-    );
-  }
-
   return (
     <div>
-      <Table
+      <LeaderboardTableSection
         title="August Leaderboard"
         rows={monthData}
         loading={monthLoading}
@@ -246,7 +267,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         onSearch={setMonthSearch}
       />
 
-      <Table
+      <LeaderboardTableSection
         title="Lifetime Leaderboard"
         rows={lifetimeData}
         loading={lifetimeLoading}

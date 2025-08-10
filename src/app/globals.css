@@ -112,6 +112,28 @@ tbody tr:last-child .td { border-bottom: none; }
 .table-sort-button:hover { color: var(--color-text-primary); }
 .table-sort-arrow { opacity: 0.8; font-size: 0.85em; }
 
+/* Ensure table fits without horizontal scroll and columns behave responsively */
+.table { table-layout: fixed; }
+.col-rank { width: 48px; }
+.col-player { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.col-kills, .col-accuracy, .col-shots-fired, .col-shots-hit, .col-deaths, .col-avg-kills, .col-avg-shots-fired, .col-avg-shots-hit, .col-avg-deaths { width: 100px; }
+.col-submitted { width: 160px; }
+
+@media (max-width: 1024px) {
+  .col-submitted { display: none; }
+}
+@media (max-width: 900px) {
+  .col-avg-kills, .col-avg-shots-fired, .col-avg-shots-hit, .col-avg-deaths { display: none; }
+}
+@media (max-width: 768px) {
+  .col-shots-fired, .col-shots-hit { display: none; }
+  .col-player { max-width: 180px; }
+}
+@media (max-width: 640px) {
+  .col-accuracy { display: none; }
+  .col-player { max-width: 160px; }
+}
+
 /* --- 4. Utility Classes (Minimal Set) --- */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
