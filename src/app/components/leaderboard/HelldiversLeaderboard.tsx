@@ -18,6 +18,11 @@ interface LeaderboardRow {
   Deaths: number | string;
   clan_name?: string;
   submitted_at?: string | Date | null;
+  // Optional averages for lifetime scope
+  AvgKills?: number;
+  AvgShotsFired?: number;
+  AvgShotsHit?: number;
+  AvgDeaths?: number;
 }
 
 function HeaderButton({
@@ -103,7 +108,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
       setLifetimeLoading(true);
       setLifetimeError(null);
       try {
-        const params = new URLSearchParams({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir, limit: '100', scope: 'lifetime' });
+        const params = new URLSearchParams({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir, limit: '1000', scope: 'lifetime' });
         const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
@@ -121,7 +126,10 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
-  function Table({ title, rows, loading, error, activeSort, onSort }: { title: string; rows: LeaderboardRow[]; loading: boolean; error: string | null; activeSort: { sortBy: SortField; sortDir: SortDir }; onSort: (f: SortField) => void }) {
+  function Table({ title, rows, loading, error, activeSort, onSort, showAverages }: { title: string; rows: LeaderboardRow[]; loading: boolean; error: string | null; activeSort: { sortBy: SortField; sortDir: SortDir }; onSort: (f: SortField) => void; showAverages?: boolean }) {
+    const hasAverages = showAverages && rows.length > 0 && (
+      typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
+    );
     return (
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">{title}</h2>
@@ -140,18 +148,22 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
                   <th className="th text-right">
                     <HeaderButton label="Kills" sortKey="Kills" activeSort={activeSort} onSort={onSort} />
                   </th>
+                  {hasAverages && <th className="th text-right">Avg Kills</th>}
                   <th className="th text-right">
                     <HeaderButton label="Accuracy" sortKey="Accuracy" activeSort={activeSort} onSort={onSort} />
                   </th>
                   <th className="th text-right">
                     <HeaderButton label="Shots Fired" sortKey="Shots Fired" activeSort={activeSort} onSort={onSort} />
                   </th>
+                  {hasAverages && <th className="th text-right">Avg Shots Fired</th>}
                   <th className="th text-right">
                     <HeaderButton label="Shots Hit" sortKey="Shots Hit" activeSort={activeSort} onSort={onSort} />
                   </th>
+                  {hasAverages && <th className="th text-right">Avg Shots Hit</th>}
                   <th className="th text-right">
                     <HeaderButton label="Deaths" sortKey="Deaths" activeSort={activeSort} onSort={onSort} />
                   </th>
+                  {hasAverages && <th className="th text-right">Avg Deaths</th>}
                   <th className="th">
                     <HeaderButton label="Clan" sortKey="clan_name" activeSort={activeSort} onSort={onSort} />
                   </th>
@@ -164,10 +176,14 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
                     <td className="td text-center">{row.rank}</td>
                     <td className="td">{row.player_name}</td>
                     <td className="td text-right">{row.Kills}</td>
+                    {hasAverages && <td className="td text-right">{typeof row.AvgKills === 'number' ? row.AvgKills.toFixed(1) : ''}</td>}
                     <td className="td text-right">{row.Accuracy}</td>
                     <td className="td text-right">{row.ShotsFired}</td>
+                    {hasAverages && <td className="td text-right">{typeof row.AvgShotsFired === 'number' ? row.AvgShotsFired.toFixed(1) : ''}</td>}
                     <td className="td text-right">{row.ShotsHit}</td>
+                    {hasAverages && <td className="td text-right">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
                     <td className="td text-right">{row.Deaths}</td>
+                    {hasAverages && <td className="td text-right">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
                     <td className="td">{row.clan_name || ''}</td>
                     <td className="td">{row.submitted_at ? new Date(row.submitted_at).toLocaleString() : ''}</td>
                   </tr>
@@ -189,6 +205,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         error={monthError}
         activeSort={monthActiveSort}
         onSort={toggleMonthSort}
+        showAverages={false}
       />
 
       <Table
@@ -198,6 +215,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
         error={lifetimeError}
         activeSort={lifetimeActiveSort}
         onSort={toggleLifetimeSort}
+        showAverages={true}
       />
     </div>
   );
