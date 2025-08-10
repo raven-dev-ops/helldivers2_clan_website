@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
     const sortBy: SortField = VALID_SORT_FIELDS.includes(sortByParam) ? sortByParam : 'Kills';
     const sortDir: 1 | -1 = sortDirParam === 'asc' ? 1 : -1;
-    const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 500) : 100;
+    const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 1000) : 100;
 
     const scope = scopeParam === 'lifetime' ? 'lifetime' : 'month';
     const month = monthParam ? parseInt(monthParam, 10) : undefined;
