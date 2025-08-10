@@ -141,6 +141,20 @@ const Navbar = () => {
           {standardNavItems.map(({ href, label }) => {
             const isActive = isClient && pathname === href;
             const linkClass = `${styles.link} ${isActive ? styles.activeLink : ''}`;
+            if (label === 'Leaderboard') {
+              const isLeaderboardActive = isClient && pathname.startsWith('/helldivers-2/leaderboard');
+              const leaderboardLinkClass = `${styles.link} ${isLeaderboardActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={leaderboardLinkClass}>Leaderboard</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Leaderboard shortcuts">
+                    <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
+                    <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
+                    <Link href="/helldivers-2/leaderboard#average" className={styles.dropdownItem} role="menuitem">Average</Link>
+                  </div>
+                </div>
+              );
+            }
             return (
               <Link key={href} href={href} className={linkClass}>
                 {label}
