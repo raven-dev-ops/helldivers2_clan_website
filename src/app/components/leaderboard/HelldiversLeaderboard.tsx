@@ -79,7 +79,7 @@ function LeaderboardTableSection({
 
   return (
     <section className="content-section">
-      <h2 className="content-section-title with-border-bottom">{title}</h2>
+      <h2 className="content-section-title with-border-bottom leaderboard-title">{title}</h2>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <input
           aria-label={`Search ${title} by player name`}
@@ -187,7 +187,8 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(initialLifetimeData?.sortDir || 'desc');
 
   const [monthSearch, setMonthSearch] = useState<string>('');
-  const [lifetimeSearch, setLifetimeSearch] = useState<string>('');
+  const [lifetimeTotalsSearch, setLifetimeTotalsSearch] = useState<string>('');
+  const [lifetimeAveragesSearch, setLifetimeAveragesSearch] = useState<string>('');
 
   const toggleMonthSort = (field: SortField) => {
     if (field === monthSortBy) {
@@ -214,7 +215,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
       setMonthError(null);
       try {
         const now = new Date();
-        const params = new URLSearchParams({ sortBy: monthSortBy, sortDir: monthSortDir, limit: '100', scope: 'month', month: '8', year: String(now.getUTCFullYear()) });
+        const params = new URLSearchParams({ sortBy: monthSortBy, sortDir: monthSortDir, limit: '100', scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) });
         const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
@@ -256,7 +257,7 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
   return (
     <div>
       <LeaderboardTableSection
-        title="August Leaderboard"
+        title="Monthly Leaderboard"
         rows={monthData}
         loading={monthLoading}
         error={monthError}
@@ -268,15 +269,27 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
       />
 
       <LeaderboardTableSection
-        title="Lifetime Leaderboard"
+        title="Total Leaderboard"
+        rows={lifetimeData}
+        loading={lifetimeLoading}
+        error={lifetimeError}
+        activeSort={lifetimeActiveSort}
+        onSort={toggleLifetimeSort}
+        showAverages={false}
+        searchTerm={lifetimeTotalsSearch}
+        onSearch={setLifetimeTotalsSearch}
+      />
+
+      <LeaderboardTableSection
+        title="Average Leaderboard"
         rows={lifetimeData}
         loading={lifetimeLoading}
         error={lifetimeError}
         activeSort={lifetimeActiveSort}
         onSort={toggleLifetimeSort}
         showAverages={true}
-        searchTerm={lifetimeSearch}
-        onSearch={setLifetimeSearch}
+        searchTerm={lifetimeAveragesSearch}
+        onSearch={setLifetimeAveragesSearch}
       />
     </div>
   );

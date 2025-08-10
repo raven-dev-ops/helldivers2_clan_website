@@ -19,8 +19,9 @@ export default async function LeaderboardServer({
   const host = hdrs.get('host') || 'localhost:3000';
   const protocol = host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https';
 
-  const augustParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'month', month: '8', year: String(new Date().getUTCFullYear()) }).toString();
-  const augustUrl = `${protocol}://${host}/api/helldivers/leaderboard?${augustParams}`;
+  const now = new Date();
+  const monthParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
+  const augustUrl = `${protocol}://${host}/api/helldivers/leaderboard?${monthParams}`;
 
   const lifetimeParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'lifetime' }).toString();
   const lifetimeUrl = `${protocol}://${host}/api/helldivers/leaderboard?${lifetimeParams}`;
