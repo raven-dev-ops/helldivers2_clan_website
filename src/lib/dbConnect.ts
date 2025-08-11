@@ -39,9 +39,10 @@ async function dbConnect(): Promise<Mongoose> {
   }
 
   if (!cached.promise) {
-    const opts = {
+    const opts: Parameters<typeof mongoose.connect>[1] = {
       bufferCommands: false,
-      dbName: 'GPTHellbot', // Replace with your dbName if needed
+      // Use MONGODB_DB if provided; otherwise defer to DB in the URI
+      ...(process.env.MONGODB_DB ? { dbName: process.env.MONGODB_DB } : {}),
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => mongooseInstance);
   }

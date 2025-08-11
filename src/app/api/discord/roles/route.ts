@@ -15,7 +15,8 @@ export async function GET() {
 
   const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
   if (!BOT_TOKEN) {
-    return NextResponse.json({ error: 'server_misconfigured' }, { status: 500 });
+    // Gracefully degrade if bot token is not set
+    return NextResponse.json({ roles: [], isMember: false });
   }
 
   // Look up the user's Discord account to get their Discord user ID

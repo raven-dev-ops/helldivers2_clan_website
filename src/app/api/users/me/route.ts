@@ -128,8 +128,14 @@ export async function PUT(req: Request) {
     if (firstName !== undefined) updates.firstName = firstName ?? null;
     if (middleName !== undefined) updates.middleName = middleName ?? null;
     if (lastName !== undefined) updates.lastName = lastName ?? null;
-    if (characterHeightCm !== undefined) updates.characterHeightCm = Number(characterHeightCm) || null;
-    if (characterWeightKg !== undefined) updates.characterWeightKg = Number(characterWeightKg) || null;
+    if (characterHeightCm !== undefined) {
+      const num = Number(characterHeightCm);
+      updates.characterHeightCm = Number.isFinite(num) ? num : null;
+    }
+    if (characterWeightKg !== undefined) {
+      const num = Number(characterWeightKg);
+      updates.characterWeightKg = Number.isFinite(num) ? num : null;
+    }
     if (homeplanet !== undefined) updates.homeplanet = homeplanet ?? null;
     if (background !== undefined) updates.background = background ?? null;
     if (division !== undefined) updates.division = division ?? null;
@@ -163,7 +169,7 @@ export async function PUT(req: Request) {
   }
 
   if (Object.keys(updates).length > 0) {
-    await UserModel.updateOne({ _id: session.user.id }, { $set: updates });
+    await UserModel.updateOne({ _id: session.user.id }, { $set: updates }, { upsert: true });
   }
 
   const updated = await UserModel.findById(session.user.id).lean();
