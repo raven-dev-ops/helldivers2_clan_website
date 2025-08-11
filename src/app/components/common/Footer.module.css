@@ -39,3 +39,15 @@
     width: 20px;
     height: 20px;
   }
+  .discordMessage {
+    margin: 0.35rem 0 0.65rem;
+    color: #c7d2fe; /* indigo-200 */
+    font-size: 0.95rem;
+  }
+  .discordMessageLink {
+    color: #93c5fd; /* blue-300 */
+    text-decoration: underline;
+  }
+  .discordMessageLink:hover {
+    color: #bfdbfe; /* blue-200 */
+  }
