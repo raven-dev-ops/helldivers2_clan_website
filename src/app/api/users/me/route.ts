@@ -34,6 +34,7 @@ export async function GET() {
     favoriteWeapon: user.favoriteWeapon ?? null,
     armor: user.armor ?? null,
     motto: user.motto ?? null,
+    favoredEnemy: user.favoredEnemy ?? null,
     challengeSubmissions: user.challengeSubmissions ?? [],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -53,7 +54,7 @@ export async function PUT(req: Request) {
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto'];
+    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
@@ -84,6 +85,7 @@ export async function PUT(req: Request) {
         const submission = {
           level,
           youtubeUrl: (form.get('youtubeUrl') || null) as string | null,
+          twitchUrl: (form.get('twitchUrl') || null) as string | null,
           witnessName: (form.get('witnessName') || null) as string | null,
           witnessDiscordId: (form.get('witnessDiscordId') || null) as string | null,
           createdAt: new Date(),
@@ -118,6 +120,7 @@ export async function PUT(req: Request) {
       favoriteWeapon,
       armor,
       motto,
+      favoredEnemy,
       challengeSubmission,
     } = body || {};
 
@@ -136,12 +139,14 @@ export async function PUT(req: Request) {
     if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
+    if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
 
     if (challengeSubmission?.level >= 1 && challengeSubmission?.level <= 7) {
       const level = Number(challengeSubmission.level);
       const submission = {
         level,
         youtubeUrl: challengeSubmission.youtubeUrl ?? null,
+        twitchUrl: challengeSubmission.twitchUrl ?? null,
         witnessName: challengeSubmission.witnessName ?? null,
         witnessDiscordId: challengeSubmission.witnessDiscordId ?? null,
         createdAt: new Date(),
@@ -162,6 +167,55 @@ export async function PUT(req: Request) {
   }
 
   const updated = await UserModel.findById(session.user.id).lean();
+
+  // Save snapshot to User_Profiles collection with discord_id and time
+  try {
+    const client = await getMongoClientPromise();
+    const db = client.db();
+    const accounts = db.collection('accounts');
+    const userObjectId = new ObjectId(session.user.id);
+    const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
+    const discordId = discordAccount?.providerAccountId || null;
+    const profileSnapshot = {
+      user_id: userObjectId,
+      discord_id: discordId,
+      time: new Date(),
+      profile: {
+        id: updated?._id?.toString(),
+        name: updated?.name ?? null,
+        firstName: updated?.firstName ?? null,
+        middleName: updated?.middleName ?? null,
+        lastName: updated?.lastName ?? null,
+        division: updated?.division ?? null,
+        characterHeightCm: updated?.characterHeightCm ?? null,
+        characterWeightKg: updated?.characterWeightKg ?? null,
+        homeplanet: updated?.homeplanet ?? null,
+        background: updated?.background ?? null,
+        callsign: updated?.callsign ?? null,
+        rankTitle: updated?.rankTitle ?? null,
+        favoriteWeapon: updated?.favoriteWeapon ?? null,
+        favoredEnemy: updated?.favoredEnemy ?? null,
+        armor: updated?.armor ?? null,
+        motto: updated?.motto ?? null,
+        challengeSubmissions: updated?.challengeSubmissions ?? [],
+      },
+    };
+    await db.collection('User_Profiles').updateOne(
+      { user_id: userObjectId },
+      {
+        $set: {
+          user_id: userObjectId,
+          discord_id: discordId,
+          last_profile: profileSnapshot.profile,
+          last_updated: profileSnapshot.time,
+        },
+        $push: { history: profileSnapshot },
+      },
+      { upsert: true }
+    );
+  } catch (e) {
+    console.error('Failed to write User_Profiles snapshot', e);
+  }
   return NextResponse.json({
     id: updated?._id.toString(),
     name: updated?.name,
@@ -181,6 +235,7 @@ export async function PUT(req: Request) {
     favoriteWeapon: updated?.favoriteWeapon ?? null,
     armor: updated?.armor ?? null,
     motto: updated?.motto ?? null,
+    favoredEnemy: updated?.favoredEnemy ?? null,
     challengeSubmissions: updated?.challengeSubmissions ?? [],
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,

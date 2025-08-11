@@ -15,6 +15,8 @@ export default function ProfileEditForm() {
   const [lastName, setLastName] = useState<string>('');
   const [characterHeightCm, setCharacterHeightCm] = useState<string>('');
   const [characterWeightKg, setCharacterWeightKg] = useState<string>('');
+  const [heightUnit, setHeightUnit] = useState<'cm' | 'in'>('cm');
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lb'>('kg');
   const [homeplanet, setHomeplanet] = useState<string>('');
   const [background, setBackground] = useState<string>('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -24,6 +26,7 @@ export default function ProfileEditForm() {
   const [favoriteWeapon, setFavoriteWeapon] = useState<string>('');
   const [armor, setArmor] = useState<string>('');
   const [motto, setMotto] = useState<string>('');
+  const [favoredEnemy, setFavoredEnemy] = useState<string>('');
   const [isChangeImageOpen, setIsChangeImageOpen] = useState<boolean>(false);
 
   useEffect(() => {
@@ -45,6 +48,7 @@ export default function ProfileEditForm() {
         setFavoriteWeapon(data.favoriteWeapon || '');
         setArmor(data.armor || '');
         setMotto(data.motto || '');
+        setFavoredEnemy(data.favoredEnemy || '');
       }
       // Fetch Discord roles (non-fatal)
       try {
@@ -74,6 +78,7 @@ export default function ProfileEditForm() {
       if (favoriteWeapon) form.append('favoriteWeapon', favoriteWeapon);
       if (armor) form.append('armor', armor);
       if (motto) form.append('motto', motto);
+      if (favoredEnemy) form.append('favoredEnemy', favoredEnemy);
       if (avatarFile) form.append('avatar', avatarFile);
       const res = await fetch('/api/users/me', { method: 'PUT', body: form });
       if (res.ok) {
@@ -112,6 +117,28 @@ export default function ProfileEditForm() {
     );
   }
 
+  // Helpers for unit conversion and controlled inputs
+  const cmToIn = (cmStr: string) => {
+    const cm = parseFloat(cmStr);
+    if (isNaN(cm)) return '';
+    return (cm / 2.54).toFixed(0);
+  };
+  const inToCm = (inStr: string) => {
+    const inches = parseFloat(inStr);
+    if (isNaN(inches)) return '';
+    return (inches * 2.54).toFixed(0);
+  };
+  const kgToLb = (kgStr: string) => {
+    const kg = parseFloat(kgStr);
+    if (isNaN(kg)) return '';
+    return (kg * 2.2046226218).toFixed(0);
+  };
+  const lbToKg = (lbStr: string) => {
+    const lb = parseFloat(lbStr);
+    if (isNaN(lb)) return '';
+    return (lb / 2.2046226218).toFixed(0);
+  };
+
   return (
     <form className="card form-grid">
       <div className="avatar-row">
@@ -147,12 +174,34 @@ export default function ProfileEditForm() {
 
       <div className="two-col">
         <label className="field">
-          <span className="label">Height (cm)</span>
-          <input type="number" inputMode="numeric" pattern="[0-9]*" value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
+          <span className="label">Height ({heightUnit}) <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>{heightUnit === 'cm' ? 'Switch to in' : 'Switch to cm'}</button></span>
+          <input
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={heightUnit === 'cm' ? characterHeightCm : cmToIn(characterHeightCm)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (heightUnit === 'cm') setCharacterHeightCm(val);
+              else setCharacterHeightCm(inToCm(val));
+            }}
+            placeholder={heightUnit === 'cm' ? 'e.g., 180' : 'e.g., 71'}
+          />
         </label>
         <label className="field">
-          <span className="label">Weight (kg)</span>
-          <input type="number" inputMode="numeric" pattern="[0-9]*" value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
+          <span className="label">Weight ({weightUnit}) <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>{weightUnit === 'kg' ? 'Switch to lb' : 'Switch to kg'}</button></span>
+          <input
+            type="number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            value={weightUnit === 'kg' ? characterWeightKg : kgToLb(characterWeightKg)}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (weightUnit === 'kg') setCharacterWeightKg(val);
+              else setCharacterWeightKg(lbToKg(val));
+            }}
+            placeholder={weightUnit === 'kg' ? 'e.g., 80' : 'e.g., 176'}
+          />
         </label>
       </div>
 
@@ -182,6 +231,11 @@ export default function ProfileEditForm() {
           <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
         </label>
       </div>
+
+      <label className="field field-sm">
+        <span className="label">Favored Enemy</span>
+        <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
+      </label>
 
       <label className="field">
         <span className="label">Description / Background</span>
