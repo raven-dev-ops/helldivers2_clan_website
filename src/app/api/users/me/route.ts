@@ -18,6 +18,9 @@ export async function GET() {
   return NextResponse.json({
     id: user._id.toString(),
     name: user.name,
+    firstName: user.firstName ?? null,
+    middleName: user.middleName ?? null,
+    lastName: user.lastName ?? null,
     email: user.email,
     image: user.image,
     division: user.division || null,
@@ -50,7 +53,7 @@ export async function PUT(req: Request) {
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto'];
+    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
@@ -101,6 +104,9 @@ export async function PUT(req: Request) {
     const body = await req.json().catch(() => ({}));
     const {
       name,
+      firstName,
+      middleName,
+      lastName,
       characterHeightCm,
       characterWeightKg,
       homeplanet,
@@ -116,6 +122,9 @@ export async function PUT(req: Request) {
     } = body || {};
 
     if (name !== undefined) updates.name = String(name);
+    if (firstName !== undefined) updates.firstName = firstName ?? null;
+    if (middleName !== undefined) updates.middleName = middleName ?? null;
+    if (lastName !== undefined) updates.lastName = lastName ?? null;
     if (characterHeightCm !== undefined) updates.characterHeightCm = Number(characterHeightCm) || null;
     if (characterWeightKg !== undefined) updates.characterWeightKg = Number(characterWeightKg) || null;
     if (homeplanet !== undefined) updates.homeplanet = homeplanet ?? null;
@@ -156,6 +165,9 @@ export async function PUT(req: Request) {
   return NextResponse.json({
     id: updated?._id.toString(),
     name: updated?.name,
+    firstName: updated?.firstName ?? null,
+    middleName: updated?.middleName ?? null,
+    lastName: updated?.lastName ?? null,
     email: updated?.email,
     image: updated?.image,
     division: updated?.division || null,

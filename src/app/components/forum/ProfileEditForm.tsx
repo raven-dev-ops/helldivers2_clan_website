@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import ChangeAvatarModal from '@/app/components/profile/ChangeAvatarModal';
 
 export default function ProfileEditForm() {
   const [loading, setLoading] = useState(true);
@@ -10,6 +11,9 @@ export default function ProfileEditForm() {
   const [userData, setUserData] = useState<any>(null);
 
   const [name, setName] = useState<string>('');
+  const [firstName, setFirstName] = useState<string>('');
+  const [middleName, setMiddleName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
   const [characterHeightCm, setCharacterHeightCm] = useState<string>('');
   const [characterWeightKg, setCharacterWeightKg] = useState<string>('');
   const [homeplanet, setHomeplanet] = useState<string>('');
@@ -21,6 +25,7 @@ export default function ProfileEditForm() {
   const [favoriteWeapon, setFavoriteWeapon] = useState<string>('');
   const [armor, setArmor] = useState<string>('');
   const [motto, setMotto] = useState<string>('');
+  const [isChangeImageOpen, setIsChangeImageOpen] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -30,6 +35,9 @@ export default function ProfileEditForm() {
         const data = await res.json();
         setUserData(data);
         setName(data.name || '');
+        setFirstName(data.firstName || '');
+        setMiddleName(data.middleName || '');
+        setLastName(data.lastName || '');
         setCharacterHeightCm(data.characterHeightCm ? String(data.characterHeightCm) : '');
         setCharacterWeightKg(data.characterWeightKg ? String(data.characterWeightKg) : '');
         setHomeplanet(data.homeplanet || '');
@@ -57,6 +65,9 @@ export default function ProfileEditForm() {
     try {
       const form = new FormData();
       if (name) form.append('name', name);
+      if (firstName) form.append('firstName', firstName);
+      if (middleName) form.append('middleName', middleName);
+      if (lastName) form.append('lastName', lastName);
       if (characterHeightCm) form.append('characterHeightCm', characterHeightCm);
       if (characterWeightKg) form.append('characterWeightKg', characterWeightKg);
       if (homeplanet) form.append('homeplanet', homeplanet);
@@ -93,6 +104,11 @@ export default function ProfileEditForm() {
     }
   };
 
+  const handleAvatarSaved = (dataUrl: string) => {
+    setUserData((prev: any) => ({ ...(prev || {}), customAvatarDataUrl: dataUrl }));
+    setIsChangeImageOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="card muted">Loading…</div>
@@ -111,9 +127,26 @@ export default function ProfileEditForm() {
         </div>
         <div className="avatar-fields">
           <label className="field">
-            <span className="label">Name</span>
+            <span className="label">Character Name</span>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Character name" />
           </label>
+          <div className="two-col">
+            <label className="field">
+              <span className="label">First Name</span>
+              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
+            </label>
+            <label className="field">
+              <span className="label">Middle Name</span>
+              <input value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
+            </label>
+          </div>
+          <label className="field">
+            <span className="label">Last Name</span>
+            <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
+          </label>
+          <button type="button" className="link-button" onClick={() => setIsChangeImageOpen(true)}>
+            Change image
+          </button>
         </div>
       </div>
 
@@ -178,10 +211,7 @@ export default function ProfileEditForm() {
         )}
       </div>
 
-      <label className="field">
-        <span className="label">Profile Picture</span>
-        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
-      </label>
+      {/* Removed direct file input in favor of Change Image modal */}
 
       <div className="actions">
         <button type="button" onClick={handleSave} disabled={saving} className="btn btn-primary">
@@ -191,6 +221,14 @@ export default function ProfileEditForm() {
           {deleting ? 'Deleting…' : 'Delete Account'}
         </button>
       </div>
+
+      {isChangeImageOpen && (
+        <ChangeAvatarModal
+          initialImageUrl={userData?.customAvatarDataUrl || userData?.image || ''}
+          onCancel={() => setIsChangeImageOpen(false)}
+          onSaved={handleAvatarSaved}
+        />
+      )}
     </form>
   );
 }
