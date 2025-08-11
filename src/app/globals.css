@@ -448,6 +448,23 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 
 /* === End Merch Page Styles === */
 
+/* Profile form: constrain field widths to about half of container */
+.profile-form .field input,
+.profile-form .field textarea,
+.profile-form .field select {
+  max-width: 520px;
+  justify-self: start;
+}
+
+.profile-form .two-col .field input,
+.profile-form .two-col .field textarea,
+.profile-form .two-col .field select {
+  max-width: 100%;
+}
+
+/* Make action buttons align start and not stretch */
+.profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-start; }
+
 /* === Partners Page Styles === */
 
 .partners-main-container {

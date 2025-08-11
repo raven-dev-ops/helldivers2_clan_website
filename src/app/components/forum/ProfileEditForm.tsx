@@ -140,7 +140,7 @@ export default function ProfileEditForm() {
   };
 
   return (
-    <form className="card form-grid">
+    <form className="card form-grid profile-form">
       <div className="avatar-row">
         <div className="avatar-col">
           <div className="avatar">
@@ -174,7 +174,7 @@ export default function ProfileEditForm() {
 
       <div className="two-col">
         <label className="field">
-          <span className="label">Height ({heightUnit}) <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>{heightUnit === 'cm' ? 'Switch to in' : 'Switch to cm'}</button></span>
+          <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
           <input
             type="number"
             inputMode="numeric"
@@ -185,11 +185,11 @@ export default function ProfileEditForm() {
               if (heightUnit === 'cm') setCharacterHeightCm(val);
               else setCharacterHeightCm(inToCm(val));
             }}
-            placeholder={heightUnit === 'cm' ? 'e.g., 180' : 'e.g., 71'}
+            placeholder={heightUnit === 'cm' ? '180' : '71'}
           />
         </label>
         <label className="field">
-          <span className="label">Weight ({weightUnit}) <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>{weightUnit === 'kg' ? 'Switch to lb' : 'Switch to kg'}</button></span>
+          <span className="label">Weight <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>({weightUnit})</button></span>
           <input
             type="number"
             inputMode="numeric"
@@ -200,7 +200,7 @@ export default function ProfileEditForm() {
               if (weightUnit === 'kg') setCharacterWeightKg(val);
               else setCharacterWeightKg(lbToKg(val));
             }}
-            placeholder={weightUnit === 'kg' ? 'e.g., 80' : 'e.g., 176'}
+            placeholder={weightUnit === 'kg' ? '80' : '176'}
           />
         </label>
       </div>
