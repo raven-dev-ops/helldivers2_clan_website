@@ -46,15 +46,15 @@ export default async function ProfilePage(
     <main className="container mx-auto py-8 px-4">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border dark:border-slate-700 flex items-center gap-6 mb-8">
         <Image
-          src={user.image || '/images/avatar-default.png'}
-          alt={`${user.name}'s Avatar`}
+          src={user.customAvatarDataUrl || user.image || '/images/avatar-default.png'}
+          alt={`${user.name || [user.firstName, user.middleName, user.lastName].filter(Boolean).join(' ') || 'User'}'s Avatar`}
           width={160}
           height={160}
           className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
         />
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            {user.name || 'User'}
+            {user.name || [user.firstName, user.middleName, user.lastName].filter(Boolean).join(' ') || 'User'}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Member since:{' '}

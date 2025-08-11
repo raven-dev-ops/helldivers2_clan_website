@@ -4,6 +4,9 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 // --- Define the Interface for the User Document ---
 export interface IUser extends Document {
   name?: string | null;
+  firstName?: string | null;
+  middleName?: string | null;
+  lastName?: string | null;
   email?: string | null; // Ensure this is unique if needed
   emailVerified?: Date | null;
   image?: string | null;
@@ -43,6 +46,9 @@ export interface IUser extends Document {
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String },
+    firstName: { type: String, default: null },
+    middleName: { type: String, default: null },
+    lastName: { type: String, default: null },
     email: { type: String, unique: true, sparse: true, lowercase: true },
     emailVerified: { type: Date, default: null },
     image: { type: String },
