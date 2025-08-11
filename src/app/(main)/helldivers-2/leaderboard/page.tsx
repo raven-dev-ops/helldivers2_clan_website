@@ -1,8 +1,6 @@
 // src/app/(main)/helldivers-2/leaderboard/page.tsx
-import dynamic from 'next/dynamic';
-
-const HelldiversLeaderboard = dynamic(() => import('@/app/components/leaderboard/HelldiversLeaderboard'), { ssr: false });
+import LeaderboardServer from '@/app/(main)/helldivers-2/LeaderboardServer';
 
 export default function LeaderboardPage() {
-  return <HelldiversLeaderboard />;
+  return <LeaderboardServer />;
 }
