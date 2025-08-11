@@ -171,7 +171,7 @@ export default function HelldiverChallengesPage() {
                    {johnHelldiverLevels.map((challenge) => {
                        const isExpanded = !!expandedChallenges[challenge.id];
                        return (
-                           <div key={challenge.id} className={styles.challengeLevelContainer} id={challenge.id}>
+                           <div key={challenge.id} className={styles.challengeLevelContainer} id={challenge.id} style={{ scrollMarginTop: 96 }}>
                                <div
                                    className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
                                    onClick={() => toggleExpansion(challenge.id)}
@@ -201,7 +201,7 @@ export default function HelldiverChallengesPage() {
                   {prestigeMissions.map((mission) => {
                     const isExpanded = !!expandedChallenges[mission.id];
                     return (
-                      <div key={mission.id} className={styles.challengeLevelContainer} id={mission.id}>
+                      <div key={mission.id} className={styles.challengeLevelContainer} id={mission.id} style={{ scrollMarginTop: 96 }}>
                         <div
                           className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
                           onClick={() => toggleExpansion(mission.id)}

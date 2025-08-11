@@ -6,11 +6,11 @@ import Link from "next/link";
 import { useRouter, usePathname } from 'next/navigation';
 // Removed FaChevronDown, kept FaSpinner for initial load indication
 import { FaSpinner } from "react-icons/fa";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import styles from "./Navbar.module.css";
 // Removed useDivisionSelection as selection is no longer handled here
 // import { useDivisionSelection } from '@/hooks/useDivisionSelection';
-import LoginButtons from "@/app/components/auth/LoginButtons";
+// import LoginButtons from "@/app/components/auth/LoginButtons";
 
 interface GameData {
   id: string;
@@ -104,25 +104,25 @@ const Navbar = () => {
     if (pathname.startsWith('/dune-awakening')) {
       return [
         { href: "/dune-awakening", label: "Home" },
+        { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/creators", label: "Creators" },
-        { href: "/dune-awakening/merch", label: "Merch" },
       ];
     } else if (isClient && currentDivisionId === 'dune-awakening') {
        return [
         { href: "/dune-awakening", label: "Home" },
+        { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/creators", label: "Creators" },
-        { href: "/dune-awakening/merch", label: "Merch" },
       ];
     } else { 
       return [
         { href: "/helldivers-2", label: "Home" },
+        { href: "/helldivers-2/merch", label: "Merch" },
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
         { href: "/helldivers-2/news", label: "Ops" },
-        { href: "/helldivers-2/merch", label: "Merch" },
       ];
     }
   };
@@ -141,18 +141,23 @@ const Navbar = () => {
       <div className={styles.container}>
         {/* Logo / Link to Home/Selection Page */}
         <div className={styles.logoArea}>
-          {/* Use a Link component for proper navigation */}
-          <Link href="/" className={styles.logoLinkButton} title="Select Division">
-            {/* Optionally show spinner during initial load */}
-            {showInitialLoadSpinner ? (
-               <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
-            ) : (
-              // Display static text or a logo image here
-              "GPT GAMES"
-              // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
-            )}
-          </Link>
-          {/* Removed dropdown button and ul */}
+          <div className={styles.dropdown}>
+            <Link href="/" className={styles.logoLinkButton} title="Select Division">
+              {/* Optionally show spinner during initial load */}
+              {showInitialLoadSpinner ? (
+                 <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
+              ) : (
+                // Display static text or a logo image here
+                "GPT GAMES"
+                // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
+              )}
+            </Link>
+            <div className={styles.dropdownMenu} role="menu" aria-label="Select a game">
+              {AVAILABLE_GAMES.map(({ id, title, href }) => (
+                <Link key={id} href={href} className={styles.dropdownItem} role="menuitem">{title}</Link>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Desktop Menu Links */}
@@ -224,7 +229,19 @@ const Navbar = () => {
               </Link>
             );
           })}
-          <LoginButtons />
+
+          {/* Profile dropdown / Auth actions */}
+          {sessionStatus === 'authenticated' ? (
+            <div className={styles.dropdown}>
+              <button className={styles.link} aria-haspopup="menu" aria-expanded="false">Profile</button>
+              <div className={styles.dropdownMenu} role="menu" aria-label="Profile actions">
+                <Link href="/components/settings" className={styles.dropdownItem} role="menuitem">Settings</Link>
+                <button onClick={() => signOut()} className={styles.dropdownItem} role="menuitem">Sign out</button>
+              </div>
+            </div>
+          ) : (
+            <Link href="/auth" className={styles.link}>Sign in</Link>
+          )}
         </div>
       </div>
     </nav>
