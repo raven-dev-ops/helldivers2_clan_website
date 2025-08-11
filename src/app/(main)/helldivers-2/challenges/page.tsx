@@ -15,30 +15,30 @@ interface ChallengeLevelData {
 }
 
 const johnHelldiverLevels: ChallengeLevelData[] = [
-     { id: 'level-0', levelTitle: 'LEVEL ZERO - BASIC CLEARANCE', details: `#FORTRESS / MEGA NEST – Solo Base
+     { id: 'level-0', levelTitle: 'Basic Clearance', details: `#FORTRESS / MEGA NEST – Solo Base
 Extract Required` },
-     { id: 'level-1', levelTitle: 'LEVEL ONE - SABOTAGE PROFICIENCY', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+     { id: 'level-1', levelTitle: 'Sabotage Proficiency', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
 No special restrictions
 Extract Required` },
-     { id: 'level-2', levelTitle: 'LEVEL TWO - RESOURCE DENIAL', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+     { id: 'level-2', levelTitle: 'Resource Denial', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
 No Stratagems
 No Resupply
 Extract Required` },
-     { id: 'level-3', levelTitle: 'LEVEL THREE - ICBM CONTROL', details: `#ICBM
+     { id: 'level-3', levelTitle: 'ICBM Control', details: `#ICBM
 No Stratagems
 Extract Required` },
-     { id: 'level-4', levelTitle: 'LEVEL FOUR - FLAWLESS ICBM', details: `#ICBM
+     { id: 'level-4', levelTitle: 'Flawless ICBM', details: `#ICBM
 No Stratagems
 No Resupply
 No Deaths
 Extract Required` },
-     { id: 'level-5', levelTitle: 'LEVEL FIVE - PERFECT SURVEY', details: `#Geological Survey
+     { id: 'level-5', levelTitle: 'Perfect Survey', details: `#Geological Survey
 No Deaths
 Extract Required` },
-     { id: 'level-6', levelTitle: 'LEVEL SIX - EAGLE ACE', details: `#Capture Flag
+     { id: 'level-6', levelTitle: 'Eagle Ace', details: `#Capture Flag
 Eagles Only
 Extract Required` },
-     { id: 'level-7', levelTitle: 'LEVEL SEVEN - THE PURIST', details: `#ICBM
+     { id: 'level-7', levelTitle: 'The Purist', details: `#ICBM
 No Stratagems
 Constitution Rifle + Senator with Throwing Knives
 No Deaths
@@ -60,7 +60,7 @@ interface PrestigeMissionData {
 const prestigeMissions: PrestigeMissionData[] = [
   {
     id: 'level-8',
-    title: 'LEVEL 8 - PRESTIGE #1: Terminid Spawn Camp',
+    title: 'Prestige #1: Terminid Spawn Camp',
     link: 'https://youtu.be/eZfzyR0ecjs?si=ncTuMW_IZ02K1lP7',
     details: `Nuke Nursery Hive Drill Mission
 Full Clear (Main Objective, Sub Objective, All Nests)
@@ -80,7 +80,7 @@ Railgun`,
   },
   {
     id: 'level-9',
-    title: 'LEVEL 9 - PRESTIGE #2: Automaton Hell Strike',
+    title: 'Prestige #2: Automaton Hell Strike',
     link: 'https://youtu.be/hn5lxqgN940?si=ztszXK0vMaFNBE3g',
     details: `Neutralize Orbital Cannons
 Full Clear (Main Objective, Sub Objectives, All Enemies)
@@ -100,7 +100,7 @@ Rocket Sentry`,
   },
   {
     id: 'level-10',
-    title: 'LEVEL 10 - PRESTIGE #3: Lethal Pacifist',
+    title: 'Prestige #3: Lethal Pacifist',
     link: 'https://youtu.be/S8MJ7Q9VHlo',
     details: `ICBM
 Full Clear (Main Objective, Sub Objectives, All Enemies)
@@ -121,7 +121,7 @@ Any Sentry`,
   },
   {
     id: 'level-11',
-    title: 'LEVEL 11 - PRESTIGE #4: Total Area Scorching',
+    title: 'Prestige #4: Total Area Scorching',
     link: 'https://youtu.be/JOucNd0dNOI',
     details: `Command Bunkers
 Full Clear (Main Objective, Sub Objective)
@@ -167,7 +167,7 @@ export default function HelldiverChallengesPage() {
                  </div>
 
                  <div className={styles.subsectionCard}>
-                   <h3 className={styles.subHeading}>Levels 1–7</h3>
+                   <h3 className={styles.subHeading}>Challenge Levels</h3>
                    {johnHelldiverLevels.map((challenge) => {
                        const isExpanded = !!expandedChallenges[challenge.id];
                        return (

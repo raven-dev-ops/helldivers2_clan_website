@@ -9,17 +9,17 @@ const AcquisitionCenter = dynamic(() => import('@/app/(main)/helldivers-2/Acquis
 export default function NewsPage() {
   return (
     <div className="content-section">
-      <h1 className="content-section-title with-border-bottom">News & Operations</h1>
-      <section style={{ marginBottom: 24 }}>
+      <h1 className="content-section-title with-border-bottom">Operations</h1>
+      <section id="war-news" style={{ marginBottom: 24 }}>
         <NewsTicker />
       </section>
-      <section style={{ marginBottom: 24 }}>
+      <section id="major-orders" style={{ marginBottom: 24 }}>
         <MajorOrders />
       </section>
-      <section style={{ marginBottom: 24 }}>
+      <section id="galactic-map" style={{ marginBottom: 24 }}>
         <WarMap />
       </section>
-      <section style={{ marginBottom: 24 }}>
+      <section id="acquisition-center" style={{ marginBottom: 24 }}>
         <AcquisitionCenter />
       </section>
     </div>
