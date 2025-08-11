@@ -172,6 +172,7 @@ export async function PUT(req: Request) {
   try {
     const client = await getMongoClientPromise();
     const db = client.db();
+    const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
     const accounts = db.collection('accounts');
     const userObjectId = new ObjectId(session.user.id);
     const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
@@ -200,7 +201,7 @@ export async function PUT(req: Request) {
         challengeSubmissions: updated?.challengeSubmissions ?? [],
       },
     };
-    await db.collection('User_Profiles').updateOne(
+    await appDb.collection('User_Profiles').updateOne(
       { user_id: userObjectId },
       {
         $set: {
