@@ -90,6 +90,8 @@
   grid-template-columns: 1fr;
   gap: 1rem;
   margin-bottom: 2rem;
+  /* Shared height for player + chat on desktop */
+  --featured-embed-height: 600px;
 }
 @media (min-width: 1024px) {
   .featuredContainer {
@@ -109,6 +111,17 @@
 .featuredVideoWrapper {
   aspect-ratio: 16 / 9;
   background-color: #000000;
+}
+
+/* Ensure the video and chat match heights on desktop */
+@media (min-width: 1024px) {
+  .featuredVideoWrapper {
+    height: var(--featured-embed-height);
+    aspect-ratio: unset;
+  }
+  .featuredChatCard iframe {
+    height: var(--featured-embed-height);
+  }
 }
 
 .featuredChatCard {
@@ -132,6 +145,69 @@
 
 .featuredTitle {
   font-weight: 600;
+}
+
+/* --- Player Card (above featured embeds) --- */
+.playerCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .playerCard { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.playerCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playerAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 2px solid #facc15;
+  overflow: hidden;
+  background: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playerName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.playerSubline {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.playerStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.playerStat {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #d1d5db;
+}
+
+.playerActions {
+  margin-left: auto;
 }
 
 /* --- Creators Grid --- */

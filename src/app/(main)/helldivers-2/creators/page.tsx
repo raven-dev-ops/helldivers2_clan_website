@@ -25,6 +25,8 @@ export default function CreatorsPage() {
   const [creatorsData, setCreatorsData] = useState<CreatorData[]>([]);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
+  // Lightweight leaderboard stats for featured profile card
+  const [featuredStats, setFeaturedStats] = useState<{ kills?: number; accuracy?: string; deaths?: number } | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -71,6 +73,30 @@ export default function CreatorsPage() {
   const featured = liveCreators[0] || null;
   const restCreators = creatorsData.filter(c => !featured || c.channelName !== featured.channelName);
 
+  // Fetch minimal leaderboard stats for featured creator (client-side for now)
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchFeaturedStats() {
+      if (!featured) { setFeaturedStats(null); return; }
+      try {
+        const now = new Date();
+        const params = new URLSearchParams({ sortBy: 'Kills', sortDir: 'desc', limit: '100', scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) });
+        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Leaderboard fetch failed: ${res.status}`);
+        const payload = await res.json();
+        const rows: any[] = payload?.results || [];
+        const match = rows.find(r => (r.player_name || '').toLowerCase() === (featured.displayName || featured.channelName).toLowerCase());
+        if (!isCancelled) {
+          setFeaturedStats(match ? { kills: Number(match.Kills) || 0, accuracy: String(match.Accuracy) || '', deaths: Number(match.Deaths) || 0 } : null);
+        }
+      } catch (_e) {
+        if (!isCancelled) setFeaturedStats(null);
+      }
+    }
+    fetchFeaturedStats();
+    return () => { isCancelled = true; };
+  }, [featured]);
+
   return (
     // Use the page container class from the module
     <main className={styles.pageContainer}>
@@ -95,6 +121,35 @@ export default function CreatorsPage() {
 
       {!isLoadingPage && !pageError && creatorsData.length > 0 && (
         <>
+          {/* Player profile card above featured embeds */}
+          {featured && (
+            <div className={styles.playerCard}>
+              <div className={styles.playerCardHeader}>
+                <div className={styles.playerAvatar}>
+                  {featured.profileImageUrl ? (
+                    <Image src={featured.profileImageUrl} alt={`${featured.displayName || featured.channelName} avatar`} width={56} height={56} unoptimized />
+                  ) : (
+                    <FaTwitch />
+                  )}
+                </div>
+                <div>
+                  <div className={styles.playerName}>{featured.displayName || featured.channelName}</div>
+                  <div className={styles.playerSubline}>twitch.tv/{featured.channelName}</div>
+                </div>
+              </div>
+              <div className={styles.playerStats}>
+                <div className={styles.playerStat}>Kills: {featuredStats?.kills ?? '—'}</div>
+                <div className={styles.playerStat}>Accuracy: {featuredStats?.accuracy ?? '—'}</div>
+                <div className={styles.playerStat}>Deaths: {featuredStats?.deaths ?? '—'}</div>
+              </div>
+              <div className={styles.playerActions}>
+                <a href={`https://www.twitch.tv/${featured.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelNameLink}>
+                  Watch on Twitch
+                </a>
+              </div>
+            </div>
+          )}
+
           {/* Featured live stream with chat on desktop */}
           {featured && (
             <div className={styles.featuredContainer}>
@@ -122,7 +177,7 @@ export default function CreatorsPage() {
                 </div>
                 <iframe
                   src={`https://www.twitch.tv/embed/${featured.channelName}/chat?parent=${twitchEmbedParent}`}
-                  height="600" width="100%"
+                  height="100%" width="100%"
                   title={`${featured.displayName || featured.channelName} Twitch Chat`}
                   style={{ border: 'none', display: 'block' }}
                   sandbox="allow-scripts allow-same-origin allow-popups"
