@@ -10,7 +10,6 @@ export default function ProfileEditForm() {
   const [deleting, setDeleting] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
-  const [name, setName] = useState<string>('');
   const [firstName, setFirstName] = useState<string>('');
   const [middleName, setMiddleName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -34,7 +33,6 @@ export default function ProfileEditForm() {
       if (res.ok) {
         const data = await res.json();
         setUserData(data);
-        setName(data.name || '');
         setFirstName(data.firstName || '');
         setMiddleName(data.middleName || '');
         setLastName(data.lastName || '');
@@ -64,7 +62,6 @@ export default function ProfileEditForm() {
     setSaving(true);
     try {
       const form = new FormData();
-      if (name) form.append('name', name);
       if (firstName) form.append('firstName', firstName);
       if (middleName) form.append('middleName', middleName);
       if (lastName) form.append('lastName', lastName);
@@ -118,18 +115,19 @@ export default function ProfileEditForm() {
   return (
     <form className="card form-grid">
       <div className="avatar-row">
-        <div className="avatar">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
-            alt="Avatar"
-          />
+        <div className="avatar-col">
+          <div className="avatar">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
+              alt="Avatar"
+            />
+          </div>
+          <button type="button" className="link-button" onClick={() => setIsChangeImageOpen(true)}>
+            Change image
+          </button>
         </div>
         <div className="avatar-fields">
-          <label className="field">
-            <span className="label">Character Name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Character name" />
-          </label>
           <div className="two-col">
             <label className="field">
               <span className="label">First Name</span>
@@ -140,13 +138,10 @@ export default function ProfileEditForm() {
               <input value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
             </label>
           </div>
-          <label className="field">
+          <label className="field field-sm">
             <span className="label">Last Name</span>
             <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
           </label>
-          <button type="button" className="link-button" onClick={() => setIsChangeImageOpen(true)}>
-            Change image
-          </button>
         </div>
       </div>
 
@@ -161,7 +156,7 @@ export default function ProfileEditForm() {
         </label>
       </div>
 
-      <label className="field">
+      <label className="field field-sm">
         <span className="label">Homeworld</span>
         <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
       </label>
@@ -193,7 +188,7 @@ export default function ProfileEditForm() {
         <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
       </label>
 
-      <label className="field">
+      <label className="field field-sm">
         <span className="label">Motto</span>
         <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
       </label>
