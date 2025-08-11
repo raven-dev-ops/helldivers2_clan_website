@@ -6,7 +6,7 @@
     margin: 0 auto;
     padding: 2rem 1rem 4rem; /* Adjusted top padding */
     color: #e5e7eb; /* text-gray-200 */
-    background-color: #111827; /* bg-gray-900 */
+    background-color: transparent; /* Let global video show through */
     min-height: 100vh;
     box-sizing: border-box;
   }
