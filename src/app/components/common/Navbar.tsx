@@ -242,7 +242,7 @@ const Navbar = () => {
             <div className={styles.dropdown}>
               <button className={styles.link} aria-haspopup="menu" aria-expanded="false">Profile</button>
               <div className={styles.dropdownMenu} role="menu" aria-label="Profile actions">
-                <Link href="/components/settings" className={styles.dropdownItem} role="menuitem">Settings</Link>
+                <Link href="/settings" className={styles.dropdownItem} role="menuitem">Settings</Link>
                 <button onClick={() => signOut()} className={styles.dropdownItem} role="menuitem">Sign out</button>
               </div>
             </div>
