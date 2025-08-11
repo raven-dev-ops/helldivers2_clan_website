@@ -199,6 +199,28 @@ export default function CreatorsPage() {
              <p className={styles.noCreatorsText}>No community creators found or configured.</p>
          </div>
       )}
+
+      {/* Placeholder sections for other platforms */}
+      <div style={{ marginTop: '3rem' }}>
+        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>Other Platforms</h2>
+        <div className={styles.creatorsGrid}>
+          {['YouTube', 'TikTok', 'Kick', 'X'].map((platform) => (
+            <div key={platform} className={styles.creatorCard} style={{ opacity: 0.5 }}>
+              <div className={styles.embedWrapper} />
+              <div className={styles.infoSection}>
+                <div className={styles.headerSection}>
+                  <div className={styles.profileImagePlaceholder} />
+                  <div className={styles.channelInfo}>
+                    <div className={styles.channelNameLink}>{platform}</div>
+                    <div className={styles.channelUrlLink}>Coming soon</div>
+                  </div>
+                </div>
+                <p className={styles.noDescriptionText}>Platform integration is not available yet.</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </main>
   );
 }

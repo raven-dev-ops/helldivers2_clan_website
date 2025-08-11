@@ -144,3 +144,9 @@
   outline: none;
 }
 
+/* Disabled style for placeholder items */
+.disabled {
+  color: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+}
+

@@ -1,7 +1,7 @@
 // src/components/common/Navbar.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from 'next/navigation';
 // Removed FaChevronDown, kept FaSpinner for initial load indication
@@ -26,6 +26,18 @@ const AVAILABLE_GAMES: GameData[] = [
 ];
 
 interface NavItem { href: string; label: string; }
+
+// Named labels for challenge anchors
+const CHALLENGE_LEVEL_LABELS: Array<{ id: string; label: string; }> = [
+  { id: 'level-0', label: 'Basic Clearance' },
+  { id: 'level-1', label: 'Sabotage Proficiency' },
+  { id: 'level-2', label: 'Resource Denial' },
+  { id: 'level-3', label: 'ICBM Control' },
+  { id: 'level-4', label: 'Flawless ICBM' },
+  { id: 'level-5', label: 'Perfect Survey' },
+  { id: 'level-6', label: 'Eagle Ace' },
+  { id: 'level-7', label: 'The Purist' },
+];
 
 const Navbar = () => {
   // Removed dropdownOpen state
@@ -109,7 +121,7 @@ const Navbar = () => {
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
-        { href: "/helldivers-2/news", label: "News" },
+        { href: "/helldivers-2/news", label: "Ops" },
         { href: "/helldivers-2/merch", label: "Merch" },
       ];
     }
@@ -118,6 +130,11 @@ const Navbar = () => {
 
   // Determine if we show a loading indicator (only during initial client fetch)
   const showInitialLoadSpinner = !isClient || isLoadingDivision;
+
+  // Base path for the current division to build dropdown links correctly
+  const divisionBasePath = pathname.startsWith('/dune-awakening') || currentDivisionId === 'dune-awakening'
+    ? '/dune-awakening'
+    : '/helldivers-2';
 
   return (
     <nav className={styles.nav}>
@@ -164,13 +181,39 @@ const Navbar = () => {
                 <div key={href} className={styles.dropdown}>
                   <Link href={href} className={challengesLinkClass}>Challenges</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Challenge levels">
-                    <Link href="/helldivers-2/challenges#level-1" className={styles.dropdownItem} role="menuitem">Level 1</Link>
-                    <Link href="/helldivers-2/challenges#level-2" className={styles.dropdownItem} role="menuitem">Level 2</Link>
-                    <Link href="/helldivers-2/challenges#level-3" className={styles.dropdownItem} role="menuitem">Level 3</Link>
-                    <Link href="/helldivers-2/challenges#level-4" className={styles.dropdownItem} role="menuitem">Level 4</Link>
-                    <Link href="/helldivers-2/challenges#level-5" className={styles.dropdownItem} role="menuitem">Level 5</Link>
-                    <Link href="/helldivers-2/challenges#level-6" className={styles.dropdownItem} role="menuitem">Level 6</Link>
-                    <Link href="/helldivers-2/challenges#level-7" className={styles.dropdownItem} role="menuitem">Level 7</Link>
+                    {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
+                      <Link key={id} href={`${divisionBasePath}/challenges#${id}`} className={styles.dropdownItem} role="menuitem">{label}</Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            if (label === 'Creators') {
+              const isCreatorsActive = isClient && pathname.startsWith(`${divisionBasePath}/creators`);
+              const creatorsLinkClass = `${styles.link} ${isCreatorsActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={creatorsLinkClass}>Creators</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Creators platforms">
+                    <Link href={`${divisionBasePath}/creators`} className={styles.dropdownItem} role="menuitem">Twitch</Link>
+                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>YouTube</span>
+                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>TikTok</span>
+                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>Kick</span>
+                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>X</span>
+                  </div>
+                </div>
+              );
+            }
+            if (label === 'Ops') {
+              const isOpsActive = isClient && pathname.startsWith(`${divisionBasePath}/news`);
+              const opsLinkClass = `${styles.link} ${isOpsActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={opsLinkClass}>Ops</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Operations">
+                    <Link href={`${divisionBasePath}/news#war-news`} className={styles.dropdownItem} role="menuitem">War News</Link>
+                    <Link href={`${divisionBasePath}/news#major-orders`} className={styles.dropdownItem} role="menuitem">Major Orders</Link>
+                    <Link href={`${divisionBasePath}/news#galactic-map`} className={styles.dropdownItem} role="menuitem">Galactic Map</Link>
                   </div>
                 </div>
               );

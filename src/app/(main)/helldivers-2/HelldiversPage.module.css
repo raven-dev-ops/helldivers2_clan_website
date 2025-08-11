@@ -199,7 +199,6 @@
     color: var(--color-text-primary); /* text-gray-200 */
 }
 
-
 /* --- Headings within sections --- */
 .subHeading {
     font-size: 1.25rem;
@@ -216,7 +215,6 @@
     margin: 0; /* Remove default margin */
 }
 
-
 /* --- Lists --- */
 .ruleList {
     list-style-type: decimal; /* Numbered list */
@@ -227,6 +225,29 @@
 .ruleListItem {
     margin-bottom: 0.6rem;
     line-height: 1.6;
+}
+
+/* New: standardized styled list similar to challenges */
+.styledList {
+    list-style-type: disc;
+    padding-left: 1.25rem;
+    margin: 0;
+}
+.listItem {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+.decimal {
+    list-style-type: decimal;
+}
+
+/* Subsection card container used within sections */
+.subsectionCard {
+    background-color: var(--color-surface-alt); /* slightly different from section */
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 /* --- Styles for Challenge Level Expanders --- */
