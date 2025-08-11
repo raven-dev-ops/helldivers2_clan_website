@@ -378,11 +378,7 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-.splitSection.reverse {
-  direction: rtl; /* flip order visually without changing markup semantics */
-}
-.splitSection.reverse > * {
-  direction: ltr;
-}
+/* Explicitly place image first when reversed */
+.splitSection.reverse .splitImage { order: -1; }
 .splitText { }
 .splitImage { }

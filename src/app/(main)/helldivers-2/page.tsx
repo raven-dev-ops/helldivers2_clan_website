@@ -44,16 +44,14 @@ const bgStyles = {
     overflow: 'hidden',
   },
   videoBackground: {
-    position: 'absolute' as const,
-    top: '50%', left: '50%',
-    width: 'auto', height: 'auto',
-    minWidth: '100%', minHeight: '100%',
+    position: 'fixed' as const,
+    top: 0, left: 0,
+    width: '100%', height: '100%',
     objectFit: 'cover' as const,
-    transform: 'translate(-50%, -50%)',
     zIndex: -2 as const,
     filter: 'brightness(0.6)',
   },
-  overlay: { position: 'absolute' as const, inset: 0, backgroundColor: 'rgba(16, 20, 31, 0.35)', zIndex: -1 as const },
+  overlay: { position: 'fixed' as const, inset: 0, backgroundColor: 'rgba(16, 20, 31, 0.35)', zIndex: -1 as const },
   audioControlsContainer: { position: 'fixed' as const, bottom: '1.5rem', left: '1.5rem', display: 'flex', alignItems: 'flex-end', gap: '0.75rem', zIndex: 10 },
   audioButtonAndSliderContainer: { position: 'relative' as const, display: 'flex', flexDirection: 'column' as const, alignItems: 'center' },
   audioControl: { backgroundColor: 'rgba(30, 41, 59, 0.6)', backdropFilter: 'blur(5px)', color: '#9ca3af', border: '1px solid rgba(51, 65, 85, 0.5)', borderRadius: '50%', width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)', flexShrink: 0, outline: 'none', position: 'relative' as const, zIndex: 1 },
@@ -176,8 +174,8 @@ export default function HelldiversPage() {
                     </div>
                 </section>
 
-                {/* === New to the Fight (Split) Section: Text left, GIF right === */}
-                <section className={`${styles.section} ${styles.splitSection}`}> {/* removed styles.reverse to move GIF to right */}
+                {/* === New to the Fight (Split) Section: Image left, Text right === */}
+                <section className={`${styles.section} ${styles.splitSection} ${styles.reverse}`}>
                     <div className={styles.splitText}>
                         <h2 className={styles.sectionTitle}>New to the Fight?</h2>
                         <p className={styles.paragraph}> Just bought the game? Feeling overwhelmed by Bile Titans or Hulks? Don't worry, we've all been there! GPT offers a supportive environment for new players. Ask questions, team up with experienced members who can show you the ropes (and the best ways to avoid friendly fire... mostly!), and learn the basics without fear of judgment. </p>
