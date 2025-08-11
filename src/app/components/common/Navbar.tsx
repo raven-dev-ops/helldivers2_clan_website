@@ -105,21 +105,21 @@ const Navbar = () => {
     if (pathname.startsWith('/dune-awakening')) {
       return [
         { href: "/dune-awakening", label: "Home" },
-        { href: "/dune-awakening/merch", label: "Merch" },
+        { href: "/dune-awakening/merch", label: "Shop" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/creators", label: "Streamers" },
       ];
     } else if (isClient && currentDivisionId === 'dune-awakening') {
        return [
         { href: "/dune-awakening", label: "Home" },
-        { href: "/dune-awakening/merch", label: "Merch" },
+        { href: "/dune-awakening/merch", label: "Shop" },
         { href: "/dune-awakening/factions", label: "Factions" },
         { href: "/dune-awakening/creators", label: "Streamers" },
       ];
     } else { 
       return [
         { href: "/helldivers-2", label: "Home" },
-        { href: "/helldivers-2/merch", label: "Merch" },
+        { href: "/helldivers-2/merch", label: "Shop" },
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Streamers" },
