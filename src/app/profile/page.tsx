@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
+import Link from 'next/link';
 
 const ProfileContainer = styled.div`
   min-height: 60vh;
@@ -10,7 +11,7 @@ const ProfileContainer = styled.div`
   color: #e2e8f0;
   padding: 2rem;
 `;
-const Section = styled.section`
+const Card = styled.section`
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(51, 65, 85, 0.6);
   border-radius: 12px;
@@ -24,22 +25,10 @@ const Row = styled.div`
   align-items: center;
   margin-bottom: 0.75rem;
 `;
-const Input = styled.input`
-  background: #0b1220;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  color: #e2e8f0;
-  padding: 0.5rem 0.75rem;
+const Avatar = styled.img`
+  width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #475569;
 `;
-const TextArea = styled.textarea`
-  background: #0b1220;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  color: #e2e8f0;
-  padding: 0.5rem 0.75rem;
-  min-height: 100px;
-`;
-const Button = styled.button`
+const ButtonLink = styled(Link)`
   background: #f59e0b;
   color: #0f172a;
   font-weight: 700;
@@ -47,35 +36,21 @@ const Button = styled.button`
   border-radius: 8px;
   padding: 0.5rem 0.85rem;
   cursor: pointer;
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  text-decoration: none;
+  display: inline-block;
 `;
-const Avatar = styled.img`
-  width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #475569;
+const StatPill = styled.span`
+  background: rgba(0,0,0,0.2);
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.85rem;
 `;
-const Star = styled.span`
-  font-size: 24px; margin-left: 8px;
-`;
-
-interface ChallengeSubmission {
-  level: number;
-  youtubeUrl?: string | null;
-  witnessName?: string | null;
-  witnessDiscordId?: string | null;
-}
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [userData, setUserData] = useState<any>(null);
-
-  const [characterHeightCm, setCharacterHeightCm] = useState<string>('');
-  const [characterWeightKg, setCharacterWeightKg] = useState<string>('');
-  const [homeplanet, setHomeplanet] = useState<string>('');
-  const [background, setBackground] = useState<string>('');
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-
-  const [challengeEdits, setChallengeEdits] = useState<Record<number, ChallengeSubmission>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -84,17 +59,6 @@ export default function ProfilePage() {
         const res = await fetch('/api/users/me');
         const data = await res.json();
         setUserData(data);
-        setCharacterHeightCm(data.characterHeightCm ? String(data.characterHeightCm) : '');
-        setCharacterWeightKg(data.characterWeightKg ? String(data.characterWeightKg) : '');
-        setHomeplanet(data.homeplanet || '');
-        setBackground(data.background || '');
-        // initialize challenge edits
-        const base: Record<number, ChallengeSubmission> = {};
-        for (let lvl = 1; lvl <= 7; lvl++) {
-          const existing = (data.challengeSubmissions || []).find((s: any) => s.level === lvl) || {};
-          base[lvl] = { level: lvl, youtubeUrl: existing.youtubeUrl || '', witnessName: existing.witnessName || '', witnessDiscordId: existing.witnessDiscordId || '' };
-        }
-        setChallengeEdits(base);
         setLoading(false);
       })();
     }
@@ -110,10 +74,9 @@ export default function ProfilePage() {
     return count === 7;
   }, [userData]);
 
-  if (status === 'loading') {
-    return <ProfileContainer>Loading session…</ProfileContainer>;
+  if (status === 'loading' || loading) {
+    return <ProfileContainer>Loading profile…</ProfileContainer>;
   }
-
   if (!session) {
     return (
       <ProfileContainer>
@@ -122,98 +85,52 @@ export default function ProfilePage() {
     );
   }
 
-  const handleSaveProfile = async () => {
-    setSaving(true);
-    try {
-      const form = new FormData();
-      if (characterHeightCm) form.append('characterHeightCm', characterHeightCm);
-      if (characterWeightKg) form.append('characterWeightKg', characterWeightKg);
-      if (homeplanet) form.append('homeplanet', homeplanet);
-      if (background) form.append('background', background);
-      if (avatarFile) form.append('avatar', avatarFile);
-      const res = await fetch('/api/users/me', { method: 'PUT', body: form });
-      const data = await res.json();
-      setUserData(data);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleSaveChallenge = async (lvl: number) => {
-    setSaving(true);
-    try {
-      const edit = challengeEdits[lvl];
-      const form = new FormData();
-      form.append('challengeLevel', String(lvl));
-      if (edit.youtubeUrl) form.append('youtubeUrl', edit.youtubeUrl);
-      if (edit.witnessName) form.append('witnessName', edit.witnessName);
-      if (edit.witnessDiscordId) form.append('witnessDiscordId', edit.witnessDiscordId);
-      const res = await fetch('/api/users/me', { method: 'PUT', body: form });
-      const data = await res.json();
-      setUserData(data);
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <ProfileContainer>
-      <h1 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {userData?.name || 'Your Profile'}
-        {allSevenComplete && <Star title="All 7 challenges submitted">⭐</Star>}
-      </h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {userData?.name || 'Your Profile'} {allSevenComplete && <span title="All 7 challenges submitted">⭐</span>}
+        </h1>
+        <ButtonLink href="/settings">Edit Profile</ButtonLink>
+      </div>
 
-      <Section>
+      <Card>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
           <Avatar src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" />
           <div>
             <Row>
-              <label>Height (cm)</label>
-              <Input value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
+              <strong>Height (cm)</strong>
+              <span>{userData?.characterHeightCm ?? '—'}</span>
             </Row>
             <Row>
-              <label>Weight (kg)</label>
-              <Input value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
+              <strong>Weight (kg)</strong>
+              <span>{userData?.characterWeightKg ?? '—'}</span>
             </Row>
             <Row>
-              <label>Homeplanet</label>
-              <Input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Super Earth" />
+              <strong>Homeplanet</strong>
+              <span>{userData?.homeplanet ?? '—'}</span>
             </Row>
-            <Row>
-              <label>Background</label>
-              <TextArea value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP background" />
-            </Row>
-            <Row>
-              <label>Profile Picture</label>
-              <Input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
-            </Row>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button onClick={handleSaveProfile} disabled={saving}>{saving ? 'Saving…' : 'Save Profile'}</Button>
-            </div>
           </div>
         </div>
-      </Section>
-
-      <Section>
-        <h2>Challenge Submissions</h2>
-        <p style={{ color: '#94a3b8', marginBottom: 12 }}>Provide a YouTube link or a witness name/Discord for each level. Submissions auto-update per level.</p>
-        <div style={{ display: 'grid', gap: 12 }}>
-          {Array.from({ length: 7 }, (_, i) => i + 1).map((lvl) => (
-            <div key={lvl} style={{ border: '1px solid #334155', borderRadius: 8, padding: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <strong>Level {lvl}</strong>
-                { (userData?.challengeSubmissions || []).some((s: any) => s.level === lvl && (s.youtubeUrl || s.witnessName || s.witnessDiscordId)) && <span>✅</span> }
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 8 }}>
-                <Input placeholder="YouTube URL" value={challengeEdits[lvl]?.youtubeUrl || ''} onChange={(e) => setChallengeEdits((prev) => ({ ...prev, [lvl]: { ...prev[lvl], youtubeUrl: e.target.value } }))} />
-                <Input placeholder="Witness Name" value={challengeEdits[lvl]?.witnessName || ''} onChange={(e) => setChallengeEdits((prev) => ({ ...prev, [lvl]: { ...prev[lvl], witnessName: e.target.value } }))} />
-                <Input placeholder="Witness Discord ID" value={challengeEdits[lvl]?.witnessDiscordId || ''} onChange={(e) => setChallengeEdits((prev) => ({ ...prev, [lvl]: { ...prev[lvl], witnessDiscordId: e.target.value } }))} />
-                <Button onClick={() => handleSaveChallenge(lvl)} disabled={saving}>Save</Button>
-              </div>
-            </div>
-          ))}
+        <div style={{ marginTop: 12 }}>
+          <strong>Background</strong>
+          <p style={{ marginTop: 6, color: '#cbd5e1' }}>{userData?.background || '—'}</p>
         </div>
-      </Section>
+      </Card>
+
+      <Card>
+        <h2>Challenge Submissions</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+          {Array.from({ length: 7 }, (_, i) => i + 1).map((lvl) => {
+            const s = (userData?.challengeSubmissions || []).find((x: any) => x.level === lvl);
+            const complete = !!(s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId));
+            return (
+              <StatPill key={lvl}>Level {lvl}: {complete ? '✅' : '—'}</StatPill>
+            );
+          })}
+        </div>
+        <p style={{ color: '#94a3b8', marginTop: 8 }}>To add or update submissions, use the Edit Profile button.</p>
+      </Card>
     </ProfileContainer>
   );
 }

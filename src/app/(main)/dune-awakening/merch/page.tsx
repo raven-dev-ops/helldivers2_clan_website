@@ -130,68 +130,72 @@ export default async function DuneMerchPage() {
 
   return (
     <div className={styles.pageContainer}>
-      <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Merch</h1>
-
-      {errorOccurred ? (
-        <div className={styles.merchErrorText}>{errorMessage}</div>
-      ) : products.length === 0 ? (
-        <div className={styles.merchMessageText}>No products found.</div>
-      ) : (
-        <div className={styles.merchProductListContainer}>
-          {products.map((product, index) => {
-            const firstVariant = product.variants[0];
-            const priceInfo = firstVariant?.unitPrice;
-            let formattedPrice = '';
-            if (priceInfo) {
-              try {
-                formattedPrice = new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: priceInfo.currency,
-                }).format(priceInfo.value);
-              } catch {
-                formattedPrice = `$${priceInfo.value.toFixed(2)} ${priceInfo.currency}`;
-              }
-            }
-
-            const imageUrl = product.images?.[0]?.url;
-            const cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '') || 'No description available.';
-
-            return (
-              <Link
-                key={product.id}
-                href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.merchProductCardLink}
-                title={`View ${product.name}`}
-              >
-                <div className={styles.merchImageContainer}>
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={product.images?.[0]?.altText || product.name || 'Product'}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className={styles.merchProductImage}
-                      priority={index < 4}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div className={styles.merchImagePlaceholder}>No Image</div>
-                  )}
-                </div>
-                <div className={styles.merchDetailsContainer}>
-                  <h2 className={styles.merchProductName}>{product.name}</h2>
-                  <p className={styles.merchProductDescription}>{cleanDescription}</p>
-                  {formattedPrice && (
-                    <p className={styles.merchProductPrice}>{formattedPrice}</p>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
+      <div className={styles.merchContentContainer}>
+        <div className={styles.titleCard}>
+          <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Merch</h1>
         </div>
-      )}
+
+        {errorOccurred ? (
+          <div className={styles.merchErrorText}>{errorMessage}</div>
+        ) : products.length === 0 ? (
+          <div className={styles.merchMessageText}>No products found.</div>
+        ) : (
+          <div className={styles.productListContainer}>
+            {products.map((product, index) => {
+              const firstVariant = product.variants[0];
+              const priceInfo = firstVariant?.unitPrice;
+              let formattedPrice = '';
+              if (priceInfo) {
+                try {
+                  formattedPrice = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: priceInfo.currency,
+                  }).format(priceInfo.value);
+                } catch {
+                  formattedPrice = `$${priceInfo.value.toFixed(2)} ${priceInfo.currency}`;
+                }
+              }
+
+              const imageUrl = product.images?.[0]?.url;
+              const cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '') || 'No description available.';
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.productCardLink}
+                  title={`View ${product.name}`}
+                >
+                  <div className={styles.imageContainer}>
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={product.images?.[0]?.altText || product.name || 'Product'}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className={styles.productImage}
+                        priority={index < 4}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div className={styles.merchImagePlaceholder}>No Image</div>
+                    )}
+                  </div>
+                  <div className={styles.detailsContainer}>
+                    <h2 className={styles.productName}>{product.name}</h2>
+                    <p className={styles.productDescription}>{cleanDescription}</p>
+                    {formattedPrice && (
+                      <p className={styles.productPrice}>{formattedPrice}</p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
