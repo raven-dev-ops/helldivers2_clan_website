@@ -16,12 +16,13 @@ interface GameData {
   id: string;
   title: string;
   href: string;
+  comingSoon?: boolean;
 }
 
 // This might still be useful for determining nav links, but not for the dropdown itself
 const AVAILABLE_GAMES: GameData[] = [
   { id: 'helldivers-2', title: "HELLDIVERS 2", href: "/helldivers-2" },
-  { id: 'dune-awakening', title: "Dune: Awakening", href: "/dune-awakening" },
+  { id: 'dune-awakening', title: "Dune: Awakening", href: "/dune-awakening", comingSoon: true },
   // Add other games as needed
 ];
 
@@ -153,8 +154,14 @@ const Navbar = () => {
               )}
             </Link>
             <div className={styles.dropdownMenu} role="menu" aria-label="Select a game">
-              {AVAILABLE_GAMES.map(({ id, title, href }) => (
-                <Link key={id} href={href} className={styles.dropdownItem} role="menuitem">{title}</Link>
+              {AVAILABLE_GAMES.map(({ id, title, href, comingSoon }) => (
+                comingSoon ? (
+                  <span key={id} className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>
+                    {title} (Coming Soon)
+                  </span>
+                ) : (
+                  <Link key={id} href={href} className={styles.dropdownItem} role="menuitem">{title}</Link>
+                )
               ))}
             </div>
           </div>

@@ -4,6 +4,8 @@ import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
+import getMongoClientPromise from '@/lib/mongoClientPromise';
+import { ObjectId } from 'mongodb';
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -43,7 +45,7 @@ export async function PUT(req: Request) {
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division'];
+    const fields = ['name', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
@@ -93,6 +95,7 @@ export async function PUT(req: Request) {
   } else {
     const body = await req.json().catch(() => ({}));
     const {
+      name,
       characterHeightCm,
       characterWeightKg,
       homeplanet,
@@ -102,6 +105,7 @@ export async function PUT(req: Request) {
       challengeSubmission,
     } = body || {};
 
+    if (name !== undefined) updates.name = String(name);
     if (characterHeightCm !== undefined) updates.characterHeightCm = Number(characterHeightCm) || null;
     if (characterWeightKg !== undefined) updates.characterWeightKg = Number(characterWeightKg) || null;
     if (homeplanet !== undefined) updates.homeplanet = homeplanet ?? null;
@@ -149,4 +153,28 @@ export async function PUT(req: Request) {
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,
   });
+}
+
+export async function DELETE() {
+  const session = await getServerSession(getAuthOptions());
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
+  await dbConnect();
+  const userId = new ObjectId(session.user.id);
+
+  // Remove user document
+  await UserModel.deleteOne({ _id: userId });
+
+  // Remove NextAuth accounts and sessions
+  const client = await getMongoClientPromise();
+  const db = client.db();
+  await Promise.all([
+    db.collection('accounts').deleteMany({ userId }),
+    db.collection('sessions').deleteMany({ userId }),
+    db.collection('verificationTokens').deleteMany({}), // safety no-op; collection may be empty
+  ]);
+
+  return NextResponse.json({ ok: true });
 }
