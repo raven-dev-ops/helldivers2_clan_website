@@ -7,6 +7,7 @@ import { Inter } from 'next/font/google';
 import './globals.css'; // Your global styles
 import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'; // Adjust path if needed
 import AuthProvider from '@/app/components/providers/AuthProvider'; // Adjust path if needed
+import MusicButton from '@/app/components/common/MusicButton';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,6 +44,7 @@ export default function RootLayout({
           {/* NO WHITESPACE HERE */}
         </StyledComponentsRegistry>
         {/* NO WHITESPACE HERE */}
+        <MusicButton />
       </body>
       {/* NO WHITESPACE HERE */}
     </html>
