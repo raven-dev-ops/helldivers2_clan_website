@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import styles from "./Navbar.module.css";
 // Removed useDivisionSelection as selection is no longer handled here
 // import { useDivisionSelection } from '@/hooks/useDivisionSelection';
+import LoginButtons from "@/app/components/auth/LoginButtons";
 
 interface GameData {
   id: string;
@@ -108,7 +109,7 @@ const Navbar = () => {
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
-        { href: "/helldivers-2/map", label: "Map" },
+        { href: "/helldivers-2/news", label: "News" },
         { href: "/helldivers-2/merch", label: "Merch" },
       ];
     }
@@ -180,6 +181,7 @@ const Navbar = () => {
               </Link>
             );
           })}
+          <LoginButtons />
         </div>
       </div>
     </nav>

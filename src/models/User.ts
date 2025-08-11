@@ -14,6 +14,22 @@ export interface IUser extends Document {
   provider?: string | null;          // <<< ADD THIS LINE
   providerAccountId?: string | null; // <<< ADD THIS LINE
 
+  // --- Character / Profile fields ---
+  characterHeightCm?: number | null;
+  characterWeightKg?: number | null;
+  homeplanet?: string | null;
+  background?: string | null;
+  customAvatarDataUrl?: string | null; // base64 or external URL
+
+  // --- Challenge submissions (levels 1..7) ---
+  challengeSubmissions?: Array<{
+    level: number; // 1..7
+    youtubeUrl?: string | null;
+    witnessName?: string | null;
+    witnessDiscordId?: string | null;
+    createdAt?: Date;
+  }>;
+
   createdAt: Date; // from timestamps
   updatedAt: Date; // from timestamps
 }
@@ -31,6 +47,27 @@ const UserSchema = new Schema<IUser>(
     // --- Provider Fields Schema Definition (MUST EXIST) ---
     provider: { type: String, index: true }, // <<< ADD THIS LINE
     providerAccountId: { type: String },      // <<< ADD THIS LINE
+
+    // --- Character / Profile fields ---
+    characterHeightCm: { type: Number, default: null },
+    characterWeightKg: { type: Number, default: null },
+    homeplanet: { type: String, default: null },
+    background: { type: String, default: null },
+    customAvatarDataUrl: { type: String, default: null },
+
+    // --- Challenge submissions ---
+    challengeSubmissions: [
+      new Schema(
+        {
+          level: { type: Number, required: true, min: 1, max: 7 },
+          youtubeUrl: { type: String, default: null },
+          witnessName: { type: String, default: null },
+          witnessDiscordId: { type: String, default: null },
+          createdAt: { type: Date, default: Date.now },
+        },
+        { _id: false }
+      ),
+    ],
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
@@ -39,6 +76,9 @@ const UserSchema = new Schema<IUser>(
 
 // --- Compound Index for Provider Lookups (Recommended) ---
 UserSchema.index({ provider: 1, providerAccountId: 1 }, { unique: true, sparse: true });
+
+// Ensure only one submission per level per user
+UserSchema.index({ _id: 1, 'challengeSubmissions.level': 1 });
 
 // --- Create and Export the Mongoose Model ---
 const UserModel =
