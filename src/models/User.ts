@@ -28,11 +28,13 @@ export interface IUser extends Document {
   favoriteWeapon?: string | null;
   armor?: string | null;
   motto?: string | null;
+  favoredEnemy?: string | null;
 
   // --- Challenge submissions (levels 1..7) ---
   challengeSubmissions?: Array<{
     level: number; // 1..7
     youtubeUrl?: string | null;
+    twitchUrl?: string | null;
     witnessName?: string | null;
     witnessDiscordId?: string | null;
     createdAt?: Date;
@@ -70,6 +72,7 @@ const UserSchema = new Schema<IUser>(
     favoriteWeapon: { type: String, default: null },
     armor: { type: String, default: null },
     motto: { type: String, default: null },
+    favoredEnemy: { type: String, default: null },
 
     // --- Challenge submissions ---
     challengeSubmissions: [
@@ -77,6 +80,7 @@ const UserSchema = new Schema<IUser>(
         {
           level: { type: Number, required: true, min: 1, max: 7 },
           youtubeUrl: { type: String, default: null },
+          twitchUrl: { type: String, default: null },
           witnessName: { type: String, default: null },
           witnessDiscordId: { type: String, default: null },
           createdAt: { type: Date, default: Date.now },

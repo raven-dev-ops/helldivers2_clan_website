@@ -5,6 +5,13 @@ import styled from 'styled-components';
 import ProfileEditForm from '@/app/components/forum/ProfileEditForm';
 import StatsSubmitForm from '@/app/components/forum/StatsSubmitForm';
 
+const videoStyle: React.CSSProperties = {
+  position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -2, filter: 'brightness(0.6)'
+};
+const overlayStyle: React.CSSProperties = {
+  position: 'fixed', inset: 0, backgroundColor: 'rgba(16, 20, 31, 0.35)', zIndex: -1
+};
+
 const Container = styled.main`
   display: flex;
   flex-direction: column;
@@ -51,6 +58,12 @@ const SectionTitle = styled.h2`
 export default function SettingsPage() {
   return (
     <Container>
+      {/* Background Video and Overlay */}
+      <video autoPlay loop muted playsInline style={videoStyle} key="bg-video-settings">
+        <source src="/videos/gpd_background.mp4" type="video/mp4" />
+      </video>
+      <div style={overlayStyle} />
+
       <Inner>
         <Header>
           <Title>Settings</Title>
