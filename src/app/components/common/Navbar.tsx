@@ -123,7 +123,7 @@ const Navbar = () => {
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
-        { href: "/helldivers-2/news", label: "Ops" },
+        { href: "/helldivers-2/news", label: "Intel" },
       ];
     }
   };
@@ -216,13 +216,13 @@ const Navbar = () => {
                 </div>
               );
             }
-            if (label === 'Ops') {
-              const isOpsActive = isClient && pathname.startsWith(`${divisionBasePath}/news`);
-              const opsLinkClass = `${styles.link} ${isOpsActive ? styles.activeLink : ''}`;
+            if (label === 'Intel') {
+              const isIntelActive = isClient && pathname.startsWith(`${divisionBasePath}/news`);
+              const intelLinkClass = `${styles.link} ${isIntelActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={opsLinkClass}>Ops</Link>
-                  <div className={styles.dropdownMenu} role="menu" aria-label="Operations">
+                  <Link href={href} className={intelLinkClass}>Intel</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Intel shortcuts">
                     <Link href={`${divisionBasePath}/news#war-news`} className={styles.dropdownItem} role="menuitem">War News</Link>
                     <Link href={`${divisionBasePath}/news#major-orders`} className={styles.dropdownItem} role="menuitem">Major Orders</Link>
                     <Link href={`${divisionBasePath}/news#galactic-map`} className={styles.dropdownItem} role="menuitem">Galactic Map</Link>
@@ -240,7 +240,7 @@ const Navbar = () => {
           {/* Profile dropdown / Auth actions */}
           {sessionStatus === 'authenticated' ? (
             <div className={styles.dropdown}>
-              <button className={styles.link} aria-haspopup="menu" aria-expanded="false">Profile</button>
+              <Link href="/profile" className={styles.link} aria-haspopup="menu" aria-expanded="false">Profile</Link>
               <div className={styles.dropdownMenu} role="menu" aria-label="Profile actions">
                 <Link href="/settings" className={styles.dropdownItem} role="menuitem">Settings</Link>
                 <button onClick={() => signOut()} className={styles.dropdownItem} role="menuitem">Sign out</button>

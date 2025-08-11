@@ -15,6 +15,13 @@ interface CreatorData {
   isLive: boolean;
 }
 
+// Lightweight stats type
+interface CreatorStats {
+  kills?: number;
+  accuracy?: string;
+  deaths?: number;
+}
+
 // List of Twitch channel *names* used to initially populate the state
 const initialTwitchChannelNames = [
   'galacticphantomtaskforce', 'kevindanilooo', 'mrswimson', 'charredviolet',
@@ -26,7 +33,9 @@ export default function CreatorsPage() {
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
   // Lightweight leaderboard stats for featured profile card
-  const [featuredStats, setFeaturedStats] = useState<{ kills?: number; accuracy?: string; deaths?: number } | null>(null);
+  const [featuredStats, setFeaturedStats] = useState<CreatorStats | null>(null);
+  // Per-creator stats map
+  const [creatorStats, setCreatorStats] = useState<Record<string, CreatorStats>>({});
 
   useEffect(() => {
     let isMounted = true;
@@ -97,13 +106,47 @@ export default function CreatorsPage() {
     return () => { isCancelled = true; };
   }, [featured]);
 
+  // Fetch stats for all creators displayed in grid (best-effort)
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchAllStats() {
+      try {
+        const now = new Date();
+        const params = new URLSearchParams({ sortBy: 'Kills', sortDir: 'desc', limit: '1000', scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) });
+        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Leaderboard fetch failed: ${res.status}`);
+        const payload = await res.json();
+        const rows: any[] = payload?.results || [];
+        const map: Record<string, CreatorStats> = {};
+        creatorsData.forEach((creator) => {
+          const key = creator.displayName || creator.channelName;
+          const match = rows.find(r => (r.player_name || '').toLowerCase() === key.toLowerCase());
+          if (match) {
+            map[creator.channelName] = {
+              kills: Number(match.Kills) || 0,
+              accuracy: String(match.Accuracy) || '',
+              deaths: Number(match.Deaths) || 0,
+            };
+          }
+        });
+        if (!isCancelled) setCreatorStats(map);
+      } catch (_e) {
+        if (!isCancelled) setCreatorStats({});
+      }
+    }
+    if (creatorsData.length) fetchAllStats();
+    return () => { isCancelled = true; };
+  }, [creatorsData]);
+
   return (
     // Use the page container class from the module
     <main className={styles.pageContainer}>
-      <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
-      <p className={styles.pageSubtitle}>
-        Discover or connect with content creators in the GPT community.
-      </p>
+      <div className={styles.titleCard}>
+        <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
+        <p className={styles.pageSubtitle}>
+          Discover or connect with content creators in the GPT community.
+        </p>
+      </div>
 
       {isLoadingPage && (
         <div className={styles.loadingContainer}>
@@ -233,6 +276,13 @@ export default function CreatorsPage() {
                            twitch.tv/{creator.channelName}
                        </a>
                     </div>
+                  </div>
+
+                  {/* Inline stats row per creator if available */}
+                  <div className={styles.playerStats}>
+                    <div className={styles.playerStat}>Kills: {creatorStats[creator.channelName]?.kills ?? '—'}</div>
+                    <div className={styles.playerStat}>Accuracy: {creatorStats[creator.channelName]?.accuracy ?? '—'}</div>
+                    <div className={styles.playerStat}>Deaths: {creatorStats[creator.channelName]?.deaths ?? '—'}</div>
                   </div>
 
                   {creator.description ? (

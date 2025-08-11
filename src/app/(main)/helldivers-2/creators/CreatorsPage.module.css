@@ -18,22 +18,31 @@
 .pageTitle {
   font-size: clamp(1.8rem, 5vw, 2.25rem);
   font-weight: 700;
-  margin-bottom: 1rem;
-  text-align: center;
+  margin-bottom: 0.5rem;
+  text-align: left;
   color: #facc15; /* text-yellow-400 */
   border-bottom: 1px solid #374151; /* border-gray-700 */
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
 }
 
 .pageSubtitle {
-  text-align: center;
+  text-align: left;
   color: #9ca3af; /* text-gray-400 */
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   max-width: 65ch;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
   font-size: 0.95rem; /* Slightly adjusted */
   line-height: 1.6;
+}
+
+/* Card layer behind the title (mirrors Challenges .section) */
+.titleCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151; /* border-gray-700 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 /* --- Loading / Error / No Results --- */
