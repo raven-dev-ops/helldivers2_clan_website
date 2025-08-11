@@ -152,6 +152,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem; /* Space before discord icon */
+    scroll-margin-top: 84px; /* ensure anchor visibility under sticky nav */
 }
 .paragraph {
     color: var(--color-text-secondary); /* text-gray-300 */

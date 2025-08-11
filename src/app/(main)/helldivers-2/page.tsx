@@ -68,7 +68,7 @@ export default function HelldiversPage() {
             </section>
 
             {/* === War Map & Acquisition Center === */}
-            <section className={styles.section}>
+            <section className={styles.section} id="galactic-war">
                 <WarMap />
             </section>
             <section className={styles.section}>

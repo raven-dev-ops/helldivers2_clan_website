@@ -2,6 +2,7 @@
 'use client';
 
 import useSWR from 'swr';
+import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -32,6 +33,9 @@ export default function WarMap() {
           </li>
         ))}
       </ul>
+      <p style={{ marginTop: 8 }}>
+        <Link href="/helldivers-2/map">Open full map</Link>
+      </p>
     </div>
   );
 }
