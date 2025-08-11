@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import useSWR from 'swr';
 
 const ProfileContainer = styled.div`
   min-height: 60vh;
@@ -26,7 +27,7 @@ const Row = styled.div`
   margin-bottom: 0.75rem;
 `;
 const Avatar = styled.img`
-  width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid #475569;
+  width: 160px; height: 160px; border-radius: 50%; object-fit: cover; border: 2px solid #475569;
 `;
 const ButtonLink = styled(Link)`
   background: #f59e0b;
@@ -52,6 +53,17 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then(r => r.json());
+  const now = new Date();
+  const qsSolo = new URLSearchParams({ scope: 'solo', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
+  const qsMonth = new URLSearchParams({ scope: 'month', sortBy: 'Kills', sortDir: 'desc', limit: '1000', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
+  const qsTotal = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
+  const qsAvg = new URLSearchParams({ scope: 'lifetime', sortBy: 'Avg Kills', sortDir: 'desc', limit: '1000' }).toString();
+  const { data: soloData } = useSWR(`/api/helldivers/leaderboard?${qsSolo}`, fetcher);
+  const { data: monthData } = useSWR(`/api/helldivers/leaderboard?${qsMonth}`, fetcher);
+  const { data: totalData } = useSWR(`/api/helldivers/leaderboard?${qsTotal}`, fetcher);
+  const { data: avgData } = useSWR(`/api/helldivers/leaderboard?${qsAvg}`, fetcher);
+
   useEffect(() => {
     if (status === 'authenticated') {
       (async () => {
@@ -73,6 +85,11 @@ export default function ProfilePage() {
     }
     return count === 7;
   }, [userData]);
+
+  const findRank = (rows: any[], name: string) => {
+    const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
+    return idx >= 0 ? (rows[idx].rank || idx + 1) : null;
+  };
 
   if (status === 'loading' || loading) {
     return <ProfileContainer>Loading profile…</ProfileContainer>;
@@ -116,6 +133,20 @@ export default function ProfilePage() {
           <strong>Background</strong>
           <p style={{ marginTop: 6, color: '#cbd5e1' }}>{userData?.background || '—'}</p>
         </div>
+      </Card>
+
+      <Card>
+        <h2>Your Rankings</h2>
+        {userData?.name ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+            <StatPill>Solo: {findRank(soloData?.results || [], userData.name) ?? '—'}</StatPill>
+            <StatPill>Monthly: {findRank(monthData?.results || [], userData.name) ?? '—'}</StatPill>
+            <StatPill>Total: {findRank(totalData?.results || [], userData.name) ?? '—'}</StatPill>
+            <StatPill>Average: {findRank(avgData?.results || [], userData.name) ?? '—'}</StatPill>
+          </div>
+        ) : (
+          <p style={{ color: '#94a3b8' }}>Set your profile name to see your leaderboard rankings.</p>
+        )}
       </Card>
 
       <Card>

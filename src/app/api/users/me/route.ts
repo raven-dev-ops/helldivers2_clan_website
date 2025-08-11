@@ -26,6 +26,11 @@ export async function GET() {
     homeplanet: user.homeplanet ?? null,
     background: user.background ?? null,
     customAvatarDataUrl: user.customAvatarDataUrl ?? null,
+    callsign: user.callsign ?? null,
+    rankTitle: user.rankTitle ?? null,
+    favoriteWeapon: user.favoriteWeapon ?? null,
+    armor: user.armor ?? null,
+    motto: user.motto ?? null,
     challengeSubmissions: user.challengeSubmissions ?? [],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -45,7 +50,7 @@ export async function PUT(req: Request) {
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division'];
+    const fields = ['name', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
@@ -102,6 +107,11 @@ export async function PUT(req: Request) {
       background,
       customAvatarDataUrl,
       division,
+      callsign,
+      rankTitle,
+      favoriteWeapon,
+      armor,
+      motto,
       challengeSubmission,
     } = body || {};
 
@@ -112,6 +122,11 @@ export async function PUT(req: Request) {
     if (background !== undefined) updates.background = background ?? null;
     if (division !== undefined) updates.division = division ?? null;
     if (customAvatarDataUrl) updates.customAvatarDataUrl = String(customAvatarDataUrl);
+    if (callsign !== undefined) updates.callsign = callsign ?? null;
+    if (rankTitle !== undefined) updates.rankTitle = rankTitle ?? null;
+    if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
+    if (armor !== undefined) updates.armor = armor ?? null;
+    if (motto !== undefined) updates.motto = motto ?? null;
 
     if (challengeSubmission?.level >= 1 && challengeSubmission?.level <= 7) {
       const level = Number(challengeSubmission.level);
@@ -149,6 +164,11 @@ export async function PUT(req: Request) {
     homeplanet: updated?.homeplanet ?? null,
     background: updated?.background ?? null,
     customAvatarDataUrl: updated?.customAvatarDataUrl ?? null,
+    callsign: updated?.callsign ?? null,
+    rankTitle: updated?.rankTitle ?? null,
+    favoriteWeapon: updated?.favoriteWeapon ?? null,
+    armor: updated?.armor ?? null,
+    motto: updated?.motto ?? null,
     challengeSubmissions: updated?.challengeSubmissions ?? [],
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,

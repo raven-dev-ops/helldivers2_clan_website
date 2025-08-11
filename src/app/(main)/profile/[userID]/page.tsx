@@ -48,8 +48,8 @@ export default async function ProfilePage(
         <Image
           src={user.image || '/images/avatar-default.png'}
           alt={`${user.name}'s Avatar`}
-          width={100}
-          height={100}
+          width={160}
+          height={160}
           className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
         />
         <div>

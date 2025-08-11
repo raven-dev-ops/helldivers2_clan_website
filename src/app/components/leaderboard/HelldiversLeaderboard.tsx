@@ -185,25 +185,40 @@ function LeaderboardTableSection({
   );
 }
 
-export default function HelldiversLeaderboard({ initialMonthData, initialLifetimeData }: { initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] } }) {
+export default function HelldiversLeaderboard({ initialSoloData, initialMonthData, initialLifetimeData }: { initialSoloData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] } }) {
+  const [soloData, setSoloData] = useState<LeaderboardRow[]>(initialSoloData?.results || []);
   const [monthData, setMonthData] = useState<LeaderboardRow[]>(initialMonthData?.results || []);
   const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(initialLifetimeData?.results || []);
 
+  const [soloLoading, setSoloLoading] = useState<boolean>(!initialSoloData);
   const [monthLoading, setMonthLoading] = useState<boolean>(!initialMonthData);
   const [lifetimeLoading, setLifetimeLoading] = useState<boolean>(!initialLifetimeData);
 
+  const [soloError, setSoloError] = useState<string | null>(null);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [lifetimeError, setLifetimeError] = useState<string | null>(null);
 
+  const [soloSortBy, setSoloSortBy] = useState<SortField>(initialSoloData?.sortBy || 'Kills');
+  const [soloSortDir, setSoloSortDir] = useState<SortDir>(initialSoloData?.sortDir || 'desc');
   const [monthSortBy, setMonthSortBy] = useState<SortField>(initialMonthData?.sortBy || 'Kills');
   const [monthSortDir, setMonthSortDir] = useState<SortDir>(initialMonthData?.sortDir || 'desc');
 
   const [lifetimeSortBy, setLifetimeSortBy] = useState<SortField>(initialLifetimeData?.sortBy || 'Kills');
   const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(initialLifetimeData?.sortDir || 'desc');
 
+  const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [lifetimeTotalsSearch, setLifetimeTotalsSearch] = useState<string>('');
   const [lifetimeAveragesSearch, setLifetimeAveragesSearch] = useState<string>('');
+
+  const toggleSoloSort = (field: SortField) => {
+    if (field === soloSortBy) {
+      setSoloSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSoloSortBy(field);
+      setSoloSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
+    }
+  };
 
   const toggleMonthSort = (field: SortField) => {
     if (field === monthSortBy) {
@@ -222,6 +237,27 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
       setLifetimeSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
     }
   };
+
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchSolo() {
+      setSoloLoading(true);
+      setSoloError(null);
+      try {
+        const params = new URLSearchParams({ sortBy: soloSortBy, sortDir: soloSortDir, limit: '100', scope: 'solo' });
+        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const payload = await res.json();
+        if (!isCancelled) setSoloData(payload.results || []);
+      } catch (e: any) {
+        if (!isCancelled) setSoloError(e?.message || 'Failed to load leaderboard');
+      } finally {
+        if (!isCancelled) setSoloLoading(false);
+      }
+    }
+    fetchSolo();
+    return () => { isCancelled = true; };
+  }, [soloSortBy, soloSortDir]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -266,11 +302,26 @@ export default function HelldiversLeaderboard({ initialMonthData, initialLifetim
     return () => { isCancelled = true; };
   }, [lifetimeSortBy, lifetimeSortDir]);
 
+  const soloActiveSort = useMemo(() => ({ sortBy: soloSortBy, sortDir: soloSortDir }), [soloSortBy, soloSortDir]);
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
   return (
     <div>
+      <LeaderboardTableSection
+        title="Solo Leaderboard"
+        rows={soloData}
+        loading={soloLoading}
+        error={soloError}
+        activeSort={soloActiveSort}
+        onSort={toggleSoloSort}
+        showAverages={false}
+        showTotals={true}
+        searchTerm={soloSearch}
+        onSearch={setSoloSearch}
+        sectionId="solo"
+      />
+
       <LeaderboardTableSection
         title="Monthly Leaderboard"
         rows={monthData}

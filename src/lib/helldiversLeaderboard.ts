@@ -18,7 +18,7 @@ export const VALID_SORT_FIELDS = [
 
 export type SortField = typeof VALID_SORT_FIELDS[number];
 export type SortDir = 'asc' | 'desc';
-export type LeaderboardScope = 'month' | 'lifetime';
+export type LeaderboardScope = 'month' | 'lifetime' | 'solo';
 
 export interface HelldiversLeaderboardRow {
   rank: number;
@@ -62,7 +62,7 @@ export async function fetchHelldiversLeaderboard(options?: {
   const sortBy = (options?.sortBy && VALID_SORT_FIELDS.includes(options.sortBy) ? options.sortBy : 'Kills') as SortField;
   const sortDir: SortDir = options?.sortDir === 'asc' ? 'asc' : 'desc';
   const limit = options?.limit && options.limit > 0 ? Math.min(options.limit, 1000) : 100;
-  const scope: LeaderboardScope = options?.scope === 'lifetime' ? 'lifetime' : 'month';
+  const scope: LeaderboardScope = options?.scope === 'lifetime' ? 'lifetime' : (options?.scope === 'solo' ? 'solo' : 'month');
 
   const client = await getMongoClientPromise();
   const db = client.db(getDbName());
@@ -96,6 +96,46 @@ export async function fetchHelldiversLeaderboard(options?: {
     const { start, end } = getMonthRange(monthProvided - 1, yearProvided);
     pipeline.push({ $match: { submittedAtDate: { $gte: start, $lt: end } } });
 
+    const sortStage: Record<string, 1 | -1> = {};
+    const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1;
+    switch (sortBy) {
+      case 'Kills': sortStage['numericKills'] = dir; break;
+      case 'Accuracy': sortStage['numericAccuracy'] = dir; break;
+      case 'Shots Fired': sortStage['numericShotsFired'] = dir; break;
+      case 'Shots Hit': sortStage['numericShotsHit'] = dir; break;
+      case 'Deaths': sortStage['numericDeaths'] = dir; break;
+      case 'player_name': sortStage['player_name'] = dir; break;
+      case 'clan_name': sortStage['clan_name'] = dir; break;
+      case 'submitted_at': sortStage['submittedAtDate'] = dir; break;
+      default: sortStage['numericKills'] = dir; break;
+    }
+
+    pipeline.push({ $sort: sortStage });
+    pipeline.push({ $limit: limit });
+    pipeline.push({
+      $project: {
+        _id: 1,
+        player_name: 1,
+        Kills: 1,
+        Accuracy: 1,
+        'Shots Fired': 1,
+        'Shots Hit': 1,
+        Deaths: 1,
+        discord_id: 1,
+        discord_server_id: 1,
+        clan_name: 1,
+        submitted_by: 1,
+        submitted_at: 1,
+        numericKills: 1,
+        numericAccuracy: 1,
+        numericShotsFired: 1,
+        numericShotsHit: 1,
+        numericDeaths: 1,
+        submittedAtDate: 1,
+      }
+    });
+  } else if (scope === 'solo') {
+    // Solo scope: sort like month, but do not filter by month; read from Solo_Stats collection later
     const sortStage: Record<string, 1 | -1> = {};
     const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1;
     switch (sortBy) {
@@ -214,7 +254,7 @@ export async function fetchHelldiversLeaderboard(options?: {
     });
   }
 
-  const collectionName = scope === 'lifetime' ? 'Lifetime_Stats' : 'User_Stats';
+  const collectionName = scope === 'lifetime' ? 'Lifetime_Stats' : (scope === 'solo' ? 'Solo_Stats' : 'User_Stats');
   const cursor = db.collection(collectionName).aggregate(pipeline, { allowDiskUse: true });
   const results = await cursor.toArray();
 
