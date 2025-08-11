@@ -47,7 +47,7 @@ export default async function ProfilePage(
     <main className="container mx-auto py-8 px-4">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border dark:border-slate-700 flex items-center gap-6 mb-8">
         <Image
-          src={user.image || '/images/default-avatar.png'}
+          src={user.image || '/images/avatar-default.png'}
           alt={`${user.name}'s Avatar`}
           width={100}
           height={100}

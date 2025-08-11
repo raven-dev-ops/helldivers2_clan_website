@@ -165,7 +165,7 @@ export default function ProfilePage() {
 
       <Section>
         <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-          <Avatar src={userData?.customAvatarDataUrl || userData?.image || '/images/default-avatar.png'} alt="Avatar" />
+          <Avatar src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" />
           <div>
             <Row>
               <label>Height (cm)</label>
