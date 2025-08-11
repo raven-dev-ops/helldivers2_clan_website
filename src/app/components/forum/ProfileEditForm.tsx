@@ -16,6 +16,11 @@ export default function ProfileEditForm() {
   const [background, setBackground] = useState<string>('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [discordRoles, setDiscordRoles] = useState<Array<{ id: string; name: string }>>([]);
+  const [callsign, setCallsign] = useState<string>('');
+  const [rankTitle, setRankTitle] = useState<string>('');
+  const [favoriteWeapon, setFavoriteWeapon] = useState<string>('');
+  const [armor, setArmor] = useState<string>('');
+  const [motto, setMotto] = useState<string>('');
 
   useEffect(() => {
     (async () => {
@@ -29,6 +34,11 @@ export default function ProfileEditForm() {
         setCharacterWeightKg(data.characterWeightKg ? String(data.characterWeightKg) : '');
         setHomeplanet(data.homeplanet || '');
         setBackground(data.background || '');
+        setCallsign(data.callsign || '');
+        setRankTitle(data.rankTitle || '');
+        setFavoriteWeapon(data.favoriteWeapon || '');
+        setArmor(data.armor || '');
+        setMotto(data.motto || '');
       }
       // Fetch Discord roles (non-fatal)
       try {
@@ -51,6 +61,11 @@ export default function ProfileEditForm() {
       if (characterWeightKg) form.append('characterWeightKg', characterWeightKg);
       if (homeplanet) form.append('homeplanet', homeplanet);
       if (background) form.append('background', background);
+      if (callsign) form.append('callsign', callsign);
+      if (rankTitle) form.append('rankTitle', rankTitle);
+      if (favoriteWeapon) form.append('favoriteWeapon', favoriteWeapon);
+      if (armor) form.append('armor', armor);
+      if (motto) form.append('motto', motto);
       if (avatarFile) form.append('avatar', avatarFile);
       const res = await fetch('/api/users/me', { method: 'PUT', body: form });
       if (res.ok) {
@@ -96,10 +111,6 @@ export default function ProfileEditForm() {
         </div>
         <div className="avatar-fields">
           <label className="field">
-            <span className="label">Profile Picture</span>
-            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
-          </label>
-          <label className="field">
             <span className="label">Name</span>
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Character name" />
           </label>
@@ -122,9 +133,36 @@ export default function ProfileEditForm() {
         <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
       </label>
 
+      <div className="two-col">
+        <label className="field">
+          <span className="label">Callsign</span>
+          <input value={callsign} onChange={(e) => setCallsign(e.target.value)} placeholder="e.g., Eagle-1" />
+        </label>
+        <label className="field">
+          <span className="label">Rank</span>
+          <input value={rankTitle} onChange={(e) => setRankTitle(e.target.value)} placeholder="e.g., Captain" />
+        </label>
+      </div>
+
+      <div className="two-col">
+        <label className="field">
+          <span className="label">Favorite Weapon</span>
+          <input value={favoriteWeapon} onChange={(e) => setFavoriteWeapon(e.target.value)} placeholder="e.g., Breaker" />
+        </label>
+        <label className="field">
+          <span className="label">Armor</span>
+          <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
+        </label>
+      </div>
+
       <label className="field">
         <span className="label">Description / Background</span>
         <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
+      </label>
+
+      <label className="field">
+        <span className="label">Motto</span>
+        <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
       </label>
 
       <div className="roles">
@@ -139,6 +177,11 @@ export default function ProfileEditForm() {
           </div>
         )}
       </div>
+
+      <label className="field">
+        <span className="label">Profile Picture</span>
+        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
+      </label>
 
       <div className="actions">
         <button type="button" onClick={handleSave} disabled={saving} className="btn btn-primary">

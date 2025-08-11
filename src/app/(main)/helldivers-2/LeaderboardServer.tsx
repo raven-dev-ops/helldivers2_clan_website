@@ -26,15 +26,20 @@ export default async function LeaderboardServer({
   const lifetimeParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'lifetime' }).toString();
   const lifetimeUrl = `${protocol}://${host}/api/helldivers/leaderboard?${lifetimeParams}`;
 
-  const [augustRes, lifetimeRes] = await Promise.all([
+  const soloParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'solo' }).toString();
+  const soloUrl = `${protocol}://${host}/api/helldivers/leaderboard?${soloParams}`;
+
+  const [augustRes, lifetimeRes, soloRes] = await Promise.all([
     fetch(augustUrl, { cache: 'no-store' }),
     fetch(lifetimeUrl, { cache: 'no-store' }),
+    fetch(soloUrl, { cache: 'no-store' }),
   ]);
 
   const augustData = augustRes.ok ? await augustRes.json() : undefined;
   const lifetimeData = lifetimeRes.ok ? await lifetimeRes.json() : undefined;
+  const soloData = soloRes.ok ? await soloRes.json() : undefined;
 
   return (
-    <HelldiversLeaderboard initialMonthData={augustData} initialLifetimeData={lifetimeData} />
+    <HelldiversLeaderboard initialSoloData={soloData} initialMonthData={augustData} initialLifetimeData={lifetimeData} />
   );
 }

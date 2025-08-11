@@ -20,6 +20,11 @@ export interface IUser extends Document {
   homeplanet?: string | null;
   background?: string | null;
   customAvatarDataUrl?: string | null; // base64 or external URL
+  callsign?: string | null;
+  rankTitle?: string | null;
+  favoriteWeapon?: string | null;
+  armor?: string | null;
+  motto?: string | null;
 
   // --- Challenge submissions (levels 1..7) ---
   challengeSubmissions?: Array<{
@@ -54,6 +59,11 @@ const UserSchema = new Schema<IUser>(
     homeplanet: { type: String, default: null },
     background: { type: String, default: null },
     customAvatarDataUrl: { type: String, default: null },
+    callsign: { type: String, default: null },
+    rankTitle: { type: String, default: null },
+    favoriteWeapon: { type: String, default: null },
+    armor: { type: String, default: null },
+    motto: { type: String, default: null },
 
     // --- Challenge submissions ---
     challengeSubmissions: [

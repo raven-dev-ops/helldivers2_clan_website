@@ -17,11 +17,11 @@ export async function GET(req: NextRequest) {
     const sortDir: 1 | -1 = sortDirParam === 'asc' ? 1 : -1;
     const limit = Number.isFinite(limitParam) && limitParam > 0 ? Math.min(limitParam, 1000) : 100;
 
-    const scope = scopeParam === 'lifetime' ? 'lifetime' : 'month';
-    const month = monthParam ? parseInt(monthParam, 10) : undefined;
-    const year = yearParam ? parseInt(yearParam, 10) : undefined;
+      const scope = scopeParam === 'lifetime' ? 'lifetime' : (scopeParam === 'solo' ? 'solo' : 'month');
+  const month = monthParam ? parseInt(monthParam, 10) : undefined;
+  const year = yearParam ? parseInt(yearParam, 10) : undefined;
 
-    const data = await fetchHelldiversLeaderboard({ sortBy, sortDir: sortDir === 1 ? 'asc' : 'desc', limit, scope, month, year });
+  const data = await fetchHelldiversLeaderboard({ sortBy, sortDir: sortDir === 1 ? 'asc' : 'desc', limit, scope, month, year });
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Error fetching helldivers leaderboard:', error);

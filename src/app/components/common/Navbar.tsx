@@ -179,6 +179,7 @@ const Navbar = () => {
                 <div key={href} className={styles.dropdown}>
                   <Link href={href} className={leaderboardLinkClass}>Leaderboard</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Leaderboard shortcuts">
+                    <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
                     <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
                     <Link href="/helldivers-2/leaderboard#average" className={styles.dropdownItem} role="menuitem">Average</Link>
