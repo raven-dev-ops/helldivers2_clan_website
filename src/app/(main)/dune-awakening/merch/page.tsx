@@ -132,7 +132,7 @@ export default async function DuneMerchPage() {
     <div className={styles.pageContainer}>
       <div className={styles.merchContentContainer}>
         <div className={styles.titleCard}>
-          <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Merch</h1>
+          <h1 className={styles.merchPageTitle}>GPT Dune: Awakening Shop</h1>
         </div>
 
         {errorOccurred ? (
