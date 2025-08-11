@@ -9,9 +9,6 @@ import dynamic from 'next/dynamic';
 
 const YoutubeCarousel = dynamic(() => import('@/app/(main)/helldivers-2/YoutubeCarousel'));
 const ReviewsRotator = dynamic(() => import('@/app/(main)/helldivers-2/ReviewsRotator'));
-const WarMap = dynamic(() => import('@/app/(main)/helldivers-2/WarMap'));
-const AcquisitionCenter = dynamic(() => import('@/app/(main)/helldivers-2/AcquisitionCenter'));
-const NewsTicker = dynamic(() => import('@/app/(main)/helldivers-2/NewsTicker'));
 
 // --- Review Data Structure ---
 interface Review { id: number; author: string; title: string; text: string; rating: number; }
@@ -65,17 +62,6 @@ export default function HelldiversPage() {
                 </h2>
                 <p className={styles.paragraph}> Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2 Division! We are a rapidly growing, multi-game community focused on creating a non-toxic, mature, and fun environment for gamers. Whether you're a fresh recruit dropping onto Malevelon Creek for the first time or a seasoned Super Citizen spreading managed democracy across the galaxy, you have a place here. </p>
                 <p className={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
-            </section>
-
-            {/* === War Map & Acquisition Center === */}
-            <section className={styles.section} id="galactic-war">
-                <WarMap />
-            </section>
-            <section className={styles.section}>
-                <NewsTicker />
-            </section>
-            <section className={styles.section}>
-                <AcquisitionCenter />
             </section>
 
             <div className={styles.imageContainer}>
