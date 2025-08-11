@@ -110,11 +110,11 @@ export default function ProfileEditForm() {
       <div className="grid md:grid-cols-2 gap-4">
         <label className="grid gap-1">
           <span className="text-sm text-slate-400">Height (cm)</span>
-          <input className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
+          <input type="number" inputMode="numeric" pattern="[0-9]*" className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
         </label>
         <label className="grid gap-1">
           <span className="text-sm text-slate-400">Weight (kg)</span>
-          <input className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
+          <input type="number" inputMode="numeric" pattern="[0-9]*" className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
         </label>
       </div>
 
@@ -141,7 +141,7 @@ export default function ProfileEditForm() {
         )}
       </div>
 
-      <div className="flex gap-3">
+             <div className="flex gap-3 pt-2">
         <button type="button" onClick={handleSave} disabled={saving} className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-4 py-2 rounded-md disabled:opacity-60">
           {saving ? 'Saving…' : 'Save Profile'}
         </button>
