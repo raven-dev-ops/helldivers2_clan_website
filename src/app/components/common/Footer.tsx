@@ -70,7 +70,7 @@ export default function Footer() {
           )}
         </div>
         <p className={styles.discordMessage}>
-          Questions, commends, or concerns?{' '}
+          Questions, comments, or concerns?{' '}
           <a
             href={discordLinkForMessage}
             target={discordUrl ? "_blank" : undefined}
