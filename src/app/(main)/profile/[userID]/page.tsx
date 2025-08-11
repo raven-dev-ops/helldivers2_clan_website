@@ -1,24 +1,23 @@
-// src/app/(main)/profile/[userId]/page.tsx
+// src/app/(main)/profile/[userID]/page.tsx
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/dbConnect';
-import UserModel, { IUser } from '@/models/User';
+import UserModel from '@/models/User';
 import ForumThreadModel from '@/models/ForumThread';
-import ForumPostModel from '@/models/ForumPost';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
 
-async function getUserProfile(userId: string) {
-  if (!mongoose.Types.ObjectId.isValid(userId)) return null;
+async function getUserProfile(userID: string) {
+  if (!mongoose.Types.ObjectId.isValid(userID)) return null;
   await dbConnect();
 
   try {
-    const user = await UserModel.findById(userId).lean();
+    const user = await UserModel.findById(userID).lean();
     if (!user) return null;
 
     const recentThreads = await ForumThreadModel
-      .find({ authorId: userId })
+      .find({ authorId: userID })
       .sort({ createdAt: -1 })
       .limit(5)
       .select('title categoryId createdAt')
@@ -32,16 +31,16 @@ async function getUserProfile(userId: string) {
 }
 
 export default async function ProfilePage(
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userID: string } }
 ) {
-  const { userId } = await params;
-  const profileData = await getUserProfile(userId);
+  const { userID } = params;
+  const profileData = await getUserProfile(userID);
 
   if (!profileData) {
     notFound();
   }
 
-  const { user, recentThreads } = profileData;
+  const { user, recentThreads } = profileData as any;
 
   return (
     <main className="container mx-auto py-8 px-4">

@@ -142,15 +142,18 @@ export default function CreatorsPage() {
     // Use the page container class from the module
     <main className={styles.pageContainer}>
       <div className={styles.titleCard}>
-        <h1 className={styles.pageTitle}>GPT HD2 Creators</h1>
+        <h1 className={styles.pageTitle}>GPT HD2 Streamers</h1>
         <p className={styles.pageSubtitle}>
           Discover or connect with content creators in the GPT community.
         </p>
       </div>
 
+      {/* Twitch Section */}
+      <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>Twitch</h2>
+
       {isLoadingPage && (
         <div className={styles.loadingContainer}>
-          <p className={styles.loadingText}>Loading Creator Channels...</p>
+          <p className={styles.loadingText}>Loading Twitch Channels...</p>
         </div>
       )}
 
@@ -299,32 +302,40 @@ export default function CreatorsPage() {
         </>
       )}
 
-      {!isLoadingPage && !pageError && creatorsData.length === 0 && (
-         <div className={styles.noCreatorsContainer}>
-             <p className={styles.noCreatorsText}>No community creators found or configured.</p>
-         </div>
-      )}
-
-      {/* Placeholder sections for other platforms */}
+      {/* Other Platforms Sections */}
       <div style={{ marginTop: '3rem' }}>
-        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>Other Platforms</h2>
+        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>YouTube</h2>
+        <p className={styles.pageSubtitle}>Coming soon.</p>
         <div className={styles.creatorsGrid}>
-          {['YouTube', 'TikTok', 'Kick', 'X'].map((platform) => (
-            <div key={platform} className={styles.creatorCard} style={{ opacity: 0.5 }}>
-              <div className={styles.embedWrapper} />
-              <div className={styles.infoSection}>
-                <div className={styles.headerSection}>
-                  <div className={styles.profileImagePlaceholder} />
-                  <div className={styles.channelInfo}>
-                    <div className={styles.channelNameLink}>{platform}</div>
-                    <div className={styles.channelUrlLink}>Coming soon</div>
-                  </div>
+          <div className={styles.creatorCard} style={{ opacity: 0.6 }}>
+            <div className={styles.embedWrapper} />
+            <div className={styles.infoSection}>
+              <div className={styles.headerSection}>
+                <div className={styles.profileImagePlaceholder} />
+                <div className={styles.channelInfo}>
+                  <div className={styles.channelNameLink}>YouTube</div>
+                  <div className={styles.channelUrlLink}>Integration not available yet</div>
                 </div>
-                <p className={styles.noDescriptionText}>Platform integration is not available yet.</p>
               </div>
+              <p className={styles.noDescriptionText}>Platform integration is not available yet.</p>
             </div>
-          ))}
+          </div>
         </div>
+      </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>TikTok</h2>
+        <p className={styles.pageSubtitle}>Coming soon.</p>
+      </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>Kick</h2>
+        <p className={styles.pageSubtitle}>Coming soon.</p>
+      </div>
+
+      <div style={{ marginTop: '2rem' }}>
+        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>X</h2>
+        <p className={styles.pageSubtitle}>Coming soon.</p>
       </div>
     </main>
   );

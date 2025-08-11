@@ -107,14 +107,14 @@ const Navbar = () => {
         { href: "/dune-awakening", label: "Home" },
         { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/creators", label: "Creators" },
+        { href: "/dune-awakening/creators", label: "Streamers" },
       ];
     } else if (isClient && currentDivisionId === 'dune-awakening') {
        return [
         { href: "/dune-awakening", label: "Home" },
         { href: "/dune-awakening/merch", label: "Merch" },
         { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/creators", label: "Creators" },
+        { href: "/dune-awakening/creators", label: "Streamers" },
       ];
     } else { 
       return [
@@ -122,7 +122,7 @@ const Navbar = () => {
         { href: "/helldivers-2/merch", label: "Merch" },
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
-        { href: "/helldivers-2/creators", label: "Creators" },
+        { href: "/helldivers-2/creators", label: "Streamers" },
         { href: "/helldivers-2/news", label: "Intel" },
       ];
     }
@@ -200,13 +200,13 @@ const Navbar = () => {
                 </div>
               );
             }
-            if (label === 'Creators') {
-              const isCreatorsActive = isClient && pathname.startsWith(`${divisionBasePath}/creators`);
-              const creatorsLinkClass = `${styles.link} ${isCreatorsActive ? styles.activeLink : ''}`;
+            if (label === 'Streamers') {
+              const isStreamersActive = isClient && pathname.startsWith(`${divisionBasePath}/creators`);
+              const streamersLinkClass = `${styles.link} ${isStreamersActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={creatorsLinkClass}>Creators</Link>
-                  <div className={styles.dropdownMenu} role="menu" aria-label="Creators platforms">
+                  <Link href={href} className={streamersLinkClass}>Streamers</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Streamers platforms">
                     <Link href={`${divisionBasePath}/creators`} className={styles.dropdownItem} role="menuitem">Twitch</Link>
                     <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>YouTube</span>
                     <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>TikTok</span>

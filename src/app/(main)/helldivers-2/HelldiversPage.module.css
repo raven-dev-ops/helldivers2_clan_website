@@ -382,3 +382,20 @@
 .splitSection.reverse .splitImage { order: -1; }
 .splitText { }
 .splitImage { }
+
+/* Ensure consistent GIF sizing beside text blocks */
+.splitImage .centeredImage {
+  width: 100%;
+  max-width: 360px;
+  height: 360px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+@media (min-width: 900px) {
+  .splitImage .centeredImage {
+    max-width: 420px;
+    height: 420px;
+  }
+}
