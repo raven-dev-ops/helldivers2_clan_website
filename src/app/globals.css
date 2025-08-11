@@ -448,22 +448,25 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 
 /* === End Merch Page Styles === */
 
-/* Profile form: constrain field widths to about half of container */
+/* Profile form: tidy alignment and consistent field widths */
+.profile-form { row-gap: 1rem; }
+.profile-form .field { grid-template-columns: 220px minmax(0, 1fr); align-items: center; }
+.profile-form .field .label { justify-self: end; }
 .profile-form .field input,
 .profile-form .field textarea,
 .profile-form .field select {
-  max-width: 640px; /* slightly longer */
-  justify-self: end; /* align to the right */
+  max-width: 640px;
+  justify-self: start;
+  width: 100%;
 }
 
-.profile-form .two-col .field input,
-.profile-form .two-col .field textarea,
-.profile-form .two-col .field select {
-  max-width: 100%;
-}
+.profile-form .two-col { column-gap: 1.25rem; }
+.profile-form .two-col .field { grid-template-columns: 160px minmax(0, 1fr); }
 
-/* Make action buttons align start and not stretch */
-.profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+/* Actions + inline save status */
+.profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-end; align-items: center; }
+.profile-form .save-status { color: var(--color-success); font-weight: 600; }
+.profile-form .save-status.error { color: var(--color-error); }
 
 /* === Partners Page Styles === */
 

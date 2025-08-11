@@ -28,6 +28,9 @@ export default function ProfileEditForm() {
   const [motto, setMotto] = useState<string>('');
   const [favoredEnemy, setFavoredEnemy] = useState<string>('');
   const [isChangeImageOpen, setIsChangeImageOpen] = useState<boolean>(false);
+  // Saved! status and error message
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -64,26 +67,39 @@ export default function ProfileEditForm() {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveStatus('idle');
+    setSaveError(null);
     try {
-      const form = new FormData();
-      if (firstName) form.append('firstName', firstName);
-      if (middleName) form.append('middleName', middleName);
-      if (lastName) form.append('lastName', lastName);
-      if (characterHeightCm) form.append('characterHeightCm', characterHeightCm);
-      if (characterWeightKg) form.append('characterWeightKg', characterWeightKg);
-      if (homeplanet) form.append('homeplanet', homeplanet);
-      if (background) form.append('background', background);
-      if (callsign) form.append('callsign', callsign);
-      if (rankTitle) form.append('rankTitle', rankTitle);
-      if (favoriteWeapon) form.append('favoriteWeapon', favoriteWeapon);
-      if (armor) form.append('armor', armor);
-      if (motto) form.append('motto', motto);
-      if (favoredEnemy) form.append('favoredEnemy', favoredEnemy);
-      if (avatarFile) form.append('avatar', avatarFile);
-      const res = await fetch('/api/users/me', { method: 'PUT', body: form });
+      const payload = {
+        firstName: firstName || null,
+        middleName: middleName || null,
+        lastName: lastName || null,
+        characterHeightCm: characterHeightCm ? Number(characterHeightCm) : null,
+        characterWeightKg: characterWeightKg ? Number(characterWeightKg) : null,
+        homeplanet: homeplanet || null,
+        background: background || null,
+        callsign: callsign || null,
+        rankTitle: rankTitle || null,
+        favoriteWeapon: favoriteWeapon || null,
+        armor: armor || null,
+        motto: motto || null,
+        favoredEnemy: favoredEnemy || null,
+      } as const;
+
+      const res = await fetch('/api/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
       if (res.ok) {
         const data = await res.json();
         setUserData(data);
+        setSaveStatus('success');
+        setTimeout(() => setSaveStatus('idle'), 2500);
+      } else {
+        const j = await res.json().catch(() => ({}));
+        setSaveError(j?.error || 'Failed to save profile');
+        setSaveStatus('error');
       }
     } finally {
       setSaving(false);
@@ -266,6 +282,12 @@ export default function ProfileEditForm() {
         <button type="button" onClick={handleSave} disabled={saving} className="btn btn-primary">
           {saving ? 'Saving…' : 'Save Profile'}
         </button>
+        {saveStatus === 'success' && (
+          <span className="save-status">Saved!</span>
+        )}
+        {saveStatus === 'error' && (
+          <span className="save-status error">{saveError || 'Error saving.'}</span>
+        )}
         <button type="button" onClick={handleDeleteAccount} disabled={deleting} className="btn btn-secondary danger">
           {deleting ? 'Deleting…' : 'Delete Account'}
         </button>
