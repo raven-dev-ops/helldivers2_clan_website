@@ -90,7 +90,7 @@ export default function ProfileEditForm() {
         <div className="w-28 h-28 rounded-full overflow-hidden border border-slate-600">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={userData?.customAvatarDataUrl || userData?.image || '/images/default-avatar.png'}
+            src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
             alt="Avatar"
             className="w-full h-full object-cover"
           />
