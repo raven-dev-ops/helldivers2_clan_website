@@ -1,7 +1,7 @@
 // src/app/components/forum/ProfileEditForm.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ProfileEditForm() {
   const [loading, setLoading] = useState(true);
@@ -80,72 +80,71 @@ export default function ProfileEditForm() {
 
   if (loading) {
     return (
-      <div className="p-4 border rounded-lg bg-white dark:bg-slate-800 text-slate-500">Loading…</div>
+      <div className="card muted">Loading…</div>
     );
   }
 
   return (
-    <form className="space-y-4 p-4 border rounded-lg bg-white dark:bg-slate-800">
-      <div className="flex gap-4 items-center">
-        <div className="w-28 h-28 rounded-full overflow-hidden border border-slate-600">
+    <form className="card form-grid">
+      <div className="avatar-row">
+        <div className="avatar">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
             alt="Avatar"
-            className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1 grid gap-3">
-          <label className="grid gap-1">
-            <span className="text-sm text-slate-400">Profile Picture</span>
-            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} className="block text-slate-200" />
+        <div className="avatar-fields">
+          <label className="field">
+            <span className="label">Profile Picture</span>
+            <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] || null)} />
           </label>
-          <label className="grid gap-1">
-            <span className="text-sm text-slate-400">Name</span>
-            <input className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={name} onChange={(e) => setName(e.target.value)} placeholder="Character name" />
+          <label className="field">
+            <span className="label">Name</span>
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Character name" />
           </label>
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="grid gap-1">
-          <span className="text-sm text-slate-400">Height (cm)</span>
-          <input type="number" inputMode="numeric" pattern="[0-9]*" className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
+      <div className="two-col">
+        <label className="field">
+          <span className="label">Height (cm)</span>
+          <input type="number" inputMode="numeric" pattern="[0-9]*" value={characterHeightCm} onChange={(e) => setCharacterHeightCm(e.target.value)} placeholder="e.g., 180" />
         </label>
-        <label className="grid gap-1">
-          <span className="text-sm text-slate-400">Weight (kg)</span>
-          <input type="number" inputMode="numeric" pattern="[0-9]*" className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
+        <label className="field">
+          <span className="label">Weight (kg)</span>
+          <input type="number" inputMode="numeric" pattern="[0-9]*" value={characterWeightKg} onChange={(e) => setCharacterWeightKg(e.target.value)} placeholder="e.g., 80" />
         </label>
       </div>
 
-      <label className="grid gap-1">
-        <span className="text-sm text-slate-400">Homeworld</span>
-        <input className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100" value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
+      <label className="field">
+        <span className="label">Homeworld</span>
+        <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
       </label>
 
-      <label className="grid gap-1">
-        <span className="text-sm text-slate-400">Description / Background</span>
-        <textarea className="bg-slate-900/70 border border-slate-600 rounded-md px-3 py-2 text-slate-100 min-h-[120px]" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
+      <label className="field">
+        <span className="label">Description / Background</span>
+        <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
       </label>
 
-      <div className="grid gap-2">
-        <span className="text-sm text-slate-400">Discord Roles in GPT Fleet</span>
+      <div className="roles">
+        <span className="label">Discord Roles in GPT Fleet</span>
         {discordRoles.length === 0 ? (
-          <div className="text-slate-500">None</div>
+          <div className="muted">None</div>
         ) : (
-          <div className="flex flex-wrap gap-2">
+          <div className="role-chips">
             {discordRoles.map((r) => (
-              <span key={r.id} className="px-2 py-1 rounded-full bg-slate-700 text-slate-100 text-sm">{r.name}</span>
+              <span key={r.id} className="chip">{r.name}</span>
             ))}
           </div>
         )}
       </div>
 
-             <div className="flex gap-3 pt-2">
-        <button type="button" onClick={handleSave} disabled={saving} className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-4 py-2 rounded-md disabled:opacity-60">
+      <div className="actions">
+        <button type="button" onClick={handleSave} disabled={saving} className="btn btn-primary">
           {saving ? 'Saving…' : 'Save Profile'}
         </button>
-        <button type="button" onClick={handleDeleteAccount} disabled={deleting} className="bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-md ml-auto disabled:opacity-60">
+        <button type="button" onClick={handleDeleteAccount} disabled={deleting} className="btn btn-secondary danger">
           {deleting ? 'Deleting…' : 'Delete Account'}
         </button>
       </div>
