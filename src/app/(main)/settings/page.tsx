@@ -22,7 +22,7 @@ export default function SettingsPage() {
       </video>
       <div style={overlayStyle} />
 
-      <h1 className="academy-page-title">Settings</h1>
+      <h1 className="academy-page-title left-with-backdrop">Settings</h1>
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Edit Profile</h2>

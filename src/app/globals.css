@@ -212,6 +212,22 @@ tbody tr:last-child .td { border-bottom: none; }
 /* Academy Page Styles (Combined from previous definition) */
 .academy-main-container { max-width: 1200px; margin-left: auto; margin-right: auto; padding: 2rem 1rem 4rem; }
 .academy-page-title { font-size: clamp(1.8rem, 5vw, 2.25rem); font-weight: bold; margin-bottom: 2rem; color: var(--color-primary, #facc15); border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem; text-align: center; }
+/* New: left-aligned title with backplate layer */
+.academy-page-title.left-with-backdrop { text-align: left; position: relative; padding-left: 0.75rem; }
+.academy-page-title.left-with-backdrop::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(160px, 30vw, 360px);
+  height: 70%;
+  background: linear-gradient(90deg, rgba(30,41,59,0.6), rgba(30,41,59,0));
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  border-radius: 8px;
+  z-index: -1;
+}
 .content-section { margin-bottom: 2.5rem; padding: 1.5rem; background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--border-radius-lg); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
 .content-section-title { font-size: clamp(1.5rem, 4vw, 1.875rem); font-weight: 600; color: var(--color-text-primary); margin-bottom: 1rem; }
 .content-section-title.with-border-bottom { margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--color-border); }

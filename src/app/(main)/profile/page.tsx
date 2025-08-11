@@ -182,36 +182,32 @@ export default function ProfilePage() {
       </video>
       <div style={overlayStyle} />
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12 }}>
-        <h1 className="academy-page-title" style={{ marginBottom: 0 }}>
+      <div style={{ marginBottom: 12 }}>
+        <h1 className="academy-page-title left-with-backdrop">
           {userData?.name || 'Your Profile'} {allSevenComplete && <span title="All 7 challenges submitted">⭐</span>}
         </h1>
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Edit Profile</Link>
-          <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
-        </div>
       </div>
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Overview</h2>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'nowrap' }}>
           <img
             src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
             alt="Avatar"
             style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid #475569' }}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1 }}>
             <strong>Height (cm)</strong>
             <span>{userData?.characterHeightCm ?? '—'}</span>
             <strong>Weight (kg)</strong>
             <span>{userData?.characterWeightKg ?? '—'}</span>
             <strong>Homeplanet</strong>
             <span>{userData?.homeplanet ?? '—'}</span>
+            <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
+              <strong>Background</strong>
+              <p style={{ marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</p>
+            </div>
           </div>
-        </div>
-        <div style={{ marginTop: 12 }}>
-          <strong>Background</strong>
-          <p style={{ marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</p>
         </div>
       </section>
 
@@ -250,6 +246,11 @@ export default function ProfilePage() {
         </div>
         <p className="text-paragraph" style={{ marginTop: 8 }}>To add or update submissions, use the Edit Profile button.</p>
       </section>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+        <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Edit Profile</Link>
+        <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
+      </div>
 
       <SubmitChallengeModal
         isOpen={isSubmitModalOpen}
