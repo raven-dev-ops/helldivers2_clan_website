@@ -67,6 +67,10 @@ export default function CreatorsPage() {
     console.warn("NEXT_PUBLIC_TWITCH_EMBED_PARENT environment variable is not set. Twitch embeds may not work on deployed sites.");
   }
 
+  const liveCreators = creatorsData.filter(c => c.isLive);
+  const featured = liveCreators[0] || null;
+  const restCreators = creatorsData.filter(c => !featured || c.channelName !== featured.channelName);
+
   return (
     // Use the page container class from the module
     <main className={styles.pageContainer}>
@@ -90,65 +94,104 @@ export default function CreatorsPage() {
       )}
 
       {!isLoadingPage && !pageError && creatorsData.length > 0 && (
-        <div className={styles.creatorsGrid}>
-          {creatorsData.map((creator) => (
-            <div key={creator.channelName} className={styles.creatorCard}>
-              <div className={styles.embedWrapper}>
+        <>
+          {/* Featured live stream with chat on desktop */}
+          {featured && (
+            <div className={styles.featuredContainer}>
+              <div className={styles.featuredVideoCard}>
+                <div className={styles.featuredTitleBar}>
+                  <div className={styles.featuredTitle}>{featured.displayName || featured.channelName}</div>
+                  <a href={`https://www.twitch.tv/${featured.channelName}`} target="_blank" rel="noopener noreferrer" aria-label="Open Twitch">
+                    <FaTwitch />
+                  </a>
+                </div>
+                <div className={styles.featuredVideoWrapper}>
+                  <iframe
+                    src={`https://player.twitch.tv/?channel=${featured.channelName}&parent=${twitchEmbedParent}&muted=false&autoplay=true`}
+                    height="100%" width="100%"
+                    allowFullScreen={true} scrolling="no"
+                    title={`${featured.displayName || featured.channelName}'s Twitch Stream`}
+                    className={styles.twitchEmbed}
+                    sandbox="allow-scripts allow-same-origin allow-popups"
+                  ></iframe>
+                </div>
+              </div>
+              <div className={styles.featuredChatCard}>
+                <div className={styles.featuredTitleBar}>
+                  <div className={styles.featuredTitle}>Chat</div>
+                </div>
                 <iframe
-                  src={`https://player.twitch.tv/?channel=${creator.channelName}&parent=${twitchEmbedParent}&muted=true&autoplay=false`}
-                  height="100%" width="100%"
-                  allowFullScreen={true} scrolling="no"
-                  title={`${creator.displayName || creator.channelName}'s Twitch Stream`}
-                  className={styles.twitchEmbed}
-                  sandbox="allow-scripts allow-same-origin allow-popups" // Security sandbox
+                  src={`https://www.twitch.tv/embed/${featured.channelName}/chat?parent=${twitchEmbedParent}`}
+                  height="600" width="100%"
+                  title={`${featured.displayName || featured.channelName} Twitch Chat`}
+                  style={{ border: 'none', display: 'block' }}
+                  sandbox="allow-scripts allow-same-origin allow-popups"
                 ></iframe>
               </div>
+            </div>
+          )}
 
-              <div className={styles.infoSection}>
-                <div className={styles.headerSection}>
-                  <div className={styles.profileImageWrapper}>
-                    {creator.profileImageUrl ? (
-                      <Image
-                        src={creator.profileImageUrl}
-                        alt={`${creator.displayName || creator.channelName} profile picture`}
-                        width={64} height={64}
-                        className={styles.profileImage} // Use class from module
-                        onError={(e) => { e.currentTarget.src = '/images/placeholder.png'; }} // Fallback placeholder
-                        unoptimized // Good practice for external images not known at build time
-                      />
-                    ) : (
-                      <div className={styles.profileImagePlaceholder}>
-                        <FaTwitch className={styles.placeholderIcon} />
-                      </div>
-                    )}
-                    {creator.isLive && (
-                      <div className={styles.liveBadge}>
-                        <FaCircle className={styles.liveDot} />
-                        LIVE
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.channelInfo}>
-                    <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelNameLink} title={creator.displayName || creator.channelName}>
-                      {creator.displayName || creator.channelName}
-                    </a>
-                    <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelUrlLink} >
-                         twitch.tv/{creator.channelName}
-                     </a>
-                  </div>
+          {/* Remaining creators in grid */}
+          <div className={styles.creatorsGrid}>
+            {restCreators.map((creator) => (
+              <div key={creator.channelName} className={styles.creatorCard}>
+                <div className={styles.embedWrapper}>
+                  <iframe
+                    src={`https://player.twitch.tv/?channel=${creator.channelName}&parent=${twitchEmbedParent}&muted=true&autoplay=false`}
+                    height="100%" width="100%"
+                    allowFullScreen={true} scrolling="no"
+                    title={`${creator.displayName || creator.channelName}'s Twitch Stream`}
+                    className={styles.twitchEmbed}
+                    sandbox="allow-scripts allow-same-origin allow-popups" // Security sandbox
+                  ></iframe>
                 </div>
 
-                {creator.description ? (
-                  <p className={styles.descriptionText}>
-                    {creator.description}
-                  </p>
-                ) : (
-                  <p className={styles.noDescriptionText}>No description available.</p>
-                )}
+                <div className={styles.infoSection}>
+                  <div className={styles.headerSection}>
+                    <div className={styles.profileImageWrapper}>
+                      {creator.profileImageUrl ? (
+                        <Image
+                          src={creator.profileImageUrl}
+                          alt={`${creator.displayName || creator.channelName} profile picture`}
+                          width={64} height={64}
+                          className={styles.profileImage} // Use class from module
+                          onError={(e) => { (e.currentTarget as any).src = '/images/placeholder.png'; }} // Fallback placeholder
+                          unoptimized // Good practice for external images not known at build time
+                        />
+                      ) : (
+                        <div className={styles.profileImagePlaceholder}>
+                          <FaTwitch className={styles.placeholderIcon} />
+                        </div>
+                      )}
+                      {creator.isLive && (
+                        <div className={styles.liveBadge}>
+                          <FaCircle className={styles.liveDot} />
+                          LIVE
+                        </div>
+                      )}
+                    </div>
+                    <div className={styles.channelInfo}>
+                      <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelNameLink} title={creator.displayName || creator.channelName}>
+                        {creator.displayName || creator.channelName}
+                      </a>
+                      <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelUrlLink} >
+                           twitch.tv/{creator.channelName}
+                       </a>
+                    </div>
+                  </div>
+
+                  {creator.description ? (
+                    <p className={styles.descriptionText}>
+                      {creator.description}
+                    </p>
+                  ) : (
+                    <p className={styles.noDescriptionText}>No description available.</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       {!isLoadingPage && !pageError && creatorsData.length === 0 && (

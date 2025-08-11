@@ -108,6 +108,7 @@ const Navbar = () => {
         { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
         { href: "/helldivers-2/challenges", label: "Challenges" },
         { href: "/helldivers-2/creators", label: "Creators" },
+        { href: "/helldivers-2/map", label: "Map" },
         { href: "/helldivers-2/merch", label: "Merch" },
       ];
     }
@@ -151,6 +152,24 @@ const Navbar = () => {
                     <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
                     <Link href="/helldivers-2/leaderboard#average" className={styles.dropdownItem} role="menuitem">Average</Link>
+                  </div>
+                </div>
+              );
+            }
+            if (label === 'Challenges') {
+              const isChallengesActive = isClient && pathname.startsWith('/helldivers-2/challenges');
+              const challengesLinkClass = `${styles.link} ${isChallengesActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={challengesLinkClass}>Challenges</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Challenge levels">
+                    <Link href="/helldivers-2/challenges#level-1" className={styles.dropdownItem} role="menuitem">Level 1</Link>
+                    <Link href="/helldivers-2/challenges#level-2" className={styles.dropdownItem} role="menuitem">Level 2</Link>
+                    <Link href="/helldivers-2/challenges#level-3" className={styles.dropdownItem} role="menuitem">Level 3</Link>
+                    <Link href="/helldivers-2/challenges#level-4" className={styles.dropdownItem} role="menuitem">Level 4</Link>
+                    <Link href="/helldivers-2/challenges#level-5" className={styles.dropdownItem} role="menuitem">Level 5</Link>
+                    <Link href="/helldivers-2/challenges#level-6" className={styles.dropdownItem} role="menuitem">Level 6</Link>
+                    <Link href="/helldivers-2/challenges#level-7" className={styles.dropdownItem} role="menuitem">Level 7</Link>
                   </div>
                 </div>
               );
