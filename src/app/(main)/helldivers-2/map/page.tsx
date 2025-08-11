@@ -1,7 +1,5 @@
 // src/app/(main)/helldivers-2/map/page.tsx
-import dynamic from 'next/dynamic';
-
-const WarMap = dynamic(() => import('@/app/(main)/helldivers-2/WarMap'), { ssr: false });
+import WarMap from '@/app/(main)/helldivers-2/WarMap';
 
 export default function MapPage() {
   return (
