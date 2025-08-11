@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     const client = await getMongoClientPromise();
     const db = client.db();
+    const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
     const userObjectId = new ObjectId(session.user.id);
     const accounts = db.collection('accounts');
     const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
       time: now,
     }));
 
-    await db.collection('User_Profiles').updateOne(
+    await appDb.collection('User_Profiles').updateOne(
       { user_id: userObjectId },
       {
         $set: { user_id: userObjectId, discord_id: discordId, last_ranking_updated: now, currentRanking: normalized },

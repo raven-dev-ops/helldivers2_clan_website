@@ -452,8 +452,8 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 .profile-form .field input,
 .profile-form .field textarea,
 .profile-form .field select {
-  max-width: 520px;
-  justify-self: start;
+  max-width: 640px; /* slightly longer */
+  justify-self: end; /* align to the right */
 }
 
 .profile-form .two-col .field input,
@@ -463,7 +463,7 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 }
 
 /* Make action buttons align start and not stretch */
-.profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-start; }
+.profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
 
 /* === Partners Page Styles === */
 
@@ -684,6 +684,8 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 .avatar { width: 10rem; height: 10rem; border-radius: 9999px; overflow: hidden; border: 1px solid var(--color-border); flex: 0 0 auto; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .avatar-fields { flex: 1 1 auto; display: grid; gap: 0.75rem; }
+/* Align fields to the right side within the avatar fields column */
+.avatar-fields { justify-items: end; }
 
 /* New: Stack avatar and its actions vertically */
 .avatar-col { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
