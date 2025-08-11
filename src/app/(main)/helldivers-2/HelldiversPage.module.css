@@ -94,6 +94,17 @@
     flex-grow: 1; /* Push author down */
     white-space: pre-line; /* Respect newlines in text */
     position: relative;
+    max-height: 6.5rem; /* Clamp height to ~4 lines */
+    overflow: hidden;
+}
+.reviewText::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2.2rem; /* fade height */
+    background: linear-gradient(to bottom, rgba(0,0,0,0), var(--color-surface));
 }
 .reviewAuthor {
     font-size: 0.75rem;
@@ -322,6 +333,7 @@
     --font-mono: monospace;
 } */
 
+/* Existing centered image utility retained */
 .imageContainer {
   display: flex;
   justify-content: center;
@@ -335,3 +347,24 @@
   max-width: 100%;
   height: auto;
 }
+
+/* --- New: Split Sections --- */
+.splitSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .splitSection {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.splitSection.reverse {
+  direction: rtl; /* flip order visually without changing markup semantics */
+}
+.splitSection.reverse > * {
+  direction: ltr;
+}
+.splitText { }
+.splitImage { }
