@@ -20,7 +20,6 @@ export default function ProfileEditForm() {
   const [homeplanet, setHomeplanet] = useState<string>('');
   const [background, setBackground] = useState<string>('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [discordRoles, setDiscordRoles] = useState<Array<{ id: string; name: string }>>([]);
   const [callsign, setCallsign] = useState<string>('');
   const [rankTitle, setRankTitle] = useState<string>('');
   const [favoriteWeapon, setFavoriteWeapon] = useState<string>('');
@@ -52,17 +51,7 @@ export default function ProfileEditForm() {
         setArmor(data.armor || '');
         setMotto(data.motto || '');
         setFavoredEnemy(data.favoredEnemy || '');
-        // Preload roles if already saved
-        if (Array.isArray(data.discordRoles)) setDiscordRoles(data.discordRoles);
       }
-      // Fetch Discord roles (non-fatal)
-      try {
-        const r = await fetch('/api/discord/roles', { cache: 'no-store' });
-        if (r.ok) {
-          const json = await r.json();
-          if (Array.isArray(json.roles)) setDiscordRoles(json.roles);
-        }
-      } catch {}
       setLoading(false);
     })();
   }, []);
@@ -101,31 +90,6 @@ export default function ProfileEditForm() {
       } else {
         const j = await res.json().catch(() => ({}));
         setSaveError(j?.error || 'Failed to save profile');
-        setSaveStatus('error');
-      }
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleSaveRoles = async () => {
-    setSaving(true);
-    setSaveStatus('idle');
-    setSaveError(null);
-    try {
-      const res = await fetch('/api/users/me', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ discordRoles }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setUserData(data);
-        setSaveStatus('success');
-        setTimeout(() => setSaveStatus('idle'), 2500);
-      } else {
-        const j = await res.json().catch(() => ({}));
-        setSaveError(j?.error || 'Failed to save roles');
         setSaveStatus('error');
       }
     } finally {
@@ -289,24 +253,6 @@ export default function ProfileEditForm() {
         <span className="label">Motto</span>
         <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
       </label>
-
-      <div className="roles">
-        <span className="label">Discord Roles in GPT Fleet</span>
-        {discordRoles.length === 0 ? (
-          <div className="muted">None</div>
-        ) : (
-          <div className="role-chips">
-            {discordRoles.map((r) => (
-              <span key={r.id} className="chip">{r.name}</span>
-            ))}
-          </div>
-        )}
-        <div style={{ marginTop: 8 }}>
-          <button type="button" className="btn btn-secondary" onClick={handleSaveRoles} disabled={saving || discordRoles.length === 0}>
-            {saving ? 'Saving…' : 'Save Roles to Profile'}
-          </button>
-        </div>
-      </div>
 
       {/* Removed direct file input in favor of Change Image modal */}
 
