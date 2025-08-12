@@ -30,6 +30,9 @@ export interface IUser extends Document {
   motto?: string | null;
   favoredEnemy?: string | null;
 
+  // --- Discord ---
+  discordRoles?: Array<{ id: string; name: string }>;
+
   // --- Challenge submissions (levels 1..7) ---
   challengeSubmissions?: Array<{
     level: number; // 1..7
@@ -73,6 +76,9 @@ const UserSchema = new Schema<IUser>(
     armor: { type: String, default: null },
     motto: { type: String, default: null },
     favoredEnemy: { type: String, default: null },
+
+    // --- Discord ---
+    discordRoles: { type: [{ id: String, name: String }], default: [] },
 
     // --- Challenge submissions ---
     challengeSubmissions: [

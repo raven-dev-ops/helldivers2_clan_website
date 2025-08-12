@@ -203,12 +203,42 @@ export default function ProfilePage() {
             <span>{userData?.characterWeightKg ?? '—'}</span>
             <strong>Homeplanet</strong>
             <span>{userData?.homeplanet ?? '—'}</span>
+            <strong>Callsign</strong>
+            <span>{userData?.callsign ?? '—'}</span>
+            <strong>Rank</strong>
+            <span>{userData?.rankTitle ?? '—'}</span>
+            <strong>Favorite Weapon</strong>
+            <span>{userData?.favoriteWeapon ?? '—'}</span>
+            <strong>Armor</strong>
+            <span>{userData?.armor ?? '—'}</span>
+            <strong>Motto</strong>
+            <span>{userData?.motto ?? '—'}</span>
+            <strong>Favored Enemy</strong>
+            <span>{userData?.favoredEnemy ?? '—'}</span>
             <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
               <strong>Background</strong>
               <p style={{ marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</p>
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="content-section">
+        <h2 className="content-section-title with-border-bottom">Your Roles</h2>
+        {Array.isArray(userData?.discordRoles) && userData.discordRoles.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {userData.discordRoles.map((r: any) => (
+              <span key={r.id} className="inline-code">{r.name}</span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-paragraph">No Discord roles detected. Link your Discord and join the server to see roles.</p>
+        )}
+      </section>
+
+      <section className="content-section">
+        <h2 className="content-section-title with-border-bottom">Your Squad</h2>
+        <p className="text-paragraph">Coming soon.</p>
       </section>
 
       <section className="content-section">
