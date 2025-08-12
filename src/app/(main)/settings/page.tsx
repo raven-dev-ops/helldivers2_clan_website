@@ -4,7 +4,6 @@
 import type { CSSProperties } from 'react';
 import styles from '../helldivers-2/HelldiversPage.module.css';
 import ProfileEditForm from '@/app/components/forum/ProfileEditForm';
-import StatsSubmitForm from '@/app/components/forum/StatsSubmitForm';
 
 const videoStyle: CSSProperties = {
   position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -2, filter: 'brightness(0.6)'
@@ -27,11 +26,6 @@ export default function SettingsPage() {
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Edit Profile</h2>
         <ProfileEditForm />
-      </section>
-
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Submit Stats</h2>
-        <StatsSubmitForm />
       </section>
     </div>
   );
