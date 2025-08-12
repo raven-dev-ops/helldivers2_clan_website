@@ -194,7 +194,7 @@ export default function HelldiverChallengesPage() {
                    })}
                  </div>
 
-                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
                    <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
                  </div>
             </section>
