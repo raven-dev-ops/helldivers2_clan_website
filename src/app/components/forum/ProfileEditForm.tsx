@@ -162,97 +162,89 @@ export default function ProfileEditForm() {
           </button>
         </div>
         <div className="avatar-fields">
-          <div className="two-col">
-            <label className="field">
-              <span className="label">First Name</span>
-              <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
-            </label>
-            <label className="field">
-              <span className="label">Middle Name</span>
-              <input value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
-            </label>
-          </div>
-          <label className="field field-sm">
+          <label className="field">
+            <span className="label">First Name</span>
+            <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
+          </label>
+          <label className="field">
+            <span className="label">Middle Name</span>
+            <input value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
+          </label>
+          <label className="field">
             <span className="label">Last Name</span>
             <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
           </label>
+
+          <label className="field">
+            <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
+            <input
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={heightUnit === 'cm' ? characterHeightCm : cmToIn(characterHeightCm)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (heightUnit === 'cm') setCharacterHeightCm(val);
+                else setCharacterHeightCm(inToCm(val));
+              }}
+              placeholder={heightUnit === 'cm' ? '180' : '71'}
+            />
+          </label>
+          <label className="field">
+            <span className="label">Weight <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>({weightUnit})</button></span>
+            <input
+              type="number"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              value={weightUnit === 'kg' ? characterWeightKg : kgToLb(characterWeightKg)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (weightUnit === 'kg') setCharacterWeightKg(val);
+                else setCharacterWeightKg(lbToKg(val));
+              }}
+              placeholder={weightUnit === 'kg' ? '80' : '176'}
+            />
+          </label>
+
+          <label className="field">
+            <span className="label">Homeworld</span>
+            <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
+          </label>
+          
+          <label className="field">
+            <span className="label">Callsign</span>
+            <input value={callsign} onChange={(e) => setCallsign(e.target.value)} placeholder="e.g., Eagle-1" />
+          </label>
+          <label className="field">
+            <span className="label">Rank</span>
+            <input value={rankTitle} onChange={(e) => setRankTitle(e.target.value)} placeholder="e.g., Captain" />
+          </label>
+
+          <label className="field">
+            <span className="label">Favorite Weapon</span>
+            <input value={favoriteWeapon} onChange={(e) => setFavoriteWeapon(e.target.value)} placeholder="e.g., Breaker" />
+          </label>
+          <label className="field">
+            <span className="label">Armor</span>
+            <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
+          </label>
+
+          <label className="field">
+            <span className="label">Favored Enemy</span>
+            <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
+          </label>
+
+          <label className="field field-span-2">
+            <span className="label">Description / Background</span>
+            <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
+          </label>
+
+          <label className="field">
+            <span className="label">Motto</span>
+            <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
+          </label>
         </div>
       </div>
-
-      <div className="two-col">
-        <label className="field">
-          <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
-          <input
-            type="number"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={heightUnit === 'cm' ? characterHeightCm : cmToIn(characterHeightCm)}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (heightUnit === 'cm') setCharacterHeightCm(val);
-              else setCharacterHeightCm(inToCm(val));
-            }}
-            placeholder={heightUnit === 'cm' ? '180' : '71'}
-          />
-        </label>
-        <label className="field">
-          <span className="label">Weight <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>({weightUnit})</button></span>
-          <input
-            type="number"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            value={weightUnit === 'kg' ? characterWeightKg : kgToLb(characterWeightKg)}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (weightUnit === 'kg') setCharacterWeightKg(val);
-              else setCharacterWeightKg(lbToKg(val));
-            }}
-            placeholder={weightUnit === 'kg' ? '80' : '176'}
-          />
-        </label>
-      </div>
-
-      <label className="field field-sm">
-        <span className="label">Homeworld</span>
-        <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
-      </label>
-
-      <div className="two-col">
-        <label className="field">
-          <span className="label">Callsign</span>
-          <input value={callsign} onChange={(e) => setCallsign(e.target.value)} placeholder="e.g., Eagle-1" />
-        </label>
-        <label className="field">
-          <span className="label">Rank</span>
-          <input value={rankTitle} onChange={(e) => setRankTitle(e.target.value)} placeholder="e.g., Captain" />
-        </label>
-      </div>
-
-      <div className="two-col">
-        <label className="field">
-          <span className="label">Favorite Weapon</span>
-          <input value={favoriteWeapon} onChange={(e) => setFavoriteWeapon(e.target.value)} placeholder="e.g., Breaker" />
-        </label>
-        <label className="field">
-          <span className="label">Armor</span>
-          <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
-        </label>
-      </div>
-
-      <label className="field field-sm">
-        <span className="label">Favored Enemy</span>
-        <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
-      </label>
-
-      <label className="field">
-        <span className="label">Description / Background</span>
-        <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
-      </label>
-
-      <label className="field field-sm">
-        <span className="label">Motto</span>
-        <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
-      </label>
 
       {/* Removed direct file input in favor of Change Image modal */}
 
