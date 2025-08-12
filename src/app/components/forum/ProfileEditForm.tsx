@@ -207,7 +207,7 @@ export default function ProfileEditForm() {
           </label>
 
           <label className="field">
-            <span className="label">Homeworld</span>
+            <span className="label">Homeplanet</span>
             <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
           </label>
           
@@ -230,18 +230,18 @@ export default function ProfileEditForm() {
           </label>
 
           <label className="field">
+            <span className="label">Motto</span>
+            <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
+          </label>
+
+          <label className="field">
             <span className="label">Favored Enemy</span>
             <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
           </label>
 
           <label className="field field-span-2">
-            <span className="label">Description / Background</span>
+            <span className="label">Background</span>
             <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
-          </label>
-
-          <label className="field">
-            <span className="label">Motto</span>
-            <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
           </label>
         </div>
       </div>
