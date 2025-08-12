@@ -114,9 +114,14 @@ export default function ProfilePage() {
     if (status === 'authenticated') {
       (async () => {
         setLoading(true);
-        const res = await fetch('/api/users/me');
-        const data = await res.json();
-        setUserData(data);
+        const [resMe, resLast] = await Promise.all([
+          fetch('/api/users/me'),
+          fetch('/api/users/profile/last'),
+        ]);
+        const data = await resMe.json();
+        const last = resLast.ok ? await resLast.json() : { last_profile: null };
+        const lastProfile = last?.last_profile || null;
+        setUserData({ ...data, lastProfile });
         setLoading(false);
       })();
     }
@@ -215,7 +220,10 @@ export default function ProfilePage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(200px, 1fr))', gap: 12, minWidth: 280, flex: 1 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <strong style={{ color: '#f59e0b' }}>Name</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.name ?? '—'}</span>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{
+                ([userData?.lastProfile?.firstName, userData?.lastProfile?.middleName, userData?.lastProfile?.lastName].filter(Boolean).join(' ') ||
+                 [userData?.firstName, userData?.middleName, userData?.lastName].filter(Boolean).join(' ') || '—')
+              }</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
