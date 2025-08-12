@@ -17,8 +17,8 @@ interface CreatorData {
 
 // List of Twitch channel *names* used to initially populate the state
 const initialTwitchChannelNames = [
-  'galacticphantomtaskforce', 'kevindanilooo', 'mrswimson', 'charredviolet',
-  'javy1402', 'gingercynic', 'chappzs', 'thywizz', 'mr_black_snow',
+  'mrswimson', 'charredviolet',
+  'gingercynic', 'chappzs', 'thywizz', 'helldiver_black_snow',
 ];
 
 export default function CreatorsPage() {
