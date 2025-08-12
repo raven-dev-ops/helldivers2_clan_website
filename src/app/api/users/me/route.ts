@@ -15,29 +15,82 @@ export async function GET() {
   await dbConnect();
   const user = await UserModel.findById(session.user.id).lean();
   if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+
+  // Attempt to sync Discord roles into the user profile (non-fatal)
+  try {
+    const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+    const GUILD_ID = '1214787549655203862';
+    if (BOT_TOKEN) {
+      const client = await getMongoClientPromise();
+      const db = client.db();
+      const account = await db.collection('accounts').findOne({
+        userId: new ObjectId(session.user.id),
+        provider: 'discord',
+      });
+      const discordUserId = account?.providerAccountId as string | undefined;
+      if (discordUserId) {
+        const memberRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`, {
+          headers: { Authorization: `Bot ${BOT_TOKEN}` },
+          cache: 'no-store',
+        });
+        if (memberRes.ok) {
+          const member = await memberRes.json();
+          const roleIds: string[] = member.roles || [];
+
+          const rolesRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/roles`, {
+            headers: { Authorization: `Bot ${BOT_TOKEN}` },
+            cache: 'no-store',
+          });
+          if (rolesRes.ok) {
+            const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> = await rolesRes.json();
+            const idToName = new Map(guildRoles.map((r) => [r.id, r.name] as const));
+            const roles = roleIds
+              .map((id) => ({ id, name: idToName.get(id) || id }))
+              .filter((r) => r.name !== '@everyone');
+
+            // Persist if different from stored value
+            const existing = Array.isArray(user.discordRoles) ? user.discordRoles : [];
+            const sameLength = existing.length === roles.length;
+            const same = sameLength && existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
+            if (!same) {
+              await UserModel.updateOne({ _id: session.user.id }, { $set: { discordRoles: roles } });
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // ignore errors
+  }
+
+  // Re-read to include potentially synced roles
+  const fresh = await UserModel.findById(session.user.id).lean();
+
   return NextResponse.json({
-    id: user._id.toString(),
-    name: user.name,
-    firstName: user.firstName ?? null,
-    middleName: user.middleName ?? null,
-    lastName: user.lastName ?? null,
-    email: user.email,
-    image: user.image,
-    division: user.division || null,
-    characterHeightCm: user.characterHeightCm ?? null,
-    characterWeightKg: user.characterWeightKg ?? null,
-    homeplanet: user.homeplanet ?? null,
-    background: user.background ?? null,
-    customAvatarDataUrl: user.customAvatarDataUrl ?? null,
-    callsign: user.callsign ?? null,
-    rankTitle: user.rankTitle ?? null,
-    favoriteWeapon: user.favoriteWeapon ?? null,
-    armor: user.armor ?? null,
-    motto: user.motto ?? null,
-    favoredEnemy: user.favoredEnemy ?? null,
-    challengeSubmissions: user.challengeSubmissions ?? [],
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
+    id: fresh!._id.toString(),
+    name: fresh!.name,
+    firstName: fresh!.firstName ?? null,
+    middleName: fresh!.middleName ?? null,
+    lastName: fresh!.lastName ?? null,
+    email: fresh!.email,
+    image: fresh!.image,
+    division: fresh!.division || null,
+    characterHeightCm: fresh!.characterHeightCm ?? null,
+    characterWeightKg: fresh!.characterWeightKg ?? null,
+    homeplanet: fresh!.homeplanet ?? null,
+    background: fresh!.background ?? null,
+    customAvatarDataUrl: fresh!.customAvatarDataUrl ?? null,
+    callsign: fresh!.callsign ?? null,
+    rankTitle: fresh!.rankTitle ?? null,
+    favoriteWeapon: fresh!.favoriteWeapon ?? null,
+    armor: fresh!.armor ?? null,
+    motto: fresh!.motto ?? null,
+    favoredEnemy: fresh!.favoredEnemy ?? null,
+    // include roles
+    discordRoles: Array.isArray(fresh!.discordRoles) ? fresh!.discordRoles : [],
+    challengeSubmissions: fresh!.challengeSubmissions ?? [],
+    createdAt: fresh!.createdAt,
+    updatedAt: fresh!.updatedAt,
   });
 }
 
@@ -102,6 +155,15 @@ export async function PUT(req: Request) {
         );
       }
     }
+
+    // Optional: accept discordRoles from form as JSON string
+    const rolesRaw = form.get('discordRoles');
+    if (rolesRaw && typeof rolesRaw === 'string') {
+      try {
+        const parsed = JSON.parse(rolesRaw);
+        if (Array.isArray(parsed)) updates.discordRoles = parsed;
+      } catch {}
+    }
   } else {
     const body = await req.json().catch(() => ({}));
     const {
@@ -122,6 +184,8 @@ export async function PUT(req: Request) {
       motto,
       favoredEnemy,
       challengeSubmission,
+      // accept roles in JSON
+      discordRoles,
     } = body || {};
 
     if (name !== undefined) updates.name = String(name);
@@ -166,6 +230,10 @@ export async function PUT(req: Request) {
         { $push: { challengeSubmissions: submission } },
       );
     }
+
+    if (discordRoles !== undefined && Array.isArray(discordRoles)) {
+      updates.discordRoles = discordRoles;
+    }
   }
 
   if (Object.keys(updates).length > 0) {
@@ -205,6 +273,7 @@ export async function PUT(req: Request) {
         armor: updated?.armor ?? null,
         motto: updated?.motto ?? null,
         challengeSubmissions: updated?.challengeSubmissions ?? [],
+        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
       },
     };
     await appDb.collection('User_Profiles').updateOne(
@@ -244,6 +313,8 @@ export async function PUT(req: Request) {
     motto: updated?.motto ?? null,
     favoredEnemy: updated?.favoredEnemy ?? null,
     challengeSubmissions: updated?.challengeSubmissions ?? [],
+    // include roles
+    discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,
   });
