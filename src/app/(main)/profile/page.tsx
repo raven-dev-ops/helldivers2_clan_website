@@ -162,6 +162,26 @@ export default function ProfilePage() {
     return null;
   };
 
+  // Unit helpers and derived display values
+  const preferredHeightUnit: 'cm' | 'in' = userData?.preferredHeightUnit === 'in' ? 'in' : 'cm';
+  const preferredWeightUnit: 'kg' | 'lb' = userData?.preferredWeightUnit === 'lb' ? 'lb' : 'kg';
+  const heightLabel = `Height (${preferredHeightUnit})`;
+  const weightLabel = `Weight (${preferredWeightUnit})`;
+  const heightDisplay = (() => {
+    const cmVal = userData?.characterHeightCm;
+    if (cmVal == null) return '—';
+    if (preferredHeightUnit === 'cm') return cmVal;
+    const inches = Math.round(Number(cmVal) / 2.54);
+    return inches;
+  })();
+  const weightDisplay = (() => {
+    const kgVal = userData?.characterWeightKg;
+    if (kgVal == null) return '—';
+    if (preferredWeightUnit === 'kg') return kgVal;
+    const lbs = Math.round(Number(kgVal) * 2.2046226218);
+    return lbs;
+  })();
+
   // Save current rankings into User_Profiles once per visit
   useEffect(() => {
     const name = userData?.name;
@@ -226,12 +246,12 @@ export default function ProfilePage() {
               }</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterHeightCm ?? '—'}</span>
+              <strong style={{ color: '#f59e0b' }}>{heightLabel}</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{heightDisplay}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Weight (kg)</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterWeightKg ?? '—'}</span>
+              <strong style={{ color: '#f59e0b' }}>{weightLabel}</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{weightDisplay}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <strong style={{ color: '#f59e0b' }}>Homeplanet</strong>

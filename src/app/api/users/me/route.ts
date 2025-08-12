@@ -86,6 +86,8 @@ export async function GET() {
     armor: fresh!.armor ?? null,
     motto: fresh!.motto ?? null,
     favoredEnemy: fresh!.favoredEnemy ?? null,
+    preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
+    preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
     // include roles
     discordRoles: Array.isArray(fresh!.discordRoles) ? fresh!.discordRoles : [],
     challengeSubmissions: fresh!.challengeSubmissions ?? [],
@@ -107,13 +109,17 @@ export async function PUT(req: Request) {
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy'];
+    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'preferredHeightUnit', 'preferredWeightUnit'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
         if (key === 'characterHeightCm' || key === 'characterWeightKg') {
           const num = Number(value);
           if (!Number.isNaN(num)) updates[key] = num; else updates[key] = null;
+        } else if (key === 'preferredHeightUnit' && (value === 'cm' || value === 'in')) {
+          updates.preferredHeightUnit = value;
+        } else if (key === 'preferredWeightUnit' && (value === 'kg' || value === 'lb')) {
+          updates.preferredWeightUnit = value;
         } else {
           updates[key] = String(value);
         }
@@ -183,6 +189,8 @@ export async function PUT(req: Request) {
       armor,
       motto,
       favoredEnemy,
+      preferredHeightUnit,
+      preferredWeightUnit,
       challengeSubmission,
       // accept roles in JSON
       discordRoles,
@@ -209,8 +217,10 @@ export async function PUT(req: Request) {
     if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
-    if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
-
+        if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
+    if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in') updates.preferredHeightUnit = preferredHeightUnit;
+    if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb') updates.preferredWeightUnit = preferredWeightUnit;
+ 
     if (challengeSubmission?.level >= 1 && challengeSubmission?.level <= 7) {
       const level = Number(challengeSubmission.level);
       const submission = {
@@ -263,17 +273,19 @@ export async function PUT(req: Request) {
         lastName: updated?.lastName ?? null,
         division: updated?.division ?? null,
         characterHeightCm: updated?.characterHeightCm ?? null,
-        characterWeightKg: updated?.characterWeightKg ?? null,
-        homeplanet: updated?.homeplanet ?? null,
-        background: updated?.background ?? null,
-        callsign: updated?.callsign ?? null,
-        rankTitle: updated?.rankTitle ?? null,
-        favoriteWeapon: updated?.favoriteWeapon ?? null,
-        favoredEnemy: updated?.favoredEnemy ?? null,
-        armor: updated?.armor ?? null,
-        motto: updated?.motto ?? null,
-        challengeSubmissions: updated?.challengeSubmissions ?? [],
-        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+                 characterWeightKg: updated?.characterWeightKg ?? null,
+         homeplanet: updated?.homeplanet ?? null,
+         background: updated?.background ?? null,
+         callsign: updated?.callsign ?? null,
+         rankTitle: updated?.rankTitle ?? null,
+         favoriteWeapon: updated?.favoriteWeapon ?? null,
+         favoredEnemy: updated?.favoredEnemy ?? null,
+         armor: updated?.armor ?? null,
+         motto: updated?.motto ?? null,
+         preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+         preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
+         challengeSubmissions: updated?.challengeSubmissions ?? [],
+         discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
       },
     };
     await appDb.collection('User_Profiles').updateOne(
@@ -312,6 +324,8 @@ export async function PUT(req: Request) {
     armor: updated?.armor ?? null,
     motto: updated?.motto ?? null,
     favoredEnemy: updated?.favoredEnemy ?? null,
+    preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+    preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
     challengeSubmissions: updated?.challengeSubmissions ?? [],
     // include roles
     discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],

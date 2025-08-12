@@ -43,6 +43,10 @@ export interface IUser extends Document {
     createdAt?: Date;
   }>;
 
+  // --- Unit preferences ---
+  preferredHeightUnit?: 'cm' | 'in' | null;
+  preferredWeightUnit?: 'kg' | 'lb' | null;
+
   createdAt: Date; // from timestamps
   updatedAt: Date; // from timestamps
 }
@@ -94,6 +98,10 @@ const UserSchema = new Schema<IUser>(
         { _id: false }
       ),
     ],
+
+    // --- Unit preferences ---
+    preferredHeightUnit: { type: String, enum: ['cm', 'in'], default: 'cm' },
+    preferredWeightUnit: { type: String, enum: ['kg', 'lb'], default: 'kg' },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt
