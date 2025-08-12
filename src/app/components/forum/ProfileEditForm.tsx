@@ -10,7 +10,7 @@ export default function ProfileEditForm() {
   const [deleting, setDeleting] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
-  // Delete button arming via hover
+  // Delete button arming via countdown
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deleteHoverSecondsLeft, setDeleteHoverSecondsLeft] = useState<number>(30);
   const deleteHoverIntervalRef = useRef<number | null>(null);
@@ -64,11 +64,41 @@ export default function ProfileEditForm() {
     })();
   }, []);
 
-  // Cleanup any running hover interval on unmount
+  // Cleanup any running interval on unmount
   useEffect(() => {
     return () => {
       if (deleteHoverIntervalRef.current !== null) {
         window.clearInterval(deleteHoverIntervalRef.current);
+        deleteHoverIntervalRef.current = null;
+      }
+    };
+  }, []);
+
+  // Start 30s countdown to enable Delete Account button
+  useEffect(() => {
+    setDeleteHoverSecondsLeft(30);
+    if (deleteHoverIntervalRef.current !== null) {
+      window.clearInterval(deleteHoverIntervalRef.current);
+      deleteHoverIntervalRef.current = null;
+    }
+    deleteHoverIntervalRef.current = window.setInterval(() => {
+      setDeleteHoverSecondsLeft((prev) => {
+        if (prev <= 1) {
+          if (deleteHoverIntervalRef.current !== null) {
+            window.clearInterval(deleteHoverIntervalRef.current);
+            deleteHoverIntervalRef.current = null;
+          }
+          setDeleteArmed(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (deleteHoverIntervalRef.current !== null) {
+        window.clearInterval(deleteHoverIntervalRef.current);
+        deleteHoverIntervalRef.current = null;
       }
     };
   }, []);
@@ -133,46 +163,6 @@ export default function ProfileEditForm() {
     }
   };
 
-  // Hover-to-enable handlers for Delete button
-  const startDeleteHover = () => {
-    if (deleteArmed || deleteHoverIntervalRef.current !== null) return;
-    setDeleteHoverSecondsLeft(30);
-    deleteHoverIntervalRef.current = window.setInterval(() => {
-      setDeleteHoverSecondsLeft((prev) => {
-        if (prev <= 1) {
-          if (deleteHoverIntervalRef.current !== null) {
-            window.clearInterval(deleteHoverIntervalRef.current);
-            deleteHoverIntervalRef.current = null;
-          }
-          setDeleteArmed(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const endDeleteHover = () => {
-    if (deleteHoverIntervalRef.current !== null) {
-      window.clearInterval(deleteHoverIntervalRef.current);
-      deleteHoverIntervalRef.current = null;
-    }
-    if (!deleteArmed) {
-      setDeleteHoverSecondsLeft(30);
-    }
-  };
-
-  const handleAvatarSaved = (dataUrl: string) => {
-    setUserData((prev: any) => ({ ...(prev || {}), customAvatarDataUrl: dataUrl }));
-    setIsChangeImageOpen(false);
-  };
-
-  if (loading) {
-    return (
-      <div className="card muted">Loading…</div>
-    );
-  }
-
   // Helpers for unit conversion and controlled inputs
   const cmToIn = (cmStr: string) => {
     const cm = parseFloat(cmStr);
@@ -193,6 +183,11 @@ export default function ProfileEditForm() {
     const lb = parseFloat(lbStr);
     if (isNaN(lb)) return '';
     return (lb / 2.2046226218).toFixed(0);
+  };
+
+  const handleAvatarSaved = (dataUrl: string) => {
+    setUserData((prev: any) => ({ ...(prev || {}), customAvatarDataUrl: dataUrl }));
+    setIsChangeImageOpen(false);
   };
 
   return (
@@ -309,21 +304,15 @@ export default function ProfileEditForm() {
         {saveStatus === 'error' && (
           <span className="save-status error">{saveError || 'Error saving.'}</span>
         )}
-        <div
-          onMouseEnter={startDeleteHover}
-          onMouseLeave={endDeleteHover}
-          title={deleteArmed ? 'Click to permanently delete your account' : `Hover for ${deleteHoverSecondsLeft}s to enable`}
-          style={{ display: 'inline-block' }}
+        <button
+          type="button"
+          onClick={handleDeleteAccount}
+          disabled={!deleteArmed || deleting}
+          className="btn btn-secondary danger"
+          title={deleteArmed ? 'Click to permanently delete your account' : undefined}
         >
-          <button
-            type="button"
-            onClick={handleDeleteAccount}
-            disabled={!deleteArmed || deleting}
-            className="btn btn-secondary danger"
-          >
-            {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hover ${deleteHoverSecondsLeft}s`)}
-          </button>
-        </div>
+          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Enabling in ${deleteHoverSecondsLeft}s`)}
+        </button>
       </div>
 
       {isChangeImageOpen && (
