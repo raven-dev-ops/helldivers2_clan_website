@@ -21,10 +21,10 @@ export default function SettingsPage() {
       </video>
       <div style={overlayStyle} />
 
-      <h1 className="academy-page-title left-with-backdrop">Settings</h1>
+      {/* Removed H1 header per request */}
 
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Edit Profile</h2>
+        <h2 className="content-section-title with-border-bottom">Settings</h2>
         <ProfileEditForm />
       </section>
     </div>
