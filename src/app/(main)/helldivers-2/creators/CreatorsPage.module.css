@@ -6,8 +6,8 @@
   margin: 0 auto;
   padding: 2rem 1rem 4rem; /* Adjusted top padding */
   color: #e5e7eb; /* text-gray-200 */
-  /* *** ADDED BACKGROUND COLOR *** */
-  background-color: #111827; /* bg-gray-900 (Matching Studio/Academy) */
+  /* Use transparent background so global video shows through */
+  background-color: transparent;
   min-height: 100vh;        /* Ensure full viewport height */
   box-sizing: border-box;   /* Consistent padding calculation */
 }
@@ -18,22 +18,31 @@
 .pageTitle {
   font-size: clamp(1.8rem, 5vw, 2.25rem);
   font-weight: 700;
-  margin-bottom: 1rem;
-  text-align: center;
+  margin-bottom: 0.5rem;
+  text-align: left;
   color: #facc15; /* text-yellow-400 */
   border-bottom: 1px solid #374151; /* border-gray-700 */
-  padding-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
 }
 
 .pageSubtitle {
-  text-align: center;
+  text-align: left;
   color: #9ca3af; /* text-gray-400 */
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
   max-width: 65ch;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
   font-size: 0.95rem; /* Slightly adjusted */
   line-height: 1.6;
+}
+
+/* Card layer behind the title (mirrors Challenges .section) */
+.titleCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151; /* border-gray-700 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 /* --- Loading / Error / No Results --- */
@@ -82,6 +91,132 @@
   margin-top: 0.5rem;
   font-size: 0.875rem;
   color: #fecaca; /* text-red-200 */
+}
+
+/* --- Featured Live Layout --- */
+.featuredContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  /* Shared height for player + chat on desktop */
+  --featured-embed-height: 600px;
+}
+@media (min-width: 1024px) {
+  .featuredContainer {
+    grid-template-columns: 2fr 1fr; /* main video + chat */
+    align-items: start;
+    gap: 1.25rem;
+  }
+}
+
+.featuredVideoCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.featuredVideoWrapper {
+  aspect-ratio: 16 / 9;
+  background-color: #000000;
+}
+
+/* Ensure the video and chat match heights on desktop */
+@media (min-width: 1024px) {
+  .featuredVideoWrapper {
+    height: var(--featured-embed-height);
+    aspect-ratio: unset;
+  }
+  .featuredChatCard iframe {
+    height: var(--featured-embed-height);
+  }
+}
+
+.featuredChatCard {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: none;
+}
+@media (min-width: 1024px) {
+  .featuredChatCard { display: block; }
+}
+
+.featuredTitleBar {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #374151;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.featuredTitle {
+  font-weight: 600;
+}
+
+/* --- Player Card (above featured embeds) --- */
+.playerCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .playerCard { flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+.playerCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.playerAvatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  border: 2px solid #facc15;
+  overflow: hidden;
+  background: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playerName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.playerSubline {
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.playerStats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.playerStat {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid #374151;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #d1d5db;
+}
+
+.playerActions {
+  margin-left: auto;
 }
 
 /* --- Creators Grid --- */

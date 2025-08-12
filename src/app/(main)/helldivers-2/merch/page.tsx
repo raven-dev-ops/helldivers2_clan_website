@@ -123,7 +123,9 @@ export default async function HelldiversMerchPage() {
 
   return (
     <main className={styles.merchMainContainer}>
-      <h1 className={styles.merchPageTitle}>GPT HD2 Merch</h1>
+      <div className={styles.titleCard}>
+        <h1 className={styles.merchPageTitle}>GPT HD2 Shop</h1>
+      </div>
 
       {errorOccurred ? (
         <div className={styles.merchErrorText}>{errorMessage}</div>

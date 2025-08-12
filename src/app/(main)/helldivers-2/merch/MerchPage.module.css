@@ -6,7 +6,7 @@
     margin: 0 auto;
     padding: 2rem 1rem 4rem; /* Adjusted top padding */
     color: #e5e7eb; /* text-gray-200 */
-    background-color: #111827; /* bg-gray-900 */
+    background-color: transparent; /* Let global video show through */
     min-height: 100vh;
     box-sizing: border-box;
   }
@@ -17,11 +17,11 @@
   .merchPageTitle {
     font-size: clamp(1.8rem, 5vw, 2.25rem);
     font-weight: 700;
-    margin-bottom: 1rem; /* Keep slightly less margin than subtitle */
-    text-align: center;
+    margin-bottom: 0.5rem; /* Keep slightly less margin than subtitle */
+    text-align: left;
     color: #facc15; /* text-yellow-400 */
     border-bottom: 1px solid #374151; /* border-gray-700 */
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
   }
   
   /* Optional: Add subtitle style if you add a subtitle */
@@ -187,3 +187,12 @@
       padding-top: 0.5rem;
       text-align: right; /* Align price to the right */
   }
+
+/* Card layer behind the title (mirrors Challenges .section) */
+.titleCard {
+  background-color: #1f2937; /* bg-gray-800 */
+  border: 1px solid #374151; /* border-gray-700 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}

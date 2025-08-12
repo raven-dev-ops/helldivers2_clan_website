@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown } from 'react-icons/fa';
+import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
 
 // --- Import CSS Module ---
 import styles from '../HelldiversPage.module.css'; // Assuming styles are shared or copied
@@ -14,84 +15,227 @@ interface ChallengeLevelData {
     details: string;
 }
 
-const challengeLevels: ChallengeLevelData[] = [
-     { id: 'level-0', levelTitle: 'LEVEL 0 - Basic Clearance', details: `MISSION TYPE: Eradicate Automaton Forces (Fortress) / Purge Hatcheries (Mega Nest)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS: Solo\nEXTRACT:      Required` },
-     { id: 'level-1', levelTitle: 'LEVEL 1 - Sabotage Proficiency', details: `MISSION TYPE: Sabotage Air Base / Destroy Command Bunkers / Sabotage Supply Bases (Orbital Cannon / Nuke Nursery)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS: Solo\nEXTRACT:      Required` },
-     { id: 'level-2', levelTitle: 'LEVEL 2 - Resource Denial', details: `MISSION TYPE: Sabotage Air Base / Destroy Command Bunkers / Sabotage Supply Bases (Orbital Cannon / Nuke Nursery)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS:\n  - Solo\n  - No Stratagems (Eagle, Orbital, Support Wpns, Backpacks)\n  - No Resupply pod usage\nEXTRACT:      Required` },
-     { id: 'level-3', levelTitle: 'LEVEL 3 - ICBM Control', details: `MISSION TYPE: Launch ICBM\nOBJECTIVE:    Complete the main objective (Launch ICBM).\nREQUIREMENTS:\n  - Solo\n  - No Stratagems (Eagle, Orbital, Support Wpns, Backpacks)\nEXTRACT:      Required` },
-     { id: 'level-4', levelTitle: 'LEVEL 4 - Flawless ICBM', details: `MISSION TYPE: Launch ICBM\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS:\n  - Solo\n  - No Stratagems\n  - No Resupply pod usage\n  - No Deaths\nEXTRACT:      Required` },
-     { id: 'level-5', levelTitle: 'LEVEL 5 - Perfect Survey', details: `MISSION TYPE: Conduct Geological Survey\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS:\n  - Solo\n  - No Deaths\nEXTRACT:      Required` },
-     { id: 'level-6', levelTitle: 'LEVEL 6 - Eagle Ace', details: `MISSION TYPE: Retrieve Essential Personnel (Capture Flag / Civilian Evac)\nOBJECTIVE:    Complete the main objective.\nREQUIREMENTS:\n  - Solo\n  - Only Eagle Stratagems allowed (Airstrike, 500kg, Strafing, etc.)\n    (NO Orbitals, NO Support Wpns/Backpacks unless found)\nEXTRACT:      Required` },
-     { id: 'level-7', levelTitle: 'LEVEL 7 - The Purist', details: `MISSION TYPE: Launch ICBM\n\nOBJECTIVE:\n  - Complete the main objective (Launch ICBM)\n  - Complete ALL 5 possible Side Objectives\n    (e.g., SEAF Artillery, Radar Tower, Stalker Lairs, Jammers, Mortars, etc.)\n\nREQUIREMENTS:\n  - Solo\n  - No Stratagems (Eagles, Orbitals, Support Weapons, Backpacks called down)\n  - No Deaths\n  - No Resupply pod usage\n  - Cannot use any Support Weapons found in the mission\n    (e.g., dropped Autocannon, Railgun).\n  - EXCEPTION: SG-8S Slugger found in world IS allowed.\n\nLOADOUT:\n  - Primary:   JAR-5 Dominator (Constitution Rifle)\n  - Secondary: P-6 Senator Revolver\n  - Grenade:   G-3 Throwing Knife\n\nEXTRACT:      Required` },
-     { id: 'level-8', levelTitle: 'LEVEL 8 - PRESTIGE #1: Terminid Spawn Camp', details: `MISSION TYPE: Sabotage Supply Bases (Nuke Nursery) OR Purge Hatcheries (Terminid Drill)\n\nOBJECTIVE:    Full Clear\n  - Complete Main Objective\n  - Complete ALL Side Objectives\n  - Destroy ALL Fabricators / Bug Holes\n\nREQUIRED LOADOUT:\n  - Armor:     B-01 Tactical\n  - Primary:   AR-23E Liberator Explosive (Adjudicator)\n  - Secondary: GP-31 Grenade Pistol (Verdict)\n  - Grenade:   G-12 High Explosive (Impact)\n\nREQUIRED STRATAGEMS:\n  - Eagle Strafing Run\n  - Eagle Airstrike\n  - Orbital Precision Strike\n  - RS-422 Railgun\n\nREQUIREMENTS:\n  - Solo\nEXTRACT:      Required` },
-     { id: 'level-9', levelTitle: 'LEVEL 9 - PRESTIGE #2: Automaton Hell Strike', details: `MISSION TYPE: Sabotage Supply Bases (Neutralize Orbital Cannons)\n\nOBJECTIVE:    Full Clear\n  - Complete Main Objective\n  - Complete ALL Side Objectives\n  - Destroy ALL Fabricators\n\nREQUIREMENTS:\n  - Solo\n  - No Deaths\n\nREQUIRED LOADOUT:\n  - Armor:     FS-05 Marksman (Exterminator)\n  - Primary:   PLAS-1 Scorcher (Plasma Punisher)\n  - Secondary: P-6 Senator Revolver\n  - Grenade:   G-10 Incendiary (Thermite)\n\nREQUIRED STRATAGEMS:\n  - Eagle Airstrike\n  - Orbital 120MM HE Barrage\n  - RS-422 Railgun\n  - A/MLS-4X Rocket Sentry\n\nEXTRACT:      Required` },
+const johnHelldiverLevels: ChallengeLevelData[] = [
+     { id: 'level-0', levelTitle: 'Basic Clearance', details: `#FORTRESS / MEGA NEST – Solo Base
+Extract Required` },
+     { id: 'level-1', levelTitle: 'Sabotage Proficiency', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+No special restrictions
+Extract Required` },
+     { id: 'level-2', levelTitle: 'Resource Denial', details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+No Stratagems
+No Resupply
+Extract Required` },
+     { id: 'level-3', levelTitle: 'ICBM Control', details: `#ICBM
+No Stratagems
+Extract Required` },
+     { id: 'level-4', levelTitle: 'Flawless ICBM', details: `#ICBM
+No Stratagems
+No Resupply
+No Deaths
+Extract Required` },
+     { id: 'level-5', levelTitle: 'Perfect Survey', details: `#Geological Survey
+No Deaths
+Extract Required` },
+     { id: 'level-6', levelTitle: 'Eagle Ace', details: `#Capture Flag
+Eagles Only
+Extract Required` },
+     { id: 'level-7', levelTitle: 'The Purist', details: `#ICBM
+No Stratagems
+Constitution Rifle + Senator with Throwing Knives
+No Deaths
+No Resupply
+All 5 Side Objectives Completed (Jammers, Mortar Emplacements, etc.)
+Extract Required
+No support weapons found in the mission can be used
+Exception: Break Action Shotgun is allowed` },
+];
+
+// --- Prestige Missions ---
+interface PrestigeMissionData {
+  id: string;
+  title: string;
+  details: string;
+  link?: string;
+}
+
+const prestigeMissions: PrestigeMissionData[] = [
+  {
+    id: 'level-8',
+    title: 'Prestige #1: Terminid Spawn Camp',
+    link: 'https://youtu.be/eZfzyR0ecjs?si=ncTuMW_IZ02K1lP7',
+    details: `Nuke Nursery Hive Drill Mission
+Full Clear (Main Objective, Sub Objective, All Nests)
+Must Extract
+
+Required Loadout:
+Armor: B-01 Tactical
+Primary: Adjudicator
+Secondary: Verdict
+Grenade: Impact
+
+Required Stratagems:
+Strafing Run
+Eagle Airstrike
+Orbital Precision Strike
+Railgun`,
+  },
+  {
+    id: 'level-9',
+    title: 'Prestige #2: Automaton Hell Strike',
+    link: 'https://youtu.be/hn5lxqgN940?si=ztszXK0vMaFNBE3g',
+    details: `Neutralize Orbital Cannons
+Full Clear (Main Objective, Sub Objectives, All Enemies)
+No Deaths
+
+Required Loadout:
+Armor: Exterminator
+Primary: Plasma Punisher
+Secondary: Senator
+Grenade: Thermite
+
+Required Stratagems:
+Eagle Airstrike
+120mm HE Barrage
+Railgun
+Rocket Sentry`,
+  },
+  {
+    id: 'level-10',
+    title: 'Prestige #3: Lethal Pacifist',
+    link: 'https://youtu.be/S8MJ7Q9VHlo',
+    details: `ICBM
+Full Clear (Main Objective, Sub Objectives, All Enemies)
+No Deaths
+No Shots Fired
+
+Required Loadout:
+Armor: Any
+Primary: Any
+Secondary: Any Melee Weapon
+Grenade: Thermite
+
+Required Stratagems:
+No Weapon Stratagems
+Orbital Precision Strike
+Eagle Strafing Run
+Any Sentry`,
+  },
+  {
+    id: 'level-11',
+    title: 'Prestige #4: Total Area Scorching',
+    link: 'https://youtu.be/JOucNd0dNOI',
+    details: `Command Bunkers
+Full Clear (Main Objective, Sub Objective)
+
+Required Loadout:
+Armor: Any
+Primary: SG-8P Punisher Plasma
+Secondary: P-113 Verdict
+Grenade: G-123 Thermite
+
+Required Stratagems:
+Eagle Strafing Run
+Orbital Barrage (120mm, 380mm, or Walking Barrage)
+Orbital Precision Strike
+Mortar Sentry`,
+  },
 ];
 
 // --- Main Component ---
 export default function HelldiverChallengesPage() {
     const [expandedChallenges, setExpandedChallenges] = useState<Record<string, boolean>>({});
+    const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
 
-    // Toggle function for challenge expanders
-    const toggleChallengeExpansion = (challengeId: string) => {
-        setExpandedChallenges(prev => ({
-            ...prev,
-            [challengeId]: !prev[challengeId]
-        }));
+    const toggleExpansion = (id: string) => {
+        setExpandedChallenges(prev => ({ ...prev, [id]: !prev[id] }));
     };
 
     return (
         // Apply styles from the imported module
         <div className={styles.pageContainer}>
-            {/* === John Helldiver Course Section === */}
-            <section className={styles.section}>
-                 <h2 className={styles.sectionTitle}>John Helldiver Course & Challenges</h2>
-                 <p className={`${styles.paragraph} ${styles.textItalic}`} style={{textAlign: 'center', marginBottom: '2rem'}}> {/* Use multiple classes */}
-                     <strong className={styles.strongText}>NO SEED FARMING</strong> - HELLDIVERS DO NOT CHERRY PICK MISSIONS TO WIN, WE JUST WIN.
+            {/* === John Helldiver Missions === */}
+            <section className={styles.section} id="john-helldiver-missions">
+                 <h2 className={styles.sectionTitle}>John Helldiver Missions</h2>
+                 <p className={`${styles.paragraph}`} style={{textAlign: 'center', marginBottom: '2rem'}}>
+                     NO SEED FARMING - HELLDIVERS DO NOT CHERRY PICK MISSIONS TO WIN, WE JUST WIN.
                  </p>
-                 <p className={styles.paragraph}>
-                     Ready to prove your mettle, Helldiver? The John Helldiver Course is a series of increasingly difficult solo challenges designed to test your skill, strategy, and adherence to Super Earth protocol. You MUST submit your videos in the <code className={styles.inlineCode}>#🪖｜training</code> channel on our Discord for review and verification by <code className={styles.inlineCode}>@JOHN HELLDIVER</code>. Respect the community and the challenge rules, or face the consequences (potentially airlocking).
-                 </p>
-                 {/* Use subsection card for Rules */}
                  <div className={styles.subsectionCard}>
-                    <h3 className={styles.subHeading}>Rules & Requirements:</h3> {/* Use SubHeading style */}
-                    <ul className={`${styles.styledList} ${styles.decimal}`}> {/* Use List styles */}
-                        <li className={styles.listItem}>If it's on the map, it's in play... *unless* the specific challenge level states otherwise.</li>
-                        <li className={styles.listItem}>Video submissions must be one continuous, unedited recording... No cuts, splits, speed-ups...</li>
-                        <li className={styles.listItem}>Mission privacy must be set to <strong className={styles.strongText}>Invite Only</strong>...</li>
+                    <h3 className={styles.subHeading}>Rules & Requirements</h3>
+                    <ul className={`${styles.styledList} ${styles.decimal}`}>
+                        <li className={styles.listItem}>If it's on the map, it's in play unless the specific challenge level states otherwise.</li>
+                        <li className={styles.listItem}>Video submissions must be one continuous, unedited recording. No cuts, splits, or speed-ups.</li>
+                        <li className={styles.listItem}>Mission privacy must be set to Invite Only.</li>
                     </ul>
                  </div>
 
-                 {/* Use subsection card for Difficulty Order */}
                  <div className={styles.subsectionCard}>
-                    <h3 className={styles.subHeading}>Order of Difficulty (Super Helldive - Difficulty 10):</h3>
-                    <p className={styles.paragraph}>Target enemy faction: Automaton (Bots) or Terminids (Bugs).</p>
+                   <h3 className={styles.subHeading}>Challenge Levels</h3>
+                   {johnHelldiverLevels.map((challenge) => {
+                       const isExpanded = !!expandedChallenges[challenge.id];
+                       return (
+                           <div key={challenge.id} className={styles.challengeLevelContainer} id={challenge.id} style={{ scrollMarginTop: 96 }}>
+                               <div
+                                   className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
+                                   onClick={() => toggleExpansion(challenge.id)}
+                                   role="button" aria-expanded={isExpanded} aria-controls={`challenge-content-${challenge.id}`}
+                                   tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleExpansion(challenge.id)}
+                               >
+                                   <h4 className={styles.challengeLevelTitle}>{challenge.levelTitle}</h4>
+                                   <FaChevronDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`} aria-hidden="true"/>
+                               </div>
+                               <div
+                                   id={`challenge-content-${challenge.id}`}
+                                   className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}
+                               >
+                                   <pre className={styles.codeBlock}>{challenge.details}</pre>
+                               </div>
+                           </div>
+                       );
+                   })}
+                 </div>
 
-                    {/* Challenge Levels as Expanders */}
-                    {challengeLevels.map((challenge) => {
-                        const isExpanded = !!expandedChallenges[challenge.id];
-                        return (
-                            <div key={challenge.id} className={styles.challengeLevelContainer}>
-                                <div
-                                    className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`} /* Add conditional border class */
-                                    onClick={() => toggleChallengeExpansion(challenge.id)}
-                                    role="button" aria-expanded={isExpanded} aria-controls={`challenge-content-${challenge.id}`}
-                                    tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleChallengeExpansion(challenge.id)}
-                                >
-                                    <h4 className={styles.challengeLevelTitle}>{challenge.levelTitle}</h4>
-                                    <FaChevronDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`} aria-hidden="true"/> {/* Conditional rotation */}
-                                </div>
-                                <div
-                                    id={`challenge-content-${challenge.id}`}
-                                    className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`} /* Conditional expansion */
-                                >
-                                    {/* Use codeBlock style for preformatted text */}
-                                    <pre className={styles.codeBlock}>{challenge.details}</pre>
-                                </div>
-                            </div>
-                        );
-                    })}
+                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                   <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
                  </div>
             </section>
+
+            {/* === Prestige: GPT Campaign Missions === */}
+            <section className={styles.section} id="gpt-campaign-missions">
+                <h2 className={styles.sectionTitle}>GPT Campaign Missions</h2>
+                <div className={styles.subsectionCard}>
+                  <h3 className={styles.subHeading}>Prestige Missions</h3>
+                  {prestigeMissions.map((mission) => {
+                    const isExpanded = !!expandedChallenges[mission.id];
+                    return (
+                      <div key={mission.id} className={styles.challengeLevelContainer} id={mission.id} style={{ scrollMarginTop: 96 }}>
+                        <div
+                          className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
+                          onClick={() => toggleExpansion(mission.id)}
+                          role="button" aria-expanded={isExpanded} aria-controls={`mission-content-${mission.id}`}
+                          tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleExpansion(mission.id)}
+                        >
+                          <h4 className={styles.challengeLevelTitle}>{mission.title}</h4>
+                          <FaChevronDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`} aria-hidden="true"/>
+                        </div>
+                        <div id={`mission-content-${mission.id}`} className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}>
+                          <pre className={styles.codeBlock}>{mission.details}</pre>
+                          {mission.link && (
+                            <p className={styles.paragraph}>
+                              Proof/Video: <a href={mission.link} target="_blank" rel="noopener noreferrer" className={styles.link}>Watch</a>
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+            </section>
+
+            <SubmitChallengeModal
+              isOpen={isSubmitModalOpen}
+              onClose={() => setIsSubmitModalOpen(false)}
+              onSubmitted={() => setIsSubmitModalOpen(false)}
+            />
         </div>
     );
 }

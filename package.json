@@ -24,8 +24,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
+    "react-easy-crop": "^5.0.8",
     "styled-components": "^6.1.17",
     "swiper": "^11.2.8",
+    "swr": "^2.3.5",
     "tsparticles": "^3.8.1",
     "zod": "^3.24.3"
   },
@@ -47,5 +49,6 @@
     "eslint": "^9.2.0",
     "eslint-config-next": "15.3.0",
     "typescript": "5.3.3"
-  }
+  },
+  "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
 }
