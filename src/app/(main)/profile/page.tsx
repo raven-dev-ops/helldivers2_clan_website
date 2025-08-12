@@ -312,7 +312,7 @@ export default function ProfilePage() {
       </section>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-        <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Edit Profile</Link>
+        <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
         <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
       </div>
 

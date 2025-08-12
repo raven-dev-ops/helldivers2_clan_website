@@ -466,8 +466,8 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 
 /* Profile form: tidy alignment and consistent field widths */
 .profile-form { row-gap: 1rem; }
-.profile-form .field { grid-template-columns: 220px minmax(0, 1fr); align-items: center; }
-.profile-form .field .label { justify-self: end; }
+.profile-form .field { grid-template-columns: 1fr; align-items: start; }
+.profile-form .field .label { justify-self: start; }
 .profile-form .field input,
 .profile-form .field textarea,
 .profile-form .field select {
@@ -477,7 +477,7 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 }
 
 .profile-form .two-col { column-gap: 1.25rem; }
-.profile-form .two-col .field { grid-template-columns: 160px minmax(0, 1fr); }
+.profile-form .two-col .field { grid-template-columns: 1fr; }
 
 /* Actions + inline save status */
 .profile-form .actions { display: flex; gap: 0.75rem; justify-content: flex-end; align-items: center; }
