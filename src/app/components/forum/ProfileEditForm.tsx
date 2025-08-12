@@ -51,6 +51,9 @@ export default function ProfileEditForm() {
         setArmor(data.armor || '');
         setMotto(data.motto || '');
         setFavoredEnemy(data.favoredEnemy || '');
+        // Load preferred units if available
+        if (data.preferredHeightUnit === 'cm' || data.preferredHeightUnit === 'in') setHeightUnit(data.preferredHeightUnit);
+        if (data.preferredWeightUnit === 'kg' || data.preferredWeightUnit === 'lb') setWeightUnit(data.preferredWeightUnit);
       }
       setLoading(false);
     })();
@@ -75,6 +78,9 @@ export default function ProfileEditForm() {
         armor: armor || null,
         motto: motto || null,
         favoredEnemy: favoredEnemy || null,
+        // Persist preferred units
+        preferredHeightUnit: heightUnit,
+        preferredWeightUnit: weightUnit,
       } as const;
 
       const res = await fetch('/api/users/me', {
@@ -174,6 +180,24 @@ export default function ProfileEditForm() {
             <span className="label">Last Name</span>
             <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
           </label>
+
+          {/* Unit preference selectors */}
+          <div className="two-col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
+            <label className="field">
+              <span className="label">Height Unit</span>
+              <select value={heightUnit} onChange={(e) => setHeightUnit(e.target.value as 'cm' | 'in')}>
+                <option value="cm">cm</option>
+                <option value="in">in</option>
+              </select>
+            </label>
+            <label className="field">
+              <span className="label">Weight Unit</span>
+              <select value={weightUnit} onChange={(e) => setWeightUnit(e.target.value as 'kg' | 'lb')}>
+                <option value="kg">kg</option>
+                <option value="lb">lb</option>
+              </select>
+            </label>
+          </div>
 
           <label className="field">
             <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
