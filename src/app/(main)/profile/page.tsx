@@ -212,30 +212,50 @@ export default function ProfilePage() {
             alt="Avatar"
             style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid #475569' }}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1 }}>
-            <strong style={{ color: '#f59e0b' }}>Name</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.name ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterHeightCm ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Weight (kg)</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterWeightKg ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Homeplanet</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.homeplanet ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Callsign</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.callsign ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Rank</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.rankTitle ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoriteWeapon ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Armor</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.armor ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Motto</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.motto ?? '—'}</span>
-            <strong style={{ color: '#f59e0b' }}>Favored Enemy</strong>
-            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoredEnemy ?? '—'}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(200px, 1fr))', gap: 12, minWidth: 280, flex: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Name</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.name ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterHeightCm ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Weight (kg)</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterWeightKg ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Homeplanet</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.homeplanet ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Callsign</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.callsign ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Rank</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.rankTitle ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoriteWeapon ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Armor</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.armor ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Motto</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.motto ?? '—'}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <strong style={{ color: '#f59e0b' }}>Favored Enemy</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoredEnemy ?? '—'}</span>
+            </div>
             <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
               <strong style={{ color: '#f59e0b' }}>Background</strong>
-              <p style={{ marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</p>
+              <div style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</div>
             </div>
           </div>
         </div>
