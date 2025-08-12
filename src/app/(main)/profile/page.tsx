@@ -137,6 +137,26 @@ export default function ProfilePage() {
     return idx >= 0 ? { rank: (rows[idx].rank || idx + 1), row: rows[idx] } : { rank: null, row: null };
   };
 
+  const computeGrade = (): string | null => {
+    if (!userData?.name) return null;
+    const total = findRankAndRow(totalData?.results || [], userData.name).row;
+    const month = findRankAndRow(monthData?.results || [], userData.name).row;
+    const avg = findRankAndRow(avgData?.results || [], userData.name).row;
+    const solo = findRankAndRow(soloData?.results || [], userData.name).row;
+    const row = total || month || avg || solo;
+    if (!row) return null;
+    const accuracyRaw = row.Accuracy as string | undefined;
+    const accuracyNum = accuracyRaw ? parseFloat(accuracyRaw.replace('%', '')) : Number.NaN;
+    if (Number.isFinite(accuracyNum)) {
+      if (accuracyNum >= 75) return 'S';
+      if (accuracyNum >= 65) return 'A';
+      if (accuracyNum >= 50) return 'B';
+      if (accuracyNum >= 35) return 'C';
+      return 'D';
+    }
+    return null;
+  };
+
   // Save current rankings into User_Profiles once per visit
   useEffect(() => {
     const name = userData?.name;
@@ -182,11 +202,7 @@ export default function ProfilePage() {
       </video>
       <div style={overlayStyle} />
 
-      <div style={{ marginBottom: 12 }}>
-        <h1 className="academy-page-title left-with-backdrop">
-          Welcome, {userData?.name || 'Helldiver'}! {allSevenComplete && <span title="All 7 challenges submitted">⭐</span>}
-        </h1>
-      </div>
+      {/* Welcome title removed per requirements */}
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Character Overview</h2>
@@ -196,7 +212,9 @@ export default function ProfilePage() {
             alt="Avatar"
             style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid #475569' }}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1, maxHeight: 160, overflow: 'auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1 }}>
+            <strong style={{ color: '#f59e0b' }}>Name</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.name ?? '—'}</span>
             <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
             <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterHeightCm ?? '—'}</span>
             <strong style={{ color: '#f59e0b' }}>Weight (kg)</strong>
@@ -237,6 +255,17 @@ export default function ProfilePage() {
       </section>
 
       <section className="content-section">
+        <h2 className="content-section-title with-border-bottom">Your Awards</h2>
+        {allSevenComplete ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <span className="inline-code" title="All 7 challenges submitted">All 7 Challenges Complete ⭐</span>
+          </div>
+        ) : (
+          <p className="text-paragraph">No awards yet.</p>
+        )}
+      </section>
+
+      <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Your Squad</h2>
         <p className="text-paragraph">Coming soon.</p>
       </section>
@@ -249,6 +278,7 @@ export default function ProfilePage() {
             <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
             <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
             <span className="inline-code">Average: {findRankAndRow(avgData?.results || [], userData.name).rank ?? '—'}</span>
+            <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
           </div>
         ) : (
           <p className="text-paragraph">Set your profile name to see your leaderboard rankings.</p>
