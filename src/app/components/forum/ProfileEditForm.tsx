@@ -224,23 +224,7 @@ export default function ProfileEditForm() {
             <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
           </label>
 
-          {/* Unit preference selectors */}
-          <div className="two-col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12 }}>
-            <label className="field">
-              <span className="label">Height Unit</span>
-              <select value={heightUnit} onChange={(e) => setHeightUnit(e.target.value as 'cm' | 'in')}>
-                <option value="cm">cm</option>
-                <option value="in">in</option>
-              </select>
-            </label>
-            <label className="field">
-              <span className="label">Weight Unit</span>
-              <select value={weightUnit} onChange={(e) => setWeightUnit(e.target.value as 'kg' | 'lb')}>
-                <option value="kg">kg</option>
-                <option value="lb">lb</option>
-              </select>
-            </label>
-          </div>
+          {/* Unit preference selectors removed per requirements */}
 
           <label className="field">
             <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
@@ -325,17 +309,21 @@ export default function ProfileEditForm() {
         {saveStatus === 'error' && (
           <span className="save-status error">{saveError || 'Error saving.'}</span>
         )}
-        <button
-          type="button"
-          onClick={handleDeleteAccount}
+        <div
           onMouseEnter={startDeleteHover}
           onMouseLeave={endDeleteHover}
-          disabled={!deleteArmed || deleting}
           title={deleteArmed ? 'Click to permanently delete your account' : `Hover for ${deleteHoverSecondsLeft}s to enable`}
-          className="btn btn-secondary danger"
+          style={{ display: 'inline-block' }}
         >
-          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hover ${deleteHoverSecondsLeft}s`)}
-        </button>
+          <button
+            type="button"
+            onClick={handleDeleteAccount}
+            disabled={!deleteArmed || deleting}
+            className="btn btn-secondary danger"
+          >
+            {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hover ${deleteHoverSecondsLeft}s`)}
+          </button>
+        </div>
       </div>
 
       {isChangeImageOpen && (
