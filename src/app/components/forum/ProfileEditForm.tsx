@@ -1,7 +1,7 @@
 // src/app/components/forum/ProfileEditForm.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ChangeAvatarModal from '@/app/components/profile/ChangeAvatarModal';
 
 export default function ProfileEditForm() {
@@ -9,6 +9,11 @@ export default function ProfileEditForm() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [userData, setUserData] = useState<any>(null);
+
+  // Delete button arming via hover
+  const [deleteArmed, setDeleteArmed] = useState(false);
+  const [deleteHoverSecondsLeft, setDeleteHoverSecondsLeft] = useState<number>(30);
+  const deleteHoverIntervalRef = useRef<number | null>(null);
 
   const [firstName, setFirstName] = useState<string>('');
   const [middleName, setMiddleName] = useState<string>('');
@@ -57,6 +62,15 @@ export default function ProfileEditForm() {
       }
       setLoading(false);
     })();
+  }, []);
+
+  // Cleanup any running hover interval on unmount
+  useEffect(() => {
+    return () => {
+      if (deleteHoverIntervalRef.current !== null) {
+        window.clearInterval(deleteHoverIntervalRef.current);
+      }
+    };
   }, []);
 
   const handleSave = async () => {
@@ -116,6 +130,35 @@ export default function ProfileEditForm() {
       }
     } finally {
       setDeleting(false);
+    }
+  };
+
+  // Hover-to-enable handlers for Delete button
+  const startDeleteHover = () => {
+    if (deleteArmed || deleteHoverIntervalRef.current !== null) return;
+    setDeleteHoverSecondsLeft(30);
+    deleteHoverIntervalRef.current = window.setInterval(() => {
+      setDeleteHoverSecondsLeft((prev) => {
+        if (prev <= 1) {
+          if (deleteHoverIntervalRef.current !== null) {
+            window.clearInterval(deleteHoverIntervalRef.current);
+            deleteHoverIntervalRef.current = null;
+          }
+          setDeleteArmed(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const endDeleteHover = () => {
+    if (deleteHoverIntervalRef.current !== null) {
+      window.clearInterval(deleteHoverIntervalRef.current);
+      deleteHoverIntervalRef.current = null;
+    }
+    if (!deleteArmed) {
+      setDeleteHoverSecondsLeft(30);
     }
   };
 
@@ -282,8 +325,16 @@ export default function ProfileEditForm() {
         {saveStatus === 'error' && (
           <span className="save-status error">{saveError || 'Error saving.'}</span>
         )}
-        <button type="button" onClick={handleDeleteAccount} disabled={deleting} className="btn btn-secondary danger">
-          {deleting ? 'Deleting…' : 'Delete Account'}
+        <button
+          type="button"
+          onClick={handleDeleteAccount}
+          onMouseEnter={startDeleteHover}
+          onMouseLeave={endDeleteHover}
+          disabled={!deleteArmed || deleting}
+          title={deleteArmed ? 'Click to permanently delete your account' : `Hover for ${deleteHoverSecondsLeft}s to enable`}
+          className="btn btn-secondary danger"
+        >
+          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hover ${deleteHoverSecondsLeft}s`)}
         </button>
       </div>
 
