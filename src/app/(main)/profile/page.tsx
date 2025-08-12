@@ -24,79 +24,10 @@ const CHALLENGE_LEVEL_LABELS: string[] = [
   'The Purist'
 ];
 
-function SubmitChallengeModal({
-  isOpen,
-  onClose,
-  onSubmitted,
-}: { isOpen: boolean; onClose: () => void; onSubmitted: () => void }) {
-  const [level, setLevel] = useState<number>(1);
-  const [youtubeUrl, setYoutubeUrl] = useState<string>('');
-  const [twitchUrl, setTwitchUrl] = useState<string>('');
-  const [witnessName, setWitnessName] = useState<string>('');
-  const [saving, setSaving] = useState<boolean>(false);
-
-  if (!isOpen) return null;
-
-  const modalStyle: CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50 };
-  const cardStyle: CSSProperties = { background: '#0b1220', color: '#fff', width: 'min(92vw, 640px)', borderRadius: 12, border: '1px solid #334155', padding: 16 };
-
-  const handleSubmit = async () => {
-    setSaving(true);
-    try {
-      const res = await fetch('/api/users/me', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          challengeSubmission: { level, youtubeUrl, twitchUrl, witnessName }
-        })
-      });
-      if (res.ok) onSubmitted();
-    } finally {
-      setSaving(false);
-      onClose();
-    }
-  };
-
-  return (
-    <div style={modalStyle} role="dialog" aria-modal="true" aria-label="Submit Challenge">
-      <div style={cardStyle}>
-        <h3 style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>Submit Challenge</h3>
-        <div style={{ display: 'grid', gap: 12 }}>
-          <label className="field">
-            <span className="label">Challenge</span>
-            <select value={level} onChange={(e) => setLevel(Number(e.target.value))}>
-              {CHALLENGE_LEVEL_LABELS.map((label, idx) => (
-                <option key={idx + 1} value={idx + 1}>{label} (Level {idx + 1})</option>
-              ))}
-            </select>
-          </label>
-          <label className="field">
-            <span className="label">YouTube Link</span>
-            <input value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="https://youtube.com/..." />
-          </label>
-          <label className="field">
-            <span className="label">Twitch VOD Link</span>
-            <input value={twitchUrl} onChange={(e) => setTwitchUrl(e.target.value)} placeholder="https://twitch.tv/videos/..." />
-          </label>
-          <label className="field">
-            <span className="label">Verified By (John Helldiver)</span>
-            <input value={witnessName} onChange={(e) => setWitnessName(e.target.value)} placeholder="Verifier name" />
-          </label>
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button className="btn btn-secondary" type="button" onClick={onClose} disabled={saving}>Cancel</button>
-            <button className="btn btn-primary" type="button" onClick={handleSubmit} disabled={saving}>{saving ? 'Submitting…' : 'Submit'}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const savedRankingOnce = useRef(false);
 
   const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then(r => r.json());
@@ -361,18 +292,9 @@ export default function ProfilePage() {
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
         <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
-        <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
       </div>
 
-      <SubmitChallengeModal
-        isOpen={isSubmitModalOpen}
-        onClose={() => setIsSubmitModalOpen(false)}
-        onSubmitted={async () => {
-          const res = await fetch('/api/users/me');
-          const data = await res.json();
-          setUserData(data);
-        }}
-      />
+
     </div>
   );
 }

@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
+import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
 
 // --- Import CSS Module ---
 import styles from '../HelldiversPage.module.css'; // Assuming styles are shared or copied
@@ -143,6 +144,7 @@ Mortar Sentry`,
 // --- Main Component ---
 export default function HelldiverChallengesPage() {
     const [expandedChallenges, setExpandedChallenges] = useState<Record<string, boolean>>({});
+    const [isSubmitModalOpen, setIsSubmitModalOpen] = useState<boolean>(false);
 
     const toggleExpansion = (id: string) => {
         setExpandedChallenges(prev => ({ ...prev, [id]: !prev[id] }));
@@ -191,6 +193,10 @@ export default function HelldiverChallengesPage() {
                        );
                    })}
                  </div>
+
+                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+                   <button className="btn btn-secondary" onClick={() => setIsSubmitModalOpen(true)}>Submit Challenge</button>
+                 </div>
             </section>
 
             {/* === Prestige: GPT Campaign Missions === */}
@@ -224,6 +230,12 @@ export default function HelldiverChallengesPage() {
                   })}
                 </div>
             </section>
+
+            <SubmitChallengeModal
+              isOpen={isSubmitModalOpen}
+              onClose={() => setIsSubmitModalOpen(false)}
+              onSubmitted={() => setIsSubmitModalOpen(false)}
+            />
         </div>
     );
 }
