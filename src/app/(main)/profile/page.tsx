@@ -184,39 +184,39 @@ export default function ProfilePage() {
 
       <div style={{ marginBottom: 12 }}>
         <h1 className="academy-page-title left-with-backdrop">
-          {userData?.name || 'Your Profile'} {allSevenComplete && <span title="All 7 challenges submitted">⭐</span>}
+          Welcome, {userData?.name || 'Helldiver'}! {allSevenComplete && <span title="All 7 challenges submitted">⭐</span>}
         </h1>
       </div>
 
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Overview</h2>
+        <h2 className="content-section-title with-border-bottom">Character Overview</h2>
         <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'nowrap' }}>
           <img
             src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
             alt="Avatar"
             style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid #475569' }}
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1 }}>
-            <strong>Height (cm)</strong>
-            <span>{userData?.characterHeightCm ?? '—'}</span>
-            <strong>Weight (kg)</strong>
-            <span>{userData?.characterWeightKg ?? '—'}</span>
-            <strong>Homeplanet</strong>
-            <span>{userData?.homeplanet ?? '—'}</span>
-            <strong>Callsign</strong>
-            <span>{userData?.callsign ?? '—'}</span>
-            <strong>Rank</strong>
-            <span>{userData?.rankTitle ?? '—'}</span>
-            <strong>Favorite Weapon</strong>
-            <span>{userData?.favoriteWeapon ?? '—'}</span>
-            <strong>Armor</strong>
-            <span>{userData?.armor ?? '—'}</span>
-            <strong>Motto</strong>
-            <span>{userData?.motto ?? '—'}</span>
-            <strong>Favored Enemy</strong>
-            <span>{userData?.favoredEnemy ?? '—'}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '180px 1fr', gap: 12, minWidth: 280, flex: 1, maxHeight: 160, overflow: 'auto' }}>
+            <strong style={{ color: '#f59e0b' }}>Height (cm)</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterHeightCm ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Weight (kg)</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.characterWeightKg ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Homeplanet</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.homeplanet ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Callsign</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.callsign ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Rank</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.rankTitle ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoriteWeapon ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Armor</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.armor ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Motto</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.motto ?? '—'}</span>
+            <strong style={{ color: '#f59e0b' }}>Favored Enemy</strong>
+            <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoredEnemy ?? '—'}</span>
             <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
-              <strong>Background</strong>
+              <strong style={{ color: '#f59e0b' }}>Background</strong>
               <p style={{ marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</p>
             </div>
           </div>
@@ -256,7 +256,12 @@ export default function ProfilePage() {
       </section>
 
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Challenge Submissions</h2>
+        <h2 className="content-section-title with-border-bottom">GPT Campaigns</h2>
+        <p className="text-paragraph">Coming soon. Explore current <Link href="/helldivers-2/challenges#gpt-campaign-missions">GPT Campaign Missions</Link>.</p>
+      </section>
+
+      <section className="content-section">
+        <h2 className="content-section-title with-border-bottom">GPT Challenges</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
           {CHALLENGE_LEVEL_LABELS.map((label, i) => {
             const lvl = i + 1;
@@ -274,7 +279,6 @@ export default function ProfilePage() {
             );
           })}
         </div>
-        <p className="text-paragraph" style={{ marginTop: 8 }}>To add or update submissions, use the Edit Profile button.</p>
       </section>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
