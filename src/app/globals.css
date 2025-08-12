@@ -471,7 +471,7 @@ button.swiper-pagination-bullet { border: none; margin: 0; padding: 0; box-shado
 .profile-form .field input,
 .profile-form .field textarea,
 .profile-form .field select {
-  max-width: 640px;
+  max-width: 100%;
   justify-self: start;
   width: 100%;
 }

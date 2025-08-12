@@ -93,20 +93,20 @@ export default function ProfilePage() {
     return null;
   };
 
-  // Unit helpers and derived display values
-  const preferredHeightUnit: 'cm' | 'in' = userData?.preferredHeightUnit === 'in' ? 'in' : 'cm';
-  const preferredWeightUnit: 'kg' | 'lb' = userData?.preferredWeightUnit === 'lb' ? 'lb' : 'kg';
+  // Unit helpers and derived display values; prefer lastProfile snapshot when available
+  const preferredHeightUnit: 'cm' | 'in' = (userData?.lastProfile?.preferredHeightUnit === 'in' ? 'in' : userData?.preferredHeightUnit === 'in' ? 'in' : 'cm');
+  const preferredWeightUnit: 'kg' | 'lb' = (userData?.lastProfile?.preferredWeightUnit === 'lb' ? 'lb' : userData?.preferredWeightUnit === 'lb' ? 'lb' : 'kg');
   const heightLabel = `Height (${preferredHeightUnit})`;
   const weightLabel = `Weight (${preferredWeightUnit})`;
   const heightDisplay = (() => {
-    const cmVal = userData?.characterHeightCm;
+    const cmVal = (userData?.lastProfile?.characterHeightCm ?? userData?.characterHeightCm);
     if (cmVal == null) return '—';
     if (preferredHeightUnit === 'cm') return cmVal;
     const inches = Math.round(Number(cmVal) / 2.54);
     return inches;
   })();
   const weightDisplay = (() => {
-    const kgVal = userData?.characterWeightKg;
+    const kgVal = (userData?.lastProfile?.characterWeightKg ?? userData?.characterWeightKg);
     if (kgVal == null) return '—';
     if (preferredWeightUnit === 'kg') return kgVal;
     const lbs = Math.round(Number(kgVal) * 2.2046226218);
