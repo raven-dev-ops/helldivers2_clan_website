@@ -3,28 +3,9 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from 'next/navigation';
-// Removed FaChevronDown, kept FaSpinner for initial load indication
-import { FaSpinner } from "react-icons/fa";
+import { usePathname } from 'next/navigation';
 import { useSession, signOut } from "next-auth/react";
 import styles from "./Navbar.module.css";
-// Removed useDivisionSelection as selection is no longer handled here
-// import { useDivisionSelection } from '@/hooks/useDivisionSelection';
-// import LoginButtons from "@/app/components/auth/LoginButtons";
-
-interface GameData {
-  id: string;
-  title: string;
-  href: string;
-  comingSoon?: boolean;
-}
-
-// This might still be useful for determining nav links, but not for the dropdown itself
-const AVAILABLE_GAMES: GameData[] = [
-  { id: 'helldivers-2', title: "HELLDIVERS 2", href: "/helldivers-2" },
-  { id: 'dune-awakening', title: "Dune: Awakening", href: "/dune-awakening", comingSoon: true },
-  // Add other games as needed
-];
 
 interface NavItem { href: string; label: string; }
 
@@ -40,134 +21,44 @@ const CHALLENGE_LEVEL_LABELS: Array<{ id: string; label: string; }> = [
   { id: 'level-7', label: 'The Purist' },
 ];
 
+const CAMPAIGN_LABELS: Array<{ id: string; label: string; }> = [
+  { id: 'level-8', label: 'Prestige #1' },
+  { id: 'level-9', label: 'Prestige #2' },
+  { id: 'level-10', label: 'Prestige #3' },
+  { id: 'level-11', label: 'Prestige #4' },
+];
+
 const Navbar = () => {
-  // Removed dropdownOpen state
-  const [currentDivisionId, setCurrentDivisionId] = useState<string | null>(null);
-  const [isLoadingDivision, setIsLoadingDivision] = useState(true); // Still useful for initial nav link determination
   const [isClient, setIsClient] = useState(false); // State to track client-side mount
-  // Removed dropdownRef
 
-  const router = useRouter();
   const pathname = usePathname();
-  const { data: session, status: sessionStatus } = useSession();
-  // Removed useDivisionSelection hook usage
+  const { status: sessionStatus } = useSession();
 
-  // --- Effect to mark component as mounted on client ---
+  // Mark component as mounted on client
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // --- Effect to fetch division data ONLY on the client AFTER mount ---
-  // This is still needed to determine which set of nav links to display
-  useEffect(() => {
-    if (!isClient || sessionStatus === 'loading') {
-        if (!isLoadingDivision && sessionStatus === 'loading') {
-             setIsLoadingDivision(true);
-        }
-      return;
-    }
-    let isEffectMounted = true;
-    const fetchUserDivision = async () => {
-      console.log("Navbar Client: Fetching division for nav links, session status:", sessionStatus);
-      setIsLoadingDivision(true);
-      let fetchedDivisionId: string | null = null;
-      if (sessionStatus === 'authenticated') {
-        try {
-          const response = await fetch('/api/users/me');
-          if (!isEffectMounted) return;
-          if (response.ok) {
-            const userData = await response.json();
-            fetchedDivisionId = userData?.division || null; // Use the correct field name from your API
-            console.log("Navbar Client: Fetched division for nav links:", fetchedDivisionId);
-          } else {
-            console.error("Navbar Client: Failed fetch:", response.statusText);
-          }
-        } catch (error) {
-           if (!isEffectMounted) return;
-          console.error("Navbar Client: Error fetching:", error);
-        }
-      }
-      if (isEffectMounted) {
-        setCurrentDivisionId(fetchedDivisionId);
-        setIsLoadingDivision(false);
-        console.log("Navbar Client: Fetch complete for nav links. ID:", fetchedDivisionId);
-      }
-    };
-    fetchUserDivision();
-    return () => { isEffectMounted = false; };
-  }, [isClient, sessionStatus]);
-
-  // Removed Dropdown Controls & Click Outside Listener
-
   // --- Define Nav Items ---
   const getNavItems = (): NavItem[] => {
-    // Check if the current path starts with /dune-awakening
-    if (pathname.startsWith('/dune-awakening')) {
-      return [
-        { href: "/dune-awakening", label: "Home" },
-        { href: "/dune-awakening/merch", label: "Shop" },
-        { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/creators", label: "Streamers" },
-      ];
-    } else if (isClient && currentDivisionId === 'dune-awakening') {
-       return [
-        { href: "/dune-awakening", label: "Home" },
-        { href: "/dune-awakening/merch", label: "Shop" },
-        { href: "/dune-awakening/factions", label: "Factions" },
-        { href: "/dune-awakening/creators", label: "Streamers" },
-      ];
-    } else { 
-      return [
-        { href: "/helldivers-2", label: "Home" },
-        { href: "/helldivers-2/merch", label: "Shop" },
-        { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
-        { href: "/helldivers-2/challenges", label: "Challenges" },
-        { href: "/helldivers-2/creators", label: "Streamers" },
-        { href: "/helldivers-2/news", label: "Intel" },
-      ];
-    }
+    return [
+      { href: "/helldivers-2", label: "Home" },
+      { href: "/helldivers-2/merch", label: "Shop" },
+      { href: "/helldivers-2/leaderboard", label: "Leaderboard" },
+      { href: "/helldivers-2/challenges", label: "Challenges" },
+      { href: "/helldivers-2/campaigns", label: "Campaigns" },
+      { href: "/helldivers-2/academy", label: "Academy" },
+      { href: "/helldivers-2/creators", label: "Streamers" },
+      { href: "/helldivers-2/news", label: "Intel" },
+    ];
   };
   const standardNavItems = getNavItems();
 
-  // Determine if we show a loading indicator (only during initial client fetch)
-  const showInitialLoadSpinner = !isClient || isLoadingDivision;
-
-  // Base path for the current division to build dropdown links correctly
-  const divisionBasePath = pathname.startsWith('/dune-awakening') || currentDivisionId === 'dune-awakening'
-    ? '/dune-awakening'
-    : '/helldivers-2';
+  const divisionBasePath = '/helldivers-2';
 
   return (
     <nav className={styles.nav}>
       <div className={styles.container}>
-        {/* Logo / Link to Home/Selection Page */}
-        <div className={styles.logoArea}>
-          <div className={styles.dropdown}>
-            <Link href="/" className={styles.logoLinkButton} title="Select Division">
-              {/* Optionally show spinner during initial load */}
-              {showInitialLoadSpinner ? (
-                 <FaSpinner className={styles.spinnerRotating} aria-label="Loading"/>
-              ) : (
-                // Display static text or a logo image here
-                "GPT GAMES"
-                // Example with image: <img src="/logo.png" alt="Site Logo" className={styles.logoImage} />
-              )}
-            </Link>
-            <div className={styles.dropdownMenu} role="menu" aria-label="Select a game">
-              {AVAILABLE_GAMES.map(({ id, title, href, comingSoon }) => (
-                comingSoon ? (
-                  <span key={id} className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>
-                    {title} (Coming Soon)
-                  </span>
-                ) : (
-                  <Link key={id} href={href} className={styles.dropdownItem} role="menuitem">{title}</Link>
-                )
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop Menu Links */}
         <div className={styles.desktopMenu}>
           {standardNavItems.map(({ href, label }) => {
             const isActive = isClient && pathname === href;
@@ -182,7 +73,6 @@ const Navbar = () => {
                     <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
                     <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
-                    <Link href="/helldivers-2/leaderboard#average" className={styles.dropdownItem} role="menuitem">Average</Link>
                   </div>
                 </div>
               );
@@ -197,6 +87,34 @@ const Navbar = () => {
                     {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
                       <Link key={id} href={`${divisionBasePath}/challenges#${id}`} className={styles.dropdownItem} role="menuitem">{label}</Link>
                     ))}
+                  </div>
+                </div>
+              );
+            }
+            if (label === 'Campaigns') {
+              const isCampaignsActive = isClient && pathname.startsWith(`${divisionBasePath}/campaigns`);
+              const campaignsLinkClass = `${styles.link} ${isCampaignsActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={campaignsLinkClass}>Campaigns</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Campaign missions">
+                    {CAMPAIGN_LABELS.map(({ id, label }) => (
+                      <Link key={id} href={`${divisionBasePath}/campaigns#${id}`} className={styles.dropdownItem} role="menuitem">{label}</Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
+            if (label === 'Academy') {
+              const isAcademyActive = isClient && pathname.startsWith(`${divisionBasePath}/academy`);
+              const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={academyLinkClass}>Academy</Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Academy pages">
+                    <Link href={`${divisionBasePath}/academy/training`} className={styles.dropdownItem} role="menuitem">Training</Link>
+                    <Link href={`${divisionBasePath}/academy/moderation`} className={styles.dropdownItem} role="menuitem">Moderation</Link>
+                    <Link href={`${divisionBasePath}/academy/applications`} className={styles.dropdownItem} role="menuitem">Applications</Link>
                   </div>
                 </div>
               );
