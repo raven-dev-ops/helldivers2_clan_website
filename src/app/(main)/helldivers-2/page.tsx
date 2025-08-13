@@ -38,7 +38,7 @@ export default function HelldiversPage() {
     return (
         <div className={styles.pageContainer}>
             {/* === Reviews Section === */}
-            <ReviewsRotator reviews={reviews} reviewSourceLink={"https://disboard.org/server/1214787549655203862"} />
+            <ReviewsRotator reviews={reviews} />
 
             {/* === About (Split) Section: Text left, GIF right === */}
             <section className={`${styles.section} ${styles.splitSection}`}>

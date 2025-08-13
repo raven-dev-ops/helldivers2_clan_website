@@ -7,7 +7,7 @@ import styles from './HelldiversPage.module.css';
 
 export interface Review { id: number; author: string; title: string; text: string; rating: number; }
 
-export default function ReviewsRotator({ reviews, reviewSourceLink }: { reviews: Review[]; reviewSourceLink?: string }) {
+export default function ReviewsRotator({ reviews }: { reviews: Review[] }) {
   const [currentReviewStartIndex, setCurrentReviewStartIndex] = useState(0);
   const [isReviewVisible, setIsReviewVisible] = useState(true);
 
@@ -36,12 +36,7 @@ export default function ReviewsRotator({ reviews, reviewSourceLink }: { reviews:
             <p className={styles.reviewAuthor}>- {review.author}</p>
           </div>
         ))}
+        </div>
       </div>
-      {reviewSourceLink && (
-        <a href={reviewSourceLink} target="_blank" rel="noopener noreferrer" className={styles.disboardLinkBottom}>
-          Disboard Reviews
-        </a>
-      )}
-    </div>
-  );
+    );
 }
