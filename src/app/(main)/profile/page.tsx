@@ -35,11 +35,9 @@ export default function ProfilePage() {
   const qsSolo = new URLSearchParams({ scope: 'solo', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
   const qsMonth = new URLSearchParams({ scope: 'month', sortBy: 'Kills', sortDir: 'desc', limit: '1000', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
   const qsTotal = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
-  const qsAvg = new URLSearchParams({ scope: 'lifetime', sortBy: 'Avg Kills', sortDir: 'desc', limit: '1000' }).toString();
-  const { data: soloData } = useSWR(`/api/helldivers/leaderboard?${qsSolo}`, fetcher);
-  const { data: monthData } = useSWR(`/api/helldivers/leaderboard?${qsMonth}`, fetcher);
-  const { data: totalData } = useSWR(`/api/helldivers/leaderboard?${qsTotal}`, fetcher);
-  const { data: avgData } = useSWR(`/api/helldivers/leaderboard?${qsAvg}`, fetcher);
+    const { data: soloData } = useSWR(`/api/helldivers/leaderboard?${qsSolo}`, fetcher);
+    const { data: monthData } = useSWR(`/api/helldivers/leaderboard?${qsMonth}`, fetcher);
+    const { data: totalData } = useSWR(`/api/helldivers/leaderboard?${qsTotal}`, fetcher);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -73,14 +71,13 @@ export default function ProfilePage() {
     return idx >= 0 ? { rank: (rows[idx].rank || idx + 1), row: rows[idx] } : { rank: null, row: null };
   };
 
-  const computeGrade = (): string | null => {
-    if (!userData?.name) return null;
-    const total = findRankAndRow(totalData?.results || [], userData.name).row;
-    const month = findRankAndRow(monthData?.results || [], userData.name).row;
-    const avg = findRankAndRow(avgData?.results || [], userData.name).row;
-    const solo = findRankAndRow(soloData?.results || [], userData.name).row;
-    const row = total || month || avg || solo;
-    if (!row) return null;
+    const computeGrade = (): string | null => {
+      if (!userData?.name) return null;
+      const total = findRankAndRow(totalData?.results || [], userData.name).row;
+      const month = findRankAndRow(monthData?.results || [], userData.name).row;
+      const solo = findRankAndRow(soloData?.results || [], userData.name).row;
+      const row = total || month || solo;
+      if (!row) return null;
     const accuracyRaw = row.Accuracy as string | undefined;
     const accuracyNum = accuracyRaw ? parseFloat(accuracyRaw.replace('%', '')) : Number.NaN;
     if (Number.isFinite(accuracyNum)) {
@@ -120,13 +117,10 @@ export default function ProfilePage() {
     const solo = findRankAndRow(soloData?.results || [], name);
     const month = findRankAndRow(monthData?.results || [], name);
     const total = findRankAndRow(totalData?.results || [], name);
-    const avg = findRankAndRow(avgData?.results || [], name);
-
     const entries = [
       { scope: 'solo', rank: solo.rank, stats: solo.row },
       { scope: 'month', rank: month.rank, stats: month.row },
       { scope: 'lifetime', rank: total.rank, stats: total.row },
-      { scope: 'average', rank: avg.rank, stats: avg.row },
     ].filter(e => e.rank != null && e.stats);
 
     if (entries.length > 0) {
@@ -137,7 +131,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ entries })
       }).catch(() => {});
     }
-  }, [userData?.name, soloData, monthData, totalData, avgData]);
+  }, [userData?.name, soloData, monthData, totalData]);
 
   if (status === 'loading' || loading) {
     return <div className={styles.pageContainer}>Loading profile…</div>;
@@ -162,13 +156,13 @@ export default function ProfilePage() {
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Character Overview</h2>
-        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', flexWrap: 'nowrap' }}>
-          <img
-            src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
-            alt="Avatar"
-            style={{ width: 160, height: 160, borderRadius: '50%', objectFit: 'cover', border: '2px solid #475569' }}
-          />
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(200px, 1fr))', gap: 12, minWidth: 280, flex: 1 }}>
+        <div className="avatar-row">
+          <div className="avatar-col">
+            <div className="avatar">
+              <img src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" />
+            </div>
+          </div>
+          <div className="avatar-fields">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <strong style={{ color: '#f59e0b' }}>Name</strong>
               <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{
@@ -256,7 +250,6 @@ export default function ProfilePage() {
             <span className="inline-code">Solo: {findRankAndRow(soloData?.results || [], userData.name).rank ?? '—'}</span>
             <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
             <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
-            <span className="inline-code">Average: {findRankAndRow(avgData?.results || [], userData.name).rank ?? '—'}</span>
             <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
           </div>
         ) : (
@@ -266,7 +259,7 @@ export default function ProfilePage() {
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">GPT Campaigns</h2>
-        <p className="text-paragraph">Coming soon. Explore current <Link href="/helldivers-2/challenges#gpt-campaign-missions">GPT Campaign Missions</Link>.</p>
+        <p className="text-paragraph">Coming soon. Explore current <Link href="/helldivers-2/campaigns#gpt-campaign-missions">GPT Campaign Missions</Link>.</p>
       </section>
 
       <section className="content-section">

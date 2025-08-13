@@ -209,7 +209,6 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [lifetimeTotalsSearch, setLifetimeTotalsSearch] = useState<string>('');
-  const [lifetimeAveragesSearch, setLifetimeAveragesSearch] = useState<string>('');
 
   const toggleSoloSort = (field: SortField) => {
     if (field === soloSortBy) {
@@ -350,19 +349,6 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
         sectionId="total"
       />
 
-      <LeaderboardTableSection
-        title="Average Leaderboard"
-        rows={lifetimeData}
-        loading={lifetimeLoading}
-        error={lifetimeError}
-        activeSort={lifetimeActiveSort}
-        onSort={toggleLifetimeSort}
-        showAverages={true}
-        showTotals={false}
-        searchTerm={lifetimeAveragesSearch}
-        onSearch={setLifetimeAveragesSearch}
-        sectionId="average"
-      />
     </div>
   );
 }

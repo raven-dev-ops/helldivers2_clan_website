@@ -328,15 +328,6 @@ export default function CreatorsPage() {
         <p className={styles.pageSubtitle}>Coming soon.</p>
       </div>
 
-      <div style={{ marginTop: '2rem' }}>
-        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>Kick</h2>
-        <p className={styles.pageSubtitle}>Coming soon.</p>
-      </div>
-
-      <div style={{ marginTop: '2rem' }}>
-        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>X</h2>
-        <p className={styles.pageSubtitle}>Coming soon.</p>
-      </div>
     </main>
   );
 }
