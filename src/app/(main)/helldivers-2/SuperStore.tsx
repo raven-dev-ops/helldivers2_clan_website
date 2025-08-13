@@ -1,17 +1,18 @@
-// src/app/(main)/helldivers-2/AcquisitionCenter.tsx
+// src/app/(main)/helldivers-2/SuperStore.tsx
 'use client';
 
 import useSWR from 'swr';
+import styles from './HelldiversPage.module.css';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export default function AcquisitionCenter() {
+export default function SuperStore() {
   const { data, isLoading } = useSWR('/api/store/rotation', fetcher, {
     refreshInterval: 5 * 60 * 1000,
     revalidateOnFocus: false,
   });
 
-  if (isLoading) return <div>Loading Acquisition Center…</div>;
+  if (isLoading) return <div>Loading Super Store…</div>;
   if (!data?.rotation) return <div>No current rotation. Check back later.</div>;
 
   const { rotation, items } = data;
@@ -19,9 +20,9 @@ export default function AcquisitionCenter() {
   const ends = new Date(rotation.ends_at).toLocaleString();
 
   return (
-    <div>
-      <h3 style={{ fontWeight: 600 }}>Acquisition Center (Unofficial)</h3>
-      <p>Last updated window: {starts} → {ends}</p>
+    <div className={styles.section}>
+      <h3 className={styles.sectionTitle}>Super Store</h3>
+      <p className={styles.paragraph}>Last updated window: {starts} → {ends}</p>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 12 }}>
         {items?.map((it: any) => (
           <div key={it._id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12 }}>

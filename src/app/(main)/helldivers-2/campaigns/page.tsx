@@ -9,14 +9,12 @@ interface PrestigeMissionData {
   id: string;
   title: string;
   details: string;
-  link?: string;
 }
 
 const prestigeMissions: PrestigeMissionData[] = [
   {
     id: 'level-8',
-    title: 'Prestige #1: Terminid Spawn Camp',
-    link: 'https://youtu.be/eZfzyR0ecjs?si=ncTuMW_IZ02K1lP7',
+    title: 'Terminid Spawn Camp',
     details: `Nuke Nursery Hive Drill Mission
 Full Clear (Main Objective, Sub Objective, All Nests)
 Must Extract
@@ -35,8 +33,7 @@ Railgun`,
   },
   {
     id: 'level-9',
-    title: 'Prestige #2: Automaton Hell Strike',
-    link: 'https://youtu.be/hn5lxqgN940?si=ztszXK0vMaFNBE3g',
+    title: 'Automaton Hell Strike',
     details: `Neutralize Orbital Cannons
 Full Clear (Main Objective, Sub Objectives, All Enemies)
 No Deaths
@@ -55,8 +52,7 @@ Rocket Sentry`,
   },
   {
     id: 'level-10',
-    title: 'Prestige #3: Lethal Pacifist',
-    link: 'https://youtu.be/S8MJ7Q9VHlo',
+    title: 'Lethal Pacifist',
     details: `ICBM
 Full Clear (Main Objective, Sub Objectives, All Enemies)
 No Deaths
@@ -76,8 +72,7 @@ Any Sentry`,
   },
   {
     id: 'level-11',
-    title: 'Prestige #4: Total Area Scorching',
-    link: 'https://youtu.be/JOucNd0dNOI',
+    title: 'Total Area Scorching',
     details: `Command Bunkers
 Full Clear (Main Objective, Sub Objective)
 
@@ -123,11 +118,7 @@ export default function CampaignsPage() {
                 </div>
                 <div id={`mission-content-${mission.id}`} className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}>
                   <pre className={styles.codeBlock}>{mission.details}</pre>
-                  {mission.link && (
-                    <p className={styles.paragraph}>
-                      Proof/Video: <a href={mission.link} target="_blank" rel="noopener noreferrer" className={styles.link}>Watch</a>
-                    </p>
-                  )}
+                  {/* Video links removed per requirements */}
                 </div>
               </div>
             );

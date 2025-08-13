@@ -1,21 +1,23 @@
 // src/app/components/common/MusicButton.tsx
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FaMusic, FaPause } from 'react-icons/fa';
 
 export default function MusicButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.4);
+  const [volume, setVolume] = useState(0.1);
 
   useEffect(() => {
     const audio = new Audio('/audio/superearth_anthem.mp3');
     audio.loop = true;
     audio.volume = volume;
     audioRef.current = audio;
-    setIsReady(true);
+    audio
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((e) => console.warn('Audio play failed:', e));
     return () => {
       audio.pause();
       audioRef.current = null;
@@ -61,22 +63,38 @@ export default function MusicButton() {
 
   const sliderStyle: React.CSSProperties = { marginLeft: 8, width: 90 };
 
+  const containerStyle: React.CSSProperties = {
+    position: 'fixed',
+    left: '16px',
+    bottom: '16px',
+    zIndex: 60,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    color: '#facc15',
+  };
+
   return (
-    <div style={buttonStyle}>
-      <button onClick={togglePlay} aria-label={isPlaying ? 'Pause music' : 'Play music'} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'inherit' }}>
-        {isPlaying ? <FaPause /> : <FaMusic />}
-        <span style={{ fontWeight: 700 }}>{isPlaying ? 'Pause' : 'Music'}</span>
-      </button>
-      <input
-        type="range"
-        min={0}
-        max={1}
-        step={0.05}
-        value={volume}
-        onChange={(e) => setVolume(parseFloat(e.target.value))}
-        aria-label="Music volume"
-        style={sliderStyle}
-      />
+    <div style={containerStyle}>
+      <div style={{ fontSize: 12, marginBottom: 4, textAlign: 'center' }}>
+        Super Earth Anthem – Helldivers 2 OST
+      </div>
+      <div style={buttonStyle}>
+        <button onClick={togglePlay} aria-label={isPlaying ? 'Pause music' : 'Play music'} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'inherit' }}>
+          {isPlaying ? <FaPause /> : <FaMusic />}
+          <span style={{ fontWeight: 700 }}>{isPlaying ? 'Pause' : 'Music'}</span>
+        </button>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          value={volume}
+          onChange={(e) => setVolume(parseFloat(e.target.value))}
+          aria-label="Music volume"
+          style={sliderStyle}
+        />
+      </div>
     </div>
   );
 }
