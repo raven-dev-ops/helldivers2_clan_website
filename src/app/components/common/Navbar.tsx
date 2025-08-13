@@ -22,10 +22,10 @@ const CHALLENGE_LEVEL_LABELS: Array<{ id: string; label: string; }> = [
 ];
 
 const CAMPAIGN_LABELS: Array<{ id: string; label: string; }> = [
-  { id: 'level-8', label: 'Prestige #1' },
-  { id: 'level-9', label: 'Prestige #2' },
-  { id: 'level-10', label: 'Prestige #3' },
-  { id: 'level-11', label: 'Prestige #4' },
+  { id: 'level-8', label: 'Terminid Spawn Camp' },
+  { id: 'level-9', label: 'Automaton Hell Strike' },
+  { id: 'level-10', label: 'Lethal Pacifist' },
+  { id: 'level-11', label: 'Total Area Scorching' },
 ];
 
 const Navbar = () => {
@@ -70,9 +70,9 @@ const Navbar = () => {
                 <div key={href} className={styles.dropdown}>
                   <Link href={href} className={leaderboardLinkClass}>Leaderboard</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Leaderboard shortcuts">
-                    <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
-                    <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
+                    <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
+                    <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
                   </div>
                 </div>
               );
@@ -143,6 +143,7 @@ const Navbar = () => {
                     <Link href={`${divisionBasePath}/news#war-news`} className={styles.dropdownItem} role="menuitem">War News</Link>
                     <Link href={`${divisionBasePath}/news#major-orders`} className={styles.dropdownItem} role="menuitem">Major Orders</Link>
                     <Link href={`${divisionBasePath}/news#galactic-map`} className={styles.dropdownItem} role="menuitem">Galactic Map</Link>
+                    <Link href={`${divisionBasePath}/news#super-store`} className={styles.dropdownItem} role="menuitem">Super Store</Link>
                   </div>
                 </div>
               );

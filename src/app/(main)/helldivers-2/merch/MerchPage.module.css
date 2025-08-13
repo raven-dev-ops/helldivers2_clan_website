@@ -14,7 +14,7 @@
       .merchMainContainer { padding: 3rem 1rem 4rem; } /* More top padding on wider screens */
   }
   
-  .merchPageTitle {
+.merchPageTitle {
     font-size: clamp(1.8rem, 5vw, 2.25rem);
     font-weight: 700;
     margin-bottom: 0.5rem; /* Keep slightly less margin than subtitle */
@@ -22,8 +22,16 @@
     color: #facc15; /* text-yellow-400 */
     border-bottom: 1px solid #374151; /* border-gray-700 */
     padding-bottom: 0.5rem;
+}
+
+  .merchDisclaimer {
+    margin-bottom: 1.5rem;
+    color: #facc15;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-width: 65ch;
   }
-  
+
   /* Optional: Add subtitle style if you add a subtitle */
   /*
   .merchPageSubtitle {

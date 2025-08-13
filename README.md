@@ -2,6 +2,12 @@
 
 This is the repository for the Galactic Phantom Division website. It is a Next.js application built with TypeScript and styled-components, featuring user authentication with NextAuth.js and MongoDB.
 
+## Recent Updates
+
+- Centered navigation bar text and added Super Store link under the Intel menu.
+- Added auto-playing background music with volume control and visible song credits.
+- Introduced tabbed leaderboards, merch shop disclaimer, and new profile tabs for roles, awards, squad, and rankings.
+
 ## Features
 
 *   **Next.js Framework:** Leverages the power of Next.js for server-side rendering, routing, and API routes.

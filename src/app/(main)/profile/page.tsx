@@ -24,6 +24,13 @@ const CHALLENGE_LEVEL_LABELS: string[] = [
   'The Purist'
 ];
 
+const CAMPAIGN_MISSION_LABELS: string[] = [
+  'Terminid Spawn Camp',
+  'Automaton Hell Strike',
+  'Lethal Pacifist',
+  'Total Area Scorching'
+];
+
 export default function ProfilePage() {
   const { data: session, status } = useSession();
   const [userData, setUserData] = useState<any>(null);
@@ -65,6 +72,8 @@ export default function ProfilePage() {
     }
     return count === 7;
   }, [userData]);
+
+  const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'>('roles');
 
   const findRankAndRow = (rows: any[], name: string) => {
     const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
@@ -163,51 +172,51 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="avatar-fields">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Name</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{
-                ([userData?.lastProfile?.firstName, userData?.lastProfile?.middleName, userData?.lastProfile?.lastName].filter(Boolean).join(' ') ||
-                 [userData?.firstName, userData?.middleName, userData?.lastName].filter(Boolean).join(' ') || '—')
-              }</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Name</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>
+                {[userData?.lastProfile?.firstName, userData?.lastProfile?.middleName, userData?.lastProfile?.lastName].filter(Boolean).join(' ') ||
+                 [userData?.firstName, userData?.middleName, userData?.lastName].filter(Boolean).join(' ') || '—'}
+              </span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>{heightLabel}</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{heightDisplay}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>{heightLabel}</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{heightDisplay}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>{weightLabel}</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{weightDisplay}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>{weightLabel}</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{weightDisplay}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Homeplanet</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.homeplanet ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Homeplanet</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.homeplanet ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Callsign</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.callsign ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Callsign</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.callsign ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Rank</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.rankTitle ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Rank</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.rankTitle ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoriteWeapon ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.favoriteWeapon ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Armor</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.armor ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Armor</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.armor ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Motto</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.motto ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Motto</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.motto ?? '—'}</span>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <strong style={{ color: '#f59e0b' }}>Favored Enemy</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6 }}>{userData?.favoredEnemy ?? '—'}</span>
+            <div className="field field-sm">
+              <strong className="label" style={{ color: '#f59e0b' }}>Favored Enemy</strong>
+              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.favoredEnemy ?? '—'}</span>
             </div>
             <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
-              <strong style={{ color: '#f59e0b' }}>Background</strong>
+              <strong className="label" style={{ color: '#f59e0b' }}>Background</strong>
               <div style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</div>
             </div>
           </div>
@@ -215,51 +224,86 @@ export default function ProfilePage() {
       </section>
 
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Your Roles</h2>
-        {Array.isArray(userData?.discordRoles) && userData.discordRoles.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {userData.discordRoles.map((r: any) => (
-              <span key={r.id} className="inline-code">{r.name}</span>
-            ))}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('roles')} aria-pressed={infoTab === 'roles'}>
+            Roles
+          </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('awards')} aria-pressed={infoTab === 'awards'}>
+            Awards
+          </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('squad')} aria-pressed={infoTab === 'squad'}>
+            Squad
+          </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('rankings')} aria-pressed={infoTab === 'rankings'}>
+            Rankings
+          </button>
+        </div>
+
+        {infoTab === 'roles' && (
+          <div>
+            {Array.isArray(userData?.discordRoles) && userData.discordRoles.length > 0 ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {userData.discordRoles.map((r: any) => (
+                  <span key={r.id} className="inline-code">{r.name}</span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-paragraph">No Discord roles detected. Link your Discord and join the server to see roles.</p>
+            )}
           </div>
-        ) : (
-          <p className="text-paragraph">No Discord roles detected. Link your Discord and join the server to see roles.</p>
         )}
-      </section>
 
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Your Awards</h2>
-        {allSevenComplete ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            <span className="inline-code" title="All 7 challenges submitted">All 7 Challenges Complete ⭐</span>
+        {infoTab === 'awards' && (
+          <div>
+            {allSevenComplete ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                <span className="inline-code" title="All 7 challenges submitted">All 7 Challenges Complete ⭐</span>
+              </div>
+            ) : (
+              <p className="text-paragraph">No awards yet.</p>
+            )}
           </div>
-        ) : (
-          <p className="text-paragraph">No awards yet.</p>
         )}
-      </section>
 
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Your Squad</h2>
-        <p className="text-paragraph">Coming soon.</p>
-      </section>
+        {infoTab === 'squad' && (
+          <p className="text-paragraph">Coming soon.</p>
+        )}
 
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Your Rankings</h2>
-        {userData?.name ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-            <span className="inline-code">Solo: {findRankAndRow(soloData?.results || [], userData.name).rank ?? '—'}</span>
-            <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
-            <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
-            <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
+        {infoTab === 'rankings' && (
+          <div>
+            {userData?.name ? (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                <span className="inline-code">Solo: {findRankAndRow(soloData?.results || [], userData.name).rank ?? '—'}</span>
+                <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
+                <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
+                <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
+              </div>
+            ) : (
+              <p className="text-paragraph">Set your profile name to see your leaderboard rankings.</p>
+            )}
           </div>
-        ) : (
-          <p className="text-paragraph">Set your profile name to see your leaderboard rankings.</p>
         )}
       </section>
 
       <section className="content-section">
         <h2 className="content-section-title with-border-bottom">GPT Campaigns</h2>
-        <p className="text-paragraph">Coming soon. Explore current <Link href="/helldivers-2/campaigns#gpt-campaign-missions">GPT Campaign Missions</Link>.</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+          {CAMPAIGN_MISSION_LABELS.map((label) => (
+            <span
+              key={label}
+              style={{
+                padding: '0.35rem 0.6rem',
+                borderRadius: 8,
+                border: '1px solid #334155',
+                background: 'rgba(0,0,0,0.2)',
+                color: '#94a3b8',
+                fontWeight: 600,
+              }}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
       </section>
 
       <section className="content-section">

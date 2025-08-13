@@ -305,49 +305,81 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
+  const [activeTab, setActiveTab] = useState<'total' | 'monthly' | 'solo'>('total');
+
   return (
     <div>
-      <LeaderboardTableSection
-        title="Solo Leaderboard"
-        rows={soloData}
-        loading={soloLoading}
-        error={soloError}
-        activeSort={soloActiveSort}
-        onSort={toggleSoloSort}
-        showAverages={false}
-        showTotals={true}
-        searchTerm={soloSearch}
-        onSearch={setSoloSearch}
-        sectionId="solo"
-      />
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('total')}
+          aria-pressed={activeTab === 'total'}
+        >
+          Total
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('monthly')}
+          aria-pressed={activeTab === 'monthly'}
+        >
+          Monthly
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('solo')}
+          aria-pressed={activeTab === 'solo'}
+        >
+          Solo
+        </button>
+      </div>
 
-      <LeaderboardTableSection
-        title="Monthly Leaderboard"
-        rows={monthData}
-        loading={monthLoading}
-        error={monthError}
-        activeSort={monthActiveSort}
-        onSort={toggleMonthSort}
-        showAverages={false}
-        showTotals={true}
-        searchTerm={monthSearch}
-        onSearch={setMonthSearch}
-        sectionId="monthly"
-      />
+      {activeTab === 'solo' && (
+        <LeaderboardTableSection
+          title="Solo Leaderboard"
+          rows={soloData}
+          loading={soloLoading}
+          error={soloError}
+          activeSort={soloActiveSort}
+          onSort={toggleSoloSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={soloSearch}
+          onSearch={setSoloSearch}
+          sectionId="solo"
+        />
+      )}
 
-      <LeaderboardTableSection
-        title="Total Leaderboard"
-        rows={lifetimeData}
-        loading={lifetimeLoading}
-        error={lifetimeError}
-        activeSort={lifetimeActiveSort}
-        onSort={toggleLifetimeSort}
-        showAverages={false}
-        showTotals={true}
-        searchTerm={lifetimeTotalsSearch}
-        onSearch={setLifetimeTotalsSearch}
-        sectionId="total"
-      />
+      {activeTab === 'monthly' && (
+        <LeaderboardTableSection
+          title="Monthly Leaderboard"
+          rows={monthData}
+          loading={monthLoading}
+          error={monthError}
+          activeSort={monthActiveSort}
+          onSort={toggleMonthSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={monthSearch}
+          onSearch={setMonthSearch}
+          sectionId="monthly"
+        />
+      )}
+
+      {activeTab === 'total' && (
+        <LeaderboardTableSection
+          title="Total Leaderboard"
+          rows={lifetimeData}
+          loading={lifetimeLoading}
+          error={lifetimeError}
+          activeSort={lifetimeActiveSort}
+          onSort={toggleLifetimeSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={lifetimeTotalsSearch}
+          onSearch={setLifetimeTotalsSearch}
+          sectionId="total"
+        />
+      )}
 
     </div>
   );
