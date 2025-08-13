@@ -102,6 +102,15 @@ export default function CampaignsPage() {
       <section className={styles.section} id="gpt-campaign-missions">
         <h2 className={styles.sectionTitle}>GPT Campaign Missions</h2>
         <div className={styles.subsectionCard}>
+          <h3 className={styles.subHeading}>Rules & Requirements</h3>
+          <ul className={`${styles.styledList} ${styles.decimal}`}>
+            <li className={styles.listItem}>If it's on the map, it's in play unless the specific challenge level states otherwise.</li>
+            <li className={styles.listItem}>Video submissions must be one continuous, unedited recording. No cuts, splits, or speed-ups.</li>
+            <li className={styles.listItem}>Mission privacy must be set to Invite Only.</li>
+          </ul>
+        </div>
+
+        <div className={styles.subsectionCard}>
           <h3 className={styles.subHeading}>Prestige Missions</h3>
           {prestigeMissions.map((mission) => {
             const isExpanded = !!expanded[mission.id];

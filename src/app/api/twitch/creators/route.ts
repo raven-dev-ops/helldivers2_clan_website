@@ -68,13 +68,10 @@ export async function GET() {
         'kevindanilooo',
         'mrhellpod',
         'mrswimson',
-        'charredviolet',
-        'javy1402',
         'gingercynic',
         'chappzs',
         'popekingx',
         'mr_black_snow',
-        'thywizz',
     ];
 
     if (!TWITCH_CLIENT_ID) {
