@@ -113,19 +113,6 @@
     margin-top: auto; /* Stick to bottom */
     padding-top: 0.5rem;
 }
-.disboardLinkBottom {
-    display: block;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--color-primary-light); /* text-yellow-300 */
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    margin-top: 0.5rem;
-    transition: color 0.2s ease;
-}
-.disboardLinkBottom:hover {
-    color: var(--color-primary); /* text-yellow-400 */
-}
 
 /* --- Discord Icon Link --- */
 .discordIconLink {
