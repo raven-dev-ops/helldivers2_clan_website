@@ -305,17 +305,17 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
-  const [activeTab, setActiveTab] = useState<'total' | 'monthly' | 'solo'>('total');
+  const [activeTab, setActiveTab] = useState<'lifetime' | 'monthly' | 'solo'>('lifetime');
 
   return (
     <div>
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('total')}
-          aria-pressed={activeTab === 'total'}
+          onClick={() => setActiveTab('lifetime')}
+          aria-pressed={activeTab === 'lifetime'}
         >
-          Total
+          Lifetime
         </button>
         <button
           className="btn btn-secondary"
@@ -365,9 +365,9 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
         />
       )}
 
-      {activeTab === 'total' && (
+      {activeTab === 'lifetime' && (
         <LeaderboardTableSection
-          title="Total Leaderboard"
+          title="Lifetime Leaderboard"
           rows={lifetimeData}
           loading={lifetimeLoading}
           error={lifetimeError}
@@ -377,7 +377,7 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
           showTotals={true}
           searchTerm={lifetimeTotalsSearch}
           onSearch={setLifetimeTotalsSearch}
-          sectionId="total"
+          sectionId="lifetime"
         />
       )}
 

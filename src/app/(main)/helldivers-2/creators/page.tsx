@@ -24,8 +24,8 @@ interface CreatorStats {
 
 // List of Twitch channel *names* used to initially populate the state
 const initialTwitchChannelNames = [
-  'mrswimson', 'charredviolet', 'helldiver_black_snow',
-  'javy1402', 'gingercynic', 'chappzs', 'thywizz',
+  'mrswimson', 'helldiver_black_snow',
+  'gingercynic', 'chappzs',
 ];
 
 export default function CreatorsPage() {
@@ -142,7 +142,7 @@ export default function CreatorsPage() {
     // Use the page container class from the module
     <main className={styles.pageContainer}>
       <div className={styles.titleCard}>
-        <h1 className={styles.pageTitle}>GPT HD2 Streamers</h1>
+        <h1 className={styles.pageTitle}>GPT Streamers</h1>
         <p className={styles.pageSubtitle}>
           Discover or connect with content creators in the GPT community. You must be an Officer to join the stream team, check out the Academy &gt; Applications and apply with your interest.
         </p>

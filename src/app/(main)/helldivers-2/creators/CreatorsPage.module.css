@@ -29,7 +29,8 @@
   text-align: left;
   color: #9ca3af; /* text-gray-400 */
   margin-bottom: 1.5rem;
-  max-width: 65ch;
+  /* Allow subtitle to span full width */
+  max-width: none;
   margin-left: 0;
   margin-right: 0;
   font-size: 0.95rem; /* Slightly adjusted */
