@@ -211,8 +211,6 @@ const Navbar = () => {
                     <Link href={`${divisionBasePath}/creators`} className={styles.dropdownItem} role="menuitem">Twitch</Link>
                     <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>YouTube</span>
                     <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>TikTok</span>
-                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>Kick</span>
-                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>X</span>
                   </div>
                 </div>
               );
