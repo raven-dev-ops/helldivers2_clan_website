@@ -10,7 +10,10 @@
 .ticker {
   display: inline-block;
   white-space: nowrap;
-  animation: marquee 30s linear infinite;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0 1rem;
+  animation: marquee 60s linear forwards;
 }
 
 @keyframes marquee {
