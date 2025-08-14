@@ -53,7 +53,7 @@
 - [ ] Implement captcha for forms to prevent spam.
 - [x] Add maintenance mode banner.
 - [ ] Provide auto-scaling infrastructure using containerization.
-- [ ] Add dynamic sitemap generation.
+- [x] Add dynamic sitemap generation.
 - [ ] Provide editable clan rules page.
 - [ ] Add support for polls and surveys.
 - [ ] Add ability to follow other members.
