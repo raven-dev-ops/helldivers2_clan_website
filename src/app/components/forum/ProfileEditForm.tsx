@@ -253,23 +253,23 @@ export default function ProfileEditForm() {
           </button>
         </div>
         <div className="avatar-fields">
-          <label className="field">
-            <span className="label">First Name</span>
+          <label className="field field-sm">
+            <strong className="label">First Name</strong>
             <input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
           </label>
-          <label className="field">
-            <span className="label">Middle Name</span>
+          <label className="field field-sm">
+            <strong className="label">Middle Name</strong>
             <input value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
           </label>
-          <label className="field">
-            <span className="label">Last Name</span>
+          <label className="field field-sm">
+            <strong className="label">Last Name</strong>
             <input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
           </label>
 
           {/* Unit preference selectors removed per requirements */}
 
-          <label className="field">
-            <span className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></span>
+          <label className="field field-sm">
+            <strong className="label">Height <button type="button" className="link-button" onClick={() => setHeightUnit(heightUnit === 'cm' ? 'in' : 'cm')}>({heightUnit})</button></strong>
             <input
               type="number"
               inputMode="numeric"
@@ -283,8 +283,8 @@ export default function ProfileEditForm() {
               placeholder={heightUnit === 'cm' ? '180' : '71'}
             />
           </label>
-          <label className="field">
-            <span className="label">Weight <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>({weightUnit})</button></span>
+          <label className="field field-sm">
+            <strong className="label">Weight <button type="button" className="link-button" onClick={() => setWeightUnit(weightUnit === 'kg' ? 'lb' : 'kg')}>({weightUnit})</button></strong>
             <input
               type="number"
               inputMode="numeric"
@@ -299,31 +299,31 @@ export default function ProfileEditForm() {
             />
           </label>
 
-          <label className="field">
-            <span className="label">Homeplanet</span>
+          <label className="field field-sm">
+            <strong className="label">Homeplanet</strong>
             <input value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
           </label>
           
-          <label className="field">
-            <span className="label">Callsign</span>
+          <label className="field field-sm">
+            <strong className="label">Callsign</strong>
             <input value={callsign} onChange={(e) => setCallsign(e.target.value)} placeholder="e.g., Eagle-1" />
           </label>
-          <label className="field">
-            <span className="label">Rank</span>
+          <label className="field field-sm">
+            <strong className="label">Rank</strong>
             <input value={rankTitle} onChange={(e) => setRankTitle(e.target.value)} placeholder="e.g., Captain" />
           </label>
 
-          <label className="field">
-            <span className="label">Favorite Weapon</span>
+          <label className="field field-sm">
+            <strong className="label">Favorite Weapon</strong>
             <input value={favoriteWeapon} onChange={(e) => setFavoriteWeapon(e.target.value)} placeholder="e.g., Breaker" />
           </label>
-          <label className="field">
-            <span className="label">Armor</span>
+          <label className="field field-sm">
+            <strong className="label">Armor</strong>
             <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
           </label>
 
-          <label className="field">
-            <span className="label">Twitch</span>
+          <label className="field field-sm">
+            <strong className="label">Twitch</strong>
             {twitchUrl ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <a href={twitchUrl} target="_blank" rel="noopener noreferrer" className="link-button">{twitchUrl}</a>
@@ -343,18 +343,18 @@ export default function ProfileEditForm() {
             )}
           </label>
 
-          <label className="field field-span-2">
-            <span className="label">Motto</span>
+          <label className="field field-sm field-span-2">
+            <strong className="label">Motto</strong>
             <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
           </label>
 
-          <label className="field field-span-2">
-            <span className="label">Favored Enemy</span>
+          <label className="field field-sm field-span-2">
+            <strong className="label">Favored Enemy</strong>
             <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
           </label>
 
-          <label className="field field-span-2">
-            <span className="label">Background</span>
+          <label className="field field-sm field-span-2">
+            <strong className="label">Background</strong>
             <textarea className="min-h" value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
           </label>
         </div>
@@ -376,8 +376,8 @@ export default function ProfileEditForm() {
           type="button"
           onMouseEnter={handleDeleteHoverStart}
           onMouseLeave={handleDeleteHoverEnd}
-          onClick={openDeleteModal}
-          disabled={!deleteArmed || deleting}
+          onClick={() => { if (deleteArmed) openDeleteModal(); }}
+          disabled={deleting}
           className="btn btn-secondary danger"
           title={deleteArmed ? 'Click to permanently delete your account' : undefined}
         >

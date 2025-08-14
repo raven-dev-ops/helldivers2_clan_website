@@ -222,6 +222,9 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
             </div>
           </div>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+          <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
+        </div>
       </section>
 
       <section className="content-section">
@@ -401,9 +404,6 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
             </div>
           );
         })()}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-          <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
-        </div>
       </section>
 
 
