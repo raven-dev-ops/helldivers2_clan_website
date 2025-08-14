@@ -16,9 +16,6 @@ export default function ProfileEditForm() {
   const deleteHoverIntervalRef = useRef<number | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [confirmText, setConfirmText] = useState('');
-  const [modalArmed, setModalArmed] = useState(false);
-  const [modalHoverSecondsLeft, setModalHoverSecondsLeft] = useState(30);
-  const modalHoverIntervalRef = useRef<number | null>(null);
   const [modalError, setModalError] = useState<string | null>(null);
 
   const [firstName, setFirstName] = useState<string>('');
@@ -78,10 +75,6 @@ export default function ProfileEditForm() {
       if (deleteHoverIntervalRef.current !== null) {
         window.clearInterval(deleteHoverIntervalRef.current);
         deleteHoverIntervalRef.current = null;
-      }
-      if (modalHoverIntervalRef.current !== null) {
-        window.clearInterval(modalHoverIntervalRef.current);
-        modalHoverIntervalRef.current = null;
       }
     };
   }, []);
@@ -160,37 +153,9 @@ export default function ProfileEditForm() {
   const openDeleteModal = () => {
     setShowDeleteModal(true);
     setConfirmText('');
-    setModalArmed(false);
-    setModalHoverSecondsLeft(30);
     setModalError(null);
   };
 
-  const handleModalHoverStart = () => {
-    if (modalHoverIntervalRef.current !== null || modalArmed) return;
-    setModalHoverSecondsLeft(30);
-    modalHoverIntervalRef.current = window.setInterval(() => {
-      setModalHoverSecondsLeft((prev) => {
-        if (prev <= 1) {
-          if (modalHoverIntervalRef.current !== null) {
-            window.clearInterval(modalHoverIntervalRef.current);
-            modalHoverIntervalRef.current = null;
-          }
-          setModalArmed(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const handleModalHoverEnd = () => {
-    if (modalArmed) return;
-    if (modalHoverIntervalRef.current !== null) {
-      window.clearInterval(modalHoverIntervalRef.current);
-      modalHoverIntervalRef.current = null;
-    }
-    setModalHoverSecondsLeft(30);
-  };
 
   const handleDeleteAccount = async () => {
     if (confirmText !== 'I renounce democracy') {
@@ -322,26 +287,6 @@ export default function ProfileEditForm() {
             <input value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
           </label>
 
-          <label className="field field-sm">
-            <strong className="label">Twitch</strong>
-            {twitchUrl ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <a href={twitchUrl} target="_blank" rel="noopener noreferrer" className="link-button">{twitchUrl}</a>
-                <button type="button" className="btn btn-secondary" onClick={() => setTwitchUrl('')}>Unlink</button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => {
-                  const url = window.prompt('Enter your Twitch channel URL');
-                  if (url) setTwitchUrl(url);
-                }}
-              >
-                Link Twitch Account
-              </button>
-            )}
-          </label>
 
           <label className="field field-sm field-span-2">
             <strong className="label">Motto</strong>
@@ -385,6 +330,26 @@ export default function ProfileEditForm() {
         </button>
       </div>
 
+      <div style={{ marginTop: '1rem' }}>
+        {twitchUrl ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <a href={twitchUrl} target="_blank" rel="noopener noreferrer" className="link-button">{twitchUrl}</a>
+            <button type="button" className="btn btn-secondary" onClick={() => setTwitchUrl('')}>Unlink</button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              const url = window.prompt('Enter your Twitch channel URL');
+              if (url) setTwitchUrl(url);
+            }}
+            style={{ backgroundColor: '#9146FF', color: '#fff', padding: '0.5rem 1rem', borderRadius: 4 }}
+          >
+            Link Twitch Account
+          </button>
+        )}
+      </div>
+
       {isChangeImageOpen && (
         <ChangeAvatarModal
           initialImageUrl={userData?.customAvatarDataUrl || userData?.image || ''}
@@ -408,12 +373,10 @@ export default function ProfileEditForm() {
               <button
                 type="button"
                 onClick={handleDeleteAccount}
-                onMouseEnter={handleModalHoverStart}
-                onMouseLeave={handleModalHoverEnd}
-                disabled={!modalArmed || deleting}
+                disabled={deleting || confirmText !== 'I renounce democracy'}
                 style={{ padding: '0.5rem 1rem', background: '#dc2626', color: '#fff', borderRadius: 4 }}
               >
-                {deleting ? 'Deleting…' : (modalArmed ? 'Submit' : `Hold ${String(modalHoverSecondsLeft).padStart(2, '0')}s`)}
+                {deleting ? 'Deleting…' : 'Confirm'}
               </button>
             </div>
           </div>

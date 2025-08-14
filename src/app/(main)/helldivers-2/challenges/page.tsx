@@ -66,9 +66,6 @@ export default function HelldiverChallengesPage() {
             {/* === John Helldiver Missions === */}
             <section className={styles.section} id="john-helldiver-missions">
                  <h2 className={styles.sectionTitle}>John Helldiver Missions</h2>
-                 <p className={`${styles.paragraph}`} style={{textAlign: 'center', marginBottom: '2rem'}}>
-                     NO SEED FARMING - HELLDIVERS DO NOT CHERRY PICK MISSIONS TO WIN, WE JUST WIN.
-                 </p>
                  <div className={styles.subsectionCard}>
                     <h3 className={styles.subHeading}>Rules & Requirements</h3>
                     <ul className={`${styles.styledList} ${styles.decimal}`}>
