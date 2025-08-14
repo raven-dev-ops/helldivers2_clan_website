@@ -113,7 +113,7 @@ const Navbar = () => {
                   <Link href={href} className={academyLinkClass}>Academy</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Academy pages">
                     <Link href={`${divisionBasePath}/academy/training`} className={styles.dropdownItem} role="menuitem">Training</Link>
-                    <Link href={`${divisionBasePath}/academy/apply`} className={styles.dropdownItem} role="menuitem">Apply</Link>
+                    <Link href={`${divisionBasePath}/academy/apply`} className={styles.dropdownItem} role="menuitem">Join Now!</Link>
                   </div>
                 </div>
               );

@@ -62,7 +62,7 @@ export default function ApplyForm({ botName, botIdentifier, onSuccess, onCancel 
     return (
         <div className={styles.formOverlay}>
             <div className={styles.formContainer}>
-                <h3 className={styles.formTitle}>Apply for {botName}</h3>
+                <h3 className={styles.formTitle}>Join {botName}</h3>
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {successMessage && <p className={styles.successMessage}>{successMessage}</p>}
                 {!successMessage && ( // Hide form after success message appears

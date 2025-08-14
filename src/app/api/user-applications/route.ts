@@ -14,14 +14,16 @@ export async function POST(request: Request) {
   const userId = new mongoose.Types.ObjectId(session.user.id);
   try {
     const body = await request.json();
-    const { type, interviewAvailability } = body;
-    if (!type) {
-      return NextResponse.json({ message: 'Type is required' }, { status: 400 });
+    const { type, interest, about, interviewAvailability } = body;
+    if (!type || !interest) {
+      return NextResponse.json({ message: 'Type and interest are required' }, { status: 400 });
     }
     await dbConnect();
     const app = new UserApplicationModel({
       userId,
       type,
+      interest,
+      about,
       interviewAvailability: interviewAvailability ? new Date(interviewAvailability) : undefined,
     });
     await app.save();

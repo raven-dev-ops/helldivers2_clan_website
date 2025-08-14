@@ -20,7 +20,6 @@ export default function NewsPage() {
         <WarMap />
       </section>
       <section id="super-store" style={{ marginBottom: 24 }}>
-        <h2 className="content-section-title with-border-bottom">Super Store</h2>
         <SuperStore />
       </section>
     </div>

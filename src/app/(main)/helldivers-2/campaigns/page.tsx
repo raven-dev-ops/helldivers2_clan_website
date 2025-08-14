@@ -155,12 +155,12 @@ export default function CampaignsPage() {
           })}
         </div>
       </section>
-      <div style={{ textAlign: 'center', marginTop: 24 }}>
-        <button onClick={handleSubmit} disabled={submitting} style={{ padding: '0.5rem 1rem', background: '#facc15', color: '#000', borderRadius: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+        <button className="btn btn-secondary" onClick={handleSubmit} disabled={submitting}>
           {submitting ? 'Submitting...' : 'Submit Campaign'}
         </button>
-        {message && <p className={styles.paragraph}>{message}</p>}
       </div>
+      {message && <p className={styles.paragraph} style={{ textAlign: 'center' }}>{message}</p>}
     </div>
   );
 }

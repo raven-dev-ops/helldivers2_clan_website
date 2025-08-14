@@ -5,6 +5,8 @@ import { IUser } from "./User";
 export interface IUserApplication extends Document {
   userId: Types.ObjectId | IUser;
   type: string;
+  interest: string;
+  about?: string;
   interviewAvailability?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -14,6 +16,8 @@ const UserApplicationSchema = new Schema<IUserApplication>(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     type: { type: String, required: true },
+    interest: { type: String, required: true },
+    about: { type: String },
     interviewAvailability: { type: Date },
   },
   { timestamps: true, collection: 'User_Applications' }
