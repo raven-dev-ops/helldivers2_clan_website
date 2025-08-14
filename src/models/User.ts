@@ -29,6 +29,7 @@ export interface IUser extends Document {
   armor?: string | null;
   motto?: string | null;
   favoredEnemy?: string | null;
+  meritPoints?: number | null;
 
   // --- Discord ---
   discordRoles?: Array<{ id: string; name: string }>;
@@ -80,6 +81,7 @@ const UserSchema = new Schema<IUser>(
     armor: { type: String, default: null },
     motto: { type: String, default: null },
     favoredEnemy: { type: String, default: null },
+    meritPoints: { type: Number, default: 0 },
 
     // --- Discord ---
     discordRoles: { type: [{ id: String, name: String }], default: [] },

@@ -74,7 +74,7 @@ export default function ProfilePage() {
     return count === 7;
   }, [userData]);
 
-const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked'>('roles');
+const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked' | 'merit'>('roles');
 
   const findRankAndRow = (rows: any[], name: string) => {
     const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
@@ -241,6 +241,9 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
           <button className="btn btn-secondary" onClick={() => setInfoTab('activity')} aria-pressed={infoTab === 'activity'}>
             Activity
           </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('merit')} aria-pressed={infoTab === 'merit'}>
+            Merit
+          </button>
           <button className="btn btn-secondary" onClick={() => setInfoTab('linked')} aria-pressed={infoTab === 'linked'}>
             Linked
           </button>
@@ -316,6 +319,11 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
               }
               return <p className="text-paragraph">No stats submissions recorded.</p>;
             })()}
+          </div>
+        )}
+        {infoTab === 'merit' && (
+          <div>
+            <p className="text-paragraph">Merit Points: {userData?.meritPoints ?? 0}</p>
           </div>
         )}
         {infoTab === 'linked' && (
