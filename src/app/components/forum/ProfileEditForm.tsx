@@ -14,6 +14,12 @@ export default function ProfileEditForm() {
   const [deleteArmed, setDeleteArmed] = useState(false);
   const [deleteHoverSecondsLeft, setDeleteHoverSecondsLeft] = useState<number>(30);
   const deleteHoverIntervalRef = useRef<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [confirmText, setConfirmText] = useState('');
+  const [modalArmed, setModalArmed] = useState(false);
+  const [modalHoverSecondsLeft, setModalHoverSecondsLeft] = useState(30);
+  const modalHoverIntervalRef = useRef<number | null>(null);
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const [firstName, setFirstName] = useState<string>('');
   const [middleName, setMiddleName] = useState<string>('');
@@ -71,34 +77,9 @@ export default function ProfileEditForm() {
         window.clearInterval(deleteHoverIntervalRef.current);
         deleteHoverIntervalRef.current = null;
       }
-    };
-  }, []);
-
-  // Start 30s countdown to enable Delete Account button
-  useEffect(() => {
-    setDeleteHoverSecondsLeft(30);
-    if (deleteHoverIntervalRef.current !== null) {
-      window.clearInterval(deleteHoverIntervalRef.current);
-      deleteHoverIntervalRef.current = null;
-    }
-    deleteHoverIntervalRef.current = window.setInterval(() => {
-      setDeleteHoverSecondsLeft((prev) => {
-        if (prev <= 1) {
-          if (deleteHoverIntervalRef.current !== null) {
-            window.clearInterval(deleteHoverIntervalRef.current);
-            deleteHoverIntervalRef.current = null;
-          }
-          setDeleteArmed(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => {
-      if (deleteHoverIntervalRef.current !== null) {
-        window.clearInterval(deleteHoverIntervalRef.current);
-        deleteHoverIntervalRef.current = null;
+      if (modalHoverIntervalRef.current !== null) {
+        window.clearInterval(modalHoverIntervalRef.current);
+        modalHoverIntervalRef.current = null;
       }
     };
   }, []);
@@ -146,17 +127,80 @@ export default function ProfileEditForm() {
       setSaving(false);
     }
   };
+  const handleDeleteHoverStart = () => {
+    if (deleteHoverIntervalRef.current !== null || deleteArmed) return;
+    setDeleteHoverSecondsLeft(30);
+    deleteHoverIntervalRef.current = window.setInterval(() => {
+      setDeleteHoverSecondsLeft((prev) => {
+        if (prev <= 1) {
+          if (deleteHoverIntervalRef.current !== null) {
+            window.clearInterval(deleteHoverIntervalRef.current);
+            deleteHoverIntervalRef.current = null;
+          }
+          setDeleteArmed(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleDeleteHoverEnd = () => {
+    if (deleteArmed) return;
+    if (deleteHoverIntervalRef.current !== null) {
+      window.clearInterval(deleteHoverIntervalRef.current);
+      deleteHoverIntervalRef.current = null;
+    }
+    setDeleteHoverSecondsLeft(30);
+  };
+
+  const openDeleteModal = () => {
+    setShowDeleteModal(true);
+    setConfirmText('');
+    setModalArmed(false);
+    setModalHoverSecondsLeft(30);
+    setModalError(null);
+  };
+
+  const handleModalHoverStart = () => {
+    if (modalHoverIntervalRef.current !== null || modalArmed) return;
+    setModalHoverSecondsLeft(30);
+    modalHoverIntervalRef.current = window.setInterval(() => {
+      setModalHoverSecondsLeft((prev) => {
+        if (prev <= 1) {
+          if (modalHoverIntervalRef.current !== null) {
+            window.clearInterval(modalHoverIntervalRef.current);
+            modalHoverIntervalRef.current = null;
+          }
+          setModalArmed(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleModalHoverEnd = () => {
+    if (modalArmed) return;
+    if (modalHoverIntervalRef.current !== null) {
+      window.clearInterval(modalHoverIntervalRef.current);
+      modalHoverIntervalRef.current = null;
+    }
+    setModalHoverSecondsLeft(30);
+  };
 
   const handleDeleteAccount = async () => {
-    if (!confirm('Are you sure you want to permanently delete your account and data?')) return;
+    if (confirmText !== 'I renounce democracy') {
+      setModalError('Incorrect confirmation text');
+      return;
+    }
     setDeleting(true);
     try {
       const res = await fetch('/api/users/me', { method: 'DELETE' });
       if (res.ok) {
-        // Redirect to sign-in after deletion
         window.location.href = '/auth';
       } else {
-        alert('Failed to delete account.');
+        setModalError('Failed to delete account.');
       }
     } finally {
       setDeleting(false);
@@ -306,12 +350,14 @@ export default function ProfileEditForm() {
         )}
         <button
           type="button"
-          onClick={handleDeleteAccount}
+          onMouseEnter={handleDeleteHoverStart}
+          onMouseLeave={handleDeleteHoverEnd}
+          onClick={openDeleteModal}
           disabled={!deleteArmed || deleting}
           className="btn btn-secondary danger"
           title={deleteArmed ? 'Click to permanently delete your account' : undefined}
         >
-          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Enabling in ${deleteHoverSecondsLeft}s`)}
+          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hold ${deleteHoverSecondsLeft}s`)}
         </button>
       </div>
 
@@ -321,6 +367,33 @@ export default function ProfileEditForm() {
           onCancel={() => setIsChangeImageOpen(false)}
           onSaved={handleAvatarSaved}
         />
+      )}
+      {showDeleteModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#1f2937', padding: '1.5rem', borderRadius: 8, width: '90%', maxWidth: 420 }}>
+            <p style={{ marginBottom: '1rem' }}>Type "I renounce democracy" to confirm account deletion.</p>
+            <input
+              type="text"
+              value={confirmText}
+              onChange={e => setConfirmText(e.target.value)}
+              style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem', borderRadius: 4, border: '1px solid #374151', background: '#111827', color: '#f9fafb' }}
+            />
+            {modalError && <p style={{ color: '#dc2626', marginBottom: '1rem' }}>{modalError}</p>}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+              <button type="button" onClick={() => setShowDeleteModal(false)} style={{ padding: '0.5rem 1rem', background: '#16a34a', color: '#fff', borderRadius: 4 }}>Cancel</button>
+              <button
+                type="button"
+                onClick={handleDeleteAccount}
+                onMouseEnter={handleModalHoverStart}
+                onMouseLeave={handleModalHoverEnd}
+                disabled={!modalArmed || deleting}
+                style={{ padding: '0.5rem 1rem', background: '#dc2626', color: '#fff', borderRadius: 4 }}
+              >
+                {deleting ? 'Deleting…' : (modalArmed ? 'Submit' : `Hold ${modalHoverSecondsLeft}s`)}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </form>
   );
