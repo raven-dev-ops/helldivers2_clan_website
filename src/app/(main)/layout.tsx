@@ -2,6 +2,7 @@
 
 import Navbar from '@/app/components/common/Navbar'; // Adjust path if needed
 import AlertBar from '@/app/components/common/AlertBar';
+import MaintenanceBanner from '@/app/components/common/MaintenanceBanner';
 import Footer from '@/app/components/common/Footer'; // Adjust path if needed
 // ThemeToggle is inside Navbar or Footer
 
@@ -12,6 +13,7 @@ export default function MainAppLayout({
 }) {
   return (
     <> {/* Fragment inherits flex from RootLayout's body */}
+      <MaintenanceBanner />
       <Navbar />
       <AlertBar />
       {/* Apply helper classes from globals.css */}
