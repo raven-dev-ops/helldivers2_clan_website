@@ -59,7 +59,7 @@ export async function GET() {
         }
       }
     }
-  } catch (e) {
+  } catch {
     // ignore errors
   }
 
@@ -87,6 +87,7 @@ export async function GET() {
     motto: fresh!.motto ?? null,
     favoredEnemy: fresh!.favoredEnemy ?? null,
     meritPoints: fresh!.meritPoints ?? 0,
+    twitchUrl: fresh!.twitchUrl ?? null,
     preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
     // include roles
@@ -106,7 +107,7 @@ export async function PUT(req: Request) {
 
   const contentType = req.headers.get('content-type') || '';
 
-  let updates: any = {};
+  const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
@@ -284,20 +285,21 @@ export async function PUT(req: Request) {
         lastName: updated?.lastName ?? null,
         division: updated?.division ?? null,
         characterHeightCm: updated?.characterHeightCm ?? null,
-                 characterWeightKg: updated?.characterWeightKg ?? null,
-         homeplanet: updated?.homeplanet ?? null,
-         background: updated?.background ?? null,
-         callsign: updated?.callsign ?? null,
-         rankTitle: updated?.rankTitle ?? null,
-         favoriteWeapon: updated?.favoriteWeapon ?? null,
-         favoredEnemy: updated?.favoredEnemy ?? null,
-         armor: updated?.armor ?? null,
-         motto: updated?.motto ?? null,
-         preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
-         preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
-         meritPoints: updated?.meritPoints ?? 0,
-         challengeSubmissions: updated?.challengeSubmissions ?? [],
-         discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+        characterWeightKg: updated?.characterWeightKg ?? null,
+        homeplanet: updated?.homeplanet ?? null,
+        background: updated?.background ?? null,
+        callsign: updated?.callsign ?? null,
+        rankTitle: updated?.rankTitle ?? null,
+        favoriteWeapon: updated?.favoriteWeapon ?? null,
+        favoredEnemy: updated?.favoredEnemy ?? null,
+        armor: updated?.armor ?? null,
+        motto: updated?.motto ?? null,
+        twitchUrl: updated?.twitchUrl ?? null,
+        preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+        preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
+        meritPoints: updated?.meritPoints ?? 0,
+        challengeSubmissions: updated?.challengeSubmissions ?? [],
+        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
       },
     };
     await appDb.collection('User_Profiles').updateOne(
