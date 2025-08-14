@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
+import { FaTwitch } from 'react-icons/fa';
 import styles from '../helldivers-2/HelldiversPage.module.css';
 
 const videoStyle: CSSProperties = {
@@ -41,10 +42,10 @@ export default function ProfilePage() {
   const now = new Date();
   const qsSolo = new URLSearchParams({ scope: 'solo', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
   const qsMonth = new URLSearchParams({ scope: 'month', sortBy: 'Kills', sortDir: 'desc', limit: '1000', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
-  const qsTotal = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
+  const qsLifetime = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
     const { data: soloData } = useSWR(`/api/helldivers/leaderboard?${qsSolo}`, fetcher);
     const { data: monthData } = useSWR(`/api/helldivers/leaderboard?${qsMonth}`, fetcher);
-    const { data: totalData } = useSWR(`/api/helldivers/leaderboard?${qsTotal}`, fetcher);
+    const { data: lifetimeData } = useSWR(`/api/helldivers/leaderboard?${qsLifetime}`, fetcher);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -73,7 +74,7 @@ export default function ProfilePage() {
     return count === 7;
   }, [userData]);
 
-  const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity'>('roles');
+const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked'>('roles');
 
   const findRankAndRow = (rows: any[], name: string) => {
     const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
@@ -82,7 +83,7 @@ export default function ProfilePage() {
 
     const computeGrade = (): string | null => {
       if (!userData?.name) return null;
-      const total = findRankAndRow(totalData?.results || [], userData.name).row;
+      const total = findRankAndRow(lifetimeData?.results || [], userData.name).row;
       const month = findRankAndRow(monthData?.results || [], userData.name).row;
       const solo = findRankAndRow(soloData?.results || [], userData.name).row;
       const row = total || month || solo;
@@ -125,7 +126,7 @@ export default function ProfilePage() {
     if (!name || savedRankingOnce.current) return;
     const solo = findRankAndRow(soloData?.results || [], name);
     const month = findRankAndRow(monthData?.results || [], name);
-    const total = findRankAndRow(totalData?.results || [], name);
+    const total = findRankAndRow(lifetimeData?.results || [], name);
     const entries = [
       { scope: 'solo', rank: solo.rank, stats: solo.row },
       { scope: 'month', rank: month.rank, stats: month.row },
@@ -140,7 +141,7 @@ export default function ProfilePage() {
         body: JSON.stringify({ entries })
       }).catch(() => {});
     }
-  }, [userData?.name, soloData, monthData, totalData]);
+  }, [userData?.name, soloData, monthData, lifetimeData]);
 
   if (status === 'loading' || loading) {
     return <div className={styles.pageContainer}>Loading profile…</div>;
@@ -240,6 +241,9 @@ export default function ProfilePage() {
           <button className="btn btn-secondary" onClick={() => setInfoTab('activity')} aria-pressed={infoTab === 'activity'}>
             Activity
           </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('linked')} aria-pressed={infoTab === 'linked'}>
+            Linked
+          </button>
         </div>
 
         {infoTab === 'roles' && (
@@ -278,7 +282,7 @@ export default function ProfilePage() {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 <span className="inline-code">Solo: {findRankAndRow(soloData?.results || [], userData.name).rank ?? '—'}</span>
                 <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
-                <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
+        <span className="inline-code">Lifetime: {findRankAndRow(lifetimeData?.results || [], userData.name).rank ?? '—'}</span>
                 <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
                 <span className="inline-code">Clearance: {userData?.rankTitle ?? '—'}</span>
               </div>
@@ -312,6 +316,17 @@ export default function ProfilePage() {
               }
               return <p className="text-paragraph">No stats submissions recorded.</p>;
             })()}
+          </div>
+        )}
+        {infoTab === 'linked' && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {userData?.twitchUrl ? (
+              <a href={userData.twitchUrl} target="_blank" rel="noopener noreferrer" aria-label="Twitch">
+                <FaTwitch size={24} color="#a970ff" />
+              </a>
+            ) : (
+              <p className="text-paragraph">No accounts linked.</p>
+            )}
           </div>
         )}
       </section>
@@ -378,11 +393,10 @@ export default function ProfilePage() {
             </div>
           );
         })()}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+          <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
+        </div>
       </section>
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-        <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
-      </div>
 
 
     </div>

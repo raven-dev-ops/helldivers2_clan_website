@@ -70,7 +70,7 @@ const Navbar = () => {
                 <div key={href} className={styles.dropdown}>
                   <Link href={href} className={leaderboardLinkClass}>Leaderboard</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Leaderboard shortcuts">
-                    <Link href="/helldivers-2/leaderboard#total" className={styles.dropdownItem} role="menuitem">Total</Link>
+                    <Link href="/helldivers-2/leaderboard#lifetime" className={styles.dropdownItem} role="menuitem">Lifetime</Link>
                     <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
                   </div>
@@ -126,8 +126,7 @@ const Navbar = () => {
                   <Link href={href} className={streamersLinkClass}>Streamers</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Streamers platforms">
                     <Link href={`${divisionBasePath}/creators`} className={styles.dropdownItem} role="menuitem">Twitch</Link>
-                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>YouTube</span>
-                    <span className={`${styles.dropdownItem} ${styles.disabled}`} role="menuitem" aria-disabled>TikTok</span>
+                    <Link href={`${divisionBasePath}/creators#youtube`} className={styles.dropdownItem} role="menuitem">YouTube</Link>
                   </div>
                 </div>
               );
