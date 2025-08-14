@@ -59,7 +59,7 @@ export async function GET() {
         }
       }
     }
-  } catch (e) {
+  } catch {
     // ignore errors
   }
 
@@ -86,6 +86,7 @@ export async function GET() {
     armor: fresh!.armor ?? null,
     motto: fresh!.motto ?? null,
     favoredEnemy: fresh!.favoredEnemy ?? null,
+    twitchUrl: fresh!.twitchUrl ?? null,
     preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
     // include roles
@@ -105,11 +106,11 @@ export async function PUT(req: Request) {
 
   const contentType = req.headers.get('content-type') || '';
 
-  let updates: any = {};
+  const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'preferredHeightUnit', 'preferredWeightUnit'];
+    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'twitchUrl', 'preferredHeightUnit', 'preferredWeightUnit'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
@@ -189,6 +190,7 @@ export async function PUT(req: Request) {
       armor,
       motto,
       favoredEnemy,
+      twitchUrl,
       preferredHeightUnit,
       preferredWeightUnit,
       challengeSubmission,
@@ -218,6 +220,7 @@ export async function PUT(req: Request) {
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
         if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
+    if (twitchUrl !== undefined) updates.twitchUrl = twitchUrl ?? null;
     if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in') updates.preferredHeightUnit = preferredHeightUnit;
     if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb') updates.preferredWeightUnit = preferredWeightUnit;
  
@@ -282,6 +285,7 @@ export async function PUT(req: Request) {
          favoredEnemy: updated?.favoredEnemy ?? null,
          armor: updated?.armor ?? null,
          motto: updated?.motto ?? null,
+         twitchUrl: updated?.twitchUrl ?? null,
          preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
          preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
          challengeSubmissions: updated?.challengeSubmissions ?? [],
@@ -324,6 +328,7 @@ export async function PUT(req: Request) {
     armor: updated?.armor ?? null,
     motto: updated?.motto ?? null,
     favoredEnemy: updated?.favoredEnemy ?? null,
+    twitchUrl: updated?.twitchUrl ?? null,
     preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
     challengeSubmissions: updated?.challengeSubmissions ?? [],

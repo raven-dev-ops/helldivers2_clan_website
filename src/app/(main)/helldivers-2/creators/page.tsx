@@ -303,7 +303,7 @@ export default function CreatorsPage() {
       )}
 
       {/* Other Platforms Sections */}
-      <div style={{ marginTop: '3rem' }}>
+      <div id="youtube" style={{ marginTop: '3rem' }}>
         <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>YouTube</h2>
         <p className={styles.pageSubtitle}>Coming soon.</p>
         <div className={styles.creatorsGrid}>
@@ -321,11 +321,6 @@ export default function CreatorsPage() {
             </div>
           </div>
         </div>
-      </div>
-
-      <div style={{ marginTop: '2rem' }}>
-        <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>TikTok</h2>
-        <p className={styles.pageSubtitle}>Coming soon.</p>
       </div>
 
     </main>

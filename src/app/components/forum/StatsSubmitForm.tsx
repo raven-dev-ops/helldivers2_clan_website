@@ -15,7 +15,7 @@ export default function StatsSubmitForm() {
 
   const [soloRank, setSoloRank] = useState<number | null>(null);
   const [monthRank, setMonthRank] = useState<number | null>(null);
-  const [totalRank, setTotalRank] = useState<number | null>(null);
+  const [lifetimeRank, setLifetimeRank] = useState<number | null>(null);
   const [averageRank, setAverageRank] = useState<number | null>(null);
 
   useEffect(() => {
@@ -38,20 +38,20 @@ export default function StatsSubmitForm() {
         const now = new Date();
         const qsSolo = new URLSearchParams({ scope: 'solo', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
         const qsMonth = new URLSearchParams({ scope: 'month', sortBy: 'Kills', sortDir: 'desc', limit: '1000', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
-        const qsTotal = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
+        const qsLifetime = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
         const qsAvg = new URLSearchParams({ scope: 'lifetime', sortBy: 'Avg Kills', sortDir: 'desc', limit: '1000' }).toString();
 
-        const [soloRes, monthRes, totalRes, avgRes] = await Promise.all([
+        const [soloRes, monthRes, lifetimeRes, avgRes] = await Promise.all([
           fetch(`/api/helldivers/leaderboard?${qsSolo}`, { cache: 'no-store' }),
           fetch(`/api/helldivers/leaderboard?${qsMonth}`, { cache: 'no-store' }),
-          fetch(`/api/helldivers/leaderboard?${qsTotal}`, { cache: 'no-store' }),
+          fetch(`/api/helldivers/leaderboard?${qsLifetime}`, { cache: 'no-store' }),
           fetch(`/api/helldivers/leaderboard?${qsAvg}`, { cache: 'no-store' }),
         ]);
 
-        const [soloJson, monthJson, totalJson, avgJson] = await Promise.all([
+        const [soloJson, monthJson, lifetimeJson, avgJson] = await Promise.all([
           soloRes.ok ? soloRes.json() : Promise.resolve({ results: [] }),
           monthRes.ok ? monthRes.json() : Promise.resolve({ results: [] }),
-          totalRes.ok ? totalRes.json() : Promise.resolve({ results: [] }),
+          lifetimeRes.ok ? lifetimeRes.json() : Promise.resolve({ results: [] }),
           avgRes.ok ? avgRes.json() : Promise.resolve({ results: [] }),
         ]);
 
@@ -63,7 +63,7 @@ export default function StatsSubmitForm() {
 
         setSoloRank(findRank(soloJson.results || [], name));
         setMonthRank(findRank(monthJson.results || [], name));
-        setTotalRank(findRank(totalJson.results || [], name));
+        setLifetimeRank(findRank(lifetimeJson.results || [], name));
         setAverageRank(findRank(avgJson.results || [], name));
       } catch (e: any) {
         if (!cancelled) setError(e?.message || 'Failed to load rankings');
@@ -88,7 +88,7 @@ export default function StatsSubmitForm() {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
             <div className="field"><span className="label">Solo</span><div>{soloRank ?? '—'}</div></div>
             <div className="field"><span className="label">Monthly</span><div>{monthRank ?? '—'}</div></div>
-            <div className="field"><span className="label">Total</span><div>{totalRank ?? '—'}</div></div>
+            <div className="field"><span className="label">Lifetime</span><div>{lifetimeRank ?? '—'}</div></div>
             <div className="field"><span className="label">Average (Avg Kills)</span><div>{averageRank ?? '—'}</div></div>
           </div>
         )}
