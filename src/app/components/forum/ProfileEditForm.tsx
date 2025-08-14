@@ -211,6 +211,7 @@ export default function ProfileEditForm() {
             <img
               src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
               alt="Avatar"
+              loading="lazy"
             />
           </div>
           <button type="button" className="link-button" onClick={() => setIsChangeImageOpen(true)}>
