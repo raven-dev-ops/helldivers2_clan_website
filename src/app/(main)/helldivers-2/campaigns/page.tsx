@@ -153,6 +153,7 @@ export default function CampaignsPage() {
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
         onSubmitted={(msg) => setMessage(msg)}
+        missions={prestigeMissions}
       />
     </div>
   );
