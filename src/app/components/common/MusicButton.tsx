@@ -11,14 +11,17 @@ export default function MusicButton() {
 
   useEffect(() => {
     const audio = new Audio('/audio/superearth_anthem.mp3');
-    audio.loop = true;
+    audio.loop = false;
     audio.volume = volume;
     audioRef.current = audio;
     audio
       .play()
       .then(() => setIsPlaying(true))
       .catch((e) => console.warn('Audio play failed:', e));
+    const handleEnded = () => setIsPlaying(false);
+    audio.addEventListener('ended', handleEnded);
     return () => {
+      audio.removeEventListener('ended', handleEnded);
       audio.pause();
       audioRef.current = null;
     };
@@ -76,9 +79,11 @@ export default function MusicButton() {
 
   return (
     <div style={containerStyle}>
-      <div style={{ fontSize: 12, marginBottom: 4, textAlign: 'center' }}>
-        Super Earth Anthem – Helldivers 2 OST
-      </div>
+      {isPlaying && (
+        <div style={{ fontSize: 12, marginBottom: 4, textAlign: 'center' }}>
+          Super Earth Anthem – Helldivers 2 OST
+        </div>
+      )}
       <div style={buttonStyle}>
         <button onClick={togglePlay} aria-label={isPlaying ? 'Pause music' : 'Play music'} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'inherit' }}>
           {isPlaying ? <FaPause /> : <FaMusic />}

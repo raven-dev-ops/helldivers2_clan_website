@@ -24,8 +24,6 @@ export default function SubmitChallengeModal({
 }) {
   const [level, setLevel] = useState<number>(1);
   const [youtubeUrl, setYoutubeUrl] = useState<string>("");
-  const [twitchUrl, setTwitchUrl] = useState<string>("");
-  const [witnessName, setWitnessName] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
   if (!isOpen) return null;
@@ -55,7 +53,7 @@ export default function SubmitChallengeModal({
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          challengeSubmission: { level, youtubeUrl, twitchUrl, witnessName },
+          challengeSubmission: { level, youtubeUrl },
         }),
       });
       if (res.ok) onSubmitted();
@@ -86,22 +84,6 @@ export default function SubmitChallengeModal({
               value={youtubeUrl}
               onChange={(e) => setYoutubeUrl(e.target.value)}
               placeholder="https://youtube.com/..."
-            />
-          </label>
-          <label className="field">
-            <span className="label">Twitch VOD Link</span>
-            <input
-              value={twitchUrl}
-              onChange={(e) => setTwitchUrl(e.target.value)}
-              placeholder="https://twitch.tv/videos/..."
-            />
-          </label>
-          <label className="field">
-            <span className="label">Verified By (John Helldiver)</span>
-            <input
-              value={witnessName}
-              onChange={(e) => setWitnessName(e.target.value)}
-              placeholder="Verifier name"
             />
           </label>
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
