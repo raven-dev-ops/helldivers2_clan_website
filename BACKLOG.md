@@ -58,7 +58,7 @@
 - [ ] Add A/B testing framework.
 - [ ] Optimize bundle size.
 - [ ] Use CDN for static assets.
-- [ ] Add sitemap and robots.txt.
+- [x] Add sitemap and robots.txt.
 - [ ] Implement structured data for SEO.
 - [ ] Add join-the-clan call-to-action on homepage.
 - [ ] Provide curated training resources.
