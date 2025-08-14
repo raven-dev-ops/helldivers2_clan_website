@@ -30,6 +30,7 @@ const CAMPAIGN_LABELS: Array<{ id: string; label: string; }> = [
 
 const Navbar = () => {
   const [isClient, setIsClient] = useState(false); // State to track client-side mount
+  const [meritPoints, setMeritPoints] = useState<number | null>(null);
 
   const pathname = usePathname();
   const { status: sessionStatus } = useSession();
@@ -38,6 +39,17 @@ const Navbar = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  useEffect(() => {
+    if (sessionStatus === 'authenticated') {
+      fetch('/api/users/me', { cache: 'no-store' })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data) setMeritPoints(data.meritPoints ?? 0);
+        })
+        .catch(() => setMeritPoints(0));
+    }
+  }, [sessionStatus]);
 
   // --- Define Nav Items ---
   const getNavItems = (): NavItem[] => {
@@ -73,6 +85,7 @@ const Navbar = () => {
                     <Link href="/helldivers-2/leaderboard#lifetime" className={styles.dropdownItem} role="menuitem">Lifetime</Link>
                     <Link href="/helldivers-2/leaderboard#monthly" className={styles.dropdownItem} role="menuitem">Monthly</Link>
                     <Link href="/helldivers-2/leaderboard#solo" className={styles.dropdownItem} role="menuitem">Solo</Link>
+                    <Link href="/helldivers-2/leaderboard#merit" className={styles.dropdownItem} role="menuitem">Merit</Link>
                   </div>
                 </div>
               );
@@ -156,7 +169,9 @@ const Navbar = () => {
           {/* Profile dropdown / Auth actions */}
           {sessionStatus === 'authenticated' ? (
             <div className={styles.dropdown}>
-              <Link href="/profile" className={styles.link} aria-haspopup="menu" aria-expanded="false">Profile</Link>
+              <Link href="/profile" className={styles.link} aria-haspopup="menu" aria-expanded="false">
+                {`Profile${meritPoints !== null ? ` (${meritPoints})` : ''}`}
+              </Link>
               <div className={styles.dropdownMenu} role="menu" aria-label="Profile actions">
                 <Link href="/settings" className={styles.dropdownItem} role="menuitem">Settings</Link>
                 <button onClick={() => signOut()} className={styles.dropdownItem} role="menuitem">Sign out</button>

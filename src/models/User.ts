@@ -1,124 +1,394 @@
-// src/models/User.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+// src/app/api/users/me/route.ts
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { getAuthOptions } from '@/lib/authOptions';
+import dbConnect from '@/lib/dbConnect';
+import UserModel from '@/models/User';
+import getMongoClientPromise from '@/lib/mongoClientPromise';
+import { ObjectId } from 'mongodb';
 
-// --- Define the Interface for the User Document ---
-export interface IUser extends Document {
-  name?: string | null;
-  firstName?: string | null;
-  middleName?: string | null;
-  lastName?: string | null;
-  email?: string | null; // Ensure this is unique if needed
-  emailVerified?: Date | null;
-  image?: string | null;
-  role: 'user' | 'moderator' | 'admin';
-  division?: string | null;
+export async function GET() {
+  const session = await getServerSession(getAuthOptions());
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+  await dbConnect();
+  const user = await UserModel.findById(session.user.id).lean();
+  if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
 
-  // --- Fields for OAuth Provider Information (MUST EXIST) ---
-  provider?: string | null;          // <<< ADD THIS LINE
-  providerAccountId?: string | null; // <<< ADD THIS LINE
+  // Attempt to sync Discord roles into the user profile (non-fatal)
+  try {
+    const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+    const GUILD_ID = '1214787549655203862';
+    if (BOT_TOKEN) {
+      const client = await getMongoClientPromise();
+      const db = client.db();
+      const account = await db.collection('accounts').findOne({
+        userId: new ObjectId(session.user.id),
+        provider: 'discord',
+      });
+      const discordUserId = account?.providerAccountId as string | undefined;
+      if (discordUserId) {
+        const memberRes = await fetch(
+          `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`,
+          { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+        );
+        if (memberRes.ok) {
+          const member = await memberRes.json();
+          const roleIds: string[] = member.roles || [];
 
-  // --- Character / Profile fields ---
-  characterHeightCm?: number | null;
-  characterWeightKg?: number | null;
-  homeplanet?: string | null;
-  background?: string | null;
-  customAvatarDataUrl?: string | null; // base64 or external URL
-  callsign?: string | null;
-  rankTitle?: string | null;
-  favoriteWeapon?: string | null;
-  armor?: string | null;
-  motto?: string | null;
-  favoredEnemy?: string | null;
-  twitchUrl?: string | null;
+          const rolesRes = await fetch(
+            `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
+            { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+          );
+          if (rolesRes.ok) {
+            const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> =
+              await rolesRes.json();
+            const idToName = new Map(guildRoles.map((r) => [r.id, r.name] as const));
+            const roles = roleIds
+              .map((id) => ({ id, name: idToName.get(id) || id }))
+              .filter((r) => r.name !== '@everyone');
 
-  // --- Discord ---
-  discordRoles?: Array<{ id: string; name: string }>;
+            const existing = Array.isArray(user.discordRoles) ? user.discordRoles : [];
+            const sameLength = existing.length === roles.length;
+            const same =
+              sameLength &&
+              existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
+            if (!same) {
+              await UserModel.updateOne({ _id: session.user.id }, { $set: { discordRoles: roles } });
+            }
+          }
+        }
+      }
+    }
+  } catch {
+    // ignore errors
+  }
 
-  // --- Challenge submissions (levels 1..7) ---
-  challengeSubmissions?: Array<{
-    level: number; // 1..7
-    youtubeUrl?: string | null;
-    twitchUrl?: string | null;
-    witnessName?: string | null;
-    witnessDiscordId?: string | null;
-    createdAt?: Date;
-  }>;
+  // Re-read to include potentially synced roles
+  const fresh = await UserModel.findById(session.user.id).lean();
 
-  // --- Unit preferences ---
-  preferredHeightUnit?: 'cm' | 'in' | null;
-  preferredWeightUnit?: 'kg' | 'lb' | null;
-
-  createdAt: Date; // from timestamps
-  updatedAt: Date; // from timestamps
+  return NextResponse.json({
+    id: fresh!._id.toString(),
+    name: fresh!.name,
+    firstName: fresh!.firstName ?? null,
+    middleName: fresh!.middleName ?? null,
+    lastName: fresh!.lastName ?? null,
+    email: fresh!.email,
+    image: fresh!.image,
+    division: fresh!.division || null,
+    characterHeightCm: fresh!.characterHeightCm ?? null,
+    characterWeightKg: fresh!.characterWeightKg ?? null,
+    homeplanet: fresh!.homeplanet ?? null,
+    background: fresh!.background ?? null,
+    customAvatarDataUrl: fresh!.customAvatarDataUrl ?? null,
+    callsign: fresh!.callsign ?? null,
+    rankTitle: fresh!.rankTitle ?? null,
+    favoriteWeapon: fresh!.favoriteWeapon ?? null,
+    armor: fresh!.armor ?? null,
+    motto: fresh!.motto ?? null,
+    favoredEnemy: fresh!.favoredEnemy ?? null,
+    meritPoints: fresh!.meritPoints ?? 0,
+    twitchUrl: fresh!.twitchUrl ?? null,
+    preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
+    preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
+    discordRoles: Array.isArray(fresh!.discordRoles) ? fresh!.discordRoles : [],
+    challengeSubmissions: fresh!.challengeSubmissions ?? [],
+    createdAt: fresh!.createdAt,
+    updatedAt: fresh!.updatedAt,
+  });
 }
 
-// --- Define the Mongoose Schema ---
-const UserSchema = new Schema<IUser>(
-  {
-    name: { type: String },
-    firstName: { type: String, default: null },
-    middleName: { type: String, default: null },
-    lastName: { type: String, default: null },
-    email: { type: String, unique: true, sparse: true, lowercase: true },
-    emailVerified: { type: Date, default: null },
-    image: { type: String },
-    role: { type: String, enum: ['user', 'moderator', 'admin'], default: 'user', required: true },
-    division: { type: String, default: null },
-
-    // --- Provider Fields Schema Definition (MUST EXIST) ---
-    provider: { type: String, index: true }, // <<< ADD THIS LINE
-    providerAccountId: { type: String },      // <<< ADD THIS LINE
-
-    // --- Character / Profile fields ---
-    characterHeightCm: { type: Number, default: null },
-    characterWeightKg: { type: Number, default: null },
-    homeplanet: { type: String, default: null },
-    background: { type: String, default: null },
-    customAvatarDataUrl: { type: String, default: null },
-    callsign: { type: String, default: null },
-    rankTitle: { type: String, default: null },
-    favoriteWeapon: { type: String, default: null },
-    armor: { type: String, default: null },
-    motto: { type: String, default: null },
-    favoredEnemy: { type: String, default: null },
-    twitchUrl: { type: String, default: null },
-
-    // --- Discord ---
-    discordRoles: { type: [{ id: String, name: String }], default: [] },
-
-    // --- Challenge submissions ---
-    challengeSubmissions: [
-      new Schema(
-        {
-          level: { type: Number, required: true, min: 1, max: 7 },
-          youtubeUrl: { type: String, default: null },
-          twitchUrl: { type: String, default: null },
-          witnessName: { type: String, default: null },
-          witnessDiscordId: { type: String, default: null },
-          createdAt: { type: Date, default: Date.now },
-        },
-        { _id: false }
-      ),
-    ],
-
-    // --- Unit preferences ---
-    preferredHeightUnit: { type: String, enum: ['cm', 'in'], default: 'cm' },
-    preferredWeightUnit: { type: String, enum: ['kg', 'lb'], default: 'kg' },
-  },
-  {
-    timestamps: true, // Automatically manage createdAt and updatedAt
+export async function PUT(req: Request) {
+  const session = await getServerSession(getAuthOptions());
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
-);
+  await dbConnect();
 
-// --- Compound Index for Provider Lookups (Recommended) ---
-UserSchema.index({ provider: 1, providerAccountId: 1 }, { unique: true, sparse: true });
+  const contentType = req.headers.get('content-type') || '';
+  const updates: Record<string, unknown> = {};
 
-// Ensure only one submission per level per user
-UserSchema.index({ _id: 1, 'challengeSubmissions.level': 1 });
+  if (contentType.includes('multipart/form-data')) {
+    const form = await req.formData();
+    const fields = [
+      'name',
+      'firstName',
+      'middleName',
+      'lastName',
+      'characterHeightCm',
+      'characterWeightKg',
+      'homeplanet',
+      'background',
+      'division',
+      'callsign',
+      'rankTitle',
+      'favoriteWeapon',
+      'armor',
+      'motto',
+      'favoredEnemy',
+      'meritPoints',
+      'twitchUrl',
+      'preferredHeightUnit',
+      'preferredWeightUnit',
+    ];
+    for (const key of fields) {
+      const value = form.get(key);
+      if (value !== null && value !== undefined && value !== '') {
+        if (key === 'characterHeightCm' || key === 'characterWeightKg') {
+          const num = Number(value);
+          updates[key] = Number.isNaN(num) ? null : num;
+        } else if (key === 'meritPoints') {
+          const num = Number(value);
+          if (!Number.isNaN(num)) updates.meritPoints = num;
+        } else if (key === 'preferredHeightUnit' && (value === 'cm' || value === 'in')) {
+          updates.preferredHeightUnit = value;
+        } else if (key === 'preferredWeightUnit' && (value === 'kg' || value === 'lb')) {
+          updates.preferredWeightUnit = value;
+        } else {
+          updates[key] = String(value);
+        }
+      }
+    }
+    const avatar = form.get('avatar');
+    if (avatar && typeof avatar !== 'string') {
+      const file = avatar as File;
+      if (file.size > 0) {
+        const arrayBuffer = await file.arrayBuffer();
+        const base64 = Buffer.from(arrayBuffer).toString('base64');
+        const dataUrl = `data:${file.type};base64,${base64}`;
+        updates.customAvatarDataUrl = dataUrl;
+      }
+    }
 
-// --- Create and Export the Mongoose Model ---
-const UserModel =
-  (mongoose.models.User as Model<IUser>) ||
-  mongoose.model<IUser>("User", UserSchema);
+    // Challenge submission (single level upsert)
+    const levelRaw = form.get('challengeLevel');
+    if (levelRaw) {
+      const level = Number(levelRaw);
+      if (level >= 1 && level <= 7) {
+        const submission = {
+          level,
+          youtubeUrl: (form.get('youtubeUrl') || null) as string | null,
+          twitchUrl: (form.get('twitchUrl') || null) as string | null,
+          witnessName: (form.get('witnessName') || null) as string | null,
+          witnessDiscordId: (form.get('witnessDiscordId') || null) as string | null,
+          createdAt: new Date(),
+        };
+        await UserModel.updateOne(
+          { _id: session.user.id, 'challengeSubmissions.level': level },
+          { $set: { 'challengeSubmissions.$': submission } }
+        );
+        await UserModel.updateOne(
+          { _id: session.user.id, 'challengeSubmissions.level': { $ne: level } },
+          { $push: { challengeSubmissions: submission } }
+        );
+      }
+    }
 
-export default UserModel;
+    // Optional: accept discordRoles from form as JSON string
+    const rolesRaw = form.get('discordRoles');
+    if (rolesRaw && typeof rolesRaw === 'string') {
+      try {
+        const parsed = JSON.parse(rolesRaw);
+        if (Array.isArray(parsed)) updates.discordRoles = parsed;
+      } catch {}
+    }
+  } else {
+    const body = await req.json().catch(() => ({}));
+    const {
+      name,
+      firstName,
+      middleName,
+      lastName,
+      characterHeightCm,
+      characterWeightKg,
+      homeplanet,
+      background,
+      customAvatarDataUrl,
+      division,
+      callsign,
+      rankTitle,
+      favoriteWeapon,
+      armor,
+      motto,
+      favoredEnemy,
+      meritPoints,
+      twitchUrl,
+      preferredHeightUnit,
+      preferredWeightUnit,
+      challengeSubmission,
+      discordRoles,
+    } = body || {};
+
+    if (name !== undefined) updates.name = String(name);
+    if (firstName !== undefined) updates.firstName = firstName ?? null;
+    if (middleName !== undefined) updates.middleName = middleName ?? null;
+    if (lastName !== undefined) updates.lastName = lastName ?? null;
+    if (characterHeightCm !== undefined) {
+      const num = Number(characterHeightCm);
+      updates.characterHeightCm = Number.isFinite(num) ? num : null;
+    }
+    if (characterWeightKg !== undefined) {
+      const num = Number(characterWeightKg);
+      updates.characterWeightKg = Number.isFinite(num) ? num : null;
+    }
+    if (homeplanet !== undefined) updates.homeplanet = homeplanet ?? null;
+    if (background !== undefined) updates.background = background ?? null;
+    if (division !== undefined) updates.division = division ?? null;
+    if (customAvatarDataUrl) updates.customAvatarDataUrl = String(customAvatarDataUrl);
+    if (callsign !== undefined) updates.callsign = callsign ?? null;
+    if (rankTitle !== undefined) updates.rankTitle = rankTitle ?? null;
+    if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
+    if (armor !== undefined) updates.armor = armor ?? null;
+    if (motto !== undefined) updates.motto = motto ?? null;
+    if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
+    if (meritPoints !== undefined) {
+      const num = Number(meritPoints);
+      if (!Number.isNaN(num)) updates.meritPoints = num;
+    }
+    if (twitchUrl !== undefined) updates.twitchUrl = twitchUrl ?? null;
+    if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in')
+      updates.preferredHeightUnit = preferredHeightUnit;
+    if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb')
+      updates.preferredWeightUnit = preferredWeightUnit;
+
+    if (challengeSubmission?.level >= 1 && challengeSubmission?.level <= 7) {
+      const level = Number(challengeSubmission.level);
+      const submission = {
+        level,
+        youtubeUrl: challengeSubmission.youtubeUrl ?? null,
+        twitchUrl: challengeSubmission.twitchUrl ?? null,
+        witnessName: challengeSubmission.witnessName ?? null,
+        witnessDiscordId: challengeSubmission.witnessDiscordId ?? null,
+        createdAt: new Date(),
+      };
+      await UserModel.updateOne(
+        { _id: session.user.id, 'challengeSubmissions.level': level },
+        { $set: { 'challengeSubmissions.$': submission } }
+      );
+      await UserModel.updateOne(
+        { _id: session.user.id, 'challengeSubmissions.level': { $ne: level } },
+        { $push: { challengeSubmissions: submission } }
+      );
+    }
+
+    if (discordRoles !== undefined && Array.isArray(discordRoles)) {
+      updates.discordRoles = discordRoles;
+    }
+  }
+
+  if (Object.keys(updates).length > 0) {
+    await UserModel.updateOne({ _id: session.user.id }, { $set: updates }, { upsert: true });
+  }
+
+  const updated = await UserModel.findById(session.user.id).lean();
+
+  // Save snapshot to User_Profiles collection with discord_id and time
+  try {
+    const client = await getMongoClientPromise();
+    const db = client.db();
+    const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
+    const accounts = db.collection('accounts');
+    const userObjectId = new ObjectId(session.user.id);
+    const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
+    const discordId = discordAccount?.providerAccountId || null;
+    const profileSnapshot = {
+      user_id: userObjectId,
+      discord_id: discordId,
+      time: new Date(),
+      profile: {
+        id: updated?._id?.toString(),
+        name: updated?.name ?? null,
+        firstName: updated?.firstName ?? null,
+        middleName: updated?.middleName ?? null,
+        lastName: updated?.lastName ?? null,
+        division: updated?.division ?? null,
+        characterHeightCm: updated?.characterHeightCm ?? null,
+        characterWeightKg: updated?.characterWeightKg ?? null,
+        homeplanet: updated?.homeplanet ?? null,
+        background: updated?.background ?? null,
+        callsign: updated?.callsign ?? null,
+        rankTitle: updated?.rankTitle ?? null,
+        favoriteWeapon: updated?.favoriteWeapon ?? null,
+        favoredEnemy: updated?.favoredEnemy ?? null,
+        armor: updated?.armor ?? null,
+        motto: updated?.motto ?? null,
+        twitchUrl: updated?.twitchUrl ?? null,
+        preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+        preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
+        meritPoints: updated?.meritPoints ?? 0,
+        challengeSubmissions: updated?.challengeSubmissions ?? [],
+        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+      },
+    };
+    await appDb.collection('User_Profiles').updateOne(
+      { user_id: userObjectId },
+      {
+        $set: {
+          user_id: userObjectId,
+          discord_id: discordId,
+          last_profile: profileSnapshot.profile,
+          last_updated: profileSnapshot.time,
+        },
+        $push: { history: profileSnapshot },
+      },
+      { upsert: true }
+    );
+  } catch (e) {
+    console.error('Failed to write User_Profiles snapshot', e);
+  }
+
+  return NextResponse.json({
+    id: updated?._id.toString(),
+    name: updated?.name,
+    firstName: updated?.firstName ?? null,
+    middleName: updated?.middleName ?? null,
+    lastName: updated?.lastName ?? null,
+    email: updated?.email,
+    image: updated?.image,
+    division: updated?.division || null,
+    characterHeightCm: updated?.characterHeightCm ?? null,
+    characterWeightKg: updated?.characterWeightKg ?? null,
+    homeplanet: updated?.homeplanet ?? null,
+    background: updated?.background ?? null,
+    customAvatarDataUrl: updated?.customAvatarDataUrl ?? null,
+    callsign: updated?.callsign ?? null,
+    rankTitle: updated?.rankTitle ?? null,
+    favoriteWeapon: updated?.favoriteWeapon ?? null,
+    armor: updated?.armor ?? null,
+    motto: updated?.motto ?? null,
+    favoredEnemy: updated?.favoredEnemy ?? null,
+    meritPoints: updated?.meritPoints ?? 0,
+    twitchUrl: updated?.twitchUrl ?? null,
+    preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+    preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
+    challengeSubmissions: updated?.challengeSubmissions ?? [],
+    discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+    createdAt: updated?.createdAt,
+    updatedAt: updated?.updatedAt,
+  });
+}
+
+export async function DELETE() {
+  const session = await getServerSession(getAuthOptions());
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  }
+
+  await dbConnect();
+  const userId = new ObjectId(session.user.id);
+
+  // Remove user document
+  await UserModel.deleteOne({ _id: userId });
+
+  // Remove NextAuth accounts and sessions
+  const client = await getMongoClientPromise();
+  const db = client.db();
+  await Promise.all([
+    db.collection('accounts').deleteMany({ userId }),
+    db.collection('sessions').deleteMany({ userId }),
+    db.collection('verificationTokens').deleteMany({}), // safety no-op; collection may be empty
+  ]);
+
+  return NextResponse.json({ ok: true });
+}
