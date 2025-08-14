@@ -16,7 +16,7 @@
 - [ ] Set up PWA for offline capability.
 - [ ] Implement tagging system for posts and guides.
 - [ ] Add multi-language support.
-- [ ] Integrate Google Analytics for tracking visitors.
+- [x] Integrate Google Analytics for tracking visitors.
 - [ ] Implement SEO improvements for better search rankings.
 - [x] Provide donation or support page.
 - [ ] Add achievements and badge system.

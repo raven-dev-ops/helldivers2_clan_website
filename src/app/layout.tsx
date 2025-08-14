@@ -9,6 +9,7 @@ import './globals.css'; // Your global styles
 import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'; // Adjust path if needed
 import AuthProvider from '@/app/components/providers/AuthProvider'; // Adjust path if needed
 import MusicButton from '@/app/components/common/MusicButton';
+import GoogleAnalytics from '@/app/components/common/GoogleAnalytics';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
             }
           `}
         </Script>
+        <GoogleAnalytics />
         {/* Head content (meta tags, links) goes here. No whitespace directly inside <head> either. */}
       </head>
       {/* NO WHITESPACE HERE */}
