@@ -7,8 +7,11 @@ interface LeaderboardRow {
 }
 
 export default function AlertBar() {
-  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(false);
 
+  // Load alert messages once on mount
   useEffect(() => {
     async function load() {
       try {
@@ -31,20 +34,21 @@ export default function AlertBar() {
         const orderDesc = order?.description || order?.brief || "";
         const orderMsg = orderTitle ? `Major Order: ${orderTitle}${orderDesc ? ' - ' + orderDesc : ''}` : '';
 
-        const namesFrom = (d: any) => (d?.results || []).slice(0, 3).map((r: LeaderboardRow) => r.player_name).join(', ');
+        const namesFrom = (d: { results?: LeaderboardRow[] } | null) =>
+          (d?.results ?? []).slice(0, 3).map((r: LeaderboardRow) => r.player_name).join(', ');
         const lifetimeMsg = namesFrom(lifetimeData);
         const monthMsg = namesFrom(monthData);
         const soloMsg = namesFrom(soloData);
         const meritMsg = namesFrom(meritData);
 
-        const parts = [] as string[];
+        const parts: string[] = [];
         if (orderMsg) parts.push(orderMsg);
         if (lifetimeMsg) parts.push(`Lifetime: ${lifetimeMsg}`);
         if (monthMsg) parts.push(`Monthly: ${monthMsg}`);
         if (soloMsg) parts.push(`Solo: ${soloMsg}`);
         if (meritMsg) parts.push(`Merit: ${meritMsg}`);
 
-        setMessage(parts.join(' | '));
+        setMessages(parts);
       } catch {
         // ignore errors
       }
@@ -53,9 +57,35 @@ export default function AlertBar() {
     load();
   }, []);
 
+  // Show the bar every five minutes
+  useEffect(() => {
+    if (messages.length === 0) return;
+
+    const startCycle = () => {
+      setIndex(0);
+      setVisible(true);
+    };
+
+    startCycle();
+    const interval = setInterval(startCycle, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [messages]);
+
+  const handleAnimationEnd = () => {
+    if (index < messages.length - 1) {
+      setIndex((i) => i + 1);
+    } else {
+      setVisible(false);
+    }
+  };
+
+  if (!visible || messages.length === 0) return null;
+
   return (
     <div className={styles.bar} role="status">
-      <div className={styles.ticker}>{message}</div>
+      <div key={index} className={styles.ticker} onAnimationEnd={handleAnimationEnd}>
+        {messages[index]}
+      </div>
     </div>
   );
 }
