@@ -61,7 +61,7 @@ const Navbar = () => {
       { href: "/helldivers-2/campaigns", label: "Campaigns" },
       { href: "/helldivers-2/academy", label: "Academy" },
       { href: "/helldivers-2/creators", label: "Streamers" },
-      { href: "/helldivers-2/news", label: "Intel" },
+      { href: "/helldivers-2/news/war-news", label: "Intel" },
     ];
   };
   const standardNavItems = getNavItems();
@@ -151,10 +151,10 @@ const Navbar = () => {
                 <div key={href} className={styles.dropdown}>
                   <Link href={href} className={intelLinkClass}>Intel</Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Intel shortcuts">
-                    <Link href={`${divisionBasePath}/news#war-news`} className={styles.dropdownItem} role="menuitem">War News</Link>
-                    <Link href={`${divisionBasePath}/news#major-orders`} className={styles.dropdownItem} role="menuitem">Major Orders</Link>
-                    <Link href={`${divisionBasePath}/news#galactic-map`} className={styles.dropdownItem} role="menuitem">Galactic Map</Link>
-                    <Link href={`${divisionBasePath}/news#super-store`} className={styles.dropdownItem} role="menuitem">Super Store</Link>
+                    <Link href={`${divisionBasePath}/news/war-news`} className={styles.dropdownItem} role="menuitem">War News</Link>
+                    <Link href={`${divisionBasePath}/news/major-orders`} className={styles.dropdownItem} role="menuitem">Major Orders</Link>
+                    <Link href={`${divisionBasePath}/news/galactic-map`} className={styles.dropdownItem} role="menuitem">Galactic Map</Link>
+                    <Link href={`${divisionBasePath}/news/super-store`} className={styles.dropdownItem} role="menuitem">Super Store</Link>
                   </div>
                 </div>
               );
