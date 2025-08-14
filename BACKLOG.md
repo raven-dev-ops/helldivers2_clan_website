@@ -3,7 +3,7 @@
 - [ ] Replace placeholder Intel API data with live game endpoints that work and format the data professionally.
 - [x] Provide answers and scoring for the Helldivers 2 and Helldivers 1 quizzes.
 - [ ] Implement Twitch OAuth for linking accounts instead of manual URL entry.
-- [ ] Improve styling and responsiveness of training and application pages.
+- [x] Improve styling and responsiveness of training and application pages.
 - [ ] Create player profile pages showing stats, achievements, and clan roles.
 - [ ] Add clan event calendar with RSVPs.
 - [ ] Integrate Discord server chat widget.

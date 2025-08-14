@@ -56,8 +56,8 @@ export default function ApplyPage() {
     <div className={styles.pageContainer}>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Join Now!</h2>
-        <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1rem', maxWidth: 400 }}>
+        <div className={styles.applyLayout}>
+          <form onSubmit={handleSubmit} className={styles.applicationForm}>
             <label className={styles.paragraph} style={{ display: 'grid', gap: 4 }}>
               Why are you interested in becoming a moderator?
               <textarea value={interest} onChange={e => setInterest(e.target.value)} required className={styles.input} rows={3} />
@@ -76,18 +76,17 @@ export default function ApplyPage() {
             </label>
             {error && <p className={styles.paragraph} style={{ color: '#dc2626' }}>{error}</p>}
             {message && <p className={styles.paragraph} style={{ color: '#16a34a' }}>{message}</p>}
-            <button type="submit" disabled={submitting} style={{ padding: '0.5rem 1rem', background: '#facc15', color: '#000', borderRadius: 4 }}>
+            <button type="submit" disabled={submitting} className={styles.applyButton}>
               {submitting ? 'Submitting...' : 'Submit Application'}
             </button>
           </form>
-          <div style={{ maxWidth: 560, flex: 1 }}>
-            <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
+          <div className={styles.videoSection}>
+            <div className={styles.videoWrapper}>
               <iframe
                 src="https://www.youtube.com/embed/dQw4w9WgXcQ"
                 title="Helldivers 2 Moderator Info"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
               />
             </div>
             <p className={styles.paragraph} style={{ marginTop: '0.5rem', minHeight: '3rem' }}>
