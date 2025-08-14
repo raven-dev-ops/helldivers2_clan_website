@@ -318,10 +318,16 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const [activeTab, setActiveTab] = useState<'lifetime' | 'monthly' | 'solo' | 'merit'>('lifetime');
 
   useEffect(() => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash === 'solo' || hash === 'monthly' || hash === 'lifetime' || hash === 'merit') {
-      setActiveTab(hash as typeof activeTab);
-    }
+    const setTabFromHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash === 'solo' || hash === 'monthly' || hash === 'lifetime' || hash === 'merit') {
+        setActiveTab(hash as typeof activeTab);
+      }
+    };
+
+    setTabFromHash();
+    window.addEventListener('hashchange', setTabFromHash);
+    return () => window.removeEventListener('hashchange', setTabFromHash);
   }, []);
 
   useEffect(() => {
