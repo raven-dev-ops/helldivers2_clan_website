@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from "next-auth/react";
 import styles from "./Navbar.module.css";
+import ThemeToggle from "./ThemeToggle";
 
 interface NavItem { href: string; label: string; }
 
@@ -180,6 +181,7 @@ const Navbar = () => {
           ) : (
             <Link href="/auth" className={styles.link}>Sign in</Link>
           )}
+          <ThemeToggle />
         </div>
       </div>
     </nav>
