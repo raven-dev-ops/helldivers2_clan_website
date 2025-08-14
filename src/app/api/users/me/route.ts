@@ -223,7 +223,7 @@ export async function PUT(req: Request) {
     if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
-        if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
+    if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
     if (meritPoints !== undefined) {
       const num = Number(meritPoints);
       if (!Number.isNaN(num)) updates.meritPoints = num;
