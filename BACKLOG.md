@@ -11,14 +11,14 @@
 - [ ] Implement role-based access for admins, officers, and members that are tied to specific discord officer roles in their user_profiles collection.
 - [x] Add dark mode toggle.
 - [ ] Implement notifications for pending applications.
-- [ ] Add mobile-friendly navigation menu.
+- [x] Add mobile-friendly navigation menu.
 - [ ] Improve loading performance using image optimization.
 - [ ] Set up PWA for offline capability.
 - [ ] Implement tagging system for posts and guides.
 - [ ] Add multi-language support.
 - [ ] Integrate Google Analytics for tracking visitors.
 - [ ] Implement SEO improvements for better search rankings.
-- [ ] Provide donation or support page.
+- [x] Provide donation or support page.
 - [ ] Add achievements and badge system.
 - [ ] Implement push notifications for updates.
 - [ ] Integrate live game status updates.

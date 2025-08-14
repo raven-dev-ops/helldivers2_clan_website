@@ -20,6 +20,7 @@
   margin-right: auto;
   padding-left: var(--spacing-2, 0.5rem);
   padding-right: var(--spacing-2, 0.5rem);
+  position: relative;
 }
 
 /* --- Logo Area --- */
@@ -76,6 +77,44 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3, 0.75rem);
+}
+
+/* --- Mobile Menu --- */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-primary, #facc15);
+  cursor: pointer;
+}
+
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-2, 0.5rem);
+  background-color: var(--color-surface, #ffffff);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: var(--spacing-3, 0.75rem);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  z-index: 40;
+}
+
+.mobileMenuOpen {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .desktopMenu {
+    display: none;
+  }
+
+  .mobileMenuButton {
+    display: block;
+  }
 }
 
 /* Style for links within the desktop menu */

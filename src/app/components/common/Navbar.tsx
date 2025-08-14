@@ -32,6 +32,7 @@ const CAMPAIGN_LABELS: Array<{ id: string; label: string; }> = [
 const Navbar = () => {
   const [isClient, setIsClient] = useState(false); // State to track client-side mount
   const [meritPoints, setMeritPoints] = useState<number | null>(null);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const pathname = usePathname();
   const { status: sessionStatus } = useSession();
@@ -63,6 +64,7 @@ const Navbar = () => {
       { href: "/helldivers-2/academy", label: "Academy" },
       { href: "/helldivers-2/creators", label: "Streamers" },
       { href: "/helldivers-2/news/war-news", label: "Intel" },
+      { href: "/helldivers-2/support", label: "Support" },
     ];
   };
   const standardNavItems = getNavItems();
@@ -72,6 +74,13 @@ const Navbar = () => {
   return (
     <nav className={styles.nav}>
       <div className={styles.container}>
+        <button
+          className={styles.mobileMenuButton}
+          aria-label="Toggle menu"
+          onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? '✕' : '☰'}
+        </button>
         <div className={styles.desktopMenu}>
           {standardNavItems.map(({ href, label }) => {
             const isActive = isClient && pathname === href;
@@ -180,6 +189,34 @@ const Navbar = () => {
             </div>
           ) : (
             <Link href="/auth" className={styles.link}>Sign in</Link>
+          )}
+          <ThemeToggle />
+        </div>
+        <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
+          {standardNavItems.map(({ href, label }) => (
+            <Link key={href} href={href} className={styles.link} onClick={() => setMobileMenuOpen(false)}>
+              {label}
+            </Link>
+          ))}
+          {sessionStatus === 'authenticated' ? (
+            <>
+              <Link href="/profile" className={styles.link} onClick={() => setMobileMenuOpen(false)}>
+                {`Profile${meritPoints !== null ? ` (${meritPoints})` : ''}`}
+              </Link>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signOut();
+                }}
+                className={styles.link}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link href="/auth" className={styles.link} onClick={() => setMobileMenuOpen(false)}>
+              Sign in
+            </Link>
           )}
           <ThemeToggle />
         </div>
