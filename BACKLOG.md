@@ -9,7 +9,7 @@
 - [ ] Integrate Discord server chat widget.
 - [ ] Add support for uploading user avatars.
 - [ ] Implement role-based access for admins, officers, and members that are tied to specific discord officer roles in their user_profiles collection.
-- [ ] Add dark mode toggle.
+- [x] Add dark mode toggle.
 - [ ] Implement notifications for pending applications.
 - [ ] Add mobile-friendly navigation menu.
 - [ ] Improve loading performance using image optimization.
