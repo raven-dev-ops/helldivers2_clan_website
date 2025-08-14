@@ -6,7 +6,7 @@
 - [x] Improve styling and responsiveness of training and application pages.
 - [ ] Create player profile pages showing stats, achievements, and clan roles.
 - [ ] Add clan event calendar with RSVPs.
-- [ ] Integrate Discord server chat widget.
+- [x] Integrate Discord server chat widget.
 - [ ] Add support for uploading user avatars.
 - [ ] Implement role-based access for admins, officers, and members that are tied to specific discord officer roles in their user_profiles collection.
 - [x] Add dark mode toggle.
