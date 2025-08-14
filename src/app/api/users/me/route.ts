@@ -1,3 +1,4 @@
+// src/app/api/users/me/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
@@ -11,6 +12,7 @@ export async function GET() {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+
   await dbConnect();
   const user = await UserModel.findById(session.user.id).lean();
   if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
@@ -28,20 +30,21 @@ export async function GET() {
       });
       const discordUserId = account?.providerAccountId as string | undefined;
       if (discordUserId) {
-        const memberRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`, {
-          headers: { Authorization: `Bot ${BOT_TOKEN}` },
-          cache: 'no-store',
-        });
+        const memberRes = await fetch(
+          `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`,
+          { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+        );
         if (memberRes.ok) {
           const member = await memberRes.json();
           const roleIds: string[] = member.roles || [];
 
-          const rolesRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/roles`, {
-            headers: { Authorization: `Bot ${BOT_TOKEN}` },
-            cache: 'no-store',
-          });
+          const rolesRes = await fetch(
+            `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
+            { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+          );
           if (rolesRes.ok) {
-            const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> = await rolesRes.json();
+            const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> =
+              await rolesRes.json();
             const idToName = new Map(guildRoles.map((r) => [r.id, r.name] as const));
             const roles = roleIds
               .map((id) => ({ id, name: idToName.get(id) || id }))
@@ -50,7 +53,8 @@ export async function GET() {
             // Persist if different from stored value
             const existing = Array.isArray(user.discordRoles) ? user.discordRoles : [];
             const sameLength = existing.length === roles.length;
-            const same = sameLength && existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
+            const same =
+              sameLength && existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
             if (!same) {
               await UserModel.updateOne({ _id: session.user.id }, { $set: { discordRoles: roles } });
             }
@@ -105,18 +109,37 @@ export async function PUT(req: Request) {
   await dbConnect();
 
   const contentType = req.headers.get('content-type') || '';
-
   const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'meritPoints', 'twitchUrl', 'preferredHeightUnit', 'preferredWeightUnit'];
+    const fields = [
+      'name',
+      'firstName',
+      'middleName',
+      'lastName',
+      'characterHeightCm',
+      'characterWeightKg',
+      'homeplanet',
+      'background',
+      'division',
+      'callsign',
+      'rankTitle',
+      'favoriteWeapon',
+      'armor',
+      'motto',
+      'favoredEnemy',
+      'meritPoints',
+      'twitchUrl',
+      'preferredHeightUnit',
+      'preferredWeightUnit',
+    ];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
         if (key === 'characterHeightCm' || key === 'characterWeightKg') {
           const num = Number(value);
-          if (!Number.isNaN(num)) updates[key] = num; else updates[key] = null;
+          updates[key] = Number.isNaN(num) ? null : num;
         } else if (key === 'meritPoints') {
           const num = Number(value);
           if (!Number.isNaN(num)) updates.meritPoints = num;
@@ -156,12 +179,12 @@ export async function PUT(req: Request) {
         // Upsert by level
         await UserModel.updateOne(
           { _id: session.user.id, 'challengeSubmissions.level': level },
-          { $set: { 'challengeSubmissions.$': submission } },
+          { $set: { 'challengeSubmissions.$': submission } }
         );
         // If not found, push
         await UserModel.updateOne(
           { _id: session.user.id, 'challengeSubmissions.level': { $ne: level } },
-          { $push: { challengeSubmissions: submission } },
+          { $push: { challengeSubmissions: submission } }
         );
       }
     }
@@ -229,9 +252,11 @@ export async function PUT(req: Request) {
       if (!Number.isNaN(num)) updates.meritPoints = num;
     }
     if (twitchUrl !== undefined) updates.twitchUrl = twitchUrl ?? null;
-    if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in') updates.preferredHeightUnit = preferredHeightUnit;
-    if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb') updates.preferredWeightUnit = preferredWeightUnit;
- 
+    if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in')
+      updates.preferredHeightUnit = preferredHeightUnit;
+    if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb')
+      updates.preferredWeightUnit = preferredWeightUnit;
+
     if (challengeSubmission?.level >= 1 && challengeSubmission?.level <= 7) {
       const level = Number(challengeSubmission.level);
       const submission = {
@@ -244,11 +269,11 @@ export async function PUT(req: Request) {
       };
       await UserModel.updateOne(
         { _id: session.user.id, 'challengeSubmissions.level': level },
-        { $set: { 'challengeSubmissions.$': submission } },
+        { $set: { 'challengeSubmissions.$': submission } }
       );
       await UserModel.updateOne(
         { _id: session.user.id, 'challengeSubmissions.level': { $ne: level } },
-        { $push: { challengeSubmissions: submission } },
+        { $push: { challengeSubmissions: submission } }
       );
     }
 
@@ -317,6 +342,7 @@ export async function PUT(req: Request) {
   } catch (e) {
     console.error('Failed to write User_Profiles snapshot', e);
   }
+
   return NextResponse.json({
     id: updated?._id.toString(),
     name: updated?.name,

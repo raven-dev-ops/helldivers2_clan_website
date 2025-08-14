@@ -1,27 +1,27 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+// src/models/User.ts
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
-// --- Define the Interface for the User Document ---
 export interface IUser extends Document {
   name?: string | null;
   firstName?: string | null;
   middleName?: string | null;
   lastName?: string | null;
-  email?: string | null; // Ensure this is unique if needed
+  email?: string | null;
   emailVerified?: Date | null;
   image?: string | null;
   role: 'user' | 'moderator' | 'admin';
   division?: string | null;
 
-  // --- Fields for OAuth Provider Information (MUST EXIST) ---
+  // OAuth provider info (kept for convenience/lookups)
   provider?: string | null;
   providerAccountId?: string | null;
 
-  // --- Character / Profile fields ---
+  // Character / profile fields
   characterHeightCm?: number | null;
   characterWeightKg?: number | null;
   homeplanet?: string | null;
   background?: string | null;
-  customAvatarDataUrl?: string | null; // base64 or external URL
+  customAvatarDataUrl?: string | null;
   callsign?: string | null;
   rankTitle?: string | null;
   favoriteWeapon?: string | null;
@@ -31,10 +31,10 @@ export interface IUser extends Document {
   meritPoints?: number | null;
   twitchUrl?: string | null;
 
-  // --- Discord ---
+  // Discord
   discordRoles?: Array<{ id: string; name: string }>;
 
-  // --- Challenge submissions (levels 1..7) ---
+  // Challenge submissions (levels 1..7)
   challengeSubmissions?: Array<{
     level: number; // 1..7
     youtubeUrl?: string | null;
@@ -44,32 +44,53 @@ export interface IUser extends Document {
     createdAt?: Date;
   }>;
 
-  // --- Unit preferences ---
+  // Unit preferences
   preferredHeightUnit?: 'cm' | 'in' | null;
   preferredWeightUnit?: 'kg' | 'lb' | null;
 
-  createdAt: Date; // from timestamps
-  updatedAt: Date; // from timestamps
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-// --- Define the Mongoose Schema ---
+const ChallengeSubmissionSchema = new Schema(
+  {
+    level: { type: Number, required: true, min: 1, max: 7 },
+    youtubeUrl: { type: String, default: null },
+    twitchUrl: { type: String, default: null },
+    witnessName: { type: String, default: null },
+    witnessDiscordId: { type: String, default: null },
+    createdAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
+const DiscordRoleSchema = new Schema(
+  {
+    id: { type: String, required: true },
+    name: { type: String, required: true },
+  },
+  { _id: false }
+);
+
 const UserSchema = new Schema<IUser>(
   {
     name: { type: String },
     firstName: { type: String, default: null },
     middleName: { type: String, default: null },
     lastName: { type: String, default: null },
-    email: { type: String, unique: true, sparse: true, lowercase: true },
+
+    email: { type: String, unique: true, sparse: true, lowercase: true, index: true },
     emailVerified: { type: Date, default: null },
     image: { type: String },
+
     role: { type: String, enum: ['user', 'moderator', 'admin'], default: 'user', required: true },
     division: { type: String, default: null },
 
-    // --- Provider Fields Schema Definition (MUST EXIST) ---
-    provider: { type: String, index: true },
-    providerAccountId: { type: String },
+    // Provider fields
+    provider: { type: String, index: true, default: null },
+    providerAccountId: { type: String, default: null },
 
-    // --- Character / Profile fields ---
+    // Character / profile
     characterHeightCm: { type: Number, default: null },
     characterWeightKg: { type: Number, default: null },
     homeplanet: { type: String, default: null },
@@ -84,42 +105,21 @@ const UserSchema = new Schema<IUser>(
     meritPoints: { type: Number, default: 0 },
     twitchUrl: { type: String, default: null },
 
-    // --- Discord ---
-    discordRoles: { type: [{ id: String, name: String }], default: [] },
+    // Discord
+    discordRoles: { type: [DiscordRoleSchema], default: [] },
 
-    // --- Challenge submissions ---
-    challengeSubmissions: [
-      new Schema(
-        {
-          level: { type: Number, required: true, min: 1, max: 7 },
-          youtubeUrl: { type: String, default: null },
-          twitchUrl: { type: String, default: null },
-          witnessName: { type: String, default: null },
-          witnessDiscordId: { type: String, default: null },
-          createdAt: { type: Date, default: Date.now },
-        },
-        { _id: false }
-      ),
-    ],
+    // Challenges
+    challengeSubmissions: { type: [ChallengeSubmissionSchema], default: [] },
 
-    // --- Unit preferences ---
+    // Units
     preferredHeightUnit: { type: String, enum: ['cm', 'in'], default: 'cm' },
     preferredWeightUnit: { type: String, enum: ['kg', 'lb'], default: 'kg' },
   },
-  {
-    timestamps: true, // Automatically manage createdAt and updatedAt
-  }
+  { timestamps: true }
 );
 
-// --- Compound Index for Provider Lookups (Recommended) ---
-UserSchema.index({ provider: 1, providerAccountId: 1 }, { unique: true, sparse: true });
-
-// Ensure only one submission per level per user
-UserSchema.index({ _id: 1, 'challengeSubmissions.level': 1 });
-
-// --- Create and Export the Mongoose Model ---
-const UserModel =
-  (mongoose.models.User as Model<IUser>) ||
-  mongoose.model<IUser>("User", UserSchema);
+// Avoid model overwrite in Next.js hot-reload
+const UserModel: Model<IUser> =
+  (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);
 
 export default UserModel;
