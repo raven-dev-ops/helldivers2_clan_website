@@ -2,6 +2,7 @@
 "use client";
 
 import styles from '../../HelldiversPage.module.css';
+import Quiz, { Question } from './Quiz';
 
 // Placeholder video topics
 const trainingTopics = [
@@ -19,53 +20,85 @@ const trainingTopics = [
   'Coming Soon',
 ];
 
-// Generate 100 Helldivers 2 lore questions
-const buildHd2Questions = () => {
-  const questions: string[] = [];
-  const ministries = ['Defense', 'Science', 'Truth', 'Unity', 'Prosperity', 'Offense', 'Logistics', 'Tranquility', 'Energy', 'Education'];
-  ministries.forEach(m => questions.push(`Which duties fall under the Ministry of ${m}?`));
-  const armors = ['FS-23 Battle Master', 'SC-15 Drone Master', 'EX-03 Prototype X', 'CM-09 Bonesnapper', 'DP-53 Savior of the Free', 'B-01 Tactical', 'DP-11 Champion of the People', 'SC-34 Infiltrator', 'FS-05 Marksman', 'PH-9 Predator'];
-  armors.forEach(a => questions.push(`What unique benefit does the ${a} armor provide?`));
-  const enemies = ['Bile Titan', 'Charger', 'Stalker', 'Hive Guard', 'Devastator', 'Hulk', 'Scout Strider', 'Tank', 'Tyrant', 'Brood Commander', 'Automaton Raider', 'Gunship', 'Rocket Devastator', 'Shredder Tank', 'Behemoth', 'Spewer', 'Bug Hole', 'Nesting Specialist', 'Obliterator', 'Shrieker'];
-  enemies.forEach(e => questions.push(`What is a weakness of the ${e}?`));
-  const weapons = ['Breaker', 'Dominator', 'Railgun', 'Autocannon', 'Eagle Strike', 'Orbital Laser', 'Stalwart', 'Quasar Cannon', 'Arc Thrower', 'Flamethrower'];
-  weapons.forEach(w => questions.push(`When is the ${w} most effective?`));
-  const stratagems = ['Reinforce', 'Resupply', 'Eagle Strafing Run', 'Eagle Cluster Bomb', 'Orbital Precision Strike', 'Orbital Gas Strike', 'Shield Generator', 'Turret', 'Seismic Probe', 'HMG Emplacement'];
-  stratagems.forEach(s => questions.push(`What does the ${s} stratagem do?`));
-  const planets = ['Super Earth', 'Malevelon Creek', 'Erata Prime', 'Choohe', 'Tibit', 'Vandalon IV', 'Meridian', 'Morgo 6', 'Crimsica', 'Pollux 4'];
-  planets.forEach(p => questions.push(`What threat is prominent on ${p}?`));
-  const general = [
-    'What is the slogan of Super Earth?',
-    'Who leads the Helldivers?',
-    'What is the prime directive of the Helldivers?',
-    'What resource powers stratagems?',
-    'How many players make up a Helldivers squad?',
-    'What is the standard Helldivers salute?',
-    'What is the capital of Super Earth?',
-    'State the Helldivers motto.',
-    'Name an example of a defensive stratagem.',
-    'Which faction threatens liberty the most?',
-  ];
-  general.forEach(q => questions.push(q));
-  while (questions.length < 100) {
-    questions.push(`Helldivers 2 lore question ${questions.length + 1}?`);
-  }
-  return questions;
-};
+const hd2Questions: Question[] = [
+  {
+    question: 'What is the slogan of Super Earth?',
+    options: ['Freedom or Death', 'Managed Democracy', 'For the Federation', 'Protect the Galaxy'],
+    answer: 1,
+  },
+  {
+    question: 'Who leads the Helldivers?',
+    options: ['The President', 'The High Command', 'The Admiral', 'The Senate'],
+    answer: 0,
+  },
+  {
+    question: 'What resource powers stratagems?',
+    options: ['Credits', 'Requisition', 'Energy Cells', 'Warbond'],
+    answer: 1,
+  },
+  {
+    question: 'How many players make up a Helldivers squad?',
+    options: ['2', '3', '4', '5'],
+    answer: 2,
+  },
+  {
+    question: 'Name an example of a defensive stratagem.',
+    options: ['Orbital Laser', 'Shield Generator', 'Eagle Strafing Run', 'Orbital Precision Strike'],
+    answer: 1,
+  },
+];
 
-const hd2Questions = buildHd2Questions();
-
-const hd1Questions = [
-  'In which year was Helldivers released?',
-  'Which faction in Helldivers 1 was composed of cyborgs?',
-  'What mission type required capturing outposts?',
-  'Name the top-tier difficulty in Helldivers 1.',
-  'Which enemy type tunneled underground?',
-  'What was the original game engine for Helldivers 1?',
-  'Which stratagem dropped a nuclear bomb?',
-  'How many planets were in the Helldivers 1 galaxy?',
-  'What was the maximum player level in Helldivers 1?',
-  'What famous quote encouraged spreading democracy?',
+const hd1Questions: Question[] = [
+  {
+    question: 'In which year was Helldivers released?',
+    options: ['2015', '2012', '2017', '2019'],
+    answer: 0,
+  },
+  {
+    question: 'Which faction in Helldivers 1 was composed of cyborgs?',
+    options: ['Illuminate', 'Cyborgs', 'Terminids', 'Automatons'],
+    answer: 1,
+  },
+  {
+    question: 'What mission type required capturing outposts?',
+    options: ['Elimination', 'Capture', 'Bug Hunt', 'Eradicate'],
+    answer: 1,
+  },
+  {
+    question: 'Name the top-tier difficulty in Helldivers 1.',
+    options: ['Suicide Mission', 'Hell Dive', 'Impossible', 'Overkill'],
+    answer: 1,
+  },
+  {
+    question: 'Which enemy type tunneled underground?',
+    options: ['Impaler', 'Cyborg Commando', 'Scout Strider', 'Tank'],
+    answer: 0,
+  },
+  {
+    question: 'What was the original game engine for Helldivers 1?',
+    options: ['Bitsquid', 'Unity', 'Unreal', 'Frostbite'],
+    answer: 0,
+  },
+  {
+    question: 'Which stratagem dropped a nuclear bomb?',
+    options: ['Resupply', 'Thunderer Barrage', 'Nuclear Strike', 'EMS Strike'],
+    answer: 2,
+  },
+  {
+    question: 'How many planets were in the Helldivers 1 galaxy?',
+    options: ['10', '20', '50', '100'],
+    answer: 1,
+  },
+  {
+    question: 'What was the maximum player level in Helldivers 1?',
+    options: ['30', '40', '50', '60'],
+    answer: 2,
+  },
+  {
+    question: 'What famous quote encouraged spreading democracy?',
+    options: ["Democracy never sleeps", "Freedom for all", "Democracy won't spread itself", "One nation under God"],
+    answer: 2,
+  },
 ];
 
 export default function TrainingPage() {
@@ -80,18 +113,8 @@ export default function TrainingPage() {
             <li key={i} className={styles.listItem}>{t}</li>
           ))}
         </ul>
-        <h3 className={styles.subHeading}>Helldivers 2 Knowledge Quiz</h3>
-        <ol className={styles.styledList} style={{ paddingLeft: 18, maxHeight: 300, overflow: 'auto' }}>
-          {hd2Questions.map((q, i) => (
-            <li key={i} className={styles.listItem}>{q}</li>
-          ))}
-        </ol>
-        <h3 className={styles.subHeading}>Historical Quiz – Helldivers 1</h3>
-        <ol className={styles.styledList} style={{ paddingLeft: 18 }}>
-          {hd1Questions.map((q, i) => (
-            <li key={i} className={styles.listItem}>{q}</li>
-          ))}
-        </ol>
+        <Quiz title="Helldivers 2 Knowledge Quiz" questions={hd2Questions} />
+        <Quiz title="Historical Quiz – Helldivers 1" questions={hd1Questions} />
       </section>
     </div>
   );
