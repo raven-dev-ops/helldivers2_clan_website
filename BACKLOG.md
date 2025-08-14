@@ -1,41 +1,30 @@
 # Backlog
 
-- [ ] Replace placeholder Intel API data with live game endpoints.
-- [ ] Add real training videos for all 12 topics.
+- [ ] Replace placeholder Intel API data with live game endpoints that work and format the data professionally.
 - [ ] Provide answers and scoring for the Helldivers 2 and Helldivers 1 quizzes.
 - [ ] Implement Twitch OAuth for linking accounts instead of manual URL entry.
 - [ ] Improve styling and responsiveness of training and application pages.
 - [ ] Create player profile pages showing stats, achievements, and clan roles.
-- [ ] Implement search functionality for clan members.
 - [ ] Add clan event calendar with RSVPs.
 - [ ] Integrate Discord server chat widget.
-- [ ] Build a recruitment form with automated responses.
 - [ ] Add support for uploading user avatars.
-- [ ] Implement role-based access for admins, officers, and members.
+- [ ] Implement role-based access for admins, officers, and members that are tied to specific discord officer roles in their user_profiles collection.
 - [ ] Add dark mode toggle.
 - [ ] Implement notifications for pending applications.
-- [ ] Create a leaderboard for clan contributions.
 - [ ] Add mobile-friendly navigation menu.
 - [ ] Improve loading performance using image optimization.
 - [ ] Set up PWA for offline capability.
-- [ ] Add forum or discussion boards.
 - [ ] Implement tagging system for posts and guides.
 - [ ] Add multi-language support.
 - [ ] Integrate Google Analytics for tracking visitors.
 - [ ] Implement SEO improvements for better search rankings.
-- [ ] Add contact form for support inquiries.
 - [ ] Provide donation or support page.
-- [ ] Add customizable user dashboards.
-- [ ] Implement in-site messaging between members.
 - [ ] Add achievements and badge system.
 - [ ] Implement push notifications for updates.
 - [ ] Integrate live game status updates.
 - [ ] Add training schedule with signup.
 - [ ] Implement RSS or Atom feeds for news.
 - [ ] Add comments section for blog posts.
-- [ ] Provide clan history and timeline page.
-- [ ] Add screenshot gallery.
-- [ ] Add video gallery with embedded YouTube or Twitch.
 - [ ] Implement caching for faster load times.
 - [ ] Add accessibility features such as ARIA labels and keyboard navigation.
 - [ ] Provide colorblind-friendly palette options.
@@ -44,13 +33,7 @@
 - [ ] Add password reset functionality.
 - [ ] Provide privacy settings for user profiles.
 - [ ] Integrate with game API for automatic stats updating.
-- [ ] Add admin dashboard for managing content.
-- [ ] Implement content moderation tools.
-- [ ] Add notification center for users.
-- [ ] Provide email newsletter subscription.
 - [ ] Add audit logs for admin actions.
-- [ ] Implement site-wide search.
-- [ ] Introduce pagination for long lists.
 - [ ] Add lazy loading for images.
 - [ ] Implement automatic backups for database.
 - [ ] Add server-side logging and monitoring.
@@ -60,15 +43,8 @@
 - [ ] Use CDN for static assets.
 - [x] Add sitemap and robots.txt.
 - [ ] Implement structured data for SEO.
-- [ ] Add join-the-clan call-to-action on homepage.
 - [ ] Provide curated training resources.
 - [ ] Add integration with Twitch streaming events.
-- [ ] Create automated welcome emails.
-- [ ] Add webhook integration for game events.
-- [ ] Provide roles management UI.
-- [ ] Add ability for users to leave clans.
-- [ ] Implement event reminders via email.
-- [ ] Add friend or ally system.
 - [ ] Provide statistics dashboard for clan performance.
 - [ ] Add server status page.
 - [ ] Implement rate limiting for API endpoints.
@@ -77,20 +53,10 @@
 - [ ] Implement captcha for forms to prevent spam.
 - [ ] Add maintenance mode banner.
 - [ ] Provide auto-scaling infrastructure using containerization.
-- [ ] Implement content delivery via GraphQL.
 - [ ] Add dynamic sitemap generation.
-- [ ] Integrate social sharing buttons.
-- [ ] Add blog post categories.
 - [ ] Provide editable clan rules page.
 - [ ] Add support for polls and surveys.
-- [ ] Implement bookmarking or favorites feature.
 - [ ] Add ability to follow other members.
-- [ ] Provide trending topics section.
-- [ ] Add achievements progress tracking.
-- [ ] Implement voice chat links for events.
-- [ ] Provide patch notes updates.
-- [ ] Add advanced search filters for forum.
-- [ ] Implement real-time chat for clan.
 - [ ] Add scheduler for weekly missions.
 - [ ] Provide timezone-aware event times.
 - [ ] Implement server maintenance announcements.
@@ -99,4 +65,6 @@
 - [ ] Implement user activity feeds.
 - [ ] Add tag-based notifications.
 - [ ] Provide site theme switcher options.
-- [ ] Implement bug reporting form.
+- [ ] Create Tests to ensure functionality before PRs can be merged.
+
+
