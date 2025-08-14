@@ -2,9 +2,21 @@
   background: #dc2626;
   color: #ffffff;
   overflow: hidden;
-  white-space: nowrap;
   padding: 8px 0;
   font-size: 1rem;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 0.5rem;
+}
+
+.tickerWrapper {
+  flex: 1;
+  overflow: hidden;
 }
 
 .ticker {
@@ -13,7 +25,28 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   padding: 0 1rem;
-  animation: marquee 60s linear forwards;
+  animation: marquee 30s linear forwards;
+}
+
+.close {
+  margin-left: 0.5rem;
+  background: #ffffff;
+  color: #dc2626;
+  border: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.close:hover {
+  background: #fee2e2;
 }
 
 @keyframes marquee {
