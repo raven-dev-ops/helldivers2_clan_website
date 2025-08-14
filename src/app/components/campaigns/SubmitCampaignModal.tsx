@@ -2,17 +2,24 @@
 
 import { useState, type CSSProperties } from "react";
 
+interface MissionOption {
+  id: string;
+  title: string;
+}
+
 export default function SubmitCampaignModal({
   isOpen,
   onClose,
   onSubmitted,
+  missions,
 }: {
   isOpen: boolean;
   onClose: () => void;
   onSubmitted: (message: string) => void;
+  missions: MissionOption[];
 }) {
-  const [documentLink, setDocumentLink] = useState<string>("");
-  const [about, setAbout] = useState<string>("");
+  const [campaignId, setCampaignId] = useState<string>("");
+  const [youtubeLink, setYoutubeLink] = useState<string>("");
   const [saving, setSaving] = useState<boolean>(false);
 
   if (!isOpen) return null;
@@ -36,19 +43,23 @@ export default function SubmitCampaignModal({
   };
 
   const handleSubmit = async () => {
-    if (!documentLink.trim()) return;
+    if (!campaignId || !youtubeLink.trim()) return;
     setSaving(true);
     try {
       const res = await fetch("/api/user-applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "campaign", interest: documentLink, about }),
+        body: JSON.stringify({
+          type: "campaign",
+          interest: campaignId,
+          about: youtubeLink,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to submit");
       onSubmitted(data.message || "Campaign submitted");
-      setDocumentLink("");
-      setAbout("");
+      setCampaignId("");
+      setYoutubeLink("");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to submit";
       onSubmitted(message);
@@ -64,19 +75,22 @@ export default function SubmitCampaignModal({
         <h3 style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>Submit Campaign</h3>
         <div style={{ display: "grid", gap: 12 }}>
           <label className="field">
-            <span className="label">Document Link</span>
-            <input
-              value={documentLink}
-              onChange={(e) => setDocumentLink(e.target.value)}
-              placeholder="https://..."
-            />
+            <span className="label">Campaign</span>
+            <select value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
+              <option value="">Select a campaign</option>
+              {missions.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.title}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="field">
-            <span className="label">Additional Info (optional)</span>
-            <textarea
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              rows={3}
+            <span className="label">YouTube Link</span>
+            <input
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.target.value)}
+              placeholder="https://youtube.com/..."
             />
           </label>
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
@@ -87,7 +101,7 @@ export default function SubmitCampaignModal({
               className="btn btn-primary"
               type="button"
               onClick={handleSubmit}
-              disabled={saving || !documentLink.trim()}
+              disabled={saving || !campaignId || !youtubeLink.trim()}
             >
               {saving ? "Submitting…" : "Submit"}
             </button>
