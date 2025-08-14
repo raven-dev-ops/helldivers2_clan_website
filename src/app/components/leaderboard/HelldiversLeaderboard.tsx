@@ -25,6 +25,12 @@ interface LeaderboardRow {
   AvgDeaths?: number;
 }
 
+interface MeritRow {
+  rank: number;
+  player_name: string;
+  meritPoints: number;
+}
+
 function HeaderButton({
   label,
   sortKey,

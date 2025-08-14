@@ -12,6 +12,7 @@ export async function GET() {
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
+
   await dbConnect();
   const user = await UserModel.findById(session.user.id).lean();
   if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
@@ -31,10 +32,7 @@ export async function GET() {
       if (discordUserId) {
         const memberRes = await fetch(
           `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`,
-          {
-            headers: { Authorization: `Bot ${BOT_TOKEN}` },
-            cache: 'no-store',
-          }
+          { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
         );
         if (memberRes.ok) {
           const member = await memberRes.json();
@@ -42,10 +40,7 @@ export async function GET() {
 
           const rolesRes = await fetch(
             `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
-            {
-              headers: { Authorization: `Bot ${BOT_TOKEN}` },
-              cache: 'no-store',
-            }
+            { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
           );
           if (rolesRes.ok) {
             const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> =
@@ -59,8 +54,7 @@ export async function GET() {
             const existing = Array.isArray(user.discordRoles) ? user.discordRoles : [];
             const sameLength = existing.length === roles.length;
             const same =
-              sameLength &&
-              existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
+              sameLength && existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
             if (!same) {
               await UserModel.updateOne({ _id: session.user.id }, { $set: { discordRoles: roles } });
             }
@@ -115,7 +109,6 @@ export async function PUT(req: Request) {
   await dbConnect();
 
   const contentType = req.headers.get('content-type') || '';
-
   const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
@@ -146,8 +139,7 @@ export async function PUT(req: Request) {
       if (value !== null && value !== undefined && value !== '') {
         if (key === 'characterHeightCm' || key === 'characterWeightKg') {
           const num = Number(value);
-          if (!Number.isNaN(num)) updates[key] = num;
-          else updates[key] = null;
+          updates[key] = Number.isNaN(num) ? null : num;
         } else if (key === 'meritPoints') {
           const num = Number(value);
           if (!Number.isNaN(num)) updates.meritPoints = num;
@@ -350,6 +342,7 @@ export async function PUT(req: Request) {
   } catch (e) {
     console.error('Failed to write User_Profiles snapshot', e);
   }
+
   return NextResponse.json({
     id: updated?._id.toString(),
     name: updated?.name,
