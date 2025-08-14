@@ -1,11 +1,23 @@
 .bar {
-  background: #1e293b;
-  color: #f1f5f9;
-  text-align: center;
-  padding: 4px 0;
-  font-size: 0.875rem;
-}
-.alert {
   background: #dc2626;
   color: #ffffff;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 8px 0;
+  font-size: 1rem;
+}
+
+.ticker {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
