@@ -73,7 +73,7 @@ export default function ProfilePage() {
     return count === 7;
   }, [userData]);
 
-  const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'>('roles');
+  const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity'>('roles');
 
   const findRankAndRow = (rows: any[], name: string) => {
     const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
@@ -237,6 +237,9 @@ export default function ProfilePage() {
           <button className="btn btn-secondary" onClick={() => setInfoTab('rankings')} aria-pressed={infoTab === 'rankings'}>
             Rankings
           </button>
+          <button className="btn btn-secondary" onClick={() => setInfoTab('activity')} aria-pressed={infoTab === 'activity'}>
+            Activity
+          </button>
         </div>
 
         {infoTab === 'roles' && (
@@ -277,54 +280,104 @@ export default function ProfilePage() {
                 <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
                 <span className="inline-code">Total: {findRankAndRow(totalData?.results || [], userData.name).rank ?? '—'}</span>
                 <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
+                <span className="inline-code">Clearance: {userData?.rankTitle ?? '—'}</span>
               </div>
             ) : (
               <p className="text-paragraph">Set your profile name to see your leaderboard rankings.</p>
             )}
           </div>
         )}
-      </section>
 
-      <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">GPT Campaigns</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-          {CAMPAIGN_MISSION_LABELS.map((label) => (
-            <span
-              key={label}
-              style={{
-                padding: '0.35rem 0.6rem',
-                borderRadius: 8,
-                border: '1px solid #334155',
-                background: 'rgba(0,0,0,0.2)',
-                color: '#94a3b8',
-                fontWeight: 600,
-              }}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
+        {infoTab === 'activity' && (
+          <div>
+            {(() => {
+              const lastStats = userData?.lastProfile?.lastStats || userData?.lastProfile?.last_stats || null;
+              const time = lastStats?.time || lastStats?.submittedAt || lastStats?.timestamp;
+              if (time) {
+                const dt = new Date(time);
+                return (
+                  <div>
+                    <p className="text-paragraph">
+                      Last stats submission: {dt.toLocaleString()}
+                    </p>
+                    {'kills' in (lastStats || {}) || 'deaths' in (lastStats || {}) || 'assists' in (lastStats || {}) ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+                        {'kills' in lastStats && <span className="inline-code">Kills: {lastStats.kills}</span>}
+                        {'deaths' in lastStats && <span className="inline-code">Deaths: {lastStats.deaths}</span>}
+                        {'assists' in lastStats && <span className="inline-code">Assists: {lastStats.assists}</span>}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              }
+              return <p className="text-paragraph">No stats submissions recorded.</p>;
+            })()}
+          </div>
+        )}
       </section>
-
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">GPT Challenges</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
-          {CHALLENGE_LEVEL_LABELS.map((label, i) => {
+        <h2 className="content-section-title with-border-bottom">GPT Career</h2>
+        {(() => {
+          const submissions = userData?.challengeSubmissions || [];
+          let challengeCompleted = 0;
+          CHALLENGE_LEVEL_LABELS.forEach((_, i) => {
             const lvl = i + 1;
-            const s = (userData?.challengeSubmissions || []).find((x: any) => x.level === lvl);
-            const complete = !!(s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId));
-            return (
-              <span key={lvl} style={{
-                padding: '0.35rem 0.6rem',
-                borderRadius: 8,
-                border: '1px solid #334155',
-                background: complete ? 'rgba(180, 140, 0, 0.2)' : 'rgba(0,0,0,0.2)',
-                color: complete ? '#f59e0b' : '#94a3b8',
-                fontWeight: 600
-              }}>{label}</span>
-            );
-          })}
-        </div>
+            const s = submissions.find((x: any) => x.level === lvl);
+            if (s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId)) challengeCompleted++;
+          });
+          const campaignCompletions: string[] = userData?.campaignCompletions || userData?.lastProfile?.campaignCompletions || [];
+          const campaignSet = new Set(campaignCompletions);
+          const campaignCompleted = campaignSet.size;
+          return (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <strong style={{ color: '#f59e0b' }}>Challenges</strong>
+                <span style={{ color: '#f59e0b', fontWeight: 600 }}>{challengeCompleted}/{CHALLENGE_LEVEL_LABELS.length}</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                {CHALLENGE_LEVEL_LABELS.map((label, i) => {
+                  const lvl = i + 1;
+                  const s = submissions.find((x: any) => x.level === lvl);
+                  const complete = !!(s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId));
+                  return (
+                    <span key={lvl} style={{
+                      padding: '0.35rem 0.6rem',
+                      borderRadius: 8,
+                      border: '1px solid #334155',
+                      background: complete ? 'rgba(180, 140, 0, 0.2)' : 'rgba(0,0,0,0.2)',
+                      color: complete ? '#f59e0b' : '#94a3b8',
+                      fontWeight: 600
+                    }}>{label}</span>
+                  );
+                })}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <strong style={{ color: '#f59e0b' }}>Campaign</strong>
+                <span style={{ color: '#f59e0b', fontWeight: 600 }}>{campaignCompleted}/{CAMPAIGN_MISSION_LABELS.length}</span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {CAMPAIGN_MISSION_LABELS.map((label) => {
+                  const complete = campaignSet.has(label);
+                  return (
+                    <span
+                      key={label}
+                      style={{
+                        padding: '0.35rem 0.6rem',
+                        borderRadius: 8,
+                        border: '1px solid #334155',
+                        background: complete ? 'rgba(180, 140, 0, 0.2)' : 'rgba(0,0,0,0.2)',
+                        color: complete ? '#f59e0b' : '#94a3b8',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
       </section>
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
