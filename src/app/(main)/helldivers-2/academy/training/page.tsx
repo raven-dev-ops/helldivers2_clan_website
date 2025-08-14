@@ -108,7 +108,7 @@ export default function TrainingPage() {
         <h2 className={styles.sectionTitle}>Training</h2>
         <p className={styles.paragraph}>Brush up on your Helldivers knowledge and tactics.</p>
         <h3 className={styles.subHeading}>Training Videos (Coming Soon)</h3>
-        <ul className={styles.styledList} style={{ paddingLeft: 18 }}>
+        <ul className={styles.trainingTopics}>
           {trainingTopics.map((t, i) => (
             <li key={i} className={styles.listItem}>{t}</li>
           ))}

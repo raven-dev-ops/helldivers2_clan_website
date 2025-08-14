@@ -37,7 +37,7 @@ export default function Quiz({ title, questions }: QuizProps) {
   return (
     <div>
       <h3 className={styles.subHeading}>{title}</h3>
-      <ol className={styles.styledList} style={{ paddingLeft: 18 }}>
+      <ol className={`${styles.styledList} ${styles.decimal}`}>
         {questions.map((q, qi) => (
           <li key={qi} className={styles.listItem}>
             <p>{q.question}</p>
@@ -55,7 +55,7 @@ export default function Quiz({ title, questions }: QuizProps) {
           </li>
         ))}
       </ol>
-      <button onClick={handleSubmit} style={{ marginTop: "0.5rem" }}>
+      <button onClick={handleSubmit} className={styles.quizButton}>
         Submit
       </button>
       {score !== null && (
