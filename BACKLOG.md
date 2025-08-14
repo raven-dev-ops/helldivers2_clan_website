@@ -65,6 +65,6 @@
 - [ ] Implement user activity feeds.
 - [ ] Add tag-based notifications.
 - [ ] Provide site theme switcher options.
-- [ ] Create Tests to ensure functionality before PRs can be merged.
+- [x] Create Tests to ensure functionality before PRs can be merged.
 
 

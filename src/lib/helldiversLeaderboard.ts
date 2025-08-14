@@ -45,7 +45,7 @@ function getDbName(): string {
   return process.env.MONGODB_DB || 'GPTHellbot';
 }
 
-function getMonthRange(monthZeroIndexed: number, year: number) {
+export function getMonthRange(monthZeroIndexed: number, year: number) {
   const start = new Date(Date.UTC(year, monthZeroIndexed, 1, 0, 0, 0, 0));
   const end = new Date(Date.UTC(year, monthZeroIndexed + 1, 1, 0, 0, 0, 0));
   return { start, end };
