@@ -59,7 +59,7 @@ export async function GET() {
         }
       }
     }
-  } catch (e) {
+  } catch {
     // ignore errors
   }
 
@@ -86,6 +86,7 @@ export async function GET() {
     armor: fresh!.armor ?? null,
     motto: fresh!.motto ?? null,
     favoredEnemy: fresh!.favoredEnemy ?? null,
+    twitchUrl: fresh!.twitchUrl ?? null,
     preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
     // include roles
@@ -105,7 +106,7 @@ export async function PUT(req: Request) {
 
   const contentType = req.headers.get('content-type') || '';
 
-  let updates: any = {};
+  const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
@@ -284,6 +285,7 @@ export async function PUT(req: Request) {
          favoredEnemy: updated?.favoredEnemy ?? null,
          armor: updated?.armor ?? null,
          motto: updated?.motto ?? null,
+         twitchUrl: updated?.twitchUrl ?? null,
          preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
          preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
          challengeSubmissions: updated?.challengeSubmissions ?? [],
