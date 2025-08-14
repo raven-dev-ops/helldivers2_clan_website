@@ -23,7 +23,7 @@ export default function SettingsPage() {
 
       {/* Removed H1 header per request */}
 
-      <section className="content-section" style={{ maxWidth: 800, margin: '0 auto' }}>
+      <section className="content-section">
         <h2 className="content-section-title with-border-bottom">Settings</h2>
         <ProfileEditForm />
       </section>

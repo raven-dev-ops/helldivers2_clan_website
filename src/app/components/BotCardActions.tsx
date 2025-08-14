@@ -46,11 +46,11 @@ export default function BotCardActions({ bot, initialHasApplied }: BotCardAction
         <div className={styles.actionsContainer}>
             {hasApplied ? (
                 <button className={styles.appliedButton} disabled>
-                    <FaCheckCircle className={styles.icon} /> Applied
+                    <FaCheckCircle className={styles.icon} /> Joined
                 </button>
             ) : (
                 <button onClick={handleApplyClick} className={styles.applyButtonLink}>
-                    <FaEnvelope className={styles.icon} /> Apply to Use
+                    <FaEnvelope className={styles.icon} /> Join Now!
                 </button>
             )}
 
