@@ -14,8 +14,8 @@ export interface IUser extends Document {
   division?: string | null;
 
   // --- Fields for OAuth Provider Information (MUST EXIST) ---
-  provider?: string | null;          // <<< ADD THIS LINE
-  providerAccountId?: string | null; // <<< ADD THIS LINE
+  provider?: string | null;
+  providerAccountId?: string | null;
 
   // --- Character / Profile fields ---
   characterHeightCm?: number | null;
@@ -29,6 +29,8 @@ export interface IUser extends Document {
   armor?: string | null;
   motto?: string | null;
   favoredEnemy?: string | null;
+  meritPoints?: number | null;
+  twitchUrl?: string | null;
 
   // --- Discord ---
   discordRoles?: Array<{ id: string; name: string }>;
@@ -65,8 +67,8 @@ const UserSchema = new Schema<IUser>(
     division: { type: String, default: null },
 
     // --- Provider Fields Schema Definition (MUST EXIST) ---
-    provider: { type: String, index: true }, // <<< ADD THIS LINE
-    providerAccountId: { type: String },      // <<< ADD THIS LINE
+    provider: { type: String, index: true },
+    providerAccountId: { type: String },
 
     // --- Character / Profile fields ---
     characterHeightCm: { type: Number, default: null },
@@ -80,6 +82,8 @@ const UserSchema = new Schema<IUser>(
     armor: { type: String, default: null },
     motto: { type: String, default: null },
     favoredEnemy: { type: String, default: null },
+    meritPoints: { type: Number, default: 0 },
+    twitchUrl: { type: String, default: null },
 
     // --- Discord ---
     discordRoles: { type: [{ id: String, name: String }], default: [] },

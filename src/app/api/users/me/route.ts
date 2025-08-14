@@ -59,7 +59,7 @@ export async function GET() {
         }
       }
     }
-  } catch (e) {
+  } catch {
     // ignore errors
   }
 
@@ -86,6 +86,8 @@ export async function GET() {
     armor: fresh!.armor ?? null,
     motto: fresh!.motto ?? null,
     favoredEnemy: fresh!.favoredEnemy ?? null,
+    meritPoints: fresh!.meritPoints ?? 0,
+    twitchUrl: fresh!.twitchUrl ?? null,
     preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
     // include roles
@@ -105,17 +107,20 @@ export async function PUT(req: Request) {
 
   const contentType = req.headers.get('content-type') || '';
 
-  let updates: any = {};
+  const updates: Record<string, unknown> = {};
 
   if (contentType.includes('multipart/form-data')) {
     const form = await req.formData();
-    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'twitchUrl', 'preferredHeightUnit', 'preferredWeightUnit'];
+    const fields = ['name', 'firstName', 'middleName', 'lastName', 'characterHeightCm', 'characterWeightKg', 'homeplanet', 'background', 'division', 'callsign', 'rankTitle', 'favoriteWeapon', 'armor', 'motto', 'favoredEnemy', 'meritPoints', 'twitchUrl', 'preferredHeightUnit', 'preferredWeightUnit'];
     for (const key of fields) {
       const value = form.get(key);
       if (value !== null && value !== undefined && value !== '') {
         if (key === 'characterHeightCm' || key === 'characterWeightKg') {
           const num = Number(value);
           if (!Number.isNaN(num)) updates[key] = num; else updates[key] = null;
+        } else if (key === 'meritPoints') {
+          const num = Number(value);
+          if (!Number.isNaN(num)) updates.meritPoints = num;
         } else if (key === 'preferredHeightUnit' && (value === 'cm' || value === 'in')) {
           updates.preferredHeightUnit = value;
         } else if (key === 'preferredWeightUnit' && (value === 'kg' || value === 'lb')) {
@@ -189,6 +194,7 @@ export async function PUT(req: Request) {
       armor,
       motto,
       favoredEnemy,
+      meritPoints,
       twitchUrl,
       preferredHeightUnit,
       preferredWeightUnit,
@@ -219,6 +225,10 @@ export async function PUT(req: Request) {
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
         if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
+    if (meritPoints !== undefined) {
+      const num = Number(meritPoints);
+      if (!Number.isNaN(num)) updates.meritPoints = num;
+    }
     if (twitchUrl !== undefined) updates.twitchUrl = twitchUrl ?? null;
     if (preferredHeightUnit === 'cm' || preferredHeightUnit === 'in') updates.preferredHeightUnit = preferredHeightUnit;
     if (preferredWeightUnit === 'kg' || preferredWeightUnit === 'lb') updates.preferredWeightUnit = preferredWeightUnit;
@@ -275,19 +285,21 @@ export async function PUT(req: Request) {
         lastName: updated?.lastName ?? null,
         division: updated?.division ?? null,
         characterHeightCm: updated?.characterHeightCm ?? null,
-                 characterWeightKg: updated?.characterWeightKg ?? null,
-         homeplanet: updated?.homeplanet ?? null,
-         background: updated?.background ?? null,
-         callsign: updated?.callsign ?? null,
-         rankTitle: updated?.rankTitle ?? null,
-         favoriteWeapon: updated?.favoriteWeapon ?? null,
-         favoredEnemy: updated?.favoredEnemy ?? null,
-         armor: updated?.armor ?? null,
-         motto: updated?.motto ?? null,
-         preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
-         preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
-         challengeSubmissions: updated?.challengeSubmissions ?? [],
-         discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+        characterWeightKg: updated?.characterWeightKg ?? null,
+        homeplanet: updated?.homeplanet ?? null,
+        background: updated?.background ?? null,
+        callsign: updated?.callsign ?? null,
+        rankTitle: updated?.rankTitle ?? null,
+        favoriteWeapon: updated?.favoriteWeapon ?? null,
+        favoredEnemy: updated?.favoredEnemy ?? null,
+        armor: updated?.armor ?? null,
+        motto: updated?.motto ?? null,
+        twitchUrl: updated?.twitchUrl ?? null,
+        preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
+        preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
+        meritPoints: updated?.meritPoints ?? 0,
+        challengeSubmissions: updated?.challengeSubmissions ?? [],
+        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
       },
     };
     await appDb.collection('User_Profiles').updateOne(
@@ -326,6 +338,7 @@ export async function PUT(req: Request) {
     armor: updated?.armor ?? null,
     motto: updated?.motto ?? null,
     favoredEnemy: updated?.favoredEnemy ?? null,
+    meritPoints: updated?.meritPoints ?? 0,
     twitchUrl: updated?.twitchUrl ?? null,
     preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',

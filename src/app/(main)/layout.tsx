@@ -1,6 +1,7 @@
 // src/app/(main)/layout.tsx (Cleaned up - Requires classes in globals.css)
 
 import Navbar from '@/app/components/common/Navbar'; // Adjust path if needed
+import AlertBar from '@/app/components/common/AlertBar';
 import Footer from '@/app/components/common/Footer'; // Adjust path if needed
 // ThemeToggle is inside Navbar or Footer
 
@@ -12,7 +13,7 @@ export default function MainAppLayout({
   return (
     <> {/* Fragment inherits flex from RootLayout's body */}
       <Navbar />
-
+      <AlertBar />
       {/* Apply helper classes from globals.css */}
       {/* Ensure '.container', '.flex-grow', '.py-6', '.relative', '.z-10' are defined */}
       <main className="container flex-grow py-6 relative z-10">

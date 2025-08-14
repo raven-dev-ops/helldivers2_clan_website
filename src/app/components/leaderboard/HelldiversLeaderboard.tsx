@@ -25,6 +25,12 @@ interface LeaderboardRow {
   AvgDeaths?: number;
 }
 
+interface MeritRow {
+  rank: number;
+  player_name: string;
+  meritPoints: number;
+}
+
 function HeaderButton({
   label,
   sortKey,
@@ -185,18 +191,21 @@ function LeaderboardTableSection({
   );
 }
 
-export default function HelldiversLeaderboard({ initialSoloData, initialMonthData, initialLifetimeData }: { initialSoloData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] } }) {
+export default function HelldiversLeaderboard({ initialSoloData, initialMonthData, initialLifetimeData, initialMeritData }: { initialSoloData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMeritData?: { results: MeritRow[] } }) {
   const [soloData, setSoloData] = useState<LeaderboardRow[]>(initialSoloData?.results || []);
   const [monthData, setMonthData] = useState<LeaderboardRow[]>(initialMonthData?.results || []);
   const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(initialLifetimeData?.results || []);
+  const [meritData, setMeritData] = useState<MeritRow[]>(initialMeritData?.results || []);
 
   const [soloLoading, setSoloLoading] = useState<boolean>(!initialSoloData);
   const [monthLoading, setMonthLoading] = useState<boolean>(!initialMonthData);
   const [lifetimeLoading, setLifetimeLoading] = useState<boolean>(!initialLifetimeData);
+  const [meritLoading, setMeritLoading] = useState<boolean>(!initialMeritData);
 
   const [soloError, setSoloError] = useState<string | null>(null);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [lifetimeError, setLifetimeError] = useState<string | null>(null);
+  const [meritError, setMeritError] = useState<string | null>(null);
 
   const [soloSortBy, setSoloSortBy] = useState<SortField>(initialSoloData?.sortBy || 'Kills');
   const [soloSortDir, setSoloSortDir] = useState<SortDir>(initialSoloData?.sortDir || 'desc');
@@ -209,6 +218,7 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [lifetimeTotalsSearch, setLifetimeTotalsSearch] = useState<string>('');
+  const [meritSearch, setMeritSearch] = useState<string>('');
 
   const toggleSoloSort = (field: SortField) => {
     if (field === soloSortBy) {
@@ -305,7 +315,39 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
   const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
 
-  const [activeTab, setActiveTab] = useState<'lifetime' | 'monthly' | 'solo'>('lifetime');
+  const [activeTab, setActiveTab] = useState<'lifetime' | 'monthly' | 'solo' | 'merit'>('lifetime');
+
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash === 'solo' || hash === 'monthly' || hash === 'lifetime' || hash === 'merit') {
+      setActiveTab(hash as typeof activeTab);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeTab !== 'merit') return;
+    let cancelled = false;
+    async function fetchMerit() {
+      setMeritLoading(true);
+      setMeritError(null);
+      try {
+        const res = await fetch('/api/merit/leaderboard', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const payload = await res.json();
+        if (!cancelled) setMeritData(payload.results || []);
+      } catch (e: any) {
+        if (!cancelled) setMeritError(e?.message || 'Failed to load leaderboard');
+      } finally {
+        if (!cancelled) setMeritLoading(false);
+      }
+    }
+    fetchMerit();
+    return () => { cancelled = true; };
+  }, [activeTab]);
+
+  const filteredMerit = meritSearch.trim()
+    ? meritData.filter(r => (r.player_name || '').toLowerCase().includes(meritSearch.trim().toLowerCase()))
+    : meritData;
 
   return (
     <div>
@@ -330,6 +372,13 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
           aria-pressed={activeTab === 'solo'}
         >
           Solo
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('merit')}
+          aria-pressed={activeTab === 'merit'}
+        >
+          Merit
         </button>
       </div>
 
@@ -379,6 +428,52 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
           onSearch={setLifetimeTotalsSearch}
           sectionId="lifetime"
         />
+      )}
+
+      {activeTab === 'merit' && (
+        <section id="merit" className="content-section">
+          <h2 className="content-section-title with-border-bottom leaderboard-title">Merit Leaderboard</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+            <input
+              aria-label="Search Merit by player name"
+              placeholder="Search by player name..."
+              value={meritSearch}
+              onChange={(e) => setMeritSearch(e.target.value)}
+              className="input"
+              style={{ maxWidth: 320 }}
+            />
+          </div>
+          {meritError && <p className="text-paragraph">Error: {meritError}</p>}
+          {meritLoading ? (
+            <p className="text-paragraph">Loading leaderboard…</p>
+          ) : (
+            <div className="table-container">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th className="th text-center" style={{ width: 56 }}>#</th>
+                    <th className="th">Player</th>
+                    <th className="th text-right">Merit Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredMerit.map((row) => (
+                    <tr key={row.rank}>
+                      <td className="td text-center">{row.rank}</td>
+                      <td className="td">{row.player_name}</td>
+                      <td className="td text-right">{row.meritPoints}</td>
+                    </tr>
+                  ))}
+                  {!filteredMerit.length && (
+                    <tr>
+                      <td className="td" colSpan={3}>No players yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       )}
 
     </div>

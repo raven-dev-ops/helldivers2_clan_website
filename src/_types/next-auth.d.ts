@@ -9,13 +9,14 @@ import { DefaultJWT, JWT } from "next-auth/jwt";
 declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     /** The user's database ID (_id as string). Non-optional after successful sign-in. */
-    id: string; // <<< Corrected: Non-optional
+    id: string;
     /** The provider used for the current session */
-    provider?: string; // <<< Added: Store provider if needed
+    provider?: string;
     /** Example: The user's role */
     // role?: string;
   }
 }
+
 
 /**
  * Module augmentation for `next-auth`
@@ -29,7 +30,7 @@ declare module "next-auth" {
   interface Session {
     user: {
       /** The user's database ID (_id as string). */
-      id: string; // Non-optional
+      id: string;
       /** Example: The user's role */
       // role?: string;
     } & DefaultSession["user"]; // Merge with default fields (name, email, image)
@@ -42,7 +43,7 @@ declare module "next-auth" {
    */
   interface User extends DefaultUser {
      /** The user's database ID (_id as string), added during signIn. */
-     id: string; // Non-optional
+     id: string;
      /** Example: User's role */
      // role?: string;
   }

@@ -1,0 +1,11 @@
+.bar {
+  background: #1e293b;
+  color: #f1f5f9;
+  text-align: center;
+  padding: 4px 0;
+  font-size: 0.875rem;
+}
+.alert {
+  background: #dc2626;
+  color: #ffffff;
+}

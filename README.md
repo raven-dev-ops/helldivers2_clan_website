@@ -7,6 +7,7 @@ This is the repository for the Galactic Phantom Division website. It is a Next.j
 - Centered navigation bar text and added Super Store link under the Intel menu.
 - Added auto-playing background music with volume control and visible song credits.
 - Introduced tabbed leaderboards, merch shop disclaimer, and new profile tabs for roles, awards, squad, and rankings.
+- Exposed merit points across the site and added a rotating alert bar beneath the navigation.
 
 ## Features
 
