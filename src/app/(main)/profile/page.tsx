@@ -169,7 +169,7 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
         <div className="avatar-row">
           <div className="avatar-col">
             <div className="avatar">
-              <img src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" />
+              <img src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" loading="lazy" />
             </div>
           </div>
           <div className="avatar-fields">

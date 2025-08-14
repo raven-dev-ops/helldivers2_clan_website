@@ -34,7 +34,7 @@
 - [ ] Provide privacy settings for user profiles.
 - [ ] Integrate with game API for automatic stats updating.
 - [ ] Add audit logs for admin actions.
-- [ ] Add lazy loading for images.
+- [x] Add lazy loading for images.
 - [ ] Implement automatic backups for database.
 - [ ] Add server-side logging and monitoring.
 - [ ] Implement error reporting with Sentry.

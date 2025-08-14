@@ -26,7 +26,7 @@ export default function SuperStore() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 12 }}>
         {items?.map((it: any) => (
           <div key={it._id} style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 12 }}>
-            <img src={it.image_url} alt={it.name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 6 }} />
+            <img src={it.image_url} alt={it.name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 6 }} loading="lazy" />
             <div style={{ marginTop: 8, fontWeight: 600 }}>{it.name}</div>
             <div style={{ color: '#374151' }}>{it.type}</div>
             <div style={{ marginTop: 6 }}>Price: {it.price_sc} SC</div>

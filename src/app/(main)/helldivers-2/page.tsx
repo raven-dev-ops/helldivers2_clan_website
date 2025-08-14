@@ -67,7 +67,7 @@ export default function HelldiversPage() {
                     <p className={styles.paragraph}> Our core values center around respect, teamwork, and enjoying the game together. We value every member and strive to provide an inclusive space where players can coordinate missions, share strategies, showcase their triumphs (and epic fails!), and simply hang out. We utilize Discord extensively for communication, LFG (Looking For Group), and organizing community events. Join us today! </p>
                 </div>
                 <div className={styles.splitImage}>
-                    <img src="/images/ultrasad.gif" alt="Ultra Sad Helldiver" className={styles.centeredImage} />
+                    <img src="/images/ultrasad.gif" alt="Ultra Sad Helldiver" className={styles.centeredImage} loading="lazy" />
                 </div>
             </section>
 
@@ -79,7 +79,7 @@ export default function HelldiversPage() {
                     <p className={styles.paragraph}> We have dedicated channels for LFG, tips, and loadout discussions. Joining voice chat is encouraged for better coordination during missions, but not mandatory if you prefer text. Find squadmates for anything from trivial difficulty farming to your first Helldive attempt! </p>
                 </div>
                 <div className={styles.splitImage}>
-                    <img src="/images/helldiver_poster.gif" alt="New to the Fight" className={styles.centeredImage} />
+                    <img src="/images/helldiver_poster.gif" alt="New to the Fight" className={styles.centeredImage} loading="lazy" />
                 </div>
             </section>
 
@@ -91,7 +91,7 @@ export default function HelldiversPage() {
                     <p className={styles.paragraph}> Coordinate multi-squad planetary operations, share your high-level strategies, participate in community-organized challenges (like the John Helldiver Course!), or simply find reliable teammates who understand the importance of covering flanks and calling out patrols. Help mentor newer players or form elite squads for the toughest challenges the galaxy throws at us. </p>
                 </div>
                 <div className={styles.splitImage}>
-                    <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.centeredImage} />
+                    <img src="/images/veteran_image.gif" alt="Seasoned Helldiver Veteran" className={styles.centeredImage} loading="lazy" />
                 </div>
             </section>
 
