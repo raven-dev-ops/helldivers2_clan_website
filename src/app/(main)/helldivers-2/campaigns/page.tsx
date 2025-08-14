@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import styles from '../HelldiversPage.module.css';
+import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
 
 interface PrestigeMissionData {
   id: string;
@@ -92,30 +93,11 @@ Mortar Sentry`,
 
 export default function CampaignsPage() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const toggleExpansion = (id: string) => {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    setMessage(null);
-    try {
-      const res = await fetch('/api/user-applications', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'campaign' }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Failed to submit');
-      setMessage(data.message || 'Campaign submitted');
-    } catch (err: any) {
-      setMessage(err.message);
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   return (
@@ -125,7 +107,7 @@ export default function CampaignsPage() {
         <div className={styles.subsectionCard}>
           <h3 className={styles.subHeading}>Rules & Requirements</h3>
           <ul className={`${styles.styledList} ${styles.decimal}`}>
-            <li className={styles.listItem}>If it's on the map, it's in play unless the specific challenge level states otherwise.</li>
+            <li className={styles.listItem}>If it&apos;s on the map, it&apos;s in play unless the specific challenge level states otherwise.</li>
             <li className={styles.listItem}>Video submissions must be one continuous, unedited recording. No cuts, splits, or speed-ups.</li>
             <li className={styles.listItem}>Mission privacy must be set to Invite Only.</li>
           </ul>
@@ -155,12 +137,23 @@ export default function CampaignsPage() {
           })}
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-          <button className="btn btn-secondary" onClick={handleSubmit} disabled={submitting}>
-            {submitting ? 'Submitting...' : 'Submit Campaign'}
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              setMessage(null);
+              setIsSubmitModalOpen(true);
+            }}
+          >
+            Submit Campaign
           </button>
         </div>
       </section>
       {message && <p className={styles.paragraph} style={{ textAlign: 'center' }}>{message}</p>}
+      <SubmitCampaignModal
+        isOpen={isSubmitModalOpen}
+        onClose={() => setIsSubmitModalOpen(false)}
+        onSubmitted={(msg) => setMessage(msg)}
+      />
     </div>
   );
 }
