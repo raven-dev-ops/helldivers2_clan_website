@@ -124,11 +124,11 @@ export default async function HelldiversMerchPage() {
   return (
     <main className={styles.merchMainContainer}>
       <div className={styles.titleCard}>
-        <h1 className={styles.merchPageTitle}>GPT HD2 Shop</h1>
+        <h1 className={styles.merchPageTitle}>GPT Clan Collectables</h1>
+        <p className={styles.merchDisclaimer}>
+          Disclaimer: We make 15% profit on all merch sold. Here at GPT, 100% of profit generated goes to our yearly charity drive.
+        </p>
       </div>
-      <p className={styles.merchDisclaimer}>
-        Disclaimer: We make 15% profit on all merch sold. Here at GPT, 100% of profit generated goes to our yearly charity drive. Last year was $500! Lets make it $1,000 this year Helldivers!
-      </p>
 
       {errorOccurred ? (
         <div className={styles.merchErrorText}>{errorMessage}</div>

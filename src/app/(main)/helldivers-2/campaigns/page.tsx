@@ -92,9 +92,30 @@ Mortar Sentry`,
 
 export default function CampaignsPage() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
   const toggleExpansion = (id: string) => {
     setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setMessage(null);
+    try {
+      const res = await fetch('/api/user-applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'campaign' }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to submit');
+      setMessage(data.message || 'Campaign submitted');
+    } catch (err: any) {
+      setMessage(err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -134,6 +155,12 @@ export default function CampaignsPage() {
           })}
         </div>
       </section>
+      <div style={{ textAlign: 'center', marginTop: 24 }}>
+        <button onClick={handleSubmit} disabled={submitting} style={{ padding: '0.5rem 1rem', background: '#facc15', color: '#000', borderRadius: 4 }}>
+          {submitting ? 'Submitting...' : 'Submit Campaign'}
+        </button>
+        {message && <p className={styles.paragraph}>{message}</p>}
+      </div>
     </div>
   );
 }
