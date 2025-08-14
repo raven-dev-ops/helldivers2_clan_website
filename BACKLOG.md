@@ -51,7 +51,7 @@
 - [ ] Provide theme customization for users.
 - [ ] Add option to export user data for GDPR compliance.
 - [ ] Implement captcha for forms to prevent spam.
-- [ ] Add maintenance mode banner.
+- [x] Add maintenance mode banner.
 - [ ] Provide auto-scaling infrastructure using containerization.
 - [ ] Add dynamic sitemap generation.
 - [ ] Provide editable clan rules page.
