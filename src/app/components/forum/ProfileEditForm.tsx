@@ -37,6 +37,7 @@ export default function ProfileEditForm() {
   const [armor, setArmor] = useState<string>('');
   const [motto, setMotto] = useState<string>('');
   const [favoredEnemy, setFavoredEnemy] = useState<string>('');
+  const [twitchUrl, setTwitchUrl] = useState<string>('');
   const [isChangeImageOpen, setIsChangeImageOpen] = useState<boolean>(false);
   // Saved! status and error message
   const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -62,6 +63,7 @@ export default function ProfileEditForm() {
         setArmor(data.armor || '');
         setMotto(data.motto || '');
         setFavoredEnemy(data.favoredEnemy || '');
+        setTwitchUrl(data.twitchUrl || '');
         // Load preferred units if available
         if (data.preferredHeightUnit === 'cm' || data.preferredHeightUnit === 'in') setHeightUnit(data.preferredHeightUnit);
         if (data.preferredWeightUnit === 'kg' || data.preferredWeightUnit === 'lb') setWeightUnit(data.preferredWeightUnit);
@@ -103,6 +105,7 @@ export default function ProfileEditForm() {
         armor: armor || null,
         motto: motto || null,
         favoredEnemy: favoredEnemy || null,
+        twitchUrl: twitchUrl || null,
         // Persist preferred units
         preferredHeightUnit: heightUnit,
         preferredWeightUnit: weightUnit,
@@ -320,11 +323,32 @@ export default function ProfileEditForm() {
           </label>
 
           <label className="field">
+            <span className="label">Twitch</span>
+            {twitchUrl ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <a href={twitchUrl} target="_blank" rel="noopener noreferrer" className="link-button">{twitchUrl}</a>
+                <button type="button" className="btn btn-secondary" onClick={() => setTwitchUrl('')}>Unlink</button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  const url = window.prompt('Enter your Twitch channel URL');
+                  if (url) setTwitchUrl(url);
+                }}
+              >
+                Link Twitch Account
+              </button>
+            )}
+          </label>
+
+          <label className="field field-span-2">
             <span className="label">Motto</span>
             <input value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
           </label>
 
-          <label className="field">
+          <label className="field field-span-2">
             <span className="label">Favored Enemy</span>
             <input value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
           </label>
@@ -357,7 +381,7 @@ export default function ProfileEditForm() {
           className="btn btn-secondary danger"
           title={deleteArmed ? 'Click to permanently delete your account' : undefined}
         >
-          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hold ${deleteHoverSecondsLeft}s`)}
+          {deleting ? 'Deleting…' : (deleteArmed ? 'Delete Account' : `Hold ${String(deleteHoverSecondsLeft).padStart(2, '0')}s`)}
         </button>
       </div>
 
@@ -389,7 +413,7 @@ export default function ProfileEditForm() {
                 disabled={!modalArmed || deleting}
                 style={{ padding: '0.5rem 1rem', background: '#dc2626', color: '#fff', borderRadius: 4 }}
               >
-                {deleting ? 'Deleting…' : (modalArmed ? 'Submit' : `Hold ${modalHoverSecondsLeft}s`)}
+                {deleting ? 'Deleting…' : (modalArmed ? 'Submit' : `Hold ${String(modalHoverSecondsLeft).padStart(2, '0')}s`)}
               </button>
             </div>
           </div>
