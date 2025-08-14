@@ -4,12 +4,14 @@ import styles from "./AlertBar.module.css";
 
 interface LeaderboardRow {
   player_name: string;
+  rank?: number;
 }
 
 export default function AlertBar() {
   const [messages, setMessages] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   // Load alert messages once on mount
   useEffect(() => {
@@ -35,7 +37,10 @@ export default function AlertBar() {
         const orderMsg = orderTitle ? `Major Order: ${orderTitle}${orderDesc ? ' - ' + orderDesc : ''}` : '';
 
         const namesFrom = (d: { results?: LeaderboardRow[] } | null) =>
-          (d?.results ?? []).slice(0, 3).map((r: LeaderboardRow) => r.player_name).join(', ');
+          (d?.results ?? [])
+            .slice(0, 3)
+            .map((r: LeaderboardRow, i: number) => `${r.rank ?? i + 1}. ${r.player_name}`)
+            .join(', ');
         const lifetimeMsg = namesFrom(lifetimeData);
         const monthMsg = namesFrom(monthData);
         const soloMsg = namesFrom(soloData);
@@ -59,7 +64,7 @@ export default function AlertBar() {
 
   // Show the bar every five minutes
   useEffect(() => {
-    if (messages.length === 0) return;
+    if (messages.length === 0 || closed) return;
 
     const startCycle = () => {
       setIndex(0);
@@ -69,7 +74,7 @@ export default function AlertBar() {
     startCycle();
     const interval = setInterval(startCycle, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [messages]);
+  }, [messages, closed]);
 
   const handleAnimationEnd = () => {
     if (index < messages.length - 1) {
@@ -79,12 +84,24 @@ export default function AlertBar() {
     }
   };
 
-  if (!visible || messages.length === 0) return null;
+  if (!visible || messages.length === 0 || closed) return null;
+
+  const handleClose = () => {
+    setVisible(false);
+    setClosed(true);
+  };
 
   return (
     <div className={styles.bar} role="status">
-      <div key={index} className={styles.ticker} onAnimationEnd={handleAnimationEnd}>
-        {messages[index]}
+      <div className={styles.inner}>
+        <div className={styles.tickerWrapper}>
+          <div key={index} className={styles.ticker} onAnimationEnd={handleAnimationEnd}>
+            {messages[index]}
+          </div>
+        </div>
+        <button className={styles.close} onClick={handleClose} aria-label="Close alert">
+          ×
+        </button>
       </div>
     </div>
   );
