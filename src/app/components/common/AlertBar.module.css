@@ -28,7 +28,7 @@
   letter-spacing: 0.05em;
   padding: 0 1rem;
   will-change: transform;        /* NEW: smoother animation */
-  animation: marquee 30s linear 0s 1 both; /* CHANGED: 1 iteration + fill-mode both */
+  animation: marquee 5s linear 0s 1 both; /* CHANGED: 1 iteration + fill-mode both */
   /*            name   dur  timing delay count fill-mode  */
 }
 

@@ -94,7 +94,7 @@ export default function AlertBar() {
 
       // Slower = smaller px/sec. Tweak if needed.
       const PX_PER_SEC = 35;
-      const secs = Math.max(40, (wrapperW + contentW) / PX_PER_SEC); // min 40s for readability
+      const secs = Math.max(120, (wrapperW + contentW) / PX_PER_SEC); // min 40s for readability
       setDurationSec(secs);
     };
 
