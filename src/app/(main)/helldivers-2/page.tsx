@@ -44,7 +44,7 @@ export default function HelldiversPage() {
             <section className={`${styles.section} ${styles.splitSection}`}>
                 <div className={styles.splitText}>
                     <h2 className={styles.sectionTitle}>
-                        GPT HELLDIVERS 2
+                        GPT FLEET
                         <span className={styles.socialIconsGroup}>
                             {discordUrl && (
                                 <Link href={discordUrl} target="_blank" rel="noopener noreferrer" aria-label="Discord" className={styles.socialIconLink}>
@@ -74,7 +74,7 @@ export default function HelldiversPage() {
             {/* === New to the Fight (Split) Section: Image left, Text right === */}
             <section className={`${styles.section} ${styles.splitSection} ${styles.reverse}`}>
                 <div className={styles.splitText}>
-                    <h2 className={styles.sectionTitle}>New to the Fight?</h2>
+                    <h2 className={styles.sectionTitle}>Day 0 of Helldiver?</h2>
                     <p className={styles.paragraph}> Just bought the game? Feeling overwhelmed by Bile Titans or Hulks? Don't worry, we've all been there! GPT offers a supportive environment for new players. Ask questions, team up with experienced members who can show you the ropes (and the best ways to avoid friendly fire... mostly!), and learn the basics without fear of judgment. </p>
                     <p className={styles.paragraph}> We have dedicated channels for LFG, tips, and loadout discussions. Joining voice chat is encouraged for better coordination during missions, but not mandatory if you prefer text. Find squadmates for anything from trivial difficulty farming to your first Helldive attempt! </p>
                 </div>
@@ -86,7 +86,7 @@ export default function HelldiversPage() {
             {/* === Veterans (Split) Section: Text left, GIF right === */}
             <section className={`${styles.section} ${styles.splitSection}`}>
                 <div className={styles.splitText}>
-                    <h2 className={styles.sectionTitle}>Seasoned Veterans Welcome!</h2>
+                    <h2 className={styles.sectionTitle}>The Front Lines Need Experience!</h2>
                     <p className={styles.paragraph}> Think you've seen it all? Mastered the art of the 500kg bomb? Looking for a consistent group to tackle Difficulty 9+ operations and coordinate advanced strategies? GPT is home to many experienced Helldivers eager to push the limits and contribute to the Galactic War effort effectively. </p>
                     <p className={styles.paragraph}> Coordinate multi-squad planetary operations, share your high-level strategies, participate in community-organized challenges (like the John Helldiver Course!), or simply find reliable teammates who understand the importance of covering flanks and calling out patrols. Help mentor newer players or form elite squads for the toughest challenges the galaxy throws at us. </p>
                 </div>

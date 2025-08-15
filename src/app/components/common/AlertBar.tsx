@@ -19,10 +19,10 @@ export default function AlertBar() {
       try {
         const [orderRes, lifetimeRes, monthRes, soloRes, meritRes] = await Promise.all([
           fetch('/api/war/major-orders', { cache: 'no-store' }),
-          fetch('/api/helldivers/leaderboard?scope=lifetime&limit=3', { cache: 'no-store' }),
-          fetch('/api/helldivers/leaderboard?scope=month&limit=3', { cache: 'no-store' }),
-          fetch('/api/helldivers/leaderboard?scope=solo&limit=3', { cache: 'no-store' }),
-          fetch('/api/merit/leaderboard', { cache: 'no-store' })
+          fetch('/api/helldivers/leaderboard?scope=lifetime&limit=50', { cache: 'no-store' }),
+          fetch('/api/helldivers/leaderboard?scope=month&limit=50', { cache: 'no-store' }),
+          fetch('/api/helldivers/leaderboard?scope=solo&limit=50', { cache: 'no-store' }),
+          fetch('/api/merit/leaderboard?limit=50', { cache: 'no-store' }),
         ]);
 
         const orderData = orderRes.ok ? await orderRes.json() : null;
@@ -36,22 +36,27 @@ export default function AlertBar() {
         const orderDesc = order?.description || order?.brief || "";
         const orderMsg = orderTitle ? `Major Order: ${orderTitle}${orderDesc ? ' - ' + orderDesc : ''}` : '';
 
-        const namesFrom = (d: { results?: LeaderboardRow[] } | null) =>
-          (d?.results ?? [])
-            .slice(0, 3)
-            .map((r: LeaderboardRow, i: number) => `${r.rank ?? i + 1}. ${r.player_name}`)
+        const stringifyTop = (d: { results?: LeaderboardRow[] } | null, label: string) => {
+          const rows: LeaderboardRow[] = Array.isArray(d?.results) ? d!.results : [];
+          if (rows.length === 0) return '';
+          const body = rows
+            .slice(0, 50)
+            .map((r, i) => `${r.rank ?? i + 1}. ${r.player_name}`)
             .join(', ');
-        const lifetimeMsg = namesFrom(lifetimeData);
-        const monthMsg = namesFrom(monthData);
-        const soloMsg = namesFrom(soloData);
-        const meritMsg = namesFrom(meritData);
+          return `${label}: ${body}`;
+        };
+
+        const lifetimeMsg = stringifyTop(lifetimeData, 'Top 50 (Lifetime)');
+        const monthMsg = stringifyTop(monthData, 'Top 50 (Monthly)');
+        const soloMsg = stringifyTop(soloData, 'Top 50 (Solo)');
+        const meritMsg = stringifyTop(meritData, 'Top 50 (Merit)');
 
         const parts: string[] = [];
         if (orderMsg) parts.push(orderMsg);
-        if (lifetimeMsg) parts.push(`Lifetime: ${lifetimeMsg}`);
-        if (monthMsg) parts.push(`Monthly: ${monthMsg}`);
-        if (soloMsg) parts.push(`Solo: ${soloMsg}`);
-        if (meritMsg) parts.push(`Merit: ${meritMsg}`);
+        if (lifetimeMsg) parts.push(lifetimeMsg);
+        if (monthMsg) parts.push(monthMsg);
+        if (soloMsg) parts.push(soloMsg);
+        if (meritMsg) parts.push(meritMsg);
 
         setMessages(parts);
       } catch {
@@ -95,6 +100,7 @@ export default function AlertBar() {
     <div className={styles.bar} role="status">
       <div className={styles.inner}>
         <div className={styles.tickerWrapper}>
+          {/* Key forces animation restart each message */}
           <div key={index} className={styles.ticker} onAnimationEnd={handleAnimationEnd}>
             {messages[index]}
           </div>
@@ -106,4 +112,3 @@ export default function AlertBar() {
     </div>
   );
 }
-

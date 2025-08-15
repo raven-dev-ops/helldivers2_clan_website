@@ -65,7 +65,7 @@ export default function HelldiverChallengesPage() {
         <div className={styles.pageContainer}>
             {/* === John Helldiver Missions === */}
             <section className={styles.section} id="john-helldiver-missions">
-                 <h2 className={styles.sectionTitle}>John Helldiver Missions</h2>
+                 <h2 className={styles.sectionTitle}>GPT Challenge Missions</h2>
                  <div className={styles.subsectionCard}>
                     <h3 className={styles.subHeading}>Rules & Requirements</h3>
                     <ul className={`${styles.styledList} ${styles.decimal}`}>
@@ -76,7 +76,7 @@ export default function HelldiverChallengesPage() {
                  </div>
 
                  <div className={styles.subsectionCard}>
-                   <h3 className={styles.subHeading}>Challenge Levels</h3>
+                   <h3 className={styles.subHeading}>100% Complete To Unlock Role: John Helldiver</h3>
                    {johnHelldiverLevels.map((challenge) => {
                        const isExpanded = !!expandedChallenges[challenge.id];
                        return (

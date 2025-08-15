@@ -17,6 +17,8 @@
 .tickerWrapper {
   flex: 1;
   overflow: hidden;
+  white-space: nowrap;           /* NEW: prevent wrapping so start/end positions are consistent */
+  position: relative;            /* helps if you later add absolutely positioned elements */
 }
 
 .ticker {
@@ -25,7 +27,9 @@
   font-weight: 600;
   letter-spacing: 0.05em;
   padding: 0 1rem;
-  animation: marquee 30s linear forwards;
+  will-change: transform;        /* NEW: smoother animation */
+  animation: marquee 30s linear 0s 1 both; /* CHANGED: 1 iteration + fill-mode both */
+  /*            name   dur  timing delay count fill-mode  */
 }
 
 .close {
@@ -50,10 +54,11 @@
 }
 
 @keyframes marquee {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+  0%   { transform: translateX(100%); }   /* fully off-screen on the RIGHT */
+  100% { transform: translateX(-100%); }  /* fully off-screen on the LEFT  */
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ticker { animation: none; transform: translateX(0); }
 }
