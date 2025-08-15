@@ -1,0 +1,85 @@
+.form {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .layout {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 900px) {
+    .layout {
+      grid-template-columns: 260px 1fr; /* avatar sidebar + main content */
+      align-items: start;
+    }
+  }
+  
+  .sidebar {
+    display: grid;
+    gap: .5rem;
+  }
+  
+  .avatar {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b1020;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  
+  .section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  
+  .sectionTitle {
+    margin: 0 0 .75rem 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  
+  .grid {
+    display: grid;
+    gap: .75rem;
+  }
+  
+  @media (min-width: 700px) {
+    .grid.cols2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .grid.cols3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  }
+  
+  .full { grid-column: 1 / -1; }
+  
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  
+  .danger {
+    border: 1px solid #7f1d1d;
+    background: #1b0d0d;
+  }
+  
+  .smallNote {
+    opacity: .8;
+    font-size: .9rem;
+  }
+  
+  .linkRow {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  
