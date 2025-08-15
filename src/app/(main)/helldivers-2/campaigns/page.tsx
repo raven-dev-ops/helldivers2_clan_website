@@ -114,7 +114,7 @@ export default function CampaignsPage() {
         </div>
 
         <div className={styles.subsectionCard}>
-          <h3 className={styles.subHeading}>Prestige Missions</h3>
+          <h3 className={styles.subHeading}>John Helldiver Operations</h3>
           {prestigeMissions.map((mission) => {
             const isExpanded = !!expanded[mission.id];
             return (

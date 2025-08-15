@@ -124,9 +124,9 @@ export default async function HelldiversMerchPage() {
   return (
     <main className={styles.merchMainContainer}>
       <div className={styles.titleCard}>
-        <h1 className={styles.merchPageTitle}>GPT Clan Collectables</h1>
+        <h1 className={styles.merchPageTitle}>GPT Clan Collectibles</h1>
         <p className={styles.merchDisclaimer}>
-          Disclaimer: We make 15% profit on all merch sold. Here at GPT, 100% of profit generated goes to our yearly charity drive.
+          100% of all profit generated goes to our yearly charity drive vote on by our members.
         </p>
       </div>
 
