@@ -87,7 +87,7 @@ export default function MusicButton() {
       <div style={buttonStyle}>
         <button onClick={togglePlay} aria-label={isPlaying ? 'Pause music' : 'Play music'} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'inherit' }}>
           {isPlaying ? <FaPause /> : <FaMusic />}
-          <span style={{ fontWeight: 700 }}>{isPlaying ? 'Pause' : 'Music'}</span>
+          <span style={{ fontWeight: 700 }}>{isPlaying ? 'Pause' : 'Play'}</span>
         </button>
         <input
           type="range"

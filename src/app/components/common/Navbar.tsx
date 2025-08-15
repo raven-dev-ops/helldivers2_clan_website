@@ -64,7 +64,6 @@ const Navbar = () => {
       { href: "/helldivers-2/academy", label: "Academy" },
       { href: "/helldivers-2/creators", label: "Streamers" },
       { href: "/helldivers-2/news/war-news", label: "Intel" },
-      { href: "/helldivers-2/support", label: "Support" },
     ];
   };
   const standardNavItems = getNavItems();
