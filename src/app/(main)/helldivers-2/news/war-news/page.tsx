@@ -1,8 +1,4 @@
-import dynamic from 'next/dynamic';
-
-const NewsTicker = dynamic(() => import('@/app/(main)/helldivers-2/NewsTicker'), {
-  ssr: false,
-});
+import NewsTicker from '@/app/(main)/helldivers-2/NewsTicker';
 
 export default function WarNewsPage() {
   return (
