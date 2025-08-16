@@ -1,7 +1,8 @@
-// src/app/(main)/helldivers-2/news/war-news/page.tsx
 import dynamic from 'next/dynamic';
 
-const NewsTicker = dynamic(() => import('@/app/(main)/helldivers-2/NewsTicker'));
+const NewsTicker = dynamic(() => import('@/app/(main)/helldivers-2/NewsTicker'), {
+  ssr: false,
+});
 
 export default function WarNewsPage() {
   return (
@@ -13,4 +14,3 @@ export default function WarNewsPage() {
     </div>
   );
 }
-
