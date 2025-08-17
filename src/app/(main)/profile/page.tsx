@@ -571,7 +571,7 @@ export default function ProfilePage() {
                     .rank ?? '—'}
                 </span>
                 <span className="inline-code">
-                  Lifetime:{' '}
+                  Yearly:{' '}
                   {findRankAndRow(lifetimeData?.results || [], userData.name)
                     .rank ?? '—'}
                 </span>

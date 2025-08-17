@@ -102,11 +102,11 @@ const Navbar = () => {
                     aria-label="Leaderboard shortcuts"
                   >
                     <Link
-                      href="/helldivers-2/leaderboard#lifetime"
+                      href="/helldivers-2/leaderboard#yearly"
                       className={styles.dropdownItem}
                       role="menuitem"
                     >
-                      Lifetime
+                      Yearly
                     </Link>
                     <Link
                       href="/helldivers-2/leaderboard#monthly"
@@ -114,6 +114,13 @@ const Navbar = () => {
                       role="menuitem"
                     >
                       Monthly
+                    </Link>
+                    <Link
+                      href="/helldivers-2/leaderboard#weekly"
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                    >
+                      Weekly
                     </Link>
                     <Link
                       href="/helldivers-2/leaderboard#solo"

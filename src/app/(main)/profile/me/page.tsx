@@ -546,7 +546,7 @@ export default function ProfilePage() {
                     `Monthly: ${findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}`
                   )}
                   {chip(
-                    `Lifetime: ${findRankAndRow(lifetimeData?.results || [], userData.name).rank ?? '—'}`
+                    `Yearly: ${findRankAndRow(lifetimeData?.results || [], userData.name).rank ?? '—'}`
                   )}
                   {chip(`Grade: ${computeGrade() ?? '—'}`)}
                   {chip(`Clearance: ${userData?.rankTitle ?? '—'}`)}
