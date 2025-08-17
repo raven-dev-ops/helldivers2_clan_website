@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FaTwitch, FaCircle } from 'react-icons/fa';
 import styles from './CreatorsPage.module.css'; // Import the CSS Module
+import { logger } from '@/lib/logger';
 
 // Define the structure for creator data fetched from *your* API route
 interface CreatorData {
@@ -65,7 +66,7 @@ export default function CreatorsPage() {
           setCreatorsData(orderedData);
         }
       } catch (error: any) {
-        console.error('Error fetching creators:', error);
+        logger.error('Error fetching creators:', error);
         if (isMounted) {
           setPageError(
             error.message ||
@@ -93,7 +94,7 @@ export default function CreatorsPage() {
     !process.env.NEXT_PUBLIC_TWITCH_EMBED_PARENT &&
     window.location.hostname !== 'localhost'
   ) {
-    console.warn(
+    logger.warn(
       'NEXT_PUBLIC_TWITCH_EMBED_PARENT environment variable is not set. Twitch embeds may not work on deployed sites.'
     );
   }

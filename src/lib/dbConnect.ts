@@ -1,5 +1,6 @@
 // src/lib/dbConnect.ts
 import mongoose, { Mongoose } from 'mongoose';
+import { logger } from '@/lib/logger';
 
 // Import all your Mongoose models to register schemas once in dev.
 import '@/models/User';
@@ -53,7 +54,7 @@ async function dbConnect(): Promise<Mongoose> {
     cached.conn = await cached.promise;
   } catch (error) {
     cached.promise = null;
-    console.error('MongoDB connection error:', error);
+    logger.error('MongoDB connection error:', error);
     throw error;
   }
 

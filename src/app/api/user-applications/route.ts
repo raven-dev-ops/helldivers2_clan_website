@@ -5,6 +5,7 @@ import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserApplicationModel from '@/models/UserApplication';
 import mongoose from 'mongoose';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: Request) {
   const session = await getServerSession(getAuthOptions());
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    console.error('User application error:', error);
+    logger.error('User application error:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
       { status: 500 }

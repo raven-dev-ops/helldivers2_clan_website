@@ -5,6 +5,7 @@ import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import BotApplicationModel from '@/models/BotApplication'; // Adjust path
 import mongoose from 'mongoose';
+import { logger } from '@/lib/logger';
 
 // Define the expected request body structure
 interface ApplicationRequestBody {
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
       { status: 201 }
     ); // 201 Created
   } catch (error) {
-    console.error('API Application Error:', error);
+    logger.error('API Application Error:', error);
     if (error instanceof mongoose.Error.ValidationError) {
       return NextResponse.json(
         { message: 'Validation Error', errors: error.errors },

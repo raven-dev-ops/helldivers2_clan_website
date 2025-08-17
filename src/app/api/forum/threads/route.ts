@@ -1,8 +1,9 @@
 // src/app/api/forum/threads/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
-  console.log('[GET /api/forum/threads]');
+  logger.info('[GET /api/forum/threads]');
   // Possibly filter by query, e.g., ?categoryId=...
   const { searchParams } = new URL(req.url);
   const categoryId = searchParams.get('categoryId');
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  console.log('[POST /api/forum/threads]');
+  logger.info('[POST /api/forum/threads]');
   const data = await req.json();
   // Example: create a new thread
   return NextResponse.json(

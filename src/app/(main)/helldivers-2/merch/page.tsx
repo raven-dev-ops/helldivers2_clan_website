@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import styles from './MerchPage.module.css';
+import { logger } from '@/lib/logger';
 
 // ✅ Force dynamic so build never tries to statically prerender
 export const dynamic = 'force-dynamic';
@@ -54,7 +55,7 @@ export default async function HelldiversMerchPage() {
   let errorMessage = 'Failed to load products.';
 
   if (!token) {
-    console.error(
+    logger.error(
       'Error: STOREFRONT_API_TOKEN environment variable is not set.'
     );
     errorOccurred = true;
@@ -63,14 +64,14 @@ export default async function HelldiversMerchPage() {
 
   if (!errorOccurred) {
     try {
-      console.log('Fetching collections...');
+      logger.info('Fetching collections...');
       const colRes = await fetch(
         `https://storefront-api.fourthwall.com/v1/collections?storefront_token=${token}`,
         { next: { revalidate: 3600 } }
       );
       if (!colRes.ok) {
         const errorBody = await colRes.text();
-        console.error(
+        logger.error(
           `Collections fetch failed: ${colRes.status} ${colRes.statusText}`,
           errorBody
         );
@@ -78,7 +79,7 @@ export default async function HelldiversMerchPage() {
       }
       const colData = await colRes.json();
       const collections: Collection[] = colData.results || [];
-      console.log(`Found ${collections.length} collections.`);
+      logger.info(`Found ${collections.length} collections.`);
 
       const targetCollectionSlug = 'all';
       const targetCollection =
@@ -86,11 +87,11 @@ export default async function HelldiversMerchPage() {
         (collections.length > 0 ? collections[0] : null);
 
       if (!targetCollection) {
-        console.warn(
+        logger.warn(
           `Target collection '${targetCollectionSlug}' not found or store has no collections.`
         );
       } else {
-        console.log(
+        logger.info(
           `Fetching products for collection: ${targetCollection.name} (slug: ${targetCollection.slug})...`
         );
         const prodRes = await fetch(
@@ -99,7 +100,7 @@ export default async function HelldiversMerchPage() {
         );
         if (!prodRes.ok) {
           const errorBody = await prodRes.text();
-          console.error(
+          logger.error(
             `Products fetch failed: ${prodRes.status} ${prodRes.statusText}`,
             errorBody
           );
@@ -151,14 +152,14 @@ export default async function HelldiversMerchPage() {
             (p: Product): p is Product => !!p.slug && p.variants.length > 0
           );
 
-        console.log(`Fetched ${products.length} valid products.`);
+        logger.info(`Fetched ${products.length} valid products.`);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
-        console.error('Error fetching Fourthwall products:', err.message);
+        logger.error('Error fetching Fourthwall products:', err.message);
         errorMessage = `Failed to load products due to a network or API error. (Details: ${err.message})`;
       } else {
-        console.error('An unexpected error occurred:', err);
+        logger.error('An unexpected error occurred:', err);
         errorMessage = 'An unexpected error occurred while loading products.';
       }
       errorOccurred = true;
@@ -213,7 +214,7 @@ export default async function HelldiversMerchPage() {
                   product.description
                 ).replace(/<[^>]*>?/gm, '');
               } catch (e) {
-                console.warn(
+                logger.warn(
                   'Could not decode/clean description for',
                   product.name,
                   e

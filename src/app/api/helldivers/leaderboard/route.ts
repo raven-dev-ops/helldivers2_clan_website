@@ -5,6 +5,7 @@ import {
   VALID_SORT_FIELDS,
   type SortField,
 } from '@/lib/helldiversLeaderboard';
+import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
   try {
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error('Error fetching helldivers leaderboard:', error);
+    logger.error('Error fetching helldivers leaderboard:', error);
     return NextResponse.json(
       { error: 'Failed to fetch leaderboard' },
       { status: 500 }

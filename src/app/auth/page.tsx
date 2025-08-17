@@ -8,6 +8,7 @@ import { FaDiscord, FaPlay, FaPause } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Auth.module.css';
+import { logger } from '@/lib/logger';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';
 
@@ -25,15 +26,13 @@ export default function AuthPage() {
   // --- Functions ---
   const handleInteraction = () => {
     if (!userInteracted) {
-      console.log('User interaction detected.');
+      logger.info('User interaction detected.');
       setUserInteracted(true);
       if (audioRef.current) audioRef.current.volume = volume;
       if (videoRef.current && videoRef.current.paused) {
         videoRef.current
           .play()
-          .catch((e) =>
-            console.error('Video play error after interaction:', e)
-          );
+          .catch((e) => logger.error('Video play error after interaction:', e));
       }
     }
   };
@@ -54,7 +53,7 @@ export default function AuthPage() {
             .then(() => setIsPlaying(true))
             .catch((error) => {
               setIsPlaying(false);
-              console.error('Audio play failed:', error);
+              logger.error('Audio play failed:', error);
               alert(
                 userInteracted
                   ? 'Could not play audio.'
@@ -65,7 +64,7 @@ export default function AuthPage() {
           setIsPlaying(true);
         }
       } else {
-        console.warn('Audio not ready.');
+        logger.warn('Audio not ready.');
         alert('Audio loading, try again.');
       }
     }
@@ -90,7 +89,7 @@ export default function AuthPage() {
       if (videoElement.paused)
         videoElement
           .play()
-          .catch((e) => console.warn('Video autoplay potentially blocked.', e));
+          .catch((e) => logger.warn('Video autoplay potentially blocked.', e));
     }
   }, []);
 
@@ -127,8 +126,8 @@ export default function AuthPage() {
           playsInline
           className={styles.videoBackground}
           key="bg-video"
-          onCanPlay={() => console.log('Video ready')}
-          onError={(e) => console.error('Video Error Event:', e)}
+          onCanPlay={() => logger.info('Video ready')}
+          onError={(e) => logger.error('Video Error Event:', e)}
         >
           <source src="/videos/gpd_background.mp4" type="video/mp4" />
           Your browser does not support the video tag.

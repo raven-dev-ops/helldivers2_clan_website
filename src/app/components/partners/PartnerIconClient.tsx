@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { FaDiscord } from 'react-icons/fa';
+import { logger } from '@/lib/logger';
 
 interface PartnerIconProps {
   src: string | null;
@@ -37,7 +38,7 @@ export default function PartnerIcon({
       height={64}
       style={iconStyle}
       onError={() => {
-        console.warn(`Failed to load image: ${src}`);
+        logger.warn(`Failed to load image: ${src}`);
         setImgError(true); // Set error state to trigger placeholder render
       }}
       priority={false} // Usually logos aren't highest priority

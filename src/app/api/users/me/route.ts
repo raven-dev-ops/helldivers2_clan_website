@@ -6,6 +6,7 @@ import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -376,7 +377,7 @@ export async function PUT(req: Request) {
       { upsert: true }
     );
   } catch (e) {
-    console.error('Failed to write User_Profiles snapshot', e);
+    logger.error('Failed to write User_Profiles snapshot', e);
   }
 
   return NextResponse.json({

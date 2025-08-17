@@ -1,8 +1,11 @@
 // Example: src/app/api/twitch/creators/route.ts (App Router)
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET; // Keep secret!
+
+let tokenCache: { token: string; expiresAt: number } | null = null;
 
 interface TwitchUser {
   id: string;
@@ -33,10 +36,14 @@ interface CreatorData {
 // Function to get App Access Token (cached recommended)
 async function getTwitchAppAccessToken(): Promise<string | null> {
   if (!TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET) {
-    console.error('Twitch API credentials missing in environment variables.');
+    logger.error('Twitch API credentials missing in environment variables.');
     return null;
   }
-  // TODO: Implement caching for the token to avoid fetching every time
+
+  if (tokenCache && tokenCache.expiresAt > Date.now()) {
+    return tokenCache.token;
+  }
+
   try {
     const response = await fetch('https://id.twitch.tv/oauth2/token', {
       method: 'POST',
@@ -51,7 +58,7 @@ async function getTwitchAppAccessToken(): Promise<string | null> {
       cache: 'no-store', // Don't cache the token request itself (but cache the result)
     });
     if (!response.ok) {
-      console.error(
+      logger.error(
         'Failed to fetch Twitch App Access Token:',
         response.status,
         await response.text()
@@ -59,13 +66,16 @@ async function getTwitchAppAccessToken(): Promise<string | null> {
       return null;
     }
     const data = await response.json();
+    tokenCache = {
+      token: data.access_token,
+      expiresAt: Date.now() + (data.expires_in ?? 0) * 1000 - 60_000, // refresh 1 min early
+    };
     return data.access_token;
   } catch (error) {
-    console.error('Error getting Twitch App Access Token:', error);
+    logger.error('Error getting Twitch App Access Token:', error);
     return null;
   }
 }
-
 export async function GET() {
   const channelNames = [
     // Keep this list manageable or pass via query params
@@ -146,7 +156,7 @@ export async function GET() {
     ); // Cache for 60s, allow stale for 120s
     return response;
   } catch (error: any) {
-    console.error('Error in Twitch API route:', error);
+    logger.error('Error in Twitch API route:', error);
     return NextResponse.json(
       { error: 'Failed to fetch data from Twitch.', details: error.message },
       { status: 500 }

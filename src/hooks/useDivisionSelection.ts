@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/logger';
 
 export interface DivisionSelectionResult {
   selectDivision: (href: string) => Promise<void>;
@@ -20,13 +21,13 @@ export function useDivisionSelection(): DivisionSelectionResult {
 
     // 1. Prevent action if auth loading
     if (status === 'loading') {
-      console.warn('useDivisionSelection: Auth status loading, aborting.');
+      logger.warn('useDivisionSelection: Auth status loading, aborting.');
       return;
     }
 
     // 2. Client-side check: If not authenticated, redirect to sign in
     if (status !== 'authenticated' || !session) {
-      console.warn(
+      logger.warn(
         'useDivisionSelection: Client session invalid/missing. Redirecting to auth.'
       );
       signIn(undefined, { callbackUrl: href }); // Default signIn page
@@ -35,7 +36,7 @@ export function useDivisionSelection(): DivisionSelectionResult {
 
     // 3. Prepare for API call
     const divisionIdentifier = href.replace(/^\//, ''); // Remove leading slash if present
-    console.log(`Attempting to set division via API: ${divisionIdentifier}`);
+    logger.info(`Attempting to set division via API: ${divisionIdentifier}`);
     setIsLoading(true);
 
     try {
@@ -49,7 +50,7 @@ export function useDivisionSelection(): DivisionSelectionResult {
       // 5. Handle API Response
       if (!response.ok) {
         if (response.status === 401) {
-          console.error(
+          logger.error(
             `API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`
           );
           setError(
@@ -61,7 +62,7 @@ export function useDivisionSelection(): DivisionSelectionResult {
           const errorText = await response
             .text()
             .catch(() => 'Could not read error response.');
-          console.error(
+          logger.error(
             `API Error (${response.status}): Failed to update user division.`,
             errorText
           );
@@ -78,13 +79,13 @@ export function useDivisionSelection(): DivisionSelectionResult {
 
       // --- Success Case ---
       const responseData = await response.json();
-      console.log('User division updated successfully via API.', responseData);
+      logger.info('User division updated successfully via API.', responseData);
       // Navigate the user to the selected game's page
       router.push(href);
       // No need to setIsLoading(false) here as navigation will unmount/remount
     } catch (err) {
       // 6. Handle Network/Fetch Errors
-      console.error('Network or other error during division update:', err);
+      logger.error('Network or other error during division update:', err);
       setError('Network Error: Could not connect to the server.');
       alert('Error: Could not connect to the server to select division.');
       setIsLoading(false);

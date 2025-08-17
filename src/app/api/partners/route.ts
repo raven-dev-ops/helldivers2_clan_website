@@ -4,6 +4,7 @@ import dbConnect from '@/lib/dbConnect'; // Assuming Mongoose connector at this 
 import ServerListingModel, { IServerListing } from '@/models/ServerListing'; // Import your model
 import { Schema, model, models } from 'mongoose'; // Import necessary Mongoose types
 import mongoose from 'mongoose'; // Import mongoose
+import { logger } from '@/lib/logger';
 
 // Define the structure of the data you want to return from this API
 interface ApiPartnerData {
@@ -15,17 +16,17 @@ interface ApiPartnerData {
 
 // --- GET Handler ---
 export async function GET() {
-  console.log('[GET /api/partners] - Request received');
+  logger.info('[GET /api/partners] - Request received');
   try {
     await dbConnect();
-    console.log('[GET /api/partners] - Database connected');
+    logger.info('[GET /api/partners] - Database connected');
 
     const partnersRaw = await ServerListingModel.find({})
       .select('_id discord_server_name discord_invite_link')
       .sort({ discord_server_name: 1 })
       .lean();
 
-    console.log(
+    logger.info(
       `[GET /api/partners] - Found ${partnersRaw?.length ?? 0} documents`
     );
 
@@ -40,10 +41,10 @@ export async function GET() {
       inviteLink: p.discord_invite_link,
     }));
 
-    console.log(`[GET /api/partners] - Returning ${partners.length} partners`);
+    logger.info(`[GET /api/partners] - Returning ${partners.length} partners`);
     return NextResponse.json(partners);
   } catch (error) {
-    console.error('[GET /api/partners] - Error fetching partners:', error);
+    logger.error('[GET /api/partners] - Error fetching partners:', error);
     return NextResponse.json(
       {
         message: 'Failed to fetch partners',
@@ -56,10 +57,10 @@ export async function GET() {
 
 // --- POST Handler (Implemented Creation Logic with Type Assertion) ---
 export async function POST(req: NextRequest) {
-  console.log('[POST /api/partners] - Request received');
+  logger.info('[POST /api/partners] - Request received');
   try {
     const body = await req.json();
-    console.log('[POST /api/partners] - Received data:', body);
+    logger.info('[POST /api/partners] - Received data:', body);
 
     // --- 1. Basic Validation ---
     if (
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     const discordRes = await fetch(discordApiUrl);
 
     if (!discordRes.ok) {
-      console.error(
+      logger.error(
         `[POST /api/partners] - Discord API fetch failed for ${inviteCode}: ${discordRes.status}`
       );
       return NextResponse.json(
@@ -107,7 +108,7 @@ export async function POST(req: NextRequest) {
     const guild = discordData.guild;
 
     if (!guild?.id) {
-      console.error(
+      logger.error(
         `[POST /api/partners] - Discord API response missing guild data or guild ID for ${inviteCode}`
       );
       return NextResponse.json(
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
 
     // --- 4. Connect to Database (moved after API validation) ---
     await dbConnect();
-    console.log('[POST /api/partners] - Database connected');
+    logger.info('[POST /api/partners] - Database connected');
 
     // --- 5. Map Incoming Data to Schema Fields and Add Validated Discord Data ---
     const newPartnerData = {
@@ -158,7 +159,7 @@ export async function POST(req: NextRequest) {
 
     // --- 8. Save Document ---
     const savedPartner = await newPartner.save();
-    console.log(
+    logger.info(
       '[POST /api/partners] - Partner saved successfully:',
       savedPartner._id
     );
@@ -182,7 +183,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     ); // 201 Created
   } catch (error: unknown) {
-    console.error('[POST /api/partners] - Error processing request:', error);
+    logger.error('[POST /api/partners] - Error processing request:', error);
 
     // Handle Mongoose validation errors
     if (error instanceof mongoose.Error.ValidationError) {

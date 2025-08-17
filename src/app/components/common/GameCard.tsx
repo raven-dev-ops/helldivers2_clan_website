@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import { logger } from '@/lib/logger';
 // Import signIn from next-auth/react
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -31,7 +32,7 @@ export default function GameCard({
 
     // 2. Client-side check: If not authenticated, redirect to sign in
     if (status !== 'authenticated' || !session) {
-      console.warn(
+      logger.warn(
         'GameCard: Client session invalid/missing. Redirecting to auth.'
       );
       // Redirect to sign-in page, passing the intended game page as callback
@@ -41,7 +42,7 @@ export default function GameCard({
 
     // 3. Prepare for API call
     const divisionIdentifier = href.replace(/^\//, '');
-    console.log(`Attempting to set division via API: ${divisionIdentifier}`);
+    logger.info(`Attempting to set division via API: ${divisionIdentifier}`);
 
     try {
       // 4. API Call
@@ -55,7 +56,7 @@ export default function GameCard({
       if (!response.ok) {
         // --- Specific Check for 401 Unauthorized ---
         if (response.status === 401) {
-          console.error(
+          logger.error(
             `API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`
           );
           // Redirect to sign-in page, optionally passing error and callback
@@ -66,7 +67,7 @@ export default function GameCard({
           const errorText = await response
             .text()
             .catch(() => 'Could not read error response.'); // Add catch for text()
-          console.error(
+          logger.error(
             `API Error (${response.status}): Failed to update user division.`,
             errorText
           );
@@ -81,12 +82,12 @@ export default function GameCard({
       // --- Success Case ---
       // API call was successful (status 2xx)
       const responseData = await response.json(); // Process successful response if needed
-      console.log('User division updated successfully via API.', responseData);
+      logger.info('User division updated successfully via API.', responseData);
       // Navigate the user to the selected game's page
       router.push(href);
     } catch (error) {
       // 6. Handle Network/Fetch Errors
-      console.error('Network or other error during division update:', error);
+      logger.error('Network or other error during division update:', error);
       alert('Error: Could not connect to the server to select division.');
     }
   };

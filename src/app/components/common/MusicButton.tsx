@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { FaMusic, FaPause } from 'react-icons/fa';
+import { logger } from '@/lib/logger';
 
 export default function MusicButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -17,7 +18,7 @@ export default function MusicButton() {
     audio
       .play()
       .then(() => setIsPlaying(true))
-      .catch((e) => console.warn('Audio play failed:', e));
+      .catch((e) => logger.warn('Audio play failed:', e));
     const handleEnded = () => setIsPlaying(false);
     audio.addEventListener('ended', handleEnded);
     return () => {
@@ -44,7 +45,7 @@ export default function MusicButton() {
         setIsPlaying(true);
       }
     } catch (e) {
-      console.warn('Audio play failed:', e);
+      logger.warn('Audio play failed:', e);
     }
   };
 
