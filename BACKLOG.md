@@ -47,7 +47,7 @@
 - [ ] Add integration with Twitch streaming events.
 - [ ] Provide statistics dashboard for clan performance.
 - [ ] Add server status page.
-- [ ] Implement rate limiting for API endpoints.
+- [x] Implement rate limiting for API endpoints.
 - [ ] Provide theme customization for users.
 - [ ] Add option to export user data for GDPR compliance.
 - [ ] Implement captcha for forms to prevent spam.

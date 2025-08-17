@@ -58,6 +58,8 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=<generate-a-secret-key>
 DISCORD_CLIENT_ID=<discord-client-id>
 DISCORD_CLIENT_SECRET=<discord-client-secret>
+RATE_LIMIT_WINDOW_MS=60000
+RATE_LIMIT_MAX=10
 ```
 
 ### Local Development
