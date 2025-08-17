@@ -10,8 +10,8 @@ describe('DiscordWidget', () => {
     expect(html).toContain('iframe');
   });
 
-  it('renders placeholder when no server ID is given', () => {
-    const html = renderToString(<DiscordWidget serverId="" />);
-    expect(html).toContain('Discord widget not configured');
+  it('uses default server ID when none is provided', () => {
+    const html = renderToString(<DiscordWidget />);
+    expect(html).toContain('https://discord.com/widget?id=1214787549655203862');
   });
 });
