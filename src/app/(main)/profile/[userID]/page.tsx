@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
 
 async function getUserProfile(userID: string) {
   if (!mongoose.Types.ObjectId.isValid(userID)) return null;
@@ -24,7 +25,7 @@ async function getUserProfile(userID: string) {
 
     return JSON.parse(JSON.stringify({ user, recentThreads }));
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    logger.error('Error fetching profile:', error);
     return null;
   }
 }
@@ -122,8 +123,6 @@ export default async function ProfilePage({
           No threads started yet.
         </p>
       )}
-
-      {/* TODO: Add recent posts section similarly */}
     </main>
   );
 }

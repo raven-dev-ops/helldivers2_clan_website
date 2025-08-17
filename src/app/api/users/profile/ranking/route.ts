@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
+import { logger } from '@/lib/logger';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(getAuthOptions());
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error('Failed saving current ranking', e);
+    logger.error('Failed saving current ranking', e);
     return NextResponse.json({ error: 'failed' }, { status: 500 });
   }
 }

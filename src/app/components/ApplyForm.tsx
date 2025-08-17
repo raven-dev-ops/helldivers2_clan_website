@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import styles from './ApplyForm.module.css'; // Create this CSS module file
+import { logger } from '@/lib/logger';
 
 interface ApplyFormProps {
   botName: string;
@@ -58,7 +59,7 @@ export default function ApplyForm({
         onSuccess(); // Notify parent component
       }, 1500); // Close form after 1.5 seconds
     } catch (err: any) {
-      console.error('Form submission error:', err);
+      logger.error('Form submission error:', err);
       setError(
         err.message || 'Failed to submit application. Please try again.'
       );

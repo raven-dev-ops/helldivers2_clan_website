@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import styles from './MerchPage.module.css';
+import { logger } from '@/lib/logger';
 
 // ✅ Force dynamic rendering for fresh data
 export const dynamic = 'force-dynamic';
@@ -57,25 +58,25 @@ export default async function DuneMerchPage() {
   let errorMessage = 'Failed to load products.';
 
   if (!token) {
-    console.error('❌ STOREFRONT_API_TOKEN not set.');
+    logger.error('❌ STOREFRONT_API_TOKEN not set.');
     errorOccurred = true;
     errorMessage = 'Store config error. Please contact support.';
   }
 
   if (!errorOccurred) {
     try {
-      console.log('🔍 Fetching collections...');
+      logger.info('🔍 Fetching collections...');
       const colRes = await fetch(
         `https://storefront-api.fourthwall.com/v1/collections?storefront_token=${token}`,
         { next: { revalidate: 3600 } }
       );
       if (!colRes.ok) {
-        console.error(`❌ Collections fetch failed: ${colRes.status}`);
+        logger.error(`❌ Collections fetch failed: ${colRes.status}`);
         throw new Error(`Collections fetch failed: ${colRes.status}`);
       }
       const colData = await colRes.json();
       const collections: Collection[] = colData.results || [];
-      console.log(`✅ Found ${collections.length} collections.`);
+      logger.info(`✅ Found ${collections.length} collections.`);
 
       const targetCollectionSlug = 'all'; // Or set your specific slug
       const targetCollection =
@@ -84,15 +85,15 @@ export default async function DuneMerchPage() {
         null;
 
       if (!targetCollection) {
-        console.warn(`⚠️ No collection found.`);
+        logger.warn(`⚠️ No collection found.`);
       } else {
-        console.log(`🔍 Fetching products for: ${targetCollection.name}`);
+        logger.info(`🔍 Fetching products for: ${targetCollection.name}`);
         const prodRes = await fetch(
           `https://storefront-api.fourthwall.com/v1/collections/${targetCollection.slug}/products?storefront_token=${token}`,
           { next: { revalidate: 3600 } }
         );
         if (!prodRes.ok) {
-          console.error(`❌ Products fetch failed: ${prodRes.status}`);
+          logger.error(`❌ Products fetch failed: ${prodRes.status}`);
           throw new Error(`Products fetch failed: ${prodRes.status}`);
         }
 
@@ -141,10 +142,10 @@ export default async function DuneMerchPage() {
             (p: Product): p is Product => !!p.slug && p.variants.length > 0
           );
 
-        console.log(`✅ Fetched ${products.length} valid products.`);
+        logger.info(`✅ Fetched ${products.length} valid products.`);
       }
     } catch (err: unknown) {
-      console.error('❌ Fetch error:', err);
+      logger.error('❌ Fetch error:', err);
       errorOccurred = true;
       errorMessage = 'An error occurred while loading products.';
     }

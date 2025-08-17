@@ -1,8 +1,9 @@
 // src/app/api/leaderboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
-  console.log('[GET /api/leaderboard]');
+  logger.info('[GET /api/leaderboard]');
   // Example: fetch top 10 players
   const leaderboard = [
     { rank: 1, name: 'Player1', score: 9999 },
@@ -12,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  console.log('[POST /api/leaderboard]');
+  logger.info('[POST /api/leaderboard]');
   const data = await req.json();
   // Example: update leaderboard with new score
   return NextResponse.json(

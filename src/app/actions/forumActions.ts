@@ -13,6 +13,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import createDOMPurify from 'isomorphic-dompurify';
 import { JSDOM } from 'jsdom';
+import { logger } from '@/lib/logger';
 
 // ---- Server-side DOMPurify setup ----
 const windowForPurify = new JSDOM('').window;
@@ -80,7 +81,7 @@ export async function editPost(prevState: any, formData: FormData) {
     revalidatePath(`/forum/[categoryId]/${post.threadId}`, 'page');
     return { status: 'success', message: 'Post updated!' };
   } catch (error) {
-    console.error('Error editing post:', error);
+    logger.error('Error editing post:', error);
     return { status: 'error', message: 'Database error editing post.' };
   }
 }
@@ -120,7 +121,7 @@ export async function deletePost(prevState: any, formData: FormData) {
     revalidatePath(`/forum/[categoryId]/${post.threadId}`, 'page');
     return { status: 'success', message: 'Post deleted.' };
   } catch (error) {
-    console.error('Error deleting post:', error);
+    logger.error('Error deleting post:', error);
     return { status: 'error', message: 'Database error deleting post.' };
   }
 }
@@ -161,12 +162,10 @@ export async function deleteThread(prevState: any, formData: FormData) {
 
     redirect(`/forum/${thread.categoryId}`);
   } catch (error) {
-    console.error('Error deleting thread:', error);
+    logger.error('Error deleting thread:', error);
     return { status: 'error', message: 'Database error deleting thread.' };
   }
 }
-
-// TODO: Implement editThread similarly...
 export async function editThread(prevState: any, formData: FormData) {
   await dbConnect();
   const session = await getServerSession(getAuthOptions());
@@ -210,7 +209,7 @@ export async function editThread(prevState: any, formData: FormData) {
     revalidatePath(`/forum/${thread.categoryId}`);
     return { status: 'success', message: 'Thread updated!' };
   } catch (error) {
-    console.error('Error editing thread:', error);
+    logger.error('Error editing thread:', error);
     return { status: 'error', message: 'Database error editing thread.' };
   }
 }
