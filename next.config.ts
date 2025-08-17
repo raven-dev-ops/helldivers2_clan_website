@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     styledComponents: true,
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   experimental: {
     typedRoutes: false,

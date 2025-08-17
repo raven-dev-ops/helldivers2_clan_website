@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # Build the Next.js app
-RUN npm run build
+RUN npm run lint && npm run build
 
 # Expose port
 EXPOSE 3000
