@@ -5,15 +5,15 @@ import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import BotApplicationModel from '@/models/BotApplication'; // Adjust path
 import mongoose from 'mongoose';
+import { z } from 'zod';
 import { logger } from '@/lib/logger';
 
-// Define the expected request body structure
-interface ApplicationRequestBody {
-  botIdentifier: string;
-  serverName?: string;
-  serverId?: string;
-  reason?: string;
-}
+const applicationSchema = z.object({
+  botIdentifier: z.string({ required_error: 'botIdentifier is required' }),
+  serverName: z.string().optional(),
+  serverId: z.string().optional(),
+  reason: z.string().optional(),
+});
 
 export async function POST(request: Request) {
   const session = await getServerSession(getAuthOptions());
@@ -25,15 +25,15 @@ export async function POST(request: Request) {
   const userId = new mongoose.Types.ObjectId(session.user.id);
 
   try {
-    const body = (await request.json()) as ApplicationRequestBody;
-
-    // 2. Basic Validation
-    if (!body.botIdentifier) {
+    const json = await request.json();
+    const parsed = applicationSchema.safeParse(json);
+    if (!parsed.success) {
       return NextResponse.json(
-        { message: 'Bot identifier is required' },
+        { message: 'Validation Error', errors: parsed.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+    const body = parsed.data;
     // Add more validation as needed (e.g., check bot exists, serverName length)
 
     await dbConnect();

@@ -2,8 +2,12 @@ import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export default withAuth(
-  function middleware(req: NextRequest) {
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX = 10;
+const requests = new Map<string, { count: number; start: number }>();
+
+const authMiddleware = withAuth(
+  function middleware() {
     return NextResponse.next();
   },
   {
@@ -16,8 +20,33 @@ export default withAuth(
   }
 );
 
+export default async function middleware(req: NextRequest) {
+  if (req.nextUrl.pathname.startsWith('/api')) {
+    const ip = req.ip ?? '127.0.0.1';
+    const now = Date.now();
+    const entry = requests.get(ip) || { count: 0, start: now };
+    if (now - entry.start > RATE_LIMIT_WINDOW) {
+      entry.count = 0;
+      entry.start = now;
+    }
+    entry.count++;
+    requests.set(ip, entry);
+    if (entry.count > RATE_LIMIT_MAX) {
+      return NextResponse.json(
+        { message: 'Too many requests' },
+        { status: 429 }
+      );
+    }
+    return NextResponse.next();
+  }
+  return (authMiddleware as any)(req);
+}
+
+export const __rateLimitStore = requests; // for testing
+
 export const config = {
   matcher: [
-    '/((?!api/auth|api/|_next/static|_next/image|auth|images|videos|audio|favicon.ico).*)',
+    '/api/:path*',
+    '/((?!api/auth|_next/static|_next/image|auth|images|videos|audio|favicon.ico).*)',
   ],
 };
