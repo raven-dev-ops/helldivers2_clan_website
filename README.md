@@ -33,5 +33,59 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
-1.  Clone the repository:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/helldivers2_clan_website.git
+   cd helldivers2_clan_website
+   ```
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+3. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+### Environment Variables
+
+Create a `.env.local` file in the project root and define the following variables:
+
+```
+MONGODB_URI=<your-mongodb-connection-string>
+MONGODB_DB=<database-name>
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=<generate-a-secret-key>
+DISCORD_CLIENT_ID=<discord-client-id>
+DISCORD_CLIENT_SECRET=<discord-client-secret>
+```
+
+### Local Development
+
+After installing dependencies and setting environment variables, start the development server:
+
+```bash
+pnpm dev
+```
+
+The app will be available at `http://localhost:3000`.
+
+### Testing
+
+Run the test suite with:
+
+```bash
+pnpm test
+```
+
+### Deployment
+
+Build the production bundle and start the server:
+
+```bash
+pnpm build
+pnpm start
+```
+
+Ensure that the same environment variables are configured in your hosting environment.
 
