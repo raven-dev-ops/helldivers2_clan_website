@@ -5,7 +5,15 @@ import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserApplicationModel from '@/models/UserApplication';
 import mongoose from 'mongoose';
+import { z } from 'zod';
 import { logger } from '@/lib/logger';
+
+const userApplicationSchema = z.object({
+  type: z.string({ required_error: 'type is required' }),
+  interest: z.string({ required_error: 'interest is required' }),
+  about: z.string().optional(),
+  interviewAvailability: z.string().optional(),
+});
 
 export async function POST(request: Request) {
   const session = await getServerSession(getAuthOptions());
@@ -14,14 +22,15 @@ export async function POST(request: Request) {
   }
   const userId = new mongoose.Types.ObjectId(session.user.id);
   try {
-    const body = await request.json();
-    const { type, interest, about, interviewAvailability } = body;
-    if (!type || !interest) {
+    const json = await request.json();
+    const parsed = userApplicationSchema.safeParse(json);
+    if (!parsed.success) {
       return NextResponse.json(
-        { message: 'Type and interest are required' },
+        { message: 'Validation Error', errors: parsed.error.flatten().fieldErrors },
         { status: 400 }
       );
     }
+    const { type, interest, about, interviewAvailability } = parsed.data;
     await dbConnect();
     const app = new UserApplicationModel({
       userId,
