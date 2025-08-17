@@ -83,11 +83,11 @@ async function getTwitchAppAccessToken(): Promise<string | null> {
       cache: 'no-store', // Don't cache the token request itself (but cache the result)
     });
     if (!response.ok) {
-      logger.error(
-        'Failed to fetch Twitch App Access Token:',
-        response.status,
-        await response.text()
-      );
+      const body = await response.text();
+      logger.error('Failed to fetch Twitch App Access Token:', {
+        status: response.status,
+        body,
+      });
       return null;
     }
     const data = await response.json();
