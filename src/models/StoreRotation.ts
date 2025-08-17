@@ -11,17 +11,21 @@ export interface IStoreRotation extends Document {
   updatedAt: Date;
 }
 
-const StoreRotationSchema = new Schema<IStoreRotation>({
-  starts_at: { type: Date, required: true },
-  ends_at: { type: Date, required: true },
-  items: [{ type: String, ref: 'StoreItem', required: true }],
-  source: { type: String, enum: ['admin', 'community'], default: 'admin' },
-  notes: { type: String },
-}, { timestamps: true });
+const StoreRotationSchema = new Schema<IStoreRotation>(
+  {
+    starts_at: { type: Date, required: true },
+    ends_at: { type: Date, required: true },
+    items: [{ type: String, ref: 'StoreItem', required: true }],
+    source: { type: String, enum: ['admin', 'community'], default: 'admin' },
+    notes: { type: String },
+  },
+  { timestamps: true }
+);
 
 StoreRotationSchema.index({ starts_at: 1, ends_at: 1 });
 
-const StoreRotationModel: Model<IStoreRotation> = (mongoose.models.StoreRotation as Model<IStoreRotation>) ||
+const StoreRotationModel: Model<IStoreRotation> =
+  (mongoose.models.StoreRotation as Model<IStoreRotation>) ||
   mongoose.model<IStoreRotation>('StoreRotation', StoreRotationSchema);
 
 export default StoreRotationModel;

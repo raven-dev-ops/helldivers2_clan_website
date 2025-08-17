@@ -1,5 +1,5 @@
 // src/components/common/ThemeToggle.tsx
-"use client"; // This component needs client-side hooks and interaction
+'use client'; // This component needs client-side hooks and interaction
 
 import { useState, useEffect } from 'react';
 import { FaSun, FaMoon } from 'react-icons/fa'; // Example icons
@@ -17,12 +17,14 @@ export default function ThemeToggle() {
   // Effect to set the initial theme based on localStorage or OS preference
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme') as Theme | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
 
     // Determine initial theme: stored preference > OS preference > default (light)
-    const initialTheme = storedTheme || (prefersDark ? Theme.Dark : Theme.Light);
+    const initialTheme =
+      storedTheme || (prefersDark ? Theme.Dark : Theme.Light);
     setTheme(initialTheme);
-
   }, []); // Empty dependency array ensures this runs only once on mount
 
   // Effect to apply the theme class to the <html> element and save preference
@@ -41,7 +43,9 @@ export default function ThemeToggle() {
 
   // Handler to toggle the theme
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === Theme.Light ? Theme.Dark : Theme.Light));
+    setTheme((prevTheme) =>
+      prevTheme === Theme.Light ? Theme.Dark : Theme.Light
+    );
   };
 
   // Don't render the button until the theme is determined client-side

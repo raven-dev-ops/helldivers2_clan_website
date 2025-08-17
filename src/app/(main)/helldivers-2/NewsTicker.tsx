@@ -49,7 +49,9 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => '');
-    throw new Error(`News fetch failed (${res.status}): ${text || res.statusText}`);
+    throw new Error(
+      `News fetch failed (${res.status}): ${text || res.statusText}`
+    );
   }
   return res.json();
 };
@@ -69,14 +71,10 @@ const normalize = (n: ApiNewsItem): UINews => {
 
   // prefer explicit title/message fields but fall back gracefully
   const title =
-    asString(n.title) ??
-    asString((n as any).headline) ??
-    'Untitled report';
+    asString(n.title) ?? asString((n as any).headline) ?? 'Untitled report';
 
   const message =
-    asString(n.message) ??
-    asString(n.description) ??
-    asString(n.body);
+    asString(n.message) ?? asString(n.description) ?? asString(n.body);
 
   // collect readable metadata if available
   const bits = [
@@ -119,7 +117,9 @@ export default function NewsTicker() {
   if (error) return <div>Couldn’t load news.</div>;
 
   const items: ApiNewsItem[] = Array.isArray(data?.news) ? data!.news! : [];
-  const uiItems = items.map(normalize).sort((a, b) => b.date.getTime() - a.date.getTime());
+  const uiItems = items
+    .map(normalize)
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
   const top = uiItems.slice(0, 10);
 
   if (top.length === 0) return <div>No war news available.</div>;
@@ -146,9 +146,7 @@ export default function NewsTicker() {
               </div>
             )}
 
-            {n.message && (
-              <div className={styles.paragraph}>{n.message}</div>
-            )}
+            {n.message && <div className={styles.paragraph}>{n.message}</div>}
 
             <div className={styles.paragraph} style={{ marginBottom: 0 }}>
               {formatDateTime(n.date)}

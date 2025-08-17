@@ -1,7 +1,9 @@
 // src/app/(main)/helldivers-2/news/major-orders/page.tsx
 import dynamic from 'next/dynamic';
 
-const MajorOrders = dynamic(() => import('@/app/(main)/helldivers-2/MajorOrders'));
+const MajorOrders = dynamic(
+  () => import('@/app/(main)/helldivers-2/MajorOrders')
+);
 
 export default function MajorOrdersPage() {
   return (
@@ -13,4 +15,3 @@ export default function MajorOrdersPage() {
     </div>
   );
 }
-

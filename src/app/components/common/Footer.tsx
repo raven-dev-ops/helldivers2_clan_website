@@ -1,6 +1,6 @@
 // src/components/common/Footer.tsx
-import React from "react";
-import styles from "./Footer.module.css";
+import React from 'react';
+import styles from './Footer.module.css';
 import { FaDiscord, FaTwitch, FaYoutube } from 'react-icons/fa';
 import { FaTiktok, FaXTwitter, FaInstagram, FaSnapchat } from 'react-icons/fa6';
 import { FaFacebook } from 'react-icons/fa';
@@ -24,47 +24,110 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.socialLinks} aria-label="Social links">
           {discordUrl && (
-            <a href={discordUrl} target="_blank" rel="noopener noreferrer" aria-label="Discord" title="Discord" className={styles.socialIconLink}>
+            <a
+              href={discordUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Discord"
+              title="Discord"
+              className={styles.socialIconLink}
+            >
               <FaDiscord className={styles.socialIcon} />
             </a>
           )}
           {youtubeUrl && (
-            <a href={youtubeUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube" className={styles.socialIconLink}>
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              title="YouTube"
+              className={styles.socialIconLink}
+            >
               <FaYoutube className={styles.socialIcon} />
             </a>
           )}
           {twitchUrl && (
-            <a href={twitchUrl} target="_blank" rel="noopener noreferrer" aria-label="Twitch" title="Twitch" className={styles.socialIconLink}>
+            <a
+              href={twitchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Twitch"
+              title="Twitch"
+              className={styles.socialIconLink}
+            >
               <FaTwitch className={styles.socialIcon} />
             </a>
           )}
           {tiktokUrl && (
-            <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok" className={styles.socialIconLink}>
+            <a
+              href={tiktokUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              title="TikTok"
+              className={styles.socialIconLink}
+            >
               <FaTiktok className={styles.socialIcon} />
             </a>
           )}
           {xUrl && (
-            <a href={xUrl} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" title="X (Twitter)" className={styles.socialIconLink}>
+            <a
+              href={xUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X (Twitter)"
+              title="X (Twitter)"
+              className={styles.socialIconLink}
+            >
               <FaXTwitter className={styles.socialIcon} />
             </a>
           )}
           {instagramUrl && (
-            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram" className={styles.socialIconLink}>
+            <a
+              href={instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              title="Instagram"
+              className={styles.socialIconLink}
+            >
               <FaInstagram className={styles.socialIcon} />
             </a>
           )}
           {metaUrl && (
-            <a href={metaUrl} target="_blank" rel="noopener noreferrer" aria-label="Meta" title="Meta" className={styles.socialIconLink}>
+            <a
+              href={metaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Meta"
+              title="Meta"
+              className={styles.socialIconLink}
+            >
               <FaFacebook className={styles.socialIcon} />
             </a>
           )}
           {snapchatUrl && (
-            <a href={snapchatUrl} target="_blank" rel="noopener noreferrer" aria-label="Snapchat" title="Snapchat" className={styles.socialIconLink}>
+            <a
+              href={snapchatUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Snapchat"
+              title="Snapchat"
+              className={styles.socialIconLink}
+            >
               <FaSnapchat className={styles.socialIcon} />
             </a>
           )}
           {kickUrl && (
-            <a href={kickUrl} target="_blank" rel="noopener noreferrer" aria-label="Kick" title="Kick" className={styles.socialIconLink}>
+            <a
+              href={kickUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Kick"
+              title="Kick"
+              className={styles.socialIconLink}
+            >
               <SiKick className={styles.socialIcon} />
             </a>
           )}
@@ -73,14 +136,17 @@ export default function Footer() {
           Questions, comments, or concerns?{' '}
           <a
             href={discordLinkForMessage}
-            target={discordUrl ? "_blank" : undefined}
-            rel={discordUrl ? "noopener noreferrer" : undefined}
+            target={discordUrl ? '_blank' : undefined}
+            rel={discordUrl ? 'noopener noreferrer' : undefined}
             className={styles.discordMessageLink}
           >
             Submit a ticket in our discord!
           </a>
         </p>
-        <p>© {new Date().getFullYear()} Galactic Phantom Division. All rights reserved.</p>
+        <p>
+          © {new Date().getFullYear()} Galactic Phantom Division. All rights
+          reserved.
+        </p>
       </div>
     </footer>
   );

@@ -79,11 +79,22 @@ const UserSchema = new Schema<IUser>(
     middleName: { type: String, default: null },
     lastName: { type: String, default: null },
 
-    email: { type: String, unique: true, sparse: true, lowercase: true, index: true },
+    email: {
+      type: String,
+      unique: true,
+      sparse: true,
+      lowercase: true,
+      index: true,
+    },
     emailVerified: { type: Date, default: null },
     image: { type: String },
 
-    role: { type: String, enum: ['user', 'moderator', 'admin'], default: 'user', required: true },
+    role: {
+      type: String,
+      enum: ['user', 'moderator', 'admin'],
+      default: 'user',
+      required: true,
+    },
     division: { type: String, default: null },
 
     // Provider fields
@@ -120,6 +131,7 @@ const UserSchema = new Schema<IUser>(
 
 // Avoid model overwrite in Next.js hot-reload
 const UserModel: Model<IUser> =
-  (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>('User', UserSchema);
+  (mongoose.models.User as Model<IUser>) ||
+  mongoose.model<IUser>('User', UserSchema);
 
 export default UserModel;

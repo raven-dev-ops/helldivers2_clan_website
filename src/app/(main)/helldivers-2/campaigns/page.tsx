@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/campaigns/page.tsx
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
@@ -97,7 +97,7 @@ export default function CampaignsPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   const toggleExpansion = (id: string) => {
-    setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
@@ -107,9 +107,17 @@ export default function CampaignsPage() {
         <div className={styles.subsectionCard}>
           <h3 className={styles.subHeading}>Rules & Requirements</h3>
           <ul className={`${styles.styledList} ${styles.decimal}`}>
-            <li className={styles.listItem}>If it&apos;s on the map, it&apos;s in play unless the specific challenge level states otherwise.</li>
-            <li className={styles.listItem}>Video submissions must be one continuous, unedited recording. No cuts, splits, or speed-ups.</li>
-            <li className={styles.listItem}>Mission privacy must be set to Invite Only.</li>
+            <li className={styles.listItem}>
+              If it&apos;s on the map, it&apos;s in play unless the specific
+              challenge level states otherwise.
+            </li>
+            <li className={styles.listItem}>
+              Video submissions must be one continuous, unedited recording. No
+              cuts, splits, or speed-ups.
+            </li>
+            <li className={styles.listItem}>
+              Mission privacy must be set to Invite Only.
+            </li>
           </ul>
         </div>
 
@@ -118,17 +126,36 @@ export default function CampaignsPage() {
           {prestigeMissions.map((mission) => {
             const isExpanded = !!expanded[mission.id];
             return (
-              <div key={mission.id} className={styles.challengeLevelContainer} id={mission.id} style={{ scrollMarginTop: 96 }}>
+              <div
+                key={mission.id}
+                className={styles.challengeLevelContainer}
+                id={mission.id}
+                style={{ scrollMarginTop: 96 }}
+              >
                 <div
                   className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
                   onClick={() => toggleExpansion(mission.id)}
-                  role="button" aria-expanded={isExpanded} aria-controls={`mission-content-${mission.id}`}
-                  tabIndex={0} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && toggleExpansion(mission.id)}
+                  role="button"
+                  aria-expanded={isExpanded}
+                  aria-controls={`mission-content-${mission.id}`}
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    (e.key === 'Enter' || e.key === ' ') &&
+                    toggleExpansion(mission.id)
+                  }
                 >
-                  <h4 className={styles.challengeLevelTitle}>{mission.title}</h4>
-                  <FaChevronDown className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`} aria-hidden="true"/>
+                  <h4 className={styles.challengeLevelTitle}>
+                    {mission.title}
+                  </h4>
+                  <FaChevronDown
+                    className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`}
+                    aria-hidden="true"
+                  />
                 </div>
-                <div id={`mission-content-${mission.id}`} className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}>
+                <div
+                  id={`mission-content-${mission.id}`}
+                  className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}
+                >
                   <pre className={styles.codeBlock}>{mission.details}</pre>
                   {/* Video links removed per requirements */}
                 </div>
@@ -136,7 +163,9 @@ export default function CampaignsPage() {
             );
           })}
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
+        >
           <button
             className="btn btn-secondary"
             onClick={() => {
@@ -148,7 +177,11 @@ export default function CampaignsPage() {
           </button>
         </div>
       </section>
-      {message && <p className={styles.paragraph} style={{ textAlign: 'center' }}>{message}</p>}
+      {message && (
+        <p className={styles.paragraph} style={{ textAlign: 'center' }}>
+          {message}
+        </p>
+      )}
       <SubmitCampaignModal
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}

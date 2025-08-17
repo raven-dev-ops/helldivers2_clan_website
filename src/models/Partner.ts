@@ -1,5 +1,5 @@
 // src/models/Partner.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPartner extends Document {
   name: string;
@@ -20,6 +20,6 @@ const PartnerSchema = new Schema<IPartner>(
 
 const PartnerModel =
   (mongoose.models.Partner as Model<IPartner>) ||
-  mongoose.model<IPartner>("Partner", PartnerSchema);
+  mongoose.model<IPartner>('Partner', PartnerSchema);
 
 export default PartnerModel;

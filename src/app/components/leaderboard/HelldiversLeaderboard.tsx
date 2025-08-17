@@ -3,7 +3,19 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 
-type SortField = 'Kills' | 'Accuracy' | 'Shots Fired' | 'Shots Hit' | 'Deaths' | 'player_name' | 'clan_name' | 'submitted_at' | 'Avg Kills' | 'Avg Shots Fired' | 'Avg Shots Hit' | 'Avg Deaths';
+type SortField =
+  | 'Kills'
+  | 'Accuracy'
+  | 'Shots Fired'
+  | 'Shots Hit'
+  | 'Deaths'
+  | 'player_name'
+  | 'clan_name'
+  | 'submitted_at'
+  | 'Avg Kills'
+  | 'Avg Shots Fired'
+  | 'Avg Shots Hit'
+  | 'Avg Deaths';
 
 type SortDir = 'asc' | 'desc';
 
@@ -35,7 +47,7 @@ function HeaderButton({
   label,
   sortKey,
   activeSort,
-  onSort
+  onSort,
 }: {
   label: string;
   sortKey: SortField;
@@ -45,9 +57,15 @@ function HeaderButton({
   const isActive = activeSort.sortBy === sortKey;
   const arrow = isActive ? (activeSort.sortDir === 'asc' ? '▲' : '▼') : '↕';
   return (
-    <button className="table-sort-button" onClick={() => onSort(sortKey)} aria-label={`Sort by ${label}`}>
+    <button
+      className="table-sort-button"
+      onClick={() => onSort(sortKey)}
+      aria-label={`Sort by ${label}`}
+    >
       <span>{label}</span>
-      <span className="table-sort-arrow" aria-hidden>{arrow}</span>
+      <span className="table-sort-arrow" aria-hidden>
+        {arrow}
+      </span>
     </button>
   );
 }
@@ -78,24 +96,43 @@ function LeaderboardTableSection({
   onSearch: (v: string) => void;
   sectionId?: string;
 }) {
-  const hasAverages = showAverages && rows.length > 0 && (
-    typeof rows[0].AvgKills === 'number' || typeof rows[0].AvgShotsFired === 'number' || typeof rows[0].AvgShotsHit === 'number' || typeof rows[0].AvgDeaths === 'number'
-  );
+  const hasAverages =
+    showAverages &&
+    rows.length > 0 &&
+    (typeof rows[0].AvgKills === 'number' ||
+      typeof rows[0].AvgShotsFired === 'number' ||
+      typeof rows[0].AvgShotsHit === 'number' ||
+      typeof rows[0].AvgDeaths === 'number');
 
   const normalizedQuery = searchTerm.trim().toLowerCase();
   const filteredRows = normalizedQuery
-    ? rows.filter(r => (r.player_name || '').toLowerCase().includes(normalizedQuery))
+    ? rows.filter((r) =>
+        (r.player_name || '').toLowerCase().includes(normalizedQuery)
+      )
     : rows;
 
-  const totalColumns = 2 /* rank, player */
-    + 1 /* accuracy */
-    + (showTotals ? 4 : 0) /* totals: kills, shots fired, shots hit, deaths */
-    + (hasAverages ? 4 : 0) /* averages: avg kills, avg shots fired, avg shots hit, avg deaths */;
+  const totalColumns =
+    2 /* rank, player */ +
+    1 /* accuracy */ +
+    (showTotals ? 4 : 0) /* totals: kills, shots fired, shots hit, deaths */ +
+    (hasAverages
+      ? 4
+      : 0); /* averages: avg kills, avg shots fired, avg shots hit, avg deaths */
 
   return (
     <section id={sectionId} className="content-section">
-      <h2 className="content-section-title with-border-bottom leaderboard-title">{title}</h2>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+      <h2 className="content-section-title with-border-bottom leaderboard-title">
+        {title}
+      </h2>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 12,
+          marginBottom: 12,
+        }}
+      >
         <input
           aria-label={`Search ${title} by player name`}
           placeholder="Search by player name..."
@@ -113,51 +150,103 @@ function LeaderboardTableSection({
           <table className="table">
             <thead>
               <tr>
-                <th className="th text-center col-rank" style={{ width: 56 }}>#</th>
+                <th className="th text-center col-rank" style={{ width: 56 }}>
+                  #
+                </th>
                 <th className="th col-player">
-                  <HeaderButton label="Player" sortKey="player_name" activeSort={activeSort} onSort={onSort} />
+                  <HeaderButton
+                    label="Player"
+                    sortKey="player_name"
+                    activeSort={activeSort}
+                    onSort={onSort}
+                  />
                 </th>
                 {showTotals && (
                   <th className="th text-right col-kills">
-                    <HeaderButton label="Kills" sortKey="Kills" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Kills"
+                      sortKey="Kills"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {hasAverages && (
                   <th className="th text-right col-avg-kills">
-                    <HeaderButton label="Avg Kills" sortKey="Avg Kills" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Avg Kills"
+                      sortKey="Avg Kills"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 <th className="th text-right col-accuracy">
-                  <HeaderButton label="Accuracy" sortKey="Accuracy" activeSort={activeSort} onSort={onSort} />
+                  <HeaderButton
+                    label="Accuracy"
+                    sortKey="Accuracy"
+                    activeSort={activeSort}
+                    onSort={onSort}
+                  />
                 </th>
                 {showTotals && (
                   <th className="th text-right col-shots-fired">
-                    <HeaderButton label="Shots Fired" sortKey="Shots Fired" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Shots Fired"
+                      sortKey="Shots Fired"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {hasAverages && (
                   <th className="th text-right col-avg-shots-fired">
-                    <HeaderButton label="Avg Shots Fired" sortKey="Avg Shots Fired" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Avg Shots Fired"
+                      sortKey="Avg Shots Fired"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {showTotals && (
                   <th className="th text-right col-shots-hit">
-                    <HeaderButton label="Shots Hit" sortKey="Shots Hit" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Shots Hit"
+                      sortKey="Shots Hit"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {hasAverages && (
                   <th className="th text-right col-avg-shots-hit">
-                    <HeaderButton label="Avg Shots Hit" sortKey="Avg Shots Hit" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Avg Shots Hit"
+                      sortKey="Avg Shots Hit"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {showTotals && (
                   <th className="th text-right col-deaths">
-                    <HeaderButton label="Deaths" sortKey="Deaths" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Deaths"
+                      sortKey="Deaths"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
                 {hasAverages && (
                   <th className="th text-right col-avg-deaths">
-                    <HeaderButton label="Avg Deaths" sortKey="Avg Deaths" activeSort={activeSort} onSort={onSort} />
+                    <HeaderButton
+                      label="Avg Deaths"
+                      sortKey="Avg Deaths"
+                      activeSort={activeSort}
+                      onSort={onSort}
+                    />
                   </th>
                 )}
               </tr>
@@ -167,20 +256,58 @@ function LeaderboardTableSection({
                 <tr key={row.id}>
                   <td className="td text-center col-rank">{row.rank}</td>
                   <td className="td col-player">{row.player_name}</td>
-                  {showTotals && <td className="td text-right col-kills">{row.Kills}</td>}
-                  {hasAverages && <td className="td text-right col-avg-kills">{typeof row.AvgKills === 'number' ? row.AvgKills.toFixed(1) : ''}</td>}
+                  {showTotals && (
+                    <td className="td text-right col-kills">{row.Kills}</td>
+                  )}
+                  {hasAverages && (
+                    <td className="td text-right col-avg-kills">
+                      {typeof row.AvgKills === 'number'
+                        ? row.AvgKills.toFixed(1)
+                        : ''}
+                    </td>
+                  )}
                   <td className="td text-right col-accuracy">{row.Accuracy}</td>
-                  {showTotals && <td className="td text-right col-shots-fired">{row.ShotsFired}</td>}
-                  {hasAverages && <td className="td text-right col-avg-shots-fired">{typeof row.AvgShotsFired === 'number' ? row.AvgShotsFired.toFixed(1) : ''}</td>}
-                  {showTotals && <td className="td text-right col-shots-hit">{row.ShotsHit}</td>}
-                  {hasAverages && <td className="td text-right col-avg-shots-hit">{typeof row.AvgShotsHit === 'number' ? row.AvgShotsHit.toFixed(1) : ''}</td>}
-                  {showTotals && <td className="td text-right col-deaths">{row.Deaths}</td>}
-                  {hasAverages && <td className="td text-right col-avg-deaths">{typeof row.AvgDeaths === 'number' ? row.AvgDeaths.toFixed(1) : ''}</td>}
+                  {showTotals && (
+                    <td className="td text-right col-shots-fired">
+                      {row.ShotsFired}
+                    </td>
+                  )}
+                  {hasAverages && (
+                    <td className="td text-right col-avg-shots-fired">
+                      {typeof row.AvgShotsFired === 'number'
+                        ? row.AvgShotsFired.toFixed(1)
+                        : ''}
+                    </td>
+                  )}
+                  {showTotals && (
+                    <td className="td text-right col-shots-hit">
+                      {row.ShotsHit}
+                    </td>
+                  )}
+                  {hasAverages && (
+                    <td className="td text-right col-avg-shots-hit">
+                      {typeof row.AvgShotsHit === 'number'
+                        ? row.AvgShotsHit.toFixed(1)
+                        : ''}
+                    </td>
+                  )}
+                  {showTotals && (
+                    <td className="td text-right col-deaths">{row.Deaths}</td>
+                  )}
+                  {hasAverages && (
+                    <td className="td text-right col-avg-deaths">
+                      {typeof row.AvgDeaths === 'number'
+                        ? row.AvgDeaths.toFixed(1)
+                        : ''}
+                    </td>
+                  )}
                 </tr>
               ))}
               {!filteredRows.length && (
                 <tr>
-                  <td className="td" colSpan={totalColumns}>No matching players.</td>
+                  <td className="td" colSpan={totalColumns}>
+                    No matching players.
+                  </td>
                 </tr>
               )}
             </tbody>
@@ -191,15 +318,49 @@ function LeaderboardTableSection({
   );
 }
 
-export default function HelldiversLeaderboard({ initialSoloData, initialMonthData, initialLifetimeData, initialMeritData }: { initialSoloData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMonthData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialLifetimeData?: { sortBy: SortField; sortDir: SortDir; limit: number; results: LeaderboardRow[] }, initialMeritData?: { results: MeritRow[] } }) {
-  const [soloData, setSoloData] = useState<LeaderboardRow[]>(initialSoloData?.results || []);
-  const [monthData, setMonthData] = useState<LeaderboardRow[]>(initialMonthData?.results || []);
-  const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(initialLifetimeData?.results || []);
-  const [meritData, setMeritData] = useState<MeritRow[]>(initialMeritData?.results || []);
+export default function HelldiversLeaderboard({
+  initialSoloData,
+  initialMonthData,
+  initialLifetimeData,
+  initialMeritData,
+}: {
+  initialSoloData?: {
+    sortBy: SortField;
+    sortDir: SortDir;
+    limit: number;
+    results: LeaderboardRow[];
+  };
+  initialMonthData?: {
+    sortBy: SortField;
+    sortDir: SortDir;
+    limit: number;
+    results: LeaderboardRow[];
+  };
+  initialLifetimeData?: {
+    sortBy: SortField;
+    sortDir: SortDir;
+    limit: number;
+    results: LeaderboardRow[];
+  };
+  initialMeritData?: { results: MeritRow[] };
+}) {
+  const [soloData, setSoloData] = useState<LeaderboardRow[]>(
+    initialSoloData?.results || []
+  );
+  const [monthData, setMonthData] = useState<LeaderboardRow[]>(
+    initialMonthData?.results || []
+  );
+  const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(
+    initialLifetimeData?.results || []
+  );
+  const [meritData, setMeritData] = useState<MeritRow[]>(
+    initialMeritData?.results || []
+  );
 
   const [soloLoading, setSoloLoading] = useState<boolean>(!initialSoloData);
   const [monthLoading, setMonthLoading] = useState<boolean>(!initialMonthData);
-  const [lifetimeLoading, setLifetimeLoading] = useState<boolean>(!initialLifetimeData);
+  const [lifetimeLoading, setLifetimeLoading] =
+    useState<boolean>(!initialLifetimeData);
   const [meritLoading, setMeritLoading] = useState<boolean>(!initialMeritData);
 
   const [soloError, setSoloError] = useState<string | null>(null);
@@ -207,13 +368,25 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
   const [lifetimeError, setLifetimeError] = useState<string | null>(null);
   const [meritError, setMeritError] = useState<string | null>(null);
 
-  const [soloSortBy, setSoloSortBy] = useState<SortField>(initialSoloData?.sortBy || 'Kills');
-  const [soloSortDir, setSoloSortDir] = useState<SortDir>(initialSoloData?.sortDir || 'desc');
-  const [monthSortBy, setMonthSortBy] = useState<SortField>(initialMonthData?.sortBy || 'Kills');
-  const [monthSortDir, setMonthSortDir] = useState<SortDir>(initialMonthData?.sortDir || 'desc');
+  const [soloSortBy, setSoloSortBy] = useState<SortField>(
+    initialSoloData?.sortBy || 'Kills'
+  );
+  const [soloSortDir, setSoloSortDir] = useState<SortDir>(
+    initialSoloData?.sortDir || 'desc'
+  );
+  const [monthSortBy, setMonthSortBy] = useState<SortField>(
+    initialMonthData?.sortBy || 'Kills'
+  );
+  const [monthSortDir, setMonthSortDir] = useState<SortDir>(
+    initialMonthData?.sortDir || 'desc'
+  );
 
-  const [lifetimeSortBy, setLifetimeSortBy] = useState<SortField>(initialLifetimeData?.sortBy || 'Kills');
-  const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(initialLifetimeData?.sortDir || 'desc');
+  const [lifetimeSortBy, setLifetimeSortBy] = useState<SortField>(
+    initialLifetimeData?.sortBy || 'Kills'
+  );
+  const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(
+    initialLifetimeData?.sortDir || 'desc'
+  );
 
   const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
@@ -222,28 +395,34 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
 
   const toggleSoloSort = (field: SortField) => {
     if (field === soloSortBy) {
-      setSoloSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+      setSoloSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSoloSortBy(field);
-      setSoloSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
+      setSoloSortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
     }
   };
 
   const toggleMonthSort = (field: SortField) => {
     if (field === monthSortBy) {
-      setMonthSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+      setMonthSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setMonthSortBy(field);
-      setMonthSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
+      setMonthSortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
     }
   };
 
   const toggleLifetimeSort = (field: SortField) => {
     if (field === lifetimeSortBy) {
-      setLifetimeSortDir(prev => (prev === 'asc' ? 'desc' : 'asc'));
+      setLifetimeSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setLifetimeSortBy(field);
-      setLifetimeSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
+      setLifetimeSortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
     }
   };
 
@@ -253,19 +432,30 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
       setSoloLoading(true);
       setSoloError(null);
       try {
-        const params = new URLSearchParams({ sortBy: soloSortBy, sortDir: soloSortDir, limit: '100', scope: 'solo' });
-        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        const params = new URLSearchParams({
+          sortBy: soloSortBy,
+          sortDir: soloSortDir,
+          limit: '100',
+          scope: 'solo',
+        });
+        const res = await fetch(
+          `/api/helldivers/leaderboard?${params.toString()}`,
+          { cache: 'no-store' }
+        );
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
         if (!isCancelled) setSoloData(payload.results || []);
       } catch (e: any) {
-        if (!isCancelled) setSoloError(e?.message || 'Failed to load leaderboard');
+        if (!isCancelled)
+          setSoloError(e?.message || 'Failed to load leaderboard');
       } finally {
         if (!isCancelled) setSoloLoading(false);
       }
     }
     fetchSolo();
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [soloSortBy, soloSortDir]);
 
   useEffect(() => {
@@ -275,19 +465,32 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
       setMonthError(null);
       try {
         const now = new Date();
-        const params = new URLSearchParams({ sortBy: monthSortBy, sortDir: monthSortDir, limit: '100', scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) });
-        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        const params = new URLSearchParams({
+          sortBy: monthSortBy,
+          sortDir: monthSortDir,
+          limit: '100',
+          scope: 'month',
+          month: String(now.getUTCMonth() + 1),
+          year: String(now.getUTCFullYear()),
+        });
+        const res = await fetch(
+          `/api/helldivers/leaderboard?${params.toString()}`,
+          { cache: 'no-store' }
+        );
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
         if (!isCancelled) setMonthData(payload.results || []);
       } catch (e: any) {
-        if (!isCancelled) setMonthError(e?.message || 'Failed to load leaderboard');
+        if (!isCancelled)
+          setMonthError(e?.message || 'Failed to load leaderboard');
       } finally {
         if (!isCancelled) setMonthLoading(false);
       }
     }
     fetchMonth();
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [monthSortBy, monthSortDir]);
 
   useEffect(() => {
@@ -296,31 +499,58 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
       setLifetimeLoading(true);
       setLifetimeError(null);
       try {
-        const params = new URLSearchParams({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir, limit: '1000', scope: 'lifetime' });
-        const res = await fetch(`/api/helldivers/leaderboard?${params.toString()}`, { cache: 'no-store' });
+        const params = new URLSearchParams({
+          sortBy: lifetimeSortBy,
+          sortDir: lifetimeSortDir,
+          limit: '1000',
+          scope: 'lifetime',
+        });
+        const res = await fetch(
+          `/api/helldivers/leaderboard?${params.toString()}`,
+          { cache: 'no-store' }
+        );
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
         if (!isCancelled) setLifetimeData(payload.results || []);
       } catch (e: any) {
-        if (!isCancelled) setLifetimeError(e?.message || 'Failed to load leaderboard');
+        if (!isCancelled)
+          setLifetimeError(e?.message || 'Failed to load leaderboard');
       } finally {
         if (!isCancelled) setLifetimeLoading(false);
       }
     }
     fetchLifetime();
-    return () => { isCancelled = true; };
+    return () => {
+      isCancelled = true;
+    };
   }, [lifetimeSortBy, lifetimeSortDir]);
 
-  const soloActiveSort = useMemo(() => ({ sortBy: soloSortBy, sortDir: soloSortDir }), [soloSortBy, soloSortDir]);
-  const monthActiveSort = useMemo(() => ({ sortBy: monthSortBy, sortDir: monthSortDir }), [monthSortBy, monthSortDir]);
-  const lifetimeActiveSort = useMemo(() => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }), [lifetimeSortBy, lifetimeSortDir]);
+  const soloActiveSort = useMemo(
+    () => ({ sortBy: soloSortBy, sortDir: soloSortDir }),
+    [soloSortBy, soloSortDir]
+  );
+  const monthActiveSort = useMemo(
+    () => ({ sortBy: monthSortBy, sortDir: monthSortDir }),
+    [monthSortBy, monthSortDir]
+  );
+  const lifetimeActiveSort = useMemo(
+    () => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }),
+    [lifetimeSortBy, lifetimeSortDir]
+  );
 
-  const [activeTab, setActiveTab] = useState<'lifetime' | 'monthly' | 'solo' | 'merit'>('lifetime');
+  const [activeTab, setActiveTab] = useState<
+    'lifetime' | 'monthly' | 'solo' | 'merit'
+  >('lifetime');
 
   useEffect(() => {
     const setTabFromHash = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'solo' || hash === 'monthly' || hash === 'lifetime' || hash === 'merit') {
+      if (
+        hash === 'solo' ||
+        hash === 'monthly' ||
+        hash === 'lifetime' ||
+        hash === 'merit'
+      ) {
         setActiveTab(hash as typeof activeTab);
       }
     };
@@ -337,22 +567,31 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
       setMeritLoading(true);
       setMeritError(null);
       try {
-        const res = await fetch('/api/merit/leaderboard', { cache: 'no-store' });
+        const res = await fetch('/api/merit/leaderboard', {
+          cache: 'no-store',
+        });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
         if (!cancelled) setMeritData(payload.results || []);
       } catch (e: any) {
-        if (!cancelled) setMeritError(e?.message || 'Failed to load leaderboard');
+        if (!cancelled)
+          setMeritError(e?.message || 'Failed to load leaderboard');
       } finally {
         if (!cancelled) setMeritLoading(false);
       }
     }
     fetchMerit();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [activeTab]);
 
   const filteredMerit = meritSearch.trim()
-    ? meritData.filter(r => (r.player_name || '').toLowerCase().includes(meritSearch.trim().toLowerCase()))
+    ? meritData.filter((r) =>
+        (r.player_name || '')
+          .toLowerCase()
+          .includes(meritSearch.trim().toLowerCase())
+      )
     : meritData;
 
   return (
@@ -438,8 +677,18 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
 
       {activeTab === 'merit' && (
         <section id="merit" className="content-section">
-          <h2 className="content-section-title with-border-bottom leaderboard-title">Merit Leaderboard</h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <h2 className="content-section-title with-border-bottom leaderboard-title">
+            Merit Leaderboard
+          </h2>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: 12,
+            }}
+          >
             <input
               aria-label="Search Merit by player name"
               placeholder="Search by player name..."
@@ -457,7 +706,9 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
               <table className="table">
                 <thead>
                   <tr>
-                    <th className="th text-center" style={{ width: 56 }}>#</th>
+                    <th className="th text-center" style={{ width: 56 }}>
+                      #
+                    </th>
                     <th className="th">Player</th>
                     <th className="th text-right">Merit Points</th>
                   </tr>
@@ -472,7 +723,9 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
                   ))}
                   {!filteredMerit.length && (
                     <tr>
-                      <td className="td" colSpan={3}>No players yet.</td>
+                      <td className="td" colSpan={3}>
+                        No players yet.
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -481,7 +734,6 @@ export default function HelldiversLeaderboard({ initialSoloData, initialMonthDat
           )}
         </section>
       )}
-
     </div>
   );
 }

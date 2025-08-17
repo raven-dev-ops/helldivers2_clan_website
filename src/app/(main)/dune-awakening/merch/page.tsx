@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -78,7 +78,10 @@ export default async function DuneMerchPage() {
       console.log(`✅ Found ${collections.length} collections.`);
 
       const targetCollectionSlug = 'all'; // Or set your specific slug
-      const targetCollection = collections.find(c => c.slug === targetCollectionSlug) || collections[0] || null;
+      const targetCollection =
+        collections.find((c) => c.slug === targetCollectionSlug) ||
+        collections[0] ||
+        null;
 
       if (!targetCollection) {
         console.warn(`⚠️ No collection found.`);
@@ -94,30 +97,49 @@ export default async function DuneMerchPage() {
         }
 
         const prodData = await prodRes.json();
-        products = (prodData.results || []).map((p: RawProductData): Product => ({
-          id: p?.id || `unknown-${Math.random().toString(36).substring(2, 9)}`,
-          name: p?.name || 'Unnamed Product',
-          description: p?.description || '',
-          slug: p?.slug || '',
-          images: Array.isArray(p?.images)
-            ? p.images.map((img: any) => ({
-                id: img?.id || `img-${Math.random().toString(36).substring(2, 9)}`,
-                url: img?.url || '',
-                altText: img?.altText || ''
-              })).filter(img => img.url)
-            : [],
-          variants: Array.isArray(p?.variants)
-            ? p.variants.map((v: any) => ({
-                id: v?.id || `var-${Math.random().toString(36).substring(2, 9)}`,
-                name: v?.name,
-                options: v?.options,
-                unitPrice: {
-                  value: typeof v?.unitPrice?.value === 'number' ? v.unitPrice.value : 0,
-                  currency: v?.unitPrice?.currency || 'USD'
-                }
-              })).filter(v => v.unitPrice.value > 0)
-            : [],
-        })).filter((p: Product): p is Product => !!p.slug && p.variants.length > 0);
+        products = (prodData.results || [])
+          .map(
+            (p: RawProductData): Product => ({
+              id:
+                p?.id ||
+                `unknown-${Math.random().toString(36).substring(2, 9)}`,
+              name: p?.name || 'Unnamed Product',
+              description: p?.description || '',
+              slug: p?.slug || '',
+              images: Array.isArray(p?.images)
+                ? p.images
+                    .map((img: any) => ({
+                      id:
+                        img?.id ||
+                        `img-${Math.random().toString(36).substring(2, 9)}`,
+                      url: img?.url || '',
+                      altText: img?.altText || '',
+                    }))
+                    .filter((img) => img.url)
+                : [],
+              variants: Array.isArray(p?.variants)
+                ? p.variants
+                    .map((v: any) => ({
+                      id:
+                        v?.id ||
+                        `var-${Math.random().toString(36).substring(2, 9)}`,
+                      name: v?.name,
+                      options: v?.options,
+                      unitPrice: {
+                        value:
+                          typeof v?.unitPrice?.value === 'number'
+                            ? v.unitPrice.value
+                            : 0,
+                        currency: v?.unitPrice?.currency || 'USD',
+                      },
+                    }))
+                    .filter((v) => v.unitPrice.value > 0)
+                : [],
+            })
+          )
+          .filter(
+            (p: Product): p is Product => !!p.slug && p.variants.length > 0
+          );
 
         console.log(`✅ Fetched ${products.length} valid products.`);
       }
@@ -157,7 +179,11 @@ export default async function DuneMerchPage() {
               }
 
               const imageUrl = product.images?.[0]?.url;
-              const cleanDescription = decodeHtmlEntities(product.description).replace(/<[^>]*>?/gm, '') || 'No description available.';
+              const cleanDescription =
+                decodeHtmlEntities(product.description).replace(
+                  /<[^>]*>?/gm,
+                  ''
+                ) || 'No description available.';
 
               return (
                 <Link
@@ -172,7 +198,11 @@ export default async function DuneMerchPage() {
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
-                        alt={product.images?.[0]?.altText || product.name || 'Product'}
+                        alt={
+                          product.images?.[0]?.altText ||
+                          product.name ||
+                          'Product'
+                        }
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className={styles.productImage}
@@ -180,12 +210,16 @@ export default async function DuneMerchPage() {
                         style={{ objectFit: 'cover' }}
                       />
                     ) : (
-                      <div className={styles.merchImagePlaceholder}>No Image</div>
+                      <div className={styles.merchImagePlaceholder}>
+                        No Image
+                      </div>
                     )}
                   </div>
                   <div className={styles.detailsContainer}>
                     <h2 className={styles.productName}>{product.name}</h2>
-                    <p className={styles.productDescription}>{cleanDescription}</p>
+                    <p className={styles.productDescription}>
+                      {cleanDescription}
+                    </p>
                     {formattedPrice && (
                       <p className={styles.productPrice}>{formattedPrice}</p>
                     )}

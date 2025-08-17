@@ -1,21 +1,21 @@
 // src/app/actions/forumActions.ts
-"use server";
+'use server';
 
-import { z } from "zod";
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "@/lib/authOptions";
-import mongoose from "mongoose";
-import dbConnect from "@/lib/dbConnect";
-import ForumThreadModel from "@/models/ForumThread";
-import ForumPostModel from "@/models/ForumPost";
-import UserModel from "@/models/User";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import createDOMPurify from "isomorphic-dompurify";
-import { JSDOM } from "jsdom";
+import { z } from 'zod';
+import { getServerSession } from 'next-auth/next';
+import { getAuthOptions } from '@/lib/authOptions';
+import mongoose from 'mongoose';
+import dbConnect from '@/lib/dbConnect';
+import ForumThreadModel from '@/models/ForumThread';
+import ForumPostModel from '@/models/ForumPost';
+import UserModel from '@/models/User';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import createDOMPurify from 'isomorphic-dompurify';
+import { JSDOM } from 'jsdom';
 
 // ---- Server-side DOMPurify setup ----
-const windowForPurify = new JSDOM("").window;
+const windowForPurify = new JSDOM('').window;
 const DOMPurify = createDOMPurify(windowForPurify);
 
 // --- Validation Schemas ---
@@ -41,7 +41,8 @@ const DeleteThreadSchema = z.object({
 export async function editPost(prevState: any, formData: FormData) {
   await dbConnect();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
+  if (!session?.user?.id)
+    return { status: 'error', message: 'Authentication required.' };
 
   const validation = EditPostSchema.safeParse({
     postId: formData.get('postId'),
@@ -78,9 +79,8 @@ export async function editPost(prevState: any, formData: FormData) {
 
     revalidatePath(`/forum/[categoryId]/${post.threadId}`, 'page');
     return { status: 'success', message: 'Post updated!' };
-
   } catch (error) {
-    console.error("Error editing post:", error);
+    console.error('Error editing post:', error);
     return { status: 'error', message: 'Database error editing post.' };
   }
 }
@@ -89,10 +89,14 @@ export async function editPost(prevState: any, formData: FormData) {
 export async function deletePost(prevState: any, formData: FormData) {
   await dbConnect();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
+  if (!session?.user?.id)
+    return { status: 'error', message: 'Authentication required.' };
 
-  const validation = DeletePostSchema.safeParse({ postId: formData.get('postId') });
-  if (!validation.success) return { status: 'error', message: 'Invalid Post ID.' };
+  const validation = DeletePostSchema.safeParse({
+    postId: formData.get('postId'),
+  });
+  if (!validation.success)
+    return { status: 'error', message: 'Invalid Post ID.' };
 
   const { postId } = validation.data;
   const userId = new mongoose.Types.ObjectId(session.user.id);
@@ -109,13 +113,14 @@ export async function deletePost(prevState: any, formData: FormData) {
     }
 
     await ForumPostModel.findByIdAndDelete(postId);
-    await ForumThreadModel.findByIdAndUpdate(post.threadId, { $inc: { replyCount: -1 } });
+    await ForumThreadModel.findByIdAndUpdate(post.threadId, {
+      $inc: { replyCount: -1 },
+    });
 
     revalidatePath(`/forum/[categoryId]/${post.threadId}`, 'page');
     return { status: 'success', message: 'Post deleted.' };
-
   } catch (error) {
-    console.error("Error deleting post:", error);
+    console.error('Error deleting post:', error);
     return { status: 'error', message: 'Database error deleting post.' };
   }
 }
@@ -124,10 +129,14 @@ export async function deletePost(prevState: any, formData: FormData) {
 export async function deleteThread(prevState: any, formData: FormData) {
   await dbConnect();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
+  if (!session?.user?.id)
+    return { status: 'error', message: 'Authentication required.' };
 
-  const validation = DeleteThreadSchema.safeParse({ threadId: formData.get('threadId') });
-  if (!validation.success) return { status: 'error', message: 'Invalid Thread ID.' };
+  const validation = DeleteThreadSchema.safeParse({
+    threadId: formData.get('threadId'),
+  });
+  if (!validation.success)
+    return { status: 'error', message: 'Invalid Thread ID.' };
 
   const { threadId } = validation.data;
   const userId = new mongoose.Types.ObjectId(session.user.id);
@@ -151,9 +160,8 @@ export async function deleteThread(prevState: any, formData: FormData) {
     revalidatePath('/forum');
 
     redirect(`/forum/${thread.categoryId}`);
-
   } catch (error) {
-    console.error("Error deleting thread:", error);
+    console.error('Error deleting thread:', error);
     return { status: 'error', message: 'Database error deleting thread.' };
   }
 }
@@ -162,7 +170,8 @@ export async function deleteThread(prevState: any, formData: FormData) {
 export async function editThread(prevState: any, formData: FormData) {
   await dbConnect();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return { status: 'error', message: 'Authentication required.' };
+  if (!session?.user?.id)
+    return { status: 'error', message: 'Authentication required.' };
 
   const validation = EditThreadSchema.safeParse({
     threadId: formData.get('threadId'),
@@ -200,9 +209,8 @@ export async function editThread(prevState: any, formData: FormData) {
     revalidatePath(`/forum/[categoryId]/${threadId}`, 'page');
     revalidatePath(`/forum/${thread.categoryId}`);
     return { status: 'success', message: 'Thread updated!' };
-
   } catch (error) {
-    console.error("Error editing thread:", error);
+    console.error('Error editing thread:', error);
     return { status: 'error', message: 'Database error editing thread.' };
   }
 }

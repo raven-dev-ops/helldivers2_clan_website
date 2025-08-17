@@ -17,4 +17,3 @@ export default function getMongoClientPromise(): Promise<MongoClient> {
   }
   return global._mongoClientPromiseForAuth;
 }
-

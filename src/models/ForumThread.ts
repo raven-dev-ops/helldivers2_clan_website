@@ -1,5 +1,5 @@
 // src/models/ForumThread.ts (Updated)
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IForumThread extends Document {
   categoryId: mongoose.Types.ObjectId;
@@ -14,9 +14,13 @@ export interface IForumThread extends Document {
 
 const ForumThreadSchema = new Schema<IForumThread>(
   {
-    categoryId: { type: Schema.Types.ObjectId, ref: "ForumCategory", required: true },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'ForumCategory',
+      required: true,
+    },
     title: { type: String, required: true },
-    authorId: { type: Schema.Types.ObjectId, ref: "User" },
+    authorId: { type: Schema.Types.ObjectId, ref: 'User' },
     lastActivity: { type: Date, default: Date.now, index: true }, // Index for sorting
     replyCount: { type: Number, default: 0 },
   },
@@ -28,6 +32,6 @@ const ForumThreadSchema = new Schema<IForumThread>(
 
 const ForumThreadModel =
   (mongoose.models.ForumThread as Model<IForumThread>) ||
-  mongoose.model<IForumThread>("ForumThread", ForumThreadSchema);
+  mongoose.model<IForumThread>('ForumThread', ForumThreadSchema);
 
 export default ForumThreadModel;

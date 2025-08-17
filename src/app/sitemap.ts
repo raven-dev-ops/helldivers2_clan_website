@@ -13,7 +13,10 @@ function getRoutes(dir: string, base = ''): string[] {
       if (['api', 'components'].includes(entry.name)) continue;
 
       // Route groups like (main) are not part of the URL
-      const segment = entry.name.startsWith('(') && entry.name.endsWith(')') ? '' : `/${entry.name}`;
+      const segment =
+        entry.name.startsWith('(') && entry.name.endsWith(')')
+          ? ''
+          : `/${entry.name}`;
       routes.push(...getRoutes(path.join(dir, entry.name), base + segment));
     } else if (/^page\.(t|j)sx?$/.test(entry.name)) {
       routes.push(base || '/');
@@ -33,4 +36,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
   }));
 }
-

@@ -26,7 +26,9 @@ export function useDivisionSelection(): DivisionSelectionResult {
 
     // 2. Client-side check: If not authenticated, redirect to sign in
     if (status !== 'authenticated' || !session) {
-      console.warn('useDivisionSelection: Client session invalid/missing. Redirecting to auth.');
+      console.warn(
+        'useDivisionSelection: Client session invalid/missing. Redirecting to auth.'
+      );
       signIn(undefined, { callbackUrl: href }); // Default signIn page
       return; // Stop execution
     }
@@ -47,15 +49,28 @@ export function useDivisionSelection(): DivisionSelectionResult {
       // 5. Handle API Response
       if (!response.ok) {
         if (response.status === 401) {
-          console.error(`API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`);
-          setError(`Unauthorized (Status ${response.status}). Please sign in again.`);
+          console.error(
+            `API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`
+          );
+          setError(
+            `Unauthorized (Status ${response.status}). Please sign in again.`
+          );
           // Redirect to sign-in page
-          signIn(undefined, { callbackUrl: href, error: "SessionRequired" });
+          signIn(undefined, { callbackUrl: href, error: 'SessionRequired' });
         } else {
-          const errorText = await response.text().catch(() => 'Could not read error response.');
-          console.error(`API Error (${response.status}): Failed to update user division.`, errorText);
-          setError(`Error: Could not select division (Status ${response.status}). ${errorText}`);
-           alert(`Error: Could not select division. Server responded with status ${response.status}.`); // Keep alert for immediate feedback
+          const errorText = await response
+            .text()
+            .catch(() => 'Could not read error response.');
+          console.error(
+            `API Error (${response.status}): Failed to update user division.`,
+            errorText
+          );
+          setError(
+            `Error: Could not select division (Status ${response.status}). ${errorText}`
+          );
+          alert(
+            `Error: Could not select division. Server responded with status ${response.status}.`
+          ); // Keep alert for immediate feedback
         }
         setIsLoading(false);
         return; // Stop execution after handling error
@@ -63,16 +78,15 @@ export function useDivisionSelection(): DivisionSelectionResult {
 
       // --- Success Case ---
       const responseData = await response.json();
-      console.log("User division updated successfully via API.", responseData);
+      console.log('User division updated successfully via API.', responseData);
       // Navigate the user to the selected game's page
       router.push(href);
       // No need to setIsLoading(false) here as navigation will unmount/remount
-
     } catch (err) {
       // 6. Handle Network/Fetch Errors
-      console.error("Network or other error during division update:", err);
-      setError("Network Error: Could not connect to the server.");
-      alert("Error: Could not connect to the server to select division.");
+      console.error('Network or other error during division update:', err);
+      setError('Network Error: Could not connect to the server.');
+      alert('Error: Could not connect to the server to select division.');
       setIsLoading(false);
     }
   };

@@ -19,14 +19,22 @@ export async function GET() {
     }).lean();
 
     if (!rotation) {
-      return NextResponse.json({ rotation: null }, { headers: { 'Cache-Control': 's-maxage=60' } });
+      return NextResponse.json(
+        { rotation: null },
+        { headers: { 'Cache-Control': 's-maxage=60' } }
+      );
     }
 
     const items = await StoreItem.find({ _id: { $in: rotation.items } }).lean();
 
-    return NextResponse.json({ rotation, items }, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=300' },
-    });
+    return NextResponse.json(
+      { rotation, items },
+      {
+        headers: {
+          'Cache-Control': 's-maxage=300, stale-while-revalidate=300',
+        },
+      }
+    );
   } catch {
     const sample = {
       rotation: {
@@ -34,7 +42,13 @@ export async function GET() {
         ends_at: new Date(Date.now() + 86400000).toISOString(),
       },
       items: [
-        { _id: '1', name: 'Placeholder Cape', type: 'cosmetic', price_sc: 100, image_url: '/images/placeholder.png' },
+        {
+          _id: '1',
+          name: 'Placeholder Cape',
+          type: 'cosmetic',
+          price_sc: 100,
+          image_url: '/images/placeholder.png',
+        },
       ],
     };
     return NextResponse.json(sample, {
@@ -46,7 +60,8 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const session = await getServerSession(getAuthOptions());
-    if (!session) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    if (!session)
+      return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
     await dbConnect();
 

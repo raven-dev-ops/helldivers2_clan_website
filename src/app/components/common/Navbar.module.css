@@ -46,7 +46,10 @@
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none; /* Remove link underline */
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
 
 /* NEW: Hover/focus state for the logo link */
@@ -68,8 +71,12 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* --- Desktop Menu --- */
@@ -125,7 +132,9 @@
   font-weight: 600;
   padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
   border-radius: var(--border-radius-md, 4px);
-  transition: color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
   white-space: nowrap; /* Prevent links wrapping */
 }
 
@@ -157,7 +166,7 @@
   min-width: 180px;
   background-color: var(--color-surface, #ffffff);
   border: 1px solid var(--color-border, #e5e7eb);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   padding: 6px;
   z-index: 1000;
@@ -188,4 +197,3 @@
   color: #9ca3af; /* gray-400 */
   cursor: not-allowed;
 }
-

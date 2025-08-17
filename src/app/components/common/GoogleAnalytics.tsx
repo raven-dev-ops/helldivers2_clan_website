@@ -7,7 +7,10 @@ export default function GoogleAnalytics() {
   }
   return (
     <>
-      <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+        strategy="afterInteractive"
+      />
       <Script id="ga-script" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
@@ -19,4 +22,3 @@ export default function GoogleAnalytics() {
     </>
   );
 }
-

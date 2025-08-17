@@ -15,7 +15,7 @@
   padding: 2rem;
   background-color: #1f2937;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   border: 1px solid #374151;
 }
 
@@ -38,7 +38,9 @@
   font-size: 0.95rem;
 }
 @media (min-width: 768px) {
-  .paragraph { font-size: 1rem; }
+  .paragraph {
+    font-size: 1rem;
+  }
 }
 
 .strongText {
@@ -78,7 +80,7 @@
   height: 0;
   overflow: hidden;
   border-radius: 0.75rem;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
   border: 1px solid #374151;
   background-color: #111827;
 }
@@ -124,7 +126,7 @@
   border-radius: 0.5rem;
   border: 1px solid #374151;
   text-align: left;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 .reviewStars {
   display: flex;
@@ -176,7 +178,9 @@
   margin-left: 0.75rem;
   vertical-align: middle;
   color: #facc15;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 .discordIconLink:hover {
   color: #fde047;
@@ -240,7 +244,7 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   margin-bottom: 2rem;
 }
 .factionCardTitle {
@@ -317,7 +321,11 @@
   line-height: 1.6;
   font-size: 1rem;
 }
-@media (min-width: 768px) { .introText { font-size: 1.125rem; } }
+@media (min-width: 768px) {
+  .introText {
+    font-size: 1.125rem;
+  }
+}
 .placeholderText {
   text-align: center;
   font-size: 1.125rem;
@@ -329,6 +337,8 @@
   max-height: 20000px; /* A large value to ensure content is visible */
   overflow: visible;
   opacity: 1;
-  transition: max-height 1s ease-in-out, opacity 0.6s ease-in 0.1s; /* Match duration with padding removed */
+  transition:
+    max-height 1s ease-in-out,
+    opacity 0.6s ease-in 0.1s; /* Match duration with padding removed */
   padding-top: 1rem; /* Add back padding for expanded state if removed */
 }

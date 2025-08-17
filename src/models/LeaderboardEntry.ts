@@ -1,5 +1,5 @@
 // src/models/LeaderboardEntry.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ILeaderboardEntry extends Document {
   userId?: mongoose.Types.ObjectId;
@@ -12,7 +12,7 @@ export interface ILeaderboardEntry extends Document {
 
 const LeaderboardEntrySchema = new Schema<ILeaderboardEntry>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User" }, // if linking to User
+    userId: { type: Schema.Types.ObjectId, ref: 'User' }, // if linking to User
     username: { type: String },
     score: { type: Number, required: true },
     rank: { type: Number },
@@ -22,6 +22,6 @@ const LeaderboardEntrySchema = new Schema<ILeaderboardEntry>(
 
 const LeaderboardEntryModel =
   (mongoose.models.LeaderboardEntry as Model<ILeaderboardEntry>) ||
-  mongoose.model<ILeaderboardEntry>("LeaderboardEntry", LeaderboardEntrySchema);
+  mongoose.model<ILeaderboardEntry>('LeaderboardEntry', LeaderboardEntrySchema);
 
 export default LeaderboardEntryModel;

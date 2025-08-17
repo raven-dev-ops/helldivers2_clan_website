@@ -17,5 +17,8 @@ export async function POST(req: NextRequest) {
   console.log('[POST /api/forum/threads]');
   const data = await req.json();
   // Example: create a new thread
-  return NextResponse.json({ message: 'Thread created', thread: data }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Thread created', thread: data },
+    { status: 201 }
+  );
 }

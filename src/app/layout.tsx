@@ -1,34 +1,41 @@
 // src/app/layout.tsx
-import type { Metadata } from "next";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Inter } from "next/font/google";
-import Script from "next/script";
-import { cookies } from "next/headers"; // <-- async in Next 15
-import "./globals.css";
-import StyledComponentsRegistry from "@/app/components/StyledComponentsRegistry";
-import AuthProvider from "@/app/components/providers/AuthProvider";
-import MusicButton from "@/app/components/common/MusicButton";
-import GoogleAnalytics from "@/app/components/common/GoogleAnalytics";
+import type { Metadata } from 'next';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Inter } from 'next/font/google';
+import Script from 'next/script';
+import { cookies } from 'next/headers'; // <-- async in Next 15
+import './globals.css';
+import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry';
+import AuthProvider from '@/app/components/providers/AuthProvider';
+import MusicButton from '@/app/components/common/MusicButton';
+import GoogleAnalytics from '@/app/components/common/GoogleAnalytics';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Galactic Phantom Division | GPT FLEET",
-  description: "We are the last Helldivers. Stay free.",
+  title: 'Galactic Phantom Division | GPT FLEET',
+  description: 'We are the last Helldivers. Stay free.',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // Next 15: cookies() returns a Promise<ReadonlyRequestCookies>
   const cookieStore = await cookies();
-  const cookieTheme = (cookieStore.get("theme")?.value ?? "system") as "light" | "dark" | "system";
-  const serverDark = cookieTheme === "dark"; // only render dark if explicitly set
+  const cookieTheme = (cookieStore.get('theme')?.value ?? 'system') as
+    | 'light'
+    | 'dark'
+    | 'system';
+  const serverDark = cookieTheme === 'dark'; // only render dark if explicitly set
 
   return (
     <html
       lang="en"
-      className={`${inter.className}${serverDark ? " dark" : ""}`}
+      className={`${inter.className}${serverDark ? ' dark' : ''}`}
       suppressHydrationWarning
     >
       <head>

@@ -12,5 +12,8 @@ export async function POST(req: NextRequest) {
   console.log('[POST /api/forum/categories]');
   const data = await req.json();
   // Example: create a new category
-  return NextResponse.json({ message: 'Category created', category: data }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Category created', category: data },
+    { status: 201 }
+  );
 }

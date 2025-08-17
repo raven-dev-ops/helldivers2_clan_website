@@ -8,4 +8,3 @@ import { redirect } from 'next/navigation';
 export default function IntelIndexPage() {
   redirect('/helldivers-2/news/war-news');
 }
-

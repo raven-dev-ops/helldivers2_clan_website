@@ -1,5 +1,5 @@
 // src/components/common/GameCard.tsx
-"use client";
+'use client';
 
 import Image from 'next/image';
 // Import signIn from next-auth/react
@@ -14,7 +14,12 @@ interface GameCardProps {
   comingSoon?: boolean;
 }
 
-export default function GameCard({ title, imageUrl, href, comingSoon }: GameCardProps) {
+export default function GameCard({
+  title,
+  imageUrl,
+  href,
+  comingSoon,
+}: GameCardProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -26,7 +31,9 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
 
     // 2. Client-side check: If not authenticated, redirect to sign in
     if (status !== 'authenticated' || !session) {
-      console.warn('GameCard: Client session invalid/missing. Redirecting to auth.');
+      console.warn(
+        'GameCard: Client session invalid/missing. Redirecting to auth.'
+      );
       // Redirect to sign-in page, passing the intended game page as callback
       signIn(undefined, { callbackUrl: href }); // Default signIn page
       return; // Stop execution
@@ -48,16 +55,25 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
       if (!response.ok) {
         // --- Specific Check for 401 Unauthorized ---
         if (response.status === 401) {
-          console.error(`API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`);
+          console.error(
+            `API Error (${response.status}): Unauthorized. Server session invalid/expired. Redirecting to auth.`
+          );
           // Redirect to sign-in page, optionally passing error and callback
-          signIn(undefined, { callbackUrl: href, error: "SessionRequired" }); // Use error code if needed
+          signIn(undefined, { callbackUrl: href, error: 'SessionRequired' }); // Use error code if needed
         }
         // --- Handle other errors ---
         else {
-            const errorText = await response.text().catch(() => 'Could not read error response.'); // Add catch for text()
-            console.error(`API Error (${response.status}): Failed to update user division.`, errorText);
-            // Show generic error to user
-            alert(`Error: Could not select division. Server responded with status ${response.status}.`);
+          const errorText = await response
+            .text()
+            .catch(() => 'Could not read error response.'); // Add catch for text()
+          console.error(
+            `API Error (${response.status}): Failed to update user division.`,
+            errorText
+          );
+          // Show generic error to user
+          alert(
+            `Error: Could not select division. Server responded with status ${response.status}.`
+          );
         }
         return; // Stop execution after handling error
       }
@@ -65,14 +81,13 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
       // --- Success Case ---
       // API call was successful (status 2xx)
       const responseData = await response.json(); // Process successful response if needed
-      console.log("User division updated successfully via API.", responseData);
+      console.log('User division updated successfully via API.', responseData);
       // Navigate the user to the selected game's page
       router.push(href);
-
     } catch (error) {
       // 6. Handle Network/Fetch Errors
-      console.error("Network or other error during division update:", error);
-      alert("Error: Could not connect to the server to select division.");
+      console.error('Network or other error during division update:', error);
+      alert('Error: Could not connect to the server to select division.');
     }
   };
 
@@ -80,7 +95,7 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
   const cardContent = (
     <>
       <div className={styles.imageWrapper}>
-         {comingSoon && <span className={styles.badge}>Coming Soon</span>}
+        {comingSoon && <span className={styles.badge}>Coming Soon</span>}
         <Image
           src={imageUrl}
           alt={`${title} game banner`}
@@ -94,12 +109,12 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
       </div>
       {/* Assumes .contentArea exists in your CSS Module for layout */}
       <div className={styles.contentArea}>
-          <h3 className={styles.title}>{title}</h3>
-          {comingSoon ? (
-              <span className={styles.comingSoonText}>Coming Soon</span>
-          ) : (
-              <span className={styles.actionText}>Select Division</span>
-          )}
+        <h3 className={styles.title}>{title}</h3>
+        {comingSoon ? (
+          <span className={styles.comingSoonText}>Coming Soon</span>
+        ) : (
+          <span className={styles.actionText}>Select Division</span>
+        )}
       </div>
     </>
   );
@@ -111,11 +126,22 @@ export default function GameCard({ title, imageUrl, href, comingSoon }: GameCard
       className={`${styles.root} ${comingSoon ? styles.comingSoon : styles.interactive}`}
       onClick={!comingSoon ? handleClick : undefined}
       style={{ cursor: comingSoon ? 'default' : 'pointer' }}
-      role={!comingSoon ? "button" : undefined}
+      role={!comingSoon ? 'button' : undefined}
       tabIndex={!comingSoon ? 0 : undefined}
       aria-disabled={comingSoon}
-      aria-label={!comingSoon ? `Select ${title} Division` : `${title} (Coming Soon)`}
-      onKeyDown={!comingSoon ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } } : undefined}
+      aria-label={
+        !comingSoon ? `Select ${title} Division` : `${title} (Coming Soon)`
+      }
+      onKeyDown={
+        !comingSoon
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleClick();
+              }
+            }
+          : undefined
+      }
     >
       {/* Render the structured content */}
       {cardContent}

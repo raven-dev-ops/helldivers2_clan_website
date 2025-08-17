@@ -1,5 +1,5 @@
 // src/app/(main)/dune-awakening/creators/page.tsx
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -17,8 +17,15 @@ interface CreatorData {
 
 // List of Twitch channel *names* used to initially populate the state
 const initialTwitchChannelNames = [
-  'galacticphantomtaskforce', 'kevindanilooo', 'mrswimson', 'charredviolet',
-  'javy1402', 'gingercynic', 'chappzs', 'thywizz', 'mr_black_snow',
+  'galacticphantomtaskforce',
+  'kevindanilooo',
+  'mrswimson',
+  'charredviolet',
+  'javy1402',
+  'gingercynic',
+  'chappzs',
+  'thywizz',
+  'mr_black_snow',
 ];
 
 export default function CreatorsPage() {
@@ -35,21 +42,27 @@ export default function CreatorsPage() {
         const response = await fetch('/api/twitch/creators');
         if (!response.ok) {
           let errorMsg = `Failed to load creators (Status: ${response.status})`;
-          try { const errorData = await response.json(); errorMsg = errorData.error || errorMsg; } catch (_) {}
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.error || errorMsg;
+          } catch (_) {}
           throw new Error(errorMsg);
         }
         const data: CreatorData[] = await response.json();
         if (isMounted) {
           // Order data based on initial list, filtering out any not found in API response
           const orderedData = initialTwitchChannelNames
-            .map(name => data.find(d => d.channelName === name))
+            .map((name) => data.find((d) => d.channelName === name))
             .filter((d): d is CreatorData => !!d); // Type guard to remove undefined
           setCreatorsData(orderedData);
         }
       } catch (error: any) {
-        console.error("Error fetching creators:", error);
+        console.error('Error fetching creators:', error);
         if (isMounted) {
-          setPageError(error.message || "An unknown error occurred while fetching creator data.");
+          setPageError(
+            error.message ||
+              'An unknown error occurred while fetching creator data.'
+          );
           setCreatorsData([]); // Clear data on error
         }
       } finally {
@@ -57,14 +70,24 @@ export default function CreatorsPage() {
       }
     };
     fetchCreatorsFromApi();
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // --- Twitch Embed Parent Domain ---
   // Ensure this is set in your .env.local or Vercel environment variables
-  const twitchEmbedParent = process.env.NEXT_PUBLIC_TWITCH_EMBED_PARENT || (typeof window !== 'undefined' ? window.location.hostname : "localhost");
-  if (typeof window !== 'undefined' && !process.env.NEXT_PUBLIC_TWITCH_EMBED_PARENT && window.location.hostname !== 'localhost') {
-    console.warn("NEXT_PUBLIC_TWITCH_EMBED_PARENT environment variable is not set. Twitch embeds may not work on deployed sites.");
+  const twitchEmbedParent =
+    process.env.NEXT_PUBLIC_TWITCH_EMBED_PARENT ||
+    (typeof window !== 'undefined' ? window.location.hostname : 'localhost');
+  if (
+    typeof window !== 'undefined' &&
+    !process.env.NEXT_PUBLIC_TWITCH_EMBED_PARENT &&
+    window.location.hostname !== 'localhost'
+  ) {
+    console.warn(
+      'NEXT_PUBLIC_TWITCH_EMBED_PARENT environment variable is not set. Twitch embeds may not work on deployed sites.'
+    );
   }
 
   return (
@@ -82,11 +105,14 @@ export default function CreatorsPage() {
       )}
 
       {pageError && !isLoadingPage && (
-         <div className={styles.errorContainer}>
-             <p className={styles.errorTitle}>Error Loading Creators:</p>
-             <p>{pageError}</p>
-             <p className={styles.errorHint}>Please try refreshing the page or contact support if the issue persists.</p>
-         </div>
+        <div className={styles.errorContainer}>
+          <p className={styles.errorTitle}>Error Loading Creators:</p>
+          <p>{pageError}</p>
+          <p className={styles.errorHint}>
+            Please try refreshing the page or contact support if the issue
+            persists.
+          </p>
+        </div>
       )}
 
       {!isLoadingPage && !pageError && creatorsData.length > 0 && (
@@ -96,8 +122,10 @@ export default function CreatorsPage() {
               <div className={styles.embedWrapper}>
                 <iframe
                   src={`https://player.twitch.tv/?channel=${creator.channelName}&parent=${twitchEmbedParent}&muted=true&autoplay=false`}
-                  height="100%" width="100%"
-                  allowFullScreen={true} scrolling="no"
+                  height="100%"
+                  width="100%"
+                  allowFullScreen={true}
+                  scrolling="no"
                   title={`${creator.displayName || creator.channelName}'s Twitch Stream`}
                   className={styles.twitchEmbed}
                   sandbox="allow-scripts allow-same-origin allow-popups" // Security sandbox
@@ -111,9 +139,12 @@ export default function CreatorsPage() {
                       <Image
                         src={creator.profileImageUrl}
                         alt={`${creator.displayName || creator.channelName} profile picture`}
-                        width={64} height={64}
+                        width={64}
+                        height={64}
                         className={styles.profileImage} // Use class from module
-                        onError={(e) => { e.currentTarget.src = '/images/placeholder.png'; }} // Fallback placeholder
+                        onError={(e) => {
+                          e.currentTarget.src = '/images/placeholder.png';
+                        }} // Fallback placeholder
                         unoptimized // Good practice for external images not known at build time
                       />
                     ) : (
@@ -129,12 +160,23 @@ export default function CreatorsPage() {
                     )}
                   </div>
                   <div className={styles.channelInfo}>
-                    <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelNameLink} title={creator.displayName || creator.channelName}>
+                    <a
+                      href={`https://www.twitch.tv/${creator.channelName}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.channelNameLink}
+                      title={creator.displayName || creator.channelName}
+                    >
                       {creator.displayName || creator.channelName}
                     </a>
-                    <a href={`https://www.twitch.tv/${creator.channelName}`} target="_blank" rel="noopener noreferrer" className={styles.channelUrlLink} >
-                         twitch.tv/{creator.channelName}
-                     </a>
+                    <a
+                      href={`https://www.twitch.tv/${creator.channelName}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.channelUrlLink}
+                    >
+                      twitch.tv/{creator.channelName}
+                    </a>
                   </div>
                 </div>
 
@@ -143,7 +185,9 @@ export default function CreatorsPage() {
                     {creator.description}
                   </p>
                 ) : (
-                  <p className={styles.noDescriptionText}>No description available.</p>
+                  <p className={styles.noDescriptionText}>
+                    No description available.
+                  </p>
                 )}
               </div>
             </div>
@@ -152,9 +196,11 @@ export default function CreatorsPage() {
       )}
 
       {!isLoadingPage && !pageError && creatorsData.length === 0 && (
-         <div className={styles.noCreatorsContainer}>
-             <p className={styles.noCreatorsText}>No community creators found or configured.</p>
-         </div>
+        <div className={styles.noCreatorsContainer}>
+          <p className={styles.noCreatorsText}>
+            No community creators found or configured.
+          </p>
+        </div>
       )}
     </main>
   );

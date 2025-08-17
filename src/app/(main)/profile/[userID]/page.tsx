@@ -16,8 +16,7 @@ async function getUserProfile(userID: string) {
     const user = await UserModel.findById(userID).lean();
     if (!user) return null;
 
-    const recentThreads = await ForumThreadModel
-      .find({ authorId: userID })
+    const recentThreads = await ForumThreadModel.find({ authorId: userID })
       .sort({ createdAt: -1 })
       .limit(5)
       .select('title categoryId createdAt')
@@ -30,9 +29,11 @@ async function getUserProfile(userID: string) {
   }
 }
 
-export default async function ProfilePage(
-  { params }: { params: { userID: string } }
-) {
+export default async function ProfilePage({
+  params,
+}: {
+  params: { userID: string };
+}) {
   const { userID } = params;
   const profileData = await getUserProfile(userID);
 
@@ -42,8 +43,10 @@ export default async function ProfilePage(
 
   const { user, recentThreads } = profileData as any;
 
-  const heightUnit: 'cm' | 'in' = user?.preferredHeightUnit === 'in' ? 'in' : 'cm';
-  const weightUnit: 'kg' | 'lb' = user?.preferredWeightUnit === 'lb' ? 'lb' : 'kg';
+  const heightUnit: 'cm' | 'in' =
+    user?.preferredHeightUnit === 'in' ? 'in' : 'cm';
+  const weightUnit: 'kg' | 'lb' =
+    user?.preferredWeightUnit === 'lb' ? 'lb' : 'kg';
   const heightDisplay = (() => {
     const cmVal = user?.characterHeightCm;
     if (cmVal == null) return '—';
@@ -61,7 +64,11 @@ export default async function ProfilePage(
     <main className="container mx-auto py-8 px-4">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border dark:border-slate-700 flex items-center gap-6 mb-8">
         <Image
-          src={user.customAvatarDataUrl || user.image || '/images/avatar-default.png'}
+          src={
+            user.customAvatarDataUrl ||
+            user.image ||
+            '/images/avatar-default.png'
+          }
           alt={`${user.name || [user.firstName, user.middleName, user.lastName].filter(Boolean).join(' ') || 'User'}'s Avatar`}
           width={160}
           height={160}
@@ -69,7 +76,11 @@ export default async function ProfilePage(
         />
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            {user.name || [user.firstName, user.middleName, user.lastName].filter(Boolean).join(' ') || 'User'}
+            {user.name ||
+              [user.firstName, user.middleName, user.lastName]
+                .filter(Boolean)
+                .join(' ') ||
+              'User'}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Member since{' '}
@@ -78,7 +89,8 @@ export default async function ProfilePage(
               : 'N/A'}
           </p>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}): {weightDisplay}
+            Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}):{' '}
+            {weightDisplay}
           </p>
         </div>
       </div>

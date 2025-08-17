@@ -40,23 +40,37 @@ export async function GET() {
 
           const rolesRes = await fetch(
             `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
-            { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+            {
+              headers: { Authorization: `Bot ${BOT_TOKEN}` },
+              cache: 'no-store',
+            }
           );
           if (rolesRes.ok) {
-            const guildRoles: Array<{ id: string; name: string } & Record<string, unknown>> =
-              await rolesRes.json();
-            const idToName = new Map(guildRoles.map((r) => [r.id, r.name] as const));
+            const guildRoles: Array<
+              { id: string; name: string } & Record<string, unknown>
+            > = await rolesRes.json();
+            const idToName = new Map(
+              guildRoles.map((r) => [r.id, r.name] as const)
+            );
             const roles = roleIds
               .map((id) => ({ id, name: idToName.get(id) || id }))
               .filter((r) => r.name !== '@everyone');
 
             // Persist if different from stored value
-            const existing = Array.isArray(user.discordRoles) ? user.discordRoles : [];
+            const existing = Array.isArray(user.discordRoles)
+              ? user.discordRoles
+              : [];
             const sameLength = existing.length === roles.length;
             const same =
-              sameLength && existing.every((e) => roles.some((r) => r.id === e.id && r.name === e.name));
+              sameLength &&
+              existing.every((e) =>
+                roles.some((r) => r.id === e.id && r.name === e.name)
+              );
             if (!same) {
-              await UserModel.updateOne({ _id: session.user.id }, { $set: { discordRoles: roles } });
+              await UserModel.updateOne(
+                { _id: session.user.id },
+                { $set: { discordRoles: roles } }
+              );
             }
           }
         }
@@ -143,9 +157,15 @@ export async function PUT(req: Request) {
         } else if (key === 'meritPoints') {
           const num = Number(value);
           if (!Number.isNaN(num)) updates.meritPoints = num;
-        } else if (key === 'preferredHeightUnit' && (value === 'cm' || value === 'in')) {
+        } else if (
+          key === 'preferredHeightUnit' &&
+          (value === 'cm' || value === 'in')
+        ) {
           updates.preferredHeightUnit = value;
-        } else if (key === 'preferredWeightUnit' && (value === 'kg' || value === 'lb')) {
+        } else if (
+          key === 'preferredWeightUnit' &&
+          (value === 'kg' || value === 'lb')
+        ) {
           updates.preferredWeightUnit = value;
         } else {
           updates[key] = String(value);
@@ -173,7 +193,9 @@ export async function PUT(req: Request) {
           youtubeUrl: (form.get('youtubeUrl') || null) as string | null,
           twitchUrl: (form.get('twitchUrl') || null) as string | null,
           witnessName: (form.get('witnessName') || null) as string | null,
-          witnessDiscordId: (form.get('witnessDiscordId') || null) as string | null,
+          witnessDiscordId: (form.get('witnessDiscordId') || null) as
+            | string
+            | null,
           createdAt: new Date(),
         };
         // Upsert by level
@@ -183,7 +205,10 @@ export async function PUT(req: Request) {
         );
         // If not found, push
         await UserModel.updateOne(
-          { _id: session.user.id, 'challengeSubmissions.level': { $ne: level } },
+          {
+            _id: session.user.id,
+            'challengeSubmissions.level': { $ne: level },
+          },
           { $push: { challengeSubmissions: submission } }
         );
       }
@@ -240,10 +265,12 @@ export async function PUT(req: Request) {
     if (homeplanet !== undefined) updates.homeplanet = homeplanet ?? null;
     if (background !== undefined) updates.background = background ?? null;
     if (division !== undefined) updates.division = division ?? null;
-    if (customAvatarDataUrl) updates.customAvatarDataUrl = String(customAvatarDataUrl);
+    if (customAvatarDataUrl)
+      updates.customAvatarDataUrl = String(customAvatarDataUrl);
     if (callsign !== undefined) updates.callsign = callsign ?? null;
     if (rankTitle !== undefined) updates.rankTitle = rankTitle ?? null;
-    if (favoriteWeapon !== undefined) updates.favoriteWeapon = favoriteWeapon ?? null;
+    if (favoriteWeapon !== undefined)
+      updates.favoriteWeapon = favoriteWeapon ?? null;
     if (armor !== undefined) updates.armor = armor ?? null;
     if (motto !== undefined) updates.motto = motto ?? null;
     if (favoredEnemy !== undefined) updates.favoredEnemy = favoredEnemy ?? null;
@@ -283,7 +310,11 @@ export async function PUT(req: Request) {
   }
 
   if (Object.keys(updates).length > 0) {
-    await UserModel.updateOne({ _id: session.user.id }, { $set: updates }, { upsert: true });
+    await UserModel.updateOne(
+      { _id: session.user.id },
+      { $set: updates },
+      { upsert: true }
+    );
   }
 
   const updated = await UserModel.findById(session.user.id).lean();
@@ -295,7 +326,10 @@ export async function PUT(req: Request) {
     const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
     const accounts = db.collection('accounts');
     const userObjectId = new ObjectId(session.user.id);
-    const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
+    const discordAccount = await accounts.findOne({
+      userId: userObjectId,
+      provider: 'discord',
+    });
     const discordId = discordAccount?.providerAccountId || null;
     const profileSnapshot = {
       user_id: userObjectId,
@@ -323,7 +357,9 @@ export async function PUT(req: Request) {
         preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
         meritPoints: updated?.meritPoints ?? 0,
         challengeSubmissions: updated?.challengeSubmissions ?? [],
-        discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+        discordRoles: Array.isArray(updated?.discordRoles)
+          ? updated?.discordRoles
+          : [],
       },
     };
     await appDb.collection('User_Profiles').updateOne(
@@ -369,7 +405,9 @@ export async function PUT(req: Request) {
     preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
     challengeSubmissions: updated?.challengeSubmissions ?? [],
     // include roles
-    discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
+    discordRoles: Array.isArray(updated?.discordRoles)
+      ? updated?.discordRoles
+      : [],
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,
   });

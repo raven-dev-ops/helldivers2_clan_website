@@ -1,6 +1,6 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export default withAuth(
   function middleware(req: NextRequest) {
@@ -11,13 +11,13 @@ export default withAuth(
       authorized: ({ token }) => !!token,
     },
     pages: {
-      signIn: "/auth",
+      signIn: '/auth',
     },
   }
 );
 
 export const config = {
   matcher: [
-    "/((?!api/auth|api/|_next/static|_next/image|auth|images|videos|audio|favicon.ico).*)",
+    '/((?!api/auth|api/|_next/static|_next/image|auth|images|videos|audio|favicon.ico).*)',
   ],
 };

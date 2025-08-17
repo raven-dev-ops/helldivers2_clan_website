@@ -16,9 +16,15 @@ const MAX_BYTES = 5 * 1024 * 1024; // 5MB
 const MIN_DIMENSION = 128; // px
 const OUTPUT_SIZE = 512; // px square canvas
 
-export default function ChangeAvatarModal({ initialImageUrl, onCancel, onSaved }: ChangeAvatarModalProps) {
+export default function ChangeAvatarModal({
+  initialImageUrl,
+  onCancel,
+  onSaved,
+}: ChangeAvatarModalProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [imageSrc, setImageSrc] = useState<string | null>(initialImageUrl || null);
+  const [imageSrc, setImageSrc] = useState<string | null>(
+    initialImageUrl || null
+  );
   const [error, setError] = useState<string | null>(null);
   const [zoom, setZoom] = useState<number>(1);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -27,25 +33,31 @@ export default function ChangeAvatarModal({ initialImageUrl, onCancel, onSaved }
 
   const onChooseFileClick = () => fileInputRef.current?.click();
 
-  const readFile = (file: File) => new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  const readFile = (file: File) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
-  const validateImageDimensions = (src: string) => new Promise<void>((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      if (img.width < MIN_DIMENSION || img.height < MIN_DIMENSION) {
-        reject(new Error(`Image too small. Minimum ${MIN_DIMENSION}x${MIN_DIMENSION}px.`));
-        return;
-      }
-      resolve();
-    };
-    img.onerror = () => reject(new Error('Failed to load image'));
-    img.src = src;
-  });
+  const validateImageDimensions = (src: string) =>
+    new Promise<void>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        if (img.width < MIN_DIMENSION || img.height < MIN_DIMENSION) {
+          reject(
+            new Error(
+              `Image too small. Minimum ${MIN_DIMENSION}x${MIN_DIMENSION}px.`
+            )
+          );
+          return;
+        }
+        resolve();
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = src;
+    });
 
   const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -136,7 +148,7 @@ export default function ChangeAvatarModal({ initialImageUrl, onCancel, onSaved }
       const res = await fetch('/api/users/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customAvatarDataUrl: dataUrl })
+        body: JSON.stringify({ customAvatarDataUrl: dataUrl }),
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
@@ -154,15 +166,32 @@ export default function ChangeAvatarModal({ initialImageUrl, onCancel, onSaved }
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal} role="dialog" aria-modal="true" aria-label="Change profile image">
+      <div
+        className={styles.modal}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Change profile image"
+      >
         <div className={styles.header}>Change Profile Image</div>
         <div className={styles.body}>
           {error && <div className={styles.error}>{error}</div>}
           {!hasImage ? (
             <div className={styles.emptyState}>
               <p>Select an image to get started.</p>
-              <button type="button" className={styles.button} onClick={onChooseFileClick}>Choose Image</button>
-              <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={onFileChange} />
+              <button
+                type="button"
+                className={styles.button}
+                onClick={onChooseFileClick}
+              >
+                Choose Image
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={onFileChange}
+              />
             </div>
           ) : (
             <>
@@ -182,19 +211,52 @@ export default function ChangeAvatarModal({ initialImageUrl, onCancel, onSaved }
               <div className={styles.controls}>
                 <label>
                   Zoom
-                  <input type="range" min={1} max={3} step={0.01} value={zoom} onChange={(e) => setZoom(Number(e.target.value))} />
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.01}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                  />
                 </label>
                 <div className={styles.controlButtons}>
-                  <button type="button" className={styles.link} onClick={onChooseFileClick}>Change file</button>
-                  <input ref={fileInputRef} type="file" accept="image/*" hidden onChange={onFileChange} />
+                  <button
+                    type="button"
+                    className={styles.link}
+                    onClick={onChooseFileClick}
+                  >
+                    Change file
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={onFileChange}
+                  />
                 </div>
               </div>
             </>
           )}
         </div>
         <div className={styles.footer}>
-          <button type="button" className={`${styles.button} ${styles.ghost}`} onClick={onCancel} disabled={isSaving}>Cancel</button>
-          <button type="button" className={styles.button} onClick={handleSave} disabled={!hasImage || isSaving}>{isSaving ? 'Saving…' : 'Save'}</button>
+          <button
+            type="button"
+            className={`${styles.button} ${styles.ghost}`}
+            onClick={onCancel}
+            disabled={isSaving}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={handleSave}
+            disabled={!hasImage || isSaving}
+          >
+            {isSaving ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
-import styles from "./AlertBar.module.css";
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import styles from './AlertBar.module.css';
 
 interface LeaderboardRow {
   player_name: string;
@@ -21,13 +21,20 @@ export default function AlertBar() {
   useEffect(() => {
     async function load() {
       try {
-        const [orderRes, lifetimeRes, monthRes, soloRes, meritRes] = await Promise.all([
-          fetch("/api/war/major-orders", { cache: "no-store" }),
-          fetch("/api/helldivers/leaderboard?scope=lifetime&limit=50", { cache: "no-store" }),
-          fetch("/api/helldivers/leaderboard?scope=month&limit=50", { cache: "no-store" }),
-          fetch("/api/helldivers/leaderboard?scope=solo&limit=50", { cache: "no-store" }),
-          fetch("/api/merit/leaderboard?limit=50", { cache: "no-store" }),
-        ]);
+        const [orderRes, lifetimeRes, monthRes, soloRes, meritRes] =
+          await Promise.all([
+            fetch('/api/war/major-orders', { cache: 'no-store' }),
+            fetch('/api/helldivers/leaderboard?scope=lifetime&limit=50', {
+              cache: 'no-store',
+            }),
+            fetch('/api/helldivers/leaderboard?scope=month&limit=50', {
+              cache: 'no-store',
+            }),
+            fetch('/api/helldivers/leaderboard?scope=solo&limit=50', {
+              cache: 'no-store',
+            }),
+            fetch('/api/merit/leaderboard?limit=50', { cache: 'no-store' }),
+          ]);
 
         const orderData = orderRes.ok ? await orderRes.json() : null;
         const lifetimeData = lifetimeRes.ok ? await lifetimeRes.json() : null;
@@ -35,25 +42,33 @@ export default function AlertBar() {
         const soloData = soloRes.ok ? await soloRes.json() : null;
         const meritData = meritRes.ok ? await meritRes.json() : null;
 
-        const order = orderData?.orders?.[0] || orderData?.data?.[0] || orderData?.[0];
-        const orderTitle = order?.title || order?.text || "";
-        const orderDesc = order?.description || order?.brief || "";
-        const orderMsg = orderTitle ? `Major Order: ${orderTitle}${orderDesc ? " - " + orderDesc : ""}` : "";
+        const order =
+          orderData?.orders?.[0] || orderData?.data?.[0] || orderData?.[0];
+        const orderTitle = order?.title || order?.text || '';
+        const orderDesc = order?.description || order?.brief || '';
+        const orderMsg = orderTitle
+          ? `Major Order: ${orderTitle}${orderDesc ? ' - ' + orderDesc : ''}`
+          : '';
 
-        const stringifyTop = (d: { results?: LeaderboardRow[] } | null, label: string) => {
-          const rows: LeaderboardRow[] = Array.isArray(d?.results) ? d!.results : [];
-          if (rows.length === 0) return "";
+        const stringifyTop = (
+          d: { results?: LeaderboardRow[] } | null,
+          label: string
+        ) => {
+          const rows: LeaderboardRow[] = Array.isArray(d?.results)
+            ? d!.results
+            : [];
+          if (rows.length === 0) return '';
           const body = rows
             .slice(0, 50)
             .map((r, i) => `${r.rank ?? i + 1}. ${r.player_name}`)
-            .join(", ");
+            .join(', ');
           return `${label}: ${body}`;
         };
 
-        const lifetimeMsg = stringifyTop(lifetimeData, "Top 50 (Lifetime)");
-        const monthMsg = stringifyTop(monthData, "Top 50 (Monthly)");
-        const soloMsg = stringifyTop(soloData, "Top 50 (Solo)");
-        const meritMsg = stringifyTop(meritData, "Top 50 (Merit)");
+        const lifetimeMsg = stringifyTop(lifetimeData, 'Top 50 (Lifetime)');
+        const monthMsg = stringifyTop(monthData, 'Top 50 (Monthly)');
+        const soloMsg = stringifyTop(soloData, 'Top 50 (Solo)');
+        const meritMsg = stringifyTop(meritData, 'Top 50 (Merit)');
 
         const parts: string[] = [];
         if (orderMsg) parts.push(orderMsg);
@@ -100,10 +115,10 @@ export default function AlertBar() {
 
     // wait for DOM paint with the new keyed message
     const id = requestAnimationFrame(compute);
-    window.addEventListener("resize", compute);
+    window.addEventListener('resize', compute);
     return () => {
       cancelAnimationFrame(id);
-      window.removeEventListener("resize", compute);
+      window.removeEventListener('resize', compute);
     };
   }, [index, messages]);
 
@@ -126,7 +141,7 @@ export default function AlertBar() {
     <div
       className={styles.bar}
       role="status"
-      style={{ ["--ticker-duration" as any]: `${durationSec}s` }} // consumed by CSS
+      style={{ ['--ticker-duration' as any]: `${durationSec}s` }} // consumed by CSS
     >
       <div className={styles.inner}>
         <div className={styles.tickerWrapper} ref={wrapperRef}>
@@ -140,7 +155,11 @@ export default function AlertBar() {
             {messages[index]}
           </div>
         </div>
-        <button className={styles.close} onClick={handleClose} aria-label="Close alert">
+        <button
+          className={styles.close}
+          onClick={handleClose}
+          aria-label="Close alert"
+        >
           ×
         </button>
       </div>

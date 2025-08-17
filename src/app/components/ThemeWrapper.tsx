@@ -6,7 +6,11 @@ import { ThemeProvider } from 'styled-components';
 import { themes } from '@/lib/theme'; // Or wherever you keep it
 import GlobalStyle from '@/app/components/GlobalStyle';
 
-export default function ThemeWrapper({ children }: { children: React.ReactNode }) {
+export default function ThemeWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { status } = useSession();
   const [currentThemeKey, setCurrentThemeKey] = useState('default');
 
@@ -15,7 +19,7 @@ export default function ThemeWrapper({ children }: { children: React.ReactNode }
       fetch('/api/users/me')
         .then((r) => r.json())
         .then((user) => {
-          // If your API returns something like { division: 'helldivers-2' }, 
+          // If your API returns something like { division: 'helldivers-2' },
           // store that key
           setCurrentThemeKey(user?.division ?? 'default');
         })
