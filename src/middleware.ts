@@ -2,8 +2,11 @@ import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const RATE_LIMIT_MAX = 10;
+const RATE_LIMIT_WINDOW = parseInt(
+  process.env.RATE_LIMIT_WINDOW_MS ?? '60000',
+  10
+); // default 1 minute
+const RATE_LIMIT_MAX = parseInt(process.env.RATE_LIMIT_MAX ?? '10', 10);
 const requests = new Map<string, { count: number; start: number }>();
 
 const authMiddleware = withAuth(
@@ -23,8 +26,7 @@ const authMiddleware = withAuth(
 export default async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api')) {
     const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-      '127.0.0.1';
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
     const now = Date.now();
     const entry = requests.get(ip) || { count: 0, start: now };
     if (now - entry.start > RATE_LIMIT_WINDOW) {
@@ -34,6 +36,7 @@ export default async function middleware(req: NextRequest) {
     entry.count++;
     requests.set(ip, entry);
     if (entry.count > RATE_LIMIT_MAX) {
+      console.warn(`Rate limit exceeded for ${ip} on ${req.nextUrl.pathname}`);
       return NextResponse.json(
         { message: 'Too many requests' },
         { status: 429 }
