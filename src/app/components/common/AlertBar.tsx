@@ -65,7 +65,7 @@ export default function AlertBar() {
           return `${label}: ${body}`;
         };
 
-        const lifetimeMsg = stringifyTop(lifetimeData, 'Top 50 (Lifetime)');
+        const lifetimeMsg = stringifyTop(lifetimeData, 'Top 50 (Yearly)');
         const monthMsg = stringifyTop(monthData, 'Top 50 (Monthly)');
         const soloMsg = stringifyTop(soloData, 'Top 50 (Solo)');
         const meritMsg = stringifyTop(meritData, 'Top 50 (Merit)');

@@ -135,7 +135,7 @@ export default function StatsSubmitForm() {
               <div>{monthRank ?? '—'}</div>
             </div>
             <div className="field">
-              <span className="label">Lifetime</span>
+              <span className="label">Yearly</span>
               <div>{lifetimeRank ?? '—'}</div>
             </div>
             <div className="field">

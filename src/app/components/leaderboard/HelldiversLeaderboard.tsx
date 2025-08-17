@@ -321,7 +321,8 @@ function LeaderboardTableSection({
 export default function HelldiversLeaderboard({
   initialSoloData,
   initialMonthData,
-  initialLifetimeData,
+  initialYearlyData,
+  initialWeekData,
   initialMeritData,
 }: {
   initialSoloData?: {
@@ -336,7 +337,13 @@ export default function HelldiversLeaderboard({
     limit: number;
     results: LeaderboardRow[];
   };
-  initialLifetimeData?: {
+  initialYearlyData?: {
+    sortBy: SortField;
+    sortDir: SortDir;
+    limit: number;
+    results: LeaderboardRow[];
+  };
+  initialWeekData?: {
     sortBy: SortField;
     sortDir: SortDir;
     limit: number;
@@ -350,8 +357,11 @@ export default function HelldiversLeaderboard({
   const [monthData, setMonthData] = useState<LeaderboardRow[]>(
     initialMonthData?.results || []
   );
-  const [lifetimeData, setLifetimeData] = useState<LeaderboardRow[]>(
-    initialLifetimeData?.results || []
+  const [yearlyData, setYearlyData] = useState<LeaderboardRow[]>(
+    initialYearlyData?.results || []
+  );
+  const [weekData, setWeekData] = useState<LeaderboardRow[]>(
+    initialWeekData?.results || []
   );
   const [meritData, setMeritData] = useState<MeritRow[]>(
     initialMeritData?.results || []
@@ -359,13 +369,15 @@ export default function HelldiversLeaderboard({
 
   const [soloLoading, setSoloLoading] = useState<boolean>(!initialSoloData);
   const [monthLoading, setMonthLoading] = useState<boolean>(!initialMonthData);
-  const [lifetimeLoading, setLifetimeLoading] =
-    useState<boolean>(!initialLifetimeData);
+  const [yearlyLoading, setYearlyLoading] =
+    useState<boolean>(!initialYearlyData);
+  const [weekLoading, setWeekLoading] = useState<boolean>(!initialWeekData);
   const [meritLoading, setMeritLoading] = useState<boolean>(!initialMeritData);
 
   const [soloError, setSoloError] = useState<string | null>(null);
   const [monthError, setMonthError] = useState<string | null>(null);
-  const [lifetimeError, setLifetimeError] = useState<string | null>(null);
+  const [yearlyError, setYearlyError] = useState<string | null>(null);
+  const [weekError, setWeekError] = useState<string | null>(null);
   const [meritError, setMeritError] = useState<string | null>(null);
 
   const [soloSortBy, setSoloSortBy] = useState<SortField>(
@@ -380,17 +392,23 @@ export default function HelldiversLeaderboard({
   const [monthSortDir, setMonthSortDir] = useState<SortDir>(
     initialMonthData?.sortDir || 'desc'
   );
-
-  const [lifetimeSortBy, setLifetimeSortBy] = useState<SortField>(
-    initialLifetimeData?.sortBy || 'Kills'
+  const [yearlySortBy, setYearlySortBy] = useState<SortField>(
+    initialYearlyData?.sortBy || 'Kills'
   );
-  const [lifetimeSortDir, setLifetimeSortDir] = useState<SortDir>(
-    initialLifetimeData?.sortDir || 'desc'
+  const [yearlySortDir, setYearlySortDir] = useState<SortDir>(
+    initialYearlyData?.sortDir || 'desc'
+  );
+  const [weekSortBy, setWeekSortBy] = useState<SortField>(
+    initialWeekData?.sortBy || 'Kills'
+  );
+  const [weekSortDir, setWeekSortDir] = useState<SortDir>(
+    initialWeekData?.sortDir || 'desc'
   );
 
   const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
-  const [lifetimeTotalsSearch, setLifetimeTotalsSearch] = useState<string>('');
+  const [yearlyTotalsSearch, setYearlyTotalsSearch] = useState<string>('');
+  const [weekSearch, setWeekSearch] = useState<string>('');
   const [meritSearch, setMeritSearch] = useState<string>('');
 
   const toggleSoloSort = (field: SortField) => {
@@ -415,12 +433,23 @@ export default function HelldiversLeaderboard({
     }
   };
 
-  const toggleLifetimeSort = (field: SortField) => {
-    if (field === lifetimeSortBy) {
-      setLifetimeSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  const toggleYearlySort = (field: SortField) => {
+    if (field === yearlySortBy) {
+      setYearlySortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
-      setLifetimeSortBy(field);
-      setLifetimeSortDir(
+      setYearlySortBy(field);
+      setYearlySortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
+    }
+  };
+
+  const toggleWeekSort = (field: SortField) => {
+    if (field === weekSortBy) {
+      setWeekSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setWeekSortBy(field);
+      setWeekSortDir(
         field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
       );
     }
@@ -495,13 +524,45 @@ export default function HelldiversLeaderboard({
 
   useEffect(() => {
     let isCancelled = false;
-    async function fetchLifetime() {
-      setLifetimeLoading(true);
-      setLifetimeError(null);
+    async function fetchWeek() {
+      setWeekLoading(true);
+      setWeekError(null);
       try {
         const params = new URLSearchParams({
-          sortBy: lifetimeSortBy,
-          sortDir: lifetimeSortDir,
+          sortBy: weekSortBy,
+          sortDir: weekSortDir,
+          limit: '100',
+          scope: 'week',
+        });
+        const res = await fetch(
+          `/api/helldivers/leaderboard?${params.toString()}`,
+          { cache: 'no-store' }
+        );
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const payload = await res.json();
+        if (!isCancelled) setWeekData(payload.results || []);
+      } catch (e: any) {
+        if (!isCancelled)
+          setWeekError(e?.message || 'Failed to load leaderboard');
+      } finally {
+        if (!isCancelled) setWeekLoading(false);
+      }
+    }
+    fetchWeek();
+    return () => {
+      isCancelled = true;
+    };
+  }, [weekSortBy, weekSortDir]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    async function fetchYearly() {
+      setYearlyLoading(true);
+      setYearlyError(null);
+      try {
+        const params = new URLSearchParams({
+          sortBy: yearlySortBy,
+          sortDir: yearlySortDir,
           limit: '1000',
           scope: 'lifetime',
         });
@@ -511,19 +572,19 @@ export default function HelldiversLeaderboard({
         );
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const payload = await res.json();
-        if (!isCancelled) setLifetimeData(payload.results || []);
+        if (!isCancelled) setYearlyData(payload.results || []);
       } catch (e: any) {
         if (!isCancelled)
-          setLifetimeError(e?.message || 'Failed to load leaderboard');
+          setYearlyError(e?.message || 'Failed to load leaderboard');
       } finally {
-        if (!isCancelled) setLifetimeLoading(false);
+        if (!isCancelled) setYearlyLoading(false);
       }
     }
-    fetchLifetime();
+    fetchYearly();
     return () => {
       isCancelled = true;
     };
-  }, [lifetimeSortBy, lifetimeSortDir]);
+  }, [yearlySortBy, yearlySortDir]);
 
   const soloActiveSort = useMemo(
     () => ({ sortBy: soloSortBy, sortDir: soloSortDir }),
@@ -533,14 +594,18 @@ export default function HelldiversLeaderboard({
     () => ({ sortBy: monthSortBy, sortDir: monthSortDir }),
     [monthSortBy, monthSortDir]
   );
-  const lifetimeActiveSort = useMemo(
-    () => ({ sortBy: lifetimeSortBy, sortDir: lifetimeSortDir }),
-    [lifetimeSortBy, lifetimeSortDir]
+  const yearActiveSort = useMemo(
+    () => ({ sortBy: yearlySortBy, sortDir: yearlySortDir }),
+    [yearlySortBy, yearlySortDir]
+  );
+  const weekActiveSort = useMemo(
+    () => ({ sortBy: weekSortBy, sortDir: weekSortDir }),
+    [weekSortBy, weekSortDir]
   );
 
   const [activeTab, setActiveTab] = useState<
-    'lifetime' | 'monthly' | 'solo' | 'merit'
-  >('lifetime');
+    'yearly' | 'monthly' | 'weekly' | 'solo' | 'merit'
+  >('yearly');
 
   useEffect(() => {
     const setTabFromHash = () => {
@@ -548,7 +613,8 @@ export default function HelldiversLeaderboard({
       if (
         hash === 'solo' ||
         hash === 'monthly' ||
-        hash === 'lifetime' ||
+        hash === 'weekly' ||
+        hash === 'yearly' ||
         hash === 'merit'
       ) {
         setActiveTab(hash as typeof activeTab);
@@ -599,10 +665,10 @@ export default function HelldiversLeaderboard({
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('lifetime')}
-          aria-pressed={activeTab === 'lifetime'}
+          onClick={() => setActiveTab('yearly')}
+          aria-pressed={activeTab === 'yearly'}
         >
-          Lifetime
+          Yearly
         </button>
         <button
           className="btn btn-secondary"
@@ -610,6 +676,13 @@ export default function HelldiversLeaderboard({
           aria-pressed={activeTab === 'monthly'}
         >
           Monthly
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('weekly')}
+          aria-pressed={activeTab === 'weekly'}
+        >
+          Weekly
         </button>
         <button
           className="btn btn-secondary"
@@ -627,19 +700,19 @@ export default function HelldiversLeaderboard({
         </button>
       </div>
 
-      {activeTab === 'solo' && (
+      {activeTab === 'yearly' && (
         <LeaderboardTableSection
-          title="Solo Leaderboard"
-          rows={soloData}
-          loading={soloLoading}
-          error={soloError}
-          activeSort={soloActiveSort}
-          onSort={toggleSoloSort}
+          title="Yearly Leaderboard"
+          rows={yearlyData}
+          loading={yearlyLoading}
+          error={yearlyError}
+          activeSort={yearActiveSort}
+          onSort={toggleYearlySort}
           showAverages={false}
           showTotals={true}
-          searchTerm={soloSearch}
-          onSearch={setSoloSearch}
-          sectionId="solo"
+          searchTerm={yearlyTotalsSearch}
+          onSearch={setYearlyTotalsSearch}
+          sectionId="yearly"
         />
       )}
 
@@ -659,19 +732,35 @@ export default function HelldiversLeaderboard({
         />
       )}
 
-      {activeTab === 'lifetime' && (
+      {activeTab === 'weekly' && (
         <LeaderboardTableSection
-          title="Lifetime Leaderboard"
-          rows={lifetimeData}
-          loading={lifetimeLoading}
-          error={lifetimeError}
-          activeSort={lifetimeActiveSort}
-          onSort={toggleLifetimeSort}
+          title="Weekly Leaderboard"
+          rows={weekData}
+          loading={weekLoading}
+          error={weekError}
+          activeSort={weekActiveSort}
+          onSort={toggleWeekSort}
           showAverages={false}
           showTotals={true}
-          searchTerm={lifetimeTotalsSearch}
-          onSearch={setLifetimeTotalsSearch}
-          sectionId="lifetime"
+          searchTerm={weekSearch}
+          onSearch={setWeekSearch}
+          sectionId="weekly"
+        />
+      )}
+
+      {activeTab === 'solo' && (
+        <LeaderboardTableSection
+          title="Solo Leaderboard"
+          rows={soloData}
+          loading={soloLoading}
+          error={soloError}
+          activeSort={soloActiveSort}
+          onSort={toggleSoloSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={soloSearch}
+          onSearch={setSoloSearch}
+          sectionId="solo"
         />
       )}
 

@@ -29,15 +29,23 @@ export default async function LeaderboardServer({
     month: String(now.getUTCMonth() + 1),
     year: String(now.getUTCFullYear()),
   }).toString();
-  const augustUrl = `${protocol}://${host}/api/helldivers/leaderboard?${monthParams}`;
+  const monthUrl = `${protocol}://${host}/api/helldivers/leaderboard?${monthParams}`;
 
-  const lifetimeParams = new URLSearchParams({
+  const weekParams = new URLSearchParams({
+    sortBy,
+    sortDir,
+    limit: String(limit),
+    scope: 'week',
+  }).toString();
+  const weekUrl = `${protocol}://${host}/api/helldivers/leaderboard?${weekParams}`;
+
+  const yearlyParams = new URLSearchParams({
     sortBy,
     sortDir,
     limit: String(limit),
     scope: 'lifetime',
   }).toString();
-  const lifetimeUrl = `${protocol}://${host}/api/helldivers/leaderboard?${lifetimeParams}`;
+  const yearlyUrl = `${protocol}://${host}/api/helldivers/leaderboard?${yearlyParams}`;
 
   const soloParams = new URLSearchParams({
     sortBy,
@@ -47,21 +55,24 @@ export default async function LeaderboardServer({
   }).toString();
   const soloUrl = `${protocol}://${host}/api/helldivers/leaderboard?${soloParams}`;
 
-  const [augustRes, lifetimeRes, soloRes] = await Promise.all([
-    fetch(augustUrl, { cache: 'no-store' }),
-    fetch(lifetimeUrl, { cache: 'no-store' }),
+  const [monthRes, weekRes, yearlyRes, soloRes] = await Promise.all([
+    fetch(monthUrl, { cache: 'no-store' }),
+    fetch(weekUrl, { cache: 'no-store' }),
+    fetch(yearlyUrl, { cache: 'no-store' }),
     fetch(soloUrl, { cache: 'no-store' }),
   ]);
 
-  const augustData = augustRes.ok ? await augustRes.json() : undefined;
-  const lifetimeData = lifetimeRes.ok ? await lifetimeRes.json() : undefined;
+  const monthData = monthRes.ok ? await monthRes.json() : undefined;
+  const weekData = weekRes.ok ? await weekRes.json() : undefined;
+  const yearlyData = yearlyRes.ok ? await yearlyRes.json() : undefined;
   const soloData = soloRes.ok ? await soloRes.json() : undefined;
 
   return (
     <HelldiversLeaderboard
       initialSoloData={soloData}
-      initialMonthData={augustData}
-      initialLifetimeData={lifetimeData}
+      initialMonthData={monthData}
+      initialYearlyData={yearlyData}
+      initialWeekData={weekData}
     />
   );
 }
