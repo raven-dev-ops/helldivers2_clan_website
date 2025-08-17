@@ -2,11 +2,10 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import middleware, { __rateLimitStore } from './middleware';
 import { NextRequest } from 'next/server';
 
-const createRequest = () => {
-  const req = new NextRequest('http://localhost/api/test');
-  (req as any).ip = '127.0.0.1';
-  return req;
-};
+const createRequest = () =>
+  new NextRequest('http://localhost/api/test', {
+    headers: { 'x-forwarded-for': '127.0.0.1' },
+  });
 
 describe('rate limiting middleware', () => {
   beforeEach(() => {
