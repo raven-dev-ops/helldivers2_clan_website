@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import styles from "../../HelldiversPage.module.css";
+import { useState } from 'react';
+import styles from '../../HelldiversPage.module.css';
 
 export interface Question {
   question: string;
@@ -15,7 +15,9 @@ interface QuizProps {
 }
 
 export default function Quiz({ title, questions }: QuizProps) {
-  const [selected, setSelected] = useState<number[]>(Array(questions.length).fill(-1));
+  const [selected, setSelected] = useState<number[]>(
+    Array(questions.length).fill(-1)
+  );
   const [score, setScore] = useState<number | null>(null);
 
   const handleSelect = (qIndex: number, optionIndex: number) => {
@@ -42,13 +44,13 @@ export default function Quiz({ title, questions }: QuizProps) {
           <li key={qi} className={styles.listItem}>
             <p>{q.question}</p>
             {q.options.map((opt, oi) => (
-              <label key={oi} style={{ display: "block" }}>
+              <label key={oi} style={{ display: 'block' }}>
                 <input
                   type="radio"
                   name={`q-${title}-${qi}`}
                   checked={selected[qi] === oi}
                   onChange={() => handleSelect(qi, oi)}
-                />{" "}
+                />{' '}
                 {opt}
               </label>
             ))}
@@ -66,4 +68,3 @@ export default function Quiz({ title, questions }: QuizProps) {
     </div>
   );
 }
-

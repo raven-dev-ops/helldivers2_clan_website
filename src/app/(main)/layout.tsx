@@ -9,23 +9,24 @@ import Footer from '@/app/components/common/Footer'; // Adjust path if needed
 export default function MainAppLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <> {/* Fragment inherits flex from RootLayout's body */}
+    <>
+      {' '}
+      {/* Fragment inherits flex from RootLayout's body */}
       <MaintenanceBanner />
       <Navbar />
       <AlertBar />
       {/* Apply helper classes from globals.css */}
       {/* Ensure '.container', '.flex-grow', '.py-6', '.relative', '.z-10' are defined */}
       <main className="container flex-grow py-6 relative z-10">
-          {/* The main page content renders here */}
-         {children}
+        {/* The main page content renders here */}
+        {children}
       </main>
-
       <Footer />
     </>
-  )
+  );
 }
 
 /*

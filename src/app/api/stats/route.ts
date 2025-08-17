@@ -12,5 +12,8 @@ export async function POST(req: NextRequest) {
   console.log('[POST /api/stats]');
   const data = await req.json();
   // Example: record a new stat or event
-  return NextResponse.json({ message: 'Stats recorded', data }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Stats recorded', data },
+    { status: 201 }
+  );
 }

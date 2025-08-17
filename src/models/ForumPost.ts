@@ -1,5 +1,5 @@
 // src/models/ForumPost.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IForumPost extends Document {
   threadId: mongoose.Types.ObjectId;
@@ -11,8 +11,12 @@ export interface IForumPost extends Document {
 
 const ForumPostSchema = new Schema<IForumPost>(
   {
-    threadId: { type: Schema.Types.ObjectId, ref: "ForumThread", required: true },
-    authorId: { type: Schema.Types.ObjectId, ref: "User" },
+    threadId: {
+      type: Schema.Types.ObjectId,
+      ref: 'ForumThread',
+      required: true,
+    },
+    authorId: { type: Schema.Types.ObjectId, ref: 'User' },
     content: { type: String, required: true },
   },
   { timestamps: true }
@@ -20,6 +24,6 @@ const ForumPostSchema = new Schema<IForumPost>(
 
 const ForumPostModel =
   (mongoose.models.ForumPost as Model<IForumPost>) ||
-  mongoose.model<IForumPost>("ForumPost", ForumPostSchema);
+  mongoose.model<IForumPost>('ForumPost', ForumPostSchema);
 
 export default ForumPostModel;

@@ -16,10 +16,9 @@ export async function GET() {
     const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
     const userObjectId = new ObjectId(session.user.id);
 
-    const doc = await appDb.collection('User_Profiles').findOne(
-      { user_id: userObjectId },
-      { projection: { last_profile: 1 } }
-    );
+    const doc = await appDb
+      .collection('User_Profiles')
+      .findOne({ user_id: userObjectId }, { projection: { last_profile: 1 } });
 
     return NextResponse.json({ last_profile: doc?.last_profile || null });
   } catch (e) {

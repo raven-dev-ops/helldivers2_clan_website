@@ -16,5 +16,8 @@ export async function POST(req: NextRequest) {
   console.log('[POST /api/forum/posts]');
   const data = await req.json();
   // Example: create a new post
-  return NextResponse.json({ message: 'Post created', post: data }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Post created', post: data },
+    { status: 201 }
+  );
 }

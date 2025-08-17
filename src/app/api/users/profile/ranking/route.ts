@@ -22,7 +22,10 @@ export async function POST(req: NextRequest) {
     const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
     const userObjectId = new ObjectId(session.user.id);
     const accounts = db.collection('accounts');
-    const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
+    const discordAccount = await accounts.findOne({
+      userId: userObjectId,
+      provider: 'discord',
+    });
     const discordId = discordAccount?.providerAccountId || null;
 
     const now = new Date();
@@ -36,7 +39,12 @@ export async function POST(req: NextRequest) {
     await appDb.collection('User_Profiles').updateOne(
       { user_id: userObjectId },
       {
-        $set: { user_id: userObjectId, discord_id: discordId, last_ranking_updated: now, currentRanking: normalized },
+        $set: {
+          user_id: userObjectId,
+          discord_id: discordId,
+          last_ranking_updated: now,
+          currentRanking: normalized,
+        },
         $push: { rankingHistory: { time: now, entries: normalized } },
       },
       { upsert: true }

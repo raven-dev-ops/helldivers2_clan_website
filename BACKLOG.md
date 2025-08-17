@@ -66,5 +66,3 @@
 - [ ] Add tag-based notifications.
 - [ ] Provide site theme switcher options.
 - [x] Create Tests to ensure functionality before PRs can be merged.
-
-

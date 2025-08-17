@@ -1,6 +1,6 @@
 // src/models/UserApplication.ts
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
-import { IUser } from "./User";
+import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+import { IUser } from './User';
 
 export interface IUserApplication extends Document {
   userId: Types.ObjectId | IUser;
@@ -14,7 +14,12 @@ export interface IUserApplication extends Document {
 
 const UserApplicationSchema = new Schema<IUserApplication>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
     type: { type: String, required: true },
     interest: { type: String, required: true },
     about: { type: String },

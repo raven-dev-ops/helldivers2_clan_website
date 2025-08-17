@@ -13,7 +13,7 @@ export default function HelldiversLayout({
     height: '100%',
     objectFit: 'cover',
     zIndex: -2,
-    filter: 'brightness(0.6)'
+    filter: 'brightness(0.6)',
   };
 
   const overlayStyle: React.CSSProperties = {

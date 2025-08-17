@@ -6,7 +6,12 @@ const Container = styled.div`
   margin: 0;
   background-color: #1a1a2e;
   color: #e0e0e0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    Segoe UI,
+    Roboto,
+    sans-serif;
 `;
 
 const Link = styled.a`

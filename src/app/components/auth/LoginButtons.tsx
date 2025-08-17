@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React from "react";
-import { signIn, signOut, useSession } from "next-auth/react";
+import React from 'react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 
 export default function LoginButtons() {
   const { data: session, status } = useSession();
 
-  if (status === "loading") {
+  if (status === 'loading') {
     return <p>Loading...</p>;
   }
 
-  if (status === "authenticated") {
+  if (status === 'authenticated') {
     return (
       <button
         onClick={() => signOut()}
@@ -24,13 +24,13 @@ export default function LoginButtons() {
   return (
     <div className="flex gap-2">
       <button
-        onClick={() => signIn("discord")}
+        onClick={() => signIn('discord')}
         className="bg-[#7289da] hover:bg-[#5f73bc] text-white py-1 px-3 rounded text-sm transition duration-200"
       >
         Discord
       </button>
       <button
-        onClick={() => signIn("google")}
+        onClick={() => signIn('google')}
         className="bg-white hover:bg-gray-200 text-gray-700 py-1 px-3 rounded text-sm transition duration-200"
       >
         Google

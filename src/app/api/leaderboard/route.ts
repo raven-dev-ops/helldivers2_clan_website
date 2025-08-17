@@ -15,5 +15,8 @@ export async function POST(req: NextRequest) {
   console.log('[POST /api/leaderboard]');
   const data = await req.json();
   // Example: update leaderboard with new score
-  return NextResponse.json({ message: 'Score submitted', data }, { status: 201 });
+  return NextResponse.json(
+    { message: 'Score submitted', data },
+    { status: 201 }
+  );
 }

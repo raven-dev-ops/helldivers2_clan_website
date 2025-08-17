@@ -1,7 +1,9 @@
 // src/app/(main)/helldivers-2/news/super-store/page.tsx
 import dynamic from 'next/dynamic';
 
-const SuperStore = dynamic(() => import('@/app/(main)/helldivers-2/SuperStore'));
+const SuperStore = dynamic(
+  () => import('@/app/(main)/helldivers-2/SuperStore')
+);
 
 export default function SuperStorePage() {
   return (
@@ -13,4 +15,3 @@ export default function SuperStorePage() {
     </div>
   );
 }
-

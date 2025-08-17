@@ -1,5 +1,5 @@
 // src/models/Creator.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface ICreator extends Document {
   discordUserId: string; // Store the *User* ID, not server ID
@@ -12,18 +12,26 @@ export interface ICreator extends Document {
   // Add other fields like YouTube, Kick links etc.
 }
 
-const CreatorSchema = new Schema<ICreator>({
-  discordUserId: { type: String, required: true, unique: true, index: true },
-  discordUsername: { type: String, required: true },
-  twitchChannelName: { type: String, required: true, unique: true, index: true },
-  displayName: { type: String },
-  profileImageUrl: { type: String },
-  description: { type: String },
-  isFeatured: { type: Boolean, default: false },
-}, { timestamps: true });
+const CreatorSchema = new Schema<ICreator>(
+  {
+    discordUserId: { type: String, required: true, unique: true, index: true },
+    discordUsername: { type: String, required: true },
+    twitchChannelName: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    displayName: { type: String },
+    profileImageUrl: { type: String },
+    description: { type: String },
+    isFeatured: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
 
 const CreatorModel =
   (mongoose.models.Creator as Model<ICreator>) ||
-  mongoose.model<ICreator>("Creator", CreatorSchema);
+  mongoose.model<ICreator>('Creator', CreatorSchema);
 
 export default CreatorModel;

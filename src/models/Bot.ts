@@ -1,8 +1,9 @@
 // src/models/Bot.ts
-import mongoose, { Schema, Document, Model, Types } from "mongoose";
+import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 // 1. Interface for the core data structure (WITHOUT _id or Document)
-export interface IBotBase { // Exporting this is optional, but can be useful
+export interface IBotBase {
+  // Exporting this is optional, but can be useful
   botIdentifier: string;
   name: string;
   description?: string;
@@ -42,14 +43,15 @@ const BotSchema = new Schema<IBotDocument>(
 // 4. Define the Model using the DOCUMENT interface
 const BotModel =
   (mongoose.models.Bot as Model<IBotDocument>) ||
-  mongoose.model<IBotDocument>("Bot", BotSchema);
+  mongoose.model<IBotDocument>('Bot', BotSchema);
 
 // 5. *** EXPORT the type for LEAN results ***
 // This interface combines the base fields with the auto-generated ones (_id, timestamps)
-export interface IBotLean extends IBotBase { // <--- Added 'export' keyword here
-    _id: Types.ObjectId;
-    createdAt: Date;
-    updatedAt: Date;
+export interface IBotLean extends IBotBase {
+  // <--- Added 'export' keyword here
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Default export the model

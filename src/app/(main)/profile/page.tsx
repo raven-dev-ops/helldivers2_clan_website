@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
@@ -8,10 +14,20 @@ import { FaTwitch } from 'react-icons/fa';
 import styles from '../helldivers-2/HelldiversPage.module.css';
 
 const videoStyle: CSSProperties = {
-  position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: -2, filter: 'brightness(0.6)'
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  zIndex: -2,
+  filter: 'brightness(0.6)',
 };
 const overlayStyle: CSSProperties = {
-  position: 'fixed', inset: 0, backgroundColor: 'rgba(16, 20, 31, 0.35)', zIndex: -1
+  position: 'fixed',
+  inset: 0,
+  backgroundColor: 'rgba(16, 20, 31, 0.35)',
+  zIndex: -1,
 };
 
 // Challenge names (levels 1-7) as in Challenges menu
@@ -22,14 +38,14 @@ const CHALLENGE_LEVEL_LABELS: string[] = [
   'Flawless ICBM',
   'Perfect Survey',
   'Eagle Ace',
-  'The Purist'
+  'The Purist',
 ];
 
 const CAMPAIGN_MISSION_LABELS: string[] = [
   'Terminid Spawn Camp',
   'Automaton Hell Strike',
   'Lethal Pacifist',
-  'Total Area Scorching'
+  'Total Area Scorching',
 ];
 
 export default function ProfilePage() {
@@ -38,14 +54,41 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const savedRankingOnce = useRef(false);
 
-  const fetcher = (url: string) => fetch(url, { cache: 'no-store' }).then(r => r.json());
+  const fetcher = (url: string) =>
+    fetch(url, { cache: 'no-store' }).then((r) => r.json());
   const now = new Date();
-  const qsSolo = new URLSearchParams({ scope: 'solo', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
-  const qsMonth = new URLSearchParams({ scope: 'month', sortBy: 'Kills', sortDir: 'desc', limit: '1000', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
-  const qsLifetime = new URLSearchParams({ scope: 'lifetime', sortBy: 'Kills', sortDir: 'desc', limit: '1000' }).toString();
-    const { data: soloData } = useSWR(`/api/helldivers/leaderboard?${qsSolo}`, fetcher);
-    const { data: monthData } = useSWR(`/api/helldivers/leaderboard?${qsMonth}`, fetcher);
-    const { data: lifetimeData } = useSWR(`/api/helldivers/leaderboard?${qsLifetime}`, fetcher);
+  const qsSolo = new URLSearchParams({
+    scope: 'solo',
+    sortBy: 'Kills',
+    sortDir: 'desc',
+    limit: '1000',
+  }).toString();
+  const qsMonth = new URLSearchParams({
+    scope: 'month',
+    sortBy: 'Kills',
+    sortDir: 'desc',
+    limit: '1000',
+    month: String(now.getUTCMonth() + 1),
+    year: String(now.getUTCFullYear()),
+  }).toString();
+  const qsLifetime = new URLSearchParams({
+    scope: 'lifetime',
+    sortBy: 'Kills',
+    sortDir: 'desc',
+    limit: '1000',
+  }).toString();
+  const { data: soloData } = useSWR(
+    `/api/helldivers/leaderboard?${qsSolo}`,
+    fetcher
+  );
+  const { data: monthData } = useSWR(
+    `/api/helldivers/leaderboard?${qsMonth}`,
+    fetcher
+  );
+  const { data: lifetimeData } = useSWR(
+    `/api/helldivers/leaderboard?${qsLifetime}`,
+    fetcher
+  );
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -74,22 +117,33 @@ export default function ProfilePage() {
     return count === 7;
   }, [userData]);
 
-const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked' | 'merit'>('roles');
+  const [infoTab, setInfoTab] = useState<
+    'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked' | 'merit'
+  >('roles');
 
   const findRankAndRow = (rows: any[], name: string) => {
-    const idx = (rows || []).findIndex(r => (r.player_name || '').toLowerCase() === name.toLowerCase());
-    return idx >= 0 ? { rank: (rows[idx].rank || idx + 1), row: rows[idx] } : { rank: null, row: null };
+    const idx = (rows || []).findIndex(
+      (r) => (r.player_name || '').toLowerCase() === name.toLowerCase()
+    );
+    return idx >= 0
+      ? { rank: rows[idx].rank || idx + 1, row: rows[idx] }
+      : { rank: null, row: null };
   };
 
-    const computeGrade = (): string | null => {
-      if (!userData?.name) return null;
-      const total = findRankAndRow(lifetimeData?.results || [], userData.name).row;
-      const month = findRankAndRow(monthData?.results || [], userData.name).row;
-      const solo = findRankAndRow(soloData?.results || [], userData.name).row;
-      const row = total || month || solo;
-      if (!row) return null;
+  const computeGrade = (): string | null => {
+    if (!userData?.name) return null;
+    const total = findRankAndRow(
+      lifetimeData?.results || [],
+      userData.name
+    ).row;
+    const month = findRankAndRow(monthData?.results || [], userData.name).row;
+    const solo = findRankAndRow(soloData?.results || [], userData.name).row;
+    const row = total || month || solo;
+    if (!row) return null;
     const accuracyRaw = row.Accuracy as string | undefined;
-    const accuracyNum = accuracyRaw ? parseFloat(accuracyRaw.replace('%', '')) : Number.NaN;
+    const accuracyNum = accuracyRaw
+      ? parseFloat(accuracyRaw.replace('%', ''))
+      : Number.NaN;
     if (Number.isFinite(accuracyNum)) {
       if (accuracyNum >= 75) return 'S';
       if (accuracyNum >= 65) return 'A';
@@ -101,19 +155,31 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
   };
 
   // Unit helpers and derived display values; prefer lastProfile snapshot when available
-  const preferredHeightUnit: 'cm' | 'in' = (userData?.lastProfile?.preferredHeightUnit === 'in' ? 'in' : userData?.preferredHeightUnit === 'in' ? 'in' : 'cm');
-  const preferredWeightUnit: 'kg' | 'lb' = (userData?.lastProfile?.preferredWeightUnit === 'lb' ? 'lb' : userData?.preferredWeightUnit === 'lb' ? 'lb' : 'kg');
+  const preferredHeightUnit: 'cm' | 'in' =
+    userData?.lastProfile?.preferredHeightUnit === 'in'
+      ? 'in'
+      : userData?.preferredHeightUnit === 'in'
+        ? 'in'
+        : 'cm';
+  const preferredWeightUnit: 'kg' | 'lb' =
+    userData?.lastProfile?.preferredWeightUnit === 'lb'
+      ? 'lb'
+      : userData?.preferredWeightUnit === 'lb'
+        ? 'lb'
+        : 'kg';
   const heightLabel = `Height (${preferredHeightUnit})`;
   const weightLabel = `Weight (${preferredWeightUnit})`;
   const heightDisplay = (() => {
-    const cmVal = (userData?.lastProfile?.characterHeightCm ?? userData?.characterHeightCm);
+    const cmVal =
+      userData?.lastProfile?.characterHeightCm ?? userData?.characterHeightCm;
     if (cmVal == null) return '—';
     if (preferredHeightUnit === 'cm') return cmVal;
     const inches = Math.round(Number(cmVal) / 2.54);
     return inches;
   })();
   const weightDisplay = (() => {
-    const kgVal = (userData?.lastProfile?.characterWeightKg ?? userData?.characterWeightKg);
+    const kgVal =
+      userData?.lastProfile?.characterWeightKg ?? userData?.characterWeightKg;
     if (kgVal == null) return '—';
     if (preferredWeightUnit === 'kg') return kgVal;
     const lbs = Math.round(Number(kgVal) * 2.2046226218);
@@ -131,14 +197,14 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
       { scope: 'solo', rank: solo.rank, stats: solo.row },
       { scope: 'month', rank: month.rank, stats: month.row },
       { scope: 'lifetime', rank: total.rank, stats: total.row },
-    ].filter(e => e.rank != null && e.stats);
+    ].filter((e) => e.rank != null && e.stats);
 
     if (entries.length > 0) {
       savedRankingOnce.current = true;
       fetch('/api/users/profile/ranking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entries })
+        body: JSON.stringify({ entries }),
       }).catch(() => {});
     }
   }, [userData?.name, soloData, monthData, lifetimeData]);
@@ -149,7 +215,9 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
   if (!session) {
     return (
       <div className={styles.pageContainer}>
-        <p>Please <a href="/auth">sign in</a> to view your profile.</p>
+        <p>
+          Please <a href="/auth">sign in</a> to view your profile.
+        </p>
       </div>
     );
   }
@@ -157,7 +225,14 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
   return (
     <div className={styles.pageContainer}>
       {/* Background Video and Overlay */}
-      <video autoPlay loop muted playsInline style={videoStyle} key="bg-video-profile">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={videoStyle}
+        key="bg-video-profile"
+      >
         <source src="/videos/gpd_background.mp4" type="video/mp4" />
       </video>
       <div style={overlayStyle} />
@@ -165,103 +240,299 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
       {/* Welcome title removed per requirements */}
 
       <section className="content-section">
-        <h2 className="content-section-title with-border-bottom">Character Overview</h2>
+        <h2 className="content-section-title with-border-bottom">
+          Character Overview
+        </h2>
         <div className="avatar-row">
           <div className="avatar-col">
             <div className="avatar">
-              <img src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'} alt="Avatar" loading="lazy" />
+              <img
+                src={
+                  userData?.customAvatarDataUrl ||
+                  userData?.image ||
+                  '/images/avatar-default.png'
+                }
+                alt="Avatar"
+                loading="lazy"
+              />
             </div>
           </div>
           <div className="avatar-fields">
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Name</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>
-                {[userData?.lastProfile?.firstName, userData?.lastProfile?.middleName, userData?.lastProfile?.lastName].filter(Boolean).join(' ') ||
-                 [userData?.firstName, userData?.middleName, userData?.lastName].filter(Boolean).join(' ') || '—'}
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Name
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {[
+                  userData?.lastProfile?.firstName,
+                  userData?.lastProfile?.middleName,
+                  userData?.lastProfile?.lastName,
+                ]
+                  .filter(Boolean)
+                  .join(' ') ||
+                  [
+                    userData?.firstName,
+                    userData?.middleName,
+                    userData?.lastName,
+                  ]
+                    .filter(Boolean)
+                    .join(' ') ||
+                  '—'}
               </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>{heightLabel}</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{heightDisplay}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                {heightLabel}
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {heightDisplay}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>{weightLabel}</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{weightDisplay}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                {weightLabel}
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {weightDisplay}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Homeplanet</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.homeplanet ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Homeplanet
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.homeplanet ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Callsign</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.callsign ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Callsign
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.callsign ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Rank</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.rankTitle ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Rank
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.rankTitle ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Favorite Weapon</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.favoriteWeapon ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Favorite Weapon
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.favoriteWeapon ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Armor</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.armor ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Armor
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.armor ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Motto</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.motto ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Motto
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.motto ?? '—'}
+              </span>
             </div>
             <div className="field field-sm">
-              <strong className="label" style={{ color: '#f59e0b' }}>Favored Enemy</strong>
-              <span style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, width: '100%' }}>{userData?.favoredEnemy ?? '—'}</span>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Favored Enemy
+              </strong>
+              <span
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  width: '100%',
+                }}
+              >
+                {userData?.favoredEnemy ?? '—'}
+              </span>
             </div>
             <div style={{ gridColumn: '1 / -1', marginTop: 8 }}>
-              <strong className="label" style={{ color: '#f59e0b' }}>Background</strong>
-              <div style={{ color: '#cbd5e1', background: 'rgba(148,163,184,0.12)', padding: '2px 8px', borderRadius: 6, marginTop: 6 }} className="text-paragraph">{userData?.background || '—'}</div>
+              <strong className="label" style={{ color: '#f59e0b' }}>
+                Background
+              </strong>
+              <div
+                style={{
+                  color: '#cbd5e1',
+                  background: 'rgba(148,163,184,0.12)',
+                  padding: '2px 8px',
+                  borderRadius: 6,
+                  marginTop: 6,
+                }}
+                className="text-paragraph"
+              >
+                {userData?.background || '—'}
+              </div>
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
-          <Link href="/settings" className="btn btn-primary" style={{ textDecoration: 'none' }}>Settings</Link>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
+        >
+          <Link
+            href="/settings"
+            className="btn btn-primary"
+            style={{ textDecoration: 'none' }}
+          >
+            Settings
+          </Link>
         </div>
       </section>
 
       <section className="content-section">
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('roles')} aria-pressed={infoTab === 'roles'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('roles')}
+            aria-pressed={infoTab === 'roles'}
+          >
             Roles
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('awards')} aria-pressed={infoTab === 'awards'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('awards')}
+            aria-pressed={infoTab === 'awards'}
+          >
             Awards
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('squad')} aria-pressed={infoTab === 'squad'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('squad')}
+            aria-pressed={infoTab === 'squad'}
+          >
             Squad
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('rankings')} aria-pressed={infoTab === 'rankings'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('rankings')}
+            aria-pressed={infoTab === 'rankings'}
+          >
             Rankings
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('activity')} aria-pressed={infoTab === 'activity'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('activity')}
+            aria-pressed={infoTab === 'activity'}
+          >
             Activity
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('merit')} aria-pressed={infoTab === 'merit'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('merit')}
+            aria-pressed={infoTab === 'merit'}
+          >
             Merit
           </button>
-          <button className="btn btn-secondary" onClick={() => setInfoTab('linked')} aria-pressed={infoTab === 'linked'}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => setInfoTab('linked')}
+            aria-pressed={infoTab === 'linked'}
+          >
             Linked
           </button>
         </div>
 
         {infoTab === 'roles' && (
           <div>
-            {Array.isArray(userData?.discordRoles) && userData.discordRoles.length > 0 ? (
+            {Array.isArray(userData?.discordRoles) &&
+            userData.discordRoles.length > 0 ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {userData.discordRoles.map((r: any) => (
-                  <span key={r.id} className="inline-code">{r.name}</span>
+                  <span key={r.id} className="inline-code">
+                    {r.name}
+                  </span>
                 ))}
               </div>
             ) : (
-              <p className="text-paragraph">No Discord roles detected. Link your Discord and join the server to see roles.</p>
+              <p className="text-paragraph">
+                No Discord roles detected. Link your Discord and join the server
+                to see roles.
+              </p>
             )}
           </div>
         )}
@@ -270,7 +541,12 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
           <div>
             {allSevenComplete ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                <span className="inline-code" title="All 7 challenges submitted">All 7 Challenges Complete ⭐</span>
+                <span
+                  className="inline-code"
+                  title="All 7 challenges submitted"
+                >
+                  All 7 Challenges Complete ⭐
+                </span>
               </div>
             ) : (
               <p className="text-paragraph">No awards yet.</p>
@@ -278,22 +554,38 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
           </div>
         )}
 
-        {infoTab === 'squad' && (
-          <p className="text-paragraph">Coming soon.</p>
-        )}
+        {infoTab === 'squad' && <p className="text-paragraph">Coming soon.</p>}
 
         {infoTab === 'rankings' && (
           <div>
             {userData?.name ? (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                <span className="inline-code">Solo: {findRankAndRow(soloData?.results || [], userData.name).rank ?? '—'}</span>
-                <span className="inline-code">Monthly: {findRankAndRow(monthData?.results || [], userData.name).rank ?? '—'}</span>
-        <span className="inline-code">Lifetime: {findRankAndRow(lifetimeData?.results || [], userData.name).rank ?? '—'}</span>
-                <span className="inline-code">Grade: {computeGrade() ?? '—'}</span>
-                <span className="inline-code">Clearance: {userData?.rankTitle ?? '—'}</span>
+                <span className="inline-code">
+                  Solo:{' '}
+                  {findRankAndRow(soloData?.results || [], userData.name)
+                    .rank ?? '—'}
+                </span>
+                <span className="inline-code">
+                  Monthly:{' '}
+                  {findRankAndRow(monthData?.results || [], userData.name)
+                    .rank ?? '—'}
+                </span>
+                <span className="inline-code">
+                  Lifetime:{' '}
+                  {findRankAndRow(lifetimeData?.results || [], userData.name)
+                    .rank ?? '—'}
+                </span>
+                <span className="inline-code">
+                  Grade: {computeGrade() ?? '—'}
+                </span>
+                <span className="inline-code">
+                  Clearance: {userData?.rankTitle ?? '—'}
+                </span>
               </div>
             ) : (
-              <p className="text-paragraph">Set your profile name to see your leaderboard rankings.</p>
+              <p className="text-paragraph">
+                Set your profile name to see your leaderboard rankings.
+              </p>
             )}
           </div>
         )}
@@ -301,8 +593,14 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
         {infoTab === 'activity' && (
           <div>
             {(() => {
-              const lastStats = userData?.lastProfile?.lastStats || userData?.lastProfile?.last_stats || null;
-              const time = lastStats?.time || lastStats?.submittedAt || lastStats?.timestamp;
+              const lastStats =
+                userData?.lastProfile?.lastStats ||
+                userData?.lastProfile?.last_stats ||
+                null;
+              const time =
+                lastStats?.time ||
+                lastStats?.submittedAt ||
+                lastStats?.timestamp;
               if (time) {
                 const dt = new Date(time);
                 return (
@@ -310,29 +608,54 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
                     <p className="text-paragraph">
                       Last stats submission: {dt.toLocaleString()}
                     </p>
-                    {'kills' in (lastStats || {}) || 'deaths' in (lastStats || {}) || 'assists' in (lastStats || {}) ? (
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                        {'kills' in lastStats && <span className="inline-code">Kills: {lastStats.kills}</span>}
-                        {'deaths' in lastStats && <span className="inline-code">Deaths: {lastStats.deaths}</span>}
-                        {'assists' in lastStats && <span className="inline-code">Assists: {lastStats.assists}</span>}
+                    {'kills' in (lastStats || {}) ||
+                    'deaths' in (lastStats || {}) ||
+                    'assists' in (lastStats || {}) ? (
+                      <div
+                        style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}
+                      >
+                        {'kills' in lastStats && (
+                          <span className="inline-code">
+                            Kills: {lastStats.kills}
+                          </span>
+                        )}
+                        {'deaths' in lastStats && (
+                          <span className="inline-code">
+                            Deaths: {lastStats.deaths}
+                          </span>
+                        )}
+                        {'assists' in lastStats && (
+                          <span className="inline-code">
+                            Assists: {lastStats.assists}
+                          </span>
+                        )}
                       </div>
                     ) : null}
                   </div>
                 );
               }
-              return <p className="text-paragraph">No stats submissions recorded.</p>;
+              return (
+                <p className="text-paragraph">No stats submissions recorded.</p>
+              );
             })()}
           </div>
         )}
         {infoTab === 'merit' && (
           <div>
-            <p className="text-paragraph">Merit Points: {userData?.meritPoints ?? 0}</p>
+            <p className="text-paragraph">
+              Merit Points: {userData?.meritPoints ?? 0}
+            </p>
           </div>
         )}
         {infoTab === 'linked' && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             {userData?.twitchUrl ? (
-              <a href={userData.twitchUrl} target="_blank" rel="noopener noreferrer" aria-label="Twitch">
+              <a
+                href={userData.twitchUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Twitch"
+              >
                 <FaTwitch size={24} color="#a970ff" />
               </a>
             ) : (
@@ -349,37 +672,76 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
           CHALLENGE_LEVEL_LABELS.forEach((_, i) => {
             const lvl = i + 1;
             const s = submissions.find((x: any) => x.level === lvl);
-            if (s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId)) challengeCompleted++;
+            if (s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId))
+              challengeCompleted++;
           });
-          const campaignCompletions: string[] = userData?.campaignCompletions || userData?.lastProfile?.campaignCompletions || [];
+          const campaignCompletions: string[] =
+            userData?.campaignCompletions ||
+            userData?.lastProfile?.campaignCompletions ||
+            [];
           const campaignSet = new Set(campaignCompletions);
           const campaignCompleted = campaignSet.size;
           return (
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
                 <strong style={{ color: '#f59e0b' }}>Challenges</strong>
-                <span style={{ color: '#f59e0b', fontWeight: 600 }}>{challengeCompleted}/{CHALLENGE_LEVEL_LABELS.length}</span>
+                <span style={{ color: '#f59e0b', fontWeight: 600 }}>
+                  {challengeCompleted}/{CHALLENGE_LEVEL_LABELS.length}
+                </span>
               </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: 8,
+                  marginBottom: 16,
+                }}
+              >
                 {CHALLENGE_LEVEL_LABELS.map((label, i) => {
                   const lvl = i + 1;
                   const s = submissions.find((x: any) => x.level === lvl);
-                  const complete = !!(s && (s.youtubeUrl || s.witnessName || s.witnessDiscordId));
+                  const complete = !!(
+                    s &&
+                    (s.youtubeUrl || s.witnessName || s.witnessDiscordId)
+                  );
                   return (
-                    <span key={lvl} style={{
-                      padding: '0.35rem 0.6rem',
-                      borderRadius: 8,
-                      border: '1px solid #334155',
-                      background: complete ? 'rgba(180, 140, 0, 0.2)' : 'rgba(0,0,0,0.2)',
-                      color: complete ? '#f59e0b' : '#94a3b8',
-                      fontWeight: 600
-                    }}>{label}</span>
+                    <span
+                      key={lvl}
+                      style={{
+                        padding: '0.35rem 0.6rem',
+                        borderRadius: 8,
+                        border: '1px solid #334155',
+                        background: complete
+                          ? 'rgba(180, 140, 0, 0.2)'
+                          : 'rgba(0,0,0,0.2)',
+                        color: complete ? '#f59e0b' : '#94a3b8',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {label}
+                    </span>
                   );
                 })}
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
                 <strong style={{ color: '#f59e0b' }}>Campaign</strong>
-                <span style={{ color: '#f59e0b', fontWeight: 600 }}>{campaignCompleted}/{CAMPAIGN_MISSION_LABELS.length}</span>
+                <span style={{ color: '#f59e0b', fontWeight: 600 }}>
+                  {campaignCompleted}/{CAMPAIGN_MISSION_LABELS.length}
+                </span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                 {CAMPAIGN_MISSION_LABELS.map((label) => {
@@ -391,7 +753,9 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
                         padding: '0.35rem 0.6rem',
                         borderRadius: 8,
                         border: '1px solid #334155',
-                        background: complete ? 'rgba(180, 140, 0, 0.2)' : 'rgba(0,0,0,0.2)',
+                        background: complete
+                          ? 'rgba(180, 140, 0, 0.2)'
+                          : 'rgba(0,0,0,0.2)',
                         color: complete ? '#f59e0b' : '#94a3b8',
                         fontWeight: 600,
                       }}
@@ -405,8 +769,6 @@ const [infoTab, setInfoTab] = useState<'roles' | 'awards' | 'squad' | 'rankings'
           );
         })()}
       </section>
-
-
     </div>
   );
 }

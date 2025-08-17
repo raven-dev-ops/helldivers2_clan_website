@@ -16,7 +16,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { type, interest, about, interviewAvailability } = body;
     if (!type || !interest) {
-      return NextResponse.json({ message: 'Type and interest are required' }, { status: 400 });
+      return NextResponse.json(
+        { message: 'Type and interest are required' },
+        { status: 400 }
+      );
     }
     await dbConnect();
     const app = new UserApplicationModel({
@@ -24,12 +27,20 @@ export async function POST(request: Request) {
       type,
       interest,
       about,
-      interviewAvailability: interviewAvailability ? new Date(interviewAvailability) : undefined,
+      interviewAvailability: interviewAvailability
+        ? new Date(interviewAvailability)
+        : undefined,
     });
     await app.save();
-    return NextResponse.json({ message: 'Application submitted successfully!' }, { status: 201 });
+    return NextResponse.json(
+      { message: 'Application submitted successfully!' },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('User application error:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(
+      { message: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

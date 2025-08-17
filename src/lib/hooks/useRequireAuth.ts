@@ -1,9 +1,9 @@
 // src/hooks/useRequireAuth.ts
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 /**
  * Client-side hook to require authentication.
@@ -14,8 +14,8 @@ export function useRequireAuth() {
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/auth");
+    if (status === 'unauthenticated') {
+      router.push('/auth');
     }
   }, [status, router]);
 

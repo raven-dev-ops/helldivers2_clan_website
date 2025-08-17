@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/academy/apply/page.tsx
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import styles from '../../HelldiversPage.module.css';
@@ -36,7 +36,12 @@ export default function ApplyPage() {
       const res = await fetch('/api/user-applications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'discord-moderator', interest, about, interviewAvailability }),
+        body: JSON.stringify({
+          type: 'discord-moderator',
+          interest,
+          about,
+          interviewAvailability,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Failed to submit');
@@ -58,25 +63,73 @@ export default function ApplyPage() {
         <h2 className={styles.sectionTitle}>Join Now!</h2>
         <div className={styles.applyLayout}>
           <form onSubmit={handleSubmit} className={styles.applicationForm}>
-            <label className={styles.paragraph} style={{ display: 'grid', gap: 4 }}>
+            <label
+              className={styles.paragraph}
+              style={{ display: 'grid', gap: 4 }}
+            >
               Why are you interested in becoming a moderator?
-              <textarea value={interest} onChange={e => setInterest(e.target.value)} required className={styles.input} rows={3} />
+              <textarea
+                value={interest}
+                onChange={(e) => setInterest(e.target.value)}
+                required
+                className={styles.input}
+                rows={3}
+              />
             </label>
-            <label className={styles.paragraph} style={{ display: 'grid', gap: 4 }}>
+            <label
+              className={styles.paragraph}
+              style={{ display: 'grid', gap: 4 }}
+            >
               Tell us about yourself
-              <textarea value={about} onChange={e => setAbout(e.target.value)} required className={styles.input} rows={3} />
+              <textarea
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+                required
+                className={styles.input}
+                rows={3}
+              />
             </label>
-            <label className={styles.paragraph} style={{ display: 'grid', gap: 4 }}>
+            <label
+              className={styles.paragraph}
+              style={{ display: 'grid', gap: 4 }}
+            >
               Interview Date
-              <input type="date" value={date} onChange={e => setDate(e.target.value)} required className={styles.input} />
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                required
+                className={styles.input}
+              />
             </label>
-            <label className={styles.paragraph} style={{ display: 'grid', gap: 4 }}>
+            <label
+              className={styles.paragraph}
+              style={{ display: 'grid', gap: 4 }}
+            >
               Interview Time
-              <input type="time" value={time} onChange={e => setTime(e.target.value)} required className={styles.input} />
+              <input
+                type="time"
+                value={time}
+                onChange={(e) => setTime(e.target.value)}
+                required
+                className={styles.input}
+              />
             </label>
-            {error && <p className={styles.paragraph} style={{ color: '#dc2626' }}>{error}</p>}
-            {message && <p className={styles.paragraph} style={{ color: '#16a34a' }}>{message}</p>}
-            <button type="submit" disabled={submitting} className={styles.applyButton}>
+            {error && (
+              <p className={styles.paragraph} style={{ color: '#dc2626' }}>
+                {error}
+              </p>
+            )}
+            {message && (
+              <p className={styles.paragraph} style={{ color: '#16a34a' }}>
+                {message}
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={submitting}
+              className={styles.applyButton}
+            >
               {submitting ? 'Submitting...' : 'Submit Application'}
             </button>
           </form>
@@ -89,7 +142,10 @@ export default function ApplyPage() {
                 allowFullScreen
               />
             </div>
-            <p className={styles.paragraph} style={{ marginTop: '0.5rem', minHeight: '3rem' }}>
+            <p
+              className={styles.paragraph}
+              style={{ marginTop: '0.5rem', minHeight: '3rem' }}
+            >
               {prompts[promptIndex]}
             </p>
           </div>

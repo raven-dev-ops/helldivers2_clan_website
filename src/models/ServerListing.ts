@@ -1,5 +1,5 @@
 // src/models/ServerListing.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 // Interface matching the data structure you provided
 export interface IServerListing extends Document {
@@ -19,7 +19,12 @@ export interface IServerListing extends Document {
 
 const ServerListingSchema = new Schema<IServerListing>(
   {
-    discord_server_id: { type: String, required: true, unique: true, index: true }, // Added index
+    discord_server_id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    }, // Added index
     discord_server_name: { type: String, required: true },
     discord_invite_link: { type: String, required: true },
     gpt_channel_id: { type: String },
@@ -33,7 +38,7 @@ const ServerListingSchema = new Schema<IServerListing>(
   {
     timestamps: true, // Adds createdAt and updatedAt
     // --- Explicitly define the collection name ---
-    collection: 'Server_Listing', 
+    collection: 'Server_Listing',
   }
 );
 
@@ -43,6 +48,6 @@ ServerListingSchema.index({ discord_server_name: 1 });
 // Prevent model overwrite during HMR
 const ServerListingModel =
   (mongoose.models.ServerListing as Model<IServerListing>) ||
-  mongoose.model<IServerListing>("ServerListing", ServerListingSchema); // Keep model name "ServerListing"
+  mongoose.model<IServerListing>('ServerListing', ServerListingSchema); // Keep model name "ServerListing"
 
 export default ServerListingModel;

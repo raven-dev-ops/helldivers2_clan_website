@@ -1,7 +1,7 @@
 // src/hooks/useOptionalAuth.ts
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
+import { useSession } from 'next-auth/react';
 
 /**
  * Client-side hook to get the user's session data if available.

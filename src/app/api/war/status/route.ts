@@ -5,13 +5,16 @@ export const revalidate = 60;
 
 export async function GET() {
   try {
-    const upstream = await fetch('https://helldiverstrainingmanual.com/api/v1/war/status', {
-      headers: {
-        'User-Agent': 'GPT-Fleet-CommunitySite/1.0',
-        'Accept': 'application/json',
-      },
-      next: { revalidate: 60 },
-    });
+    const upstream = await fetch(
+      'https://helldiverstrainingmanual.com/api/v1/war/status',
+      {
+        headers: {
+          'User-Agent': 'GPT-Fleet-CommunitySite/1.0',
+          Accept: 'application/json',
+        },
+        next: { revalidate: 60 },
+      }
+    );
     if (upstream.ok) {
       const data = await upstream.json();
       return NextResponse.json(data, {

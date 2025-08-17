@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface LeaderboardEntry {
   rank: number;
@@ -23,9 +23,13 @@ export default function LeaderboardTable({ entries }: LeaderboardTableProps) {
       <tbody>
         {entries.map((entry) => (
           <tr key={entry.rank}>
-            <td className="p-2 border border-gray-200 text-center">{entry.rank}</td>
+            <td className="p-2 border border-gray-200 text-center">
+              {entry.rank}
+            </td>
             <td className="p-2 border border-gray-200">{entry.name}</td>
-            <td className="p-2 border border-gray-200 text-right">{entry.score}</td>
+            <td className="p-2 border border-gray-200 text-right">
+              {entry.score}
+            </td>
           </tr>
         ))}
       </tbody>

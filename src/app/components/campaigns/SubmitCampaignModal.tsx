@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties } from 'react';
 
 interface MissionOption {
   id: string;
@@ -18,27 +18,27 @@ export default function SubmitCampaignModal({
   onSubmitted: (message: string) => void;
   missions: MissionOption[];
 }) {
-  const [campaignId, setCampaignId] = useState<string>("");
-  const [youtubeLink, setYoutubeLink] = useState<string>("");
+  const [campaignId, setCampaignId] = useState<string>('');
+  const [youtubeLink, setYoutubeLink] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
 
   if (!isOpen) return null;
 
   const modalStyle: CSSProperties = {
-    position: "fixed",
+    position: 'fixed',
     inset: 0,
-    background: "rgba(0,0,0,0.6)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    background: 'rgba(0,0,0,0.6)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 50,
   };
   const cardStyle: CSSProperties = {
-    background: "#0b1220",
-    color: "#fff",
-    width: "min(92vw, 640px)",
+    background: '#0b1220',
+    color: '#fff',
+    width: 'min(92vw, 640px)',
     borderRadius: 12,
-    border: "1px solid #334155",
+    border: '1px solid #334155',
     padding: 16,
   };
 
@@ -46,22 +46,22 @@ export default function SubmitCampaignModal({
     if (!campaignId || !youtubeLink.trim()) return;
     setSaving(true);
     try {
-      const res = await fetch("/api/user-applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/user-applications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: "campaign",
+          type: 'campaign',
           interest: campaignId,
           about: youtubeLink,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to submit");
-      onSubmitted(data.message || "Campaign submitted");
-      setCampaignId("");
-      setYoutubeLink("");
+      if (!res.ok) throw new Error(data.message || 'Failed to submit');
+      onSubmitted(data.message || 'Campaign submitted');
+      setCampaignId('');
+      setYoutubeLink('');
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to submit";
+      const message = err instanceof Error ? err.message : 'Failed to submit';
       onSubmitted(message);
     } finally {
       setSaving(false);
@@ -70,13 +70,23 @@ export default function SubmitCampaignModal({
   };
 
   return (
-    <div style={modalStyle} role="dialog" aria-modal="true" aria-label="Submit Campaign">
+    <div
+      style={modalStyle}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Submit Campaign"
+    >
       <div style={cardStyle}>
-        <h3 style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>Submit Campaign</h3>
-        <div style={{ display: "grid", gap: 12 }}>
+        <h3 style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>
+          Submit Campaign
+        </h3>
+        <div style={{ display: 'grid', gap: 12 }}>
           <label className="field">
             <span className="label">Campaign</span>
-            <select value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
+            <select
+              value={campaignId}
+              onChange={(e) => setCampaignId(e.target.value)}
+            >
               <option value="">Select a campaign</option>
               {missions.map((m) => (
                 <option key={m.id} value={m.id}>
@@ -93,8 +103,13 @@ export default function SubmitCampaignModal({
               placeholder="https://youtube.com/..."
             />
           </label>
-          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-            <button className="btn btn-secondary" type="button" onClick={onClose} disabled={saving}>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={onClose}
+              disabled={saving}
+            >
               Cancel
             </button>
             <button
@@ -103,7 +118,7 @@ export default function SubmitCampaignModal({
               onClick={handleSubmit}
               disabled={saving || !campaignId || !youtubeLink.trim()}
             >
-              {saving ? "Submitting…" : "Submit"}
+              {saving ? 'Submitting…' : 'Submit'}
             </button>
           </div>
         </div>
@@ -111,4 +126,3 @@ export default function SubmitCampaignModal({
     </div>
   );
 }
-

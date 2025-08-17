@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/YoutubeCarousel.tsx
-"use client";
+'use client';
 
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -9,9 +9,16 @@ import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 import styles from './HelldiversPage.module.css';
 
-export interface YoutubeVideo { id: string; embedUrl: string; }
+export interface YoutubeVideo {
+  id: string;
+  embedUrl: string;
+}
 
-export default function YoutubeCarousel({ videos }: { videos: YoutubeVideo[] }) {
+export default function YoutubeCarousel({
+  videos,
+}: {
+  videos: YoutubeVideo[];
+}) {
   return (
     <div className={styles.youtubeCarouselContainer}>
       <Swiper

@@ -15,7 +15,9 @@ export default function MajorOrders() {
   if (isLoading) return <div>Loading Major Orders…</div>;
   if (!data) return <div>No current Major Orders.</div>;
 
-  const orders = Array.isArray(data?.orders) ? data.orders : (data?.data || data || []);
+  const orders = Array.isArray(data?.orders)
+    ? data.orders
+    : data?.data || data || [];
 
   return (
     <div className={styles.section}>
@@ -24,12 +26,16 @@ export default function MajorOrders() {
         {orders.slice(0, 5).map((o: any, idx: number) => {
           const title = o.title || o.text || 'Order';
           const desc = o.description || o.brief || '';
-          const expires = new Date(o.expires || o.expiration || Date.now()).toLocaleString();
+          const expires = new Date(
+            o.expires || o.expiration || Date.now()
+          ).toLocaleString();
           return (
             <li key={o.id || idx} className={styles.listItem}>
               <div style={{ fontWeight: 600 }}>{title}</div>
               {desc && <div className={styles.paragraph}>{desc}</div>}
-              <div className={styles.paragraph} style={{ marginBottom: 0 }}>Expires: {expires}</div>
+              <div className={styles.paragraph} style={{ marginBottom: 0 }}>
+                Expires: {expires}
+              </div>
             </li>
           );
         })}

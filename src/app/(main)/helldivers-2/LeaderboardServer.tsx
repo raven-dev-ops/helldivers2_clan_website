@@ -17,16 +17,34 @@ export default async function LeaderboardServer({
 }) {
   const hdrs = await headers();
   const host = hdrs.get('host') || 'localhost:3000';
-  const protocol = host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https';
+  const protocol =
+    host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https';
 
   const now = new Date();
-  const monthParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'month', month: String(now.getUTCMonth() + 1), year: String(now.getUTCFullYear()) }).toString();
+  const monthParams = new URLSearchParams({
+    sortBy,
+    sortDir,
+    limit: String(limit),
+    scope: 'month',
+    month: String(now.getUTCMonth() + 1),
+    year: String(now.getUTCFullYear()),
+  }).toString();
   const augustUrl = `${protocol}://${host}/api/helldivers/leaderboard?${monthParams}`;
 
-  const lifetimeParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'lifetime' }).toString();
+  const lifetimeParams = new URLSearchParams({
+    sortBy,
+    sortDir,
+    limit: String(limit),
+    scope: 'lifetime',
+  }).toString();
   const lifetimeUrl = `${protocol}://${host}/api/helldivers/leaderboard?${lifetimeParams}`;
 
-  const soloParams = new URLSearchParams({ sortBy, sortDir, limit: String(limit), scope: 'solo' }).toString();
+  const soloParams = new URLSearchParams({
+    sortBy,
+    sortDir,
+    limit: String(limit),
+    scope: 'solo',
+  }).toString();
   const soloUrl = `${protocol}://${host}/api/helldivers/leaderboard?${soloParams}`;
 
   const [augustRes, lifetimeRes, soloRes] = await Promise.all([
@@ -40,6 +58,10 @@ export default async function LeaderboardServer({
   const soloData = soloRes.ok ? await soloRes.json() : undefined;
 
   return (
-    <HelldiversLeaderboard initialSoloData={soloData} initialMonthData={augustData} initialLifetimeData={lifetimeData} />
+    <HelldiversLeaderboard
+      initialSoloData={soloData}
+      initialMonthData={augustData}
+      initialLifetimeData={lifetimeData}
+    />
   );
 }

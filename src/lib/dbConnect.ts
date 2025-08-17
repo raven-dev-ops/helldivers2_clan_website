@@ -44,7 +44,9 @@ async function dbConnect(): Promise<Mongoose> {
       // Use MONGODB_DB if provided; otherwise defer to DB in the URI
       ...(process.env.MONGODB_DB ? { dbName: process.env.MONGODB_DB } : {}),
     };
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => mongooseInstance);
+    cached.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongooseInstance) => mongooseInstance);
   }
 
   try {

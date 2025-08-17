@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: "Admin Dashboard",
+  title: 'Admin Dashboard',
 };
 
 export default function AdminLayout({
@@ -37,9 +37,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 bg-gray-100 p-6">
-        {children}
-      </main>
+      <main className="flex-1 bg-gray-100 p-6">{children}</main>
     </div>
   );
 }

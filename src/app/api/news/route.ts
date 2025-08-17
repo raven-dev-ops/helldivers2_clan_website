@@ -42,12 +42,17 @@ export async function GET() {
       id: n.id ?? i,
       title: n.title ?? n.headline ?? n.message ?? 'Update',
       message: n.message ?? n.body ?? '',
-      published: n.published ?? n.timestamp ?? n.time ?? new Date().toISOString(),
+      published:
+        n.published ?? n.timestamp ?? n.time ?? new Date().toISOString(),
     }));
 
     return NextResponse.json(
       { news },
-      { headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=300' } }
+      {
+        headers: {
+          'Cache-Control': 's-maxage=300, stale-while-revalidate=300',
+        },
+      }
     );
   } catch {
     // Fallback sample so the site still renders if the upstream is

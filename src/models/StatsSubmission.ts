@@ -1,5 +1,5 @@
 // src/models/StatsSubmission.ts
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IStatsSubmission extends Document {
   userId?: mongoose.Types.ObjectId;
@@ -12,7 +12,7 @@ export interface IStatsSubmission extends Document {
 
 const StatsSubmissionSchema = new Schema<IStatsSubmission>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    userId: { type: Schema.Types.ObjectId, ref: 'User' },
     kills: { type: Number, default: 0 },
     deaths: { type: Number, default: 0 },
     assists: { type: Number, default: 0 },
@@ -22,6 +22,6 @@ const StatsSubmissionSchema = new Schema<IStatsSubmission>(
 
 const StatsSubmissionModel =
   (mongoose.models.StatsSubmission as Model<IStatsSubmission>) ||
-  mongoose.model<IStatsSubmission>("StatsSubmission", StatsSubmissionSchema);
+  mongoose.model<IStatsSubmission>('StatsSubmission', StatsSubmissionSchema);
 
 export default StatsSubmissionModel;

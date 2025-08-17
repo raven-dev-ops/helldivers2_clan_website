@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/academy/training/page.tsx
-"use client";
+'use client';
 
 import styles from '../../HelldiversPage.module.css';
 import Quiz, { Question } from './Quiz';
@@ -23,7 +23,12 @@ const trainingTopics = [
 const hd2Questions: Question[] = [
   {
     question: 'What is the slogan of Super Earth?',
-    options: ['Freedom or Death', 'Managed Democracy', 'For the Federation', 'Protect the Galaxy'],
+    options: [
+      'Freedom or Death',
+      'Managed Democracy',
+      'For the Federation',
+      'Protect the Galaxy',
+    ],
     answer: 1,
   },
   {
@@ -43,7 +48,12 @@ const hd2Questions: Question[] = [
   },
   {
     question: 'Name an example of a defensive stratagem.',
-    options: ['Orbital Laser', 'Shield Generator', 'Eagle Strafing Run', 'Orbital Precision Strike'],
+    options: [
+      'Orbital Laser',
+      'Shield Generator',
+      'Eagle Strafing Run',
+      'Orbital Precision Strike',
+    ],
     answer: 1,
   },
 ];
@@ -96,7 +106,12 @@ const hd1Questions: Question[] = [
   },
   {
     question: 'What famous quote encouraged spreading democracy?',
-    options: ["Democracy never sleeps", "Freedom for all", "Democracy won't spread itself", "One nation under God"],
+    options: [
+      'Democracy never sleeps',
+      'Freedom for all',
+      "Democracy won't spread itself",
+      'One nation under God',
+    ],
     answer: 2,
   },
 ];
@@ -106,11 +121,15 @@ export default function TrainingPage() {
     <div className={styles.pageContainer}>
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Training</h2>
-        <p className={styles.paragraph}>Brush up on your Helldivers knowledge and tactics.</p>
+        <p className={styles.paragraph}>
+          Brush up on your Helldivers knowledge and tactics.
+        </p>
         <h3 className={styles.subHeading}>Training Videos (Coming Soon)</h3>
         <ul className={styles.trainingTopics}>
           {trainingTopics.map((t, i) => (
-            <li key={i} className={styles.listItem}>{t}</li>
+            <li key={i} className={styles.listItem}>
+              {t}
+            </li>
           ))}
         </ul>
         <Quiz title="Helldivers 2 Knowledge Quiz" questions={hd2Questions} />
