@@ -5,7 +5,32 @@ import { logger } from '@/lib/logger';
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET; // Keep secret!
 
-let tokenCache: { token: string; expiresAt: number } | null = null;
+interface TokenCache {
+  token: string;
+  expiresAt: number;
+}
+
+// simple in-memory cache using globalThis so the token can be reused across requests
+const globalForCache = globalThis as unknown as {
+  __twitch_token_cache__?: TokenCache;
+};
+
+function readTokenCache(): TokenCache | null {
+  try {
+    return globalForCache.__twitch_token_cache__ ?? null;
+  } catch (error) {
+    logger.error('Failed to read Twitch token cache:', error);
+    return null;
+  }
+}
+
+function writeTokenCache(cache: TokenCache): void {
+  try {
+    globalForCache.__twitch_token_cache__ = cache;
+  } catch (error) {
+    logger.error('Failed to write Twitch token cache:', error);
+  }
+}
 
 interface TwitchUser {
   id: string;
@@ -39,9 +64,9 @@ async function getTwitchAppAccessToken(): Promise<string | null> {
     logger.error('Twitch API credentials missing in environment variables.');
     return null;
   }
-
-  if (tokenCache && tokenCache.expiresAt > Date.now()) {
-    return tokenCache.token;
+  const cached = readTokenCache();
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.token;
   }
 
   try {
@@ -66,12 +91,13 @@ async function getTwitchAppAccessToken(): Promise<string | null> {
       return null;
     }
     const data = await response.json();
-    tokenCache = {
+    const newCache = {
       token: data.access_token,
       expiresAt: Date.now() + (data.expires_in ?? 0) * 1000 - 60_000, // refresh 1 min early
     };
+    writeTokenCache(newCache);
     return data.access_token;
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Error getting Twitch App Access Token:', error);
     return null;
   }
@@ -155,10 +181,13 @@ export async function GET() {
       'public, s-maxage=60, stale-while-revalidate=120'
     ); // Cache for 60s, allow stale for 120s
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Error in Twitch API route:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch data from Twitch.', details: error.message },
+      {
+        error: 'Failed to fetch data from Twitch.',
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }
