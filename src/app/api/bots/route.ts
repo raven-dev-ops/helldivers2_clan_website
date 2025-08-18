@@ -20,10 +20,7 @@ export async function POST(req: NextRequest) {
     const json = await req.json();
     const data = botSchema.parse(json);
     // Example: create a new bot in database
-    return NextResponse.json(
-      { message: 'Bot created', data },
-      { status: 201 }
-    );
+    return NextResponse.json({ message: 'Bot created', data }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

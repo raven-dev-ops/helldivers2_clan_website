@@ -192,7 +192,9 @@
   transform: translateX(-50%);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s linear 0.3s;
   background-color: rgba(30, 41, 59, 0.7);
   padding: 10px 5px;
   border-radius: 8px;
@@ -203,7 +205,9 @@
 .volumeSliderContainerVisible {
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.3s ease-in-out, visibility 0s linear 0s;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s linear 0s;
 }
 
 .volumeSlider {
@@ -224,13 +228,17 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.5s ease-in-out, visibility 0s linear 0.5s;
+  transition:
+    opacity 0.5s ease-in-out,
+    visibility 0s linear 0.5s;
   max-width: 200px;
 }
 .audioCreditVisible {
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.5s ease-in-out, visibility 0s linear 0s;
+  transition:
+    opacity 0.5s ease-in-out,
+    visibility 0s linear 0s;
 }
 
 .audioCreditLink {
@@ -243,4 +251,3 @@
 .audioCreditLink:hover {
   color: #a5f3fc;
 }
-

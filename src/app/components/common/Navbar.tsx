@@ -93,7 +93,11 @@ const Navbar = () => {
               const leaderboardLinkClass = `${styles.link} ${isLeaderboardActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={leaderboardLinkClass} prefetch={false}>
+                  <Link
+                    href={href}
+                    className={leaderboardLinkClass}
+                    prefetch={false}
+                  >
                     Leaderboard
                   </Link>
                   <div
@@ -151,7 +155,11 @@ const Navbar = () => {
               const challengesLinkClass = `${styles.link} ${isChallengesActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={challengesLinkClass} prefetch={false}>
+                  <Link
+                    href={href}
+                    className={challengesLinkClass}
+                    prefetch={false}
+                  >
                     Challenges
                   </Link>
                   <div
@@ -181,7 +189,11 @@ const Navbar = () => {
               const campaignsLinkClass = `${styles.link} ${isCampaignsActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={campaignsLinkClass} prefetch={false}>
+                  <Link
+                    href={href}
+                    className={campaignsLinkClass}
+                    prefetch={false}
+                  >
                     Campaigns
                   </Link>
                   <div
@@ -210,7 +222,11 @@ const Navbar = () => {
               const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={academyLinkClass} prefetch={false}>
+                  <Link
+                    href={href}
+                    className={academyLinkClass}
+                    prefetch={false}
+                  >
                     Academy
                   </Link>
                   <div
@@ -244,7 +260,11 @@ const Navbar = () => {
               const streamersLinkClass = `${styles.link} ${isStreamersActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={streamersLinkClass} prefetch={false}>
+                  <Link
+                    href={href}
+                    className={streamersLinkClass}
+                    prefetch={false}
+                  >
                     Streamers
                   </Link>
                   <div
@@ -323,7 +343,12 @@ const Navbar = () => {
               );
             }
             return (
-              <Link key={href} href={href} className={linkClass} prefetch={false}>
+              <Link
+                key={href}
+                href={href}
+                className={linkClass}
+                prefetch={false}
+              >
                 {label}
               </Link>
             );
