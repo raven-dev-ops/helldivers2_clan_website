@@ -210,39 +210,18 @@ const Navbar = () => {
             if (label === 'Streamers') {
               const isStreamersActive =
                 isClient && pathname.startsWith(`${divisionBasePath}/creators`);
-              const streamersLinkClass = `${styles.link} ${isStreamersActive ? styles.activeLink : ''}`;
+              const streamersLinkClass = `${styles.link} ${
+                isStreamersActive ? styles.activeLink : ''
+              }`;
               return (
-                <div key={href} className={styles.dropdown}>
-                  <Link
-                    href={href}
-                    className={streamersLinkClass}
-                    prefetch={false}
-                  >
-                    Streamers
-                  </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Streamers platforms"
-                  >
-                    <Link
-                      href={`${divisionBasePath}/creators`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Twitch
-                    </Link>
-                    <Link
-                      href={`${divisionBasePath}/creators#youtube`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      YouTube
-                    </Link>
-                  </div>
-                </div>
+                <Link
+                  key={href}
+                  href={href}
+                  className={streamersLinkClass}
+                  prefetch={false}
+                >
+                  Streamers
+                </Link>
               );
             }
             if (label === 'Intel') {
