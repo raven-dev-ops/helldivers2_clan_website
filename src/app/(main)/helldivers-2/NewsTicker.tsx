@@ -7,30 +7,22 @@ type ApiNewsItem = {
   id?: string | number;
   title?: string;
   message?: string;
-  description?: string;
-  body?: string;
-
-  // possible date fields your API might provide
-  published?: string | number;
-  createdAt?: string | number;
-  updatedAt?: string | number;
-  timestamp?: string | number;
-
-  // optional metadata we can show if present
   url?: string;
   link?: string;
   planet?: string;
   sector?: string;
   faction?: string;
-  theater?: string;
-  casualties?: string | number;
-  source?: string;
   severity?: string;
+  source?: string;
+  // dates
+  time?: string | number;
+  published?: string | number;
+  updatedAt?: string | number;
+  createdAt?: string | number;
+  timestamp?: string | number;
 };
 
-type ApiResponse = {
-  news?: ApiNewsItem[];
-};
+type ApiResponse = { news?: ApiNewsItem[] };
 
 type UINews = {
   id: string;
@@ -38,54 +30,48 @@ type UINews = {
   message?: string;
   date: Date;
   url?: string;
-  meta?: string; // “Malevelon Creek · Automatons · Severe”
+  meta?: string;
 };
 
 const fetcher = async (url: string): Promise<ApiResponse> => {
   const res = await fetch(url, {
-    // this ensures we always get fresh news and don’t cache stale results
     cache: 'no-store',
     headers: { Accept: 'application/json' },
   });
-  if (!res.ok) {
-    const text = await res.text().catch(() => '');
-    throw new Error(
-      `News fetch failed (${res.status}): ${text || res.statusText}`
-    );
-  }
+  if (!res.ok) throw new Error(`News fetch failed (${res.status})`);
   return res.json();
-};
-
-const pickDate = (n: ApiNewsItem): Date => {
-  const raw =
-    n.published ?? n.timestamp ?? n.updatedAt ?? n.createdAt ?? Date.now();
-  const d = new Date(raw as any);
-  return isNaN(d.getTime()) ? new Date() : d;
 };
 
 const asString = (v: unknown) =>
   typeof v === 'string' && v.trim().length ? v.trim() : undefined;
 
+const pickDate = (n: ApiNewsItem): Date => {
+  const raw =
+    (n as any).time ??
+    n.published ??
+    n.timestamp ??
+    n.updatedAt ??
+    n.createdAt ??
+    Date.now();
+  const d = new Date(raw as any);
+  return isNaN(d.getTime()) ? new Date() : d;
+};
+
 const normalize = (n: ApiNewsItem): UINews => {
   const date = pickDate(n);
-
-  // prefer explicit title/message fields but fall back gracefully
   const title =
-    asString(n.title) ?? asString((n as any).headline) ?? 'Untitled report';
-
-  const message =
-    asString(n.message) ?? asString(n.description) ?? asString(n.body);
-
-  // collect readable metadata if available
+    asString(n.title) ??
+    asString((n as any).headline) ??
+    asString(n.message)?.split('\n')[0]?.slice(0, 120) ??
+    'War News';
+  const message = asString(n.message);
   const bits = [
     asString(n.planet),
-    asString(n.sector ?? n.theater),
+    asString(n.sector),
     asString(n.faction),
     asString(n.severity),
-    n.casualties != null ? `Casualties: ${n.casualties}` : undefined,
     asString(n.source),
   ].filter(Boolean) as string[];
-
   const url = asString(n.url) ?? asString(n.link);
 
   return {
@@ -108,21 +94,23 @@ const formatDateTime = (d: Date) =>
   }).format(d);
 
 export default function NewsTicker() {
-  const { data, isLoading, error } = useSWR<ApiResponse>('/api/news', fetcher, {
-    refreshInterval: 5 * 60 * 1000, // refresh every 5 minutes
-    revalidateOnFocus: false,
-  });
+  const { data, isLoading, error } = useSWR<ApiResponse>(
+    '/api/war-news', // ✅ use your new proxy route
+    fetcher,
+    {
+      refreshInterval: 5 * 60 * 1000,
+      revalidateOnFocus: false,
+    }
+  );
 
-  if (isLoading) return <div>Loading news…</div>;
-  if (error) return <div>Couldn’t load news.</div>;
+  if (isLoading) return <div>Loading war news…</div>;
+  if (error) return <div>Couldn’t load war news.</div>;
 
   const items: ApiNewsItem[] = Array.isArray(data?.news) ? data!.news! : [];
-  const uiItems = items
-    .map(normalize)
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+  const uiItems = items.map(normalize).sort((a, b) => b.date.getTime() - a.date.getTime());
   const top = uiItems.slice(0, 10);
 
-  if (top.length === 0) return <div>No war news available.</div>;
+  if (!top.length) return <div>No war news available.</div>;
 
   return (
     <div className={styles.section}>
