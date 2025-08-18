@@ -343,39 +343,44 @@ export default function ApplyPage() {
   return (
     <div className={styles.pageContainer}>
       <section className={styles.section}>
-        {/* --- FULL-WIDTH INTRO --- */}
-        <div className={styles.applyIntro}>
-          <h2 className={styles.sectionTitle}>Join Now!</h2>
-          <p className={styles.paragraph}>
-            Help us keep comms clear, morale high, and missions efficient.
-            Moderators set the tone for Managed Democracy—on and off the field.
-          </p>
+        {/* --- INTRO (LEFT) + QUIZ (RIGHT) --- */}
+        <div className={styles.introAndQuizRow}>
+          {/* LEFT: Intro */}
+          <div className={styles.introBlock}>
+            <h2 className={styles.sectionTitle}>Join Now!</h2>
+            <p className={styles.paragraph}>
+              Help us keep comms clear, morale high, and missions efficient. Moderators set the tone
+              for Managed Democracy—on and off the field.
+            </p>
 
-          <div className={styles.badgeRow}>
-            <span className={`${styles.badge} ${styles.badgeActive}`}>Clear Comms</span>
-            <span className={`${styles.badge} ${styles.badgeActive}`}>Team First</span>
-            <span className={`${styles.badge} ${styles.badgeActive}`}>Calm Under Fire</span>
-            <span className={`${styles.badge} ${styles.badgeActive}`}>Fair &amp; Consistent</span>
+            <div className={styles.badgeRow}>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>Clear Comms</span>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>Team First</span>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>Calm Under Fire</span>
+              <span className={`${styles.badge} ${styles.badgeActive}`}>Fair &amp; Consistent</span>
+            </div>
+
+            <ul className={styles.tipsList}>
+              <li>Model good conduct and de-escalate conflicts quickly.</li>
+              <li>Support new recruits and keep events running smoothly.</li>
+              <li>Document incidents and follow server guidelines.</li>
+            </ul>
           </div>
 
-          <ul className={styles.tipsList}>
-            <li>Model good conduct and de-escalate conflicts quickly.</li>
-            <li>Support new recruits and keep events running smoothly.</li>
-            <li>Document incidents and follow server guidelines.</li>
-          </ul>
-        </div>
-
-        {/* --- READINESS QUIZ (directly below intro) --- */}
-        <div className={styles.subsectionCard} style={{ marginTop: '1rem' }}>
-          <div className={styles.modQuizHeader}>
-            <h3 className={styles.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
-          </div>
-          <p className={styles.modQuizDesc}>
-            Scenarios reflect real Helldivers 2 comms: team-kills, intoxication, staff conduct, and escalation. 
-            Remember: enforcement requires <strong>3 other officers present</strong> and <strong>prior discussion in mod chat</strong> 
-            (except immediate safety risks). Admins have final say.
-          </p>
-          <Quiz title="Moderator Readiness Quiz" questions={modQuestions} />
+          {/* RIGHT: Readiness Quiz */}
+          <aside className={styles.quizSide}>
+            <div className={`${styles.subsectionCard} ${styles.quizSideCard}`}>
+              <div className={styles.modQuizHeader}>
+                <h3 className={styles.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
+              </div>
+              <p className={styles.modQuizDesc}>
+                Scenarios reflect real Helldivers 2 comms: team-kills, intoxication, staff conduct, and escalation.
+                Remember: enforcement requires <strong>3 other officers present</strong> and <strong>prior discussion in mod chat</strong>
+                (except immediate safety risks). Admins have final say.
+              </p>
+              <Quiz title="Moderator Readiness Quiz" questions={modQuestions} />
+            </div>
+          </aside>
         </div>
 
         {/* --- TWO-COLUMN: FORM LEFT, VIDEO + PROMPTS RIGHT --- */}
