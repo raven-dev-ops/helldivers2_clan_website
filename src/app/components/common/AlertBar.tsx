@@ -1,19 +1,10 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import styles from './AlertBar.module.css';
-import type { AlertVariant } from '@/_types/alerts';
+import type { Alert } from '@/_types/alerts';
 
-interface LeaderboardRow {
-  player_name: string;
-  rank?: number;
-}
-
-export default function AlertBar({
-  variant = 'purple',
-}: {
-  variant?: AlertVariant;
-}) {
-  const [messages, setMessages] = useState<string[]>([]);
+export default function AlertBar() {
+  const [alerts, setAlerts] = useState<Alert[]>([]);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [closed, setClosed] = useState(false);
@@ -26,63 +17,9 @@ export default function AlertBar({
   useEffect(() => {
     async function load() {
       try {
-        const [orderRes, lifetimeRes, monthRes, soloRes, meritRes] =
-          await Promise.all([
-            fetch('/api/war/major-orders', { cache: 'no-store' }),
-            fetch('/api/helldivers/leaderboard?scope=lifetime&limit=50', {
-              cache: 'no-store',
-            }),
-            fetch('/api/helldivers/leaderboard?scope=month&limit=50', {
-              cache: 'no-store',
-            }),
-            fetch('/api/helldivers/leaderboard?scope=solo&limit=50', {
-              cache: 'no-store',
-            }),
-            fetch('/api/merit/leaderboard?limit=50', { cache: 'no-store' }),
-          ]);
-
-        const orderData = orderRes.ok ? await orderRes.json() : null;
-        const lifetimeData = lifetimeRes.ok ? await lifetimeRes.json() : null;
-        const monthData = monthRes.ok ? await monthRes.json() : null;
-        const soloData = soloRes.ok ? await soloRes.json() : null;
-        const meritData = meritRes.ok ? await meritRes.json() : null;
-
-        const order =
-          orderData?.orders?.[0] || orderData?.data?.[0] || orderData?.[0];
-        const orderTitle = order?.title || order?.text || '';
-        const orderDesc = order?.description || order?.brief || '';
-        const orderMsg = orderTitle
-          ? `Major Order: ${orderTitle}${orderDesc ? ' - ' + orderDesc : ''}`
-          : '';
-
-        const stringifyTop = (
-          d: { results?: LeaderboardRow[] } | null,
-          label: string
-        ) => {
-          const rows: LeaderboardRow[] = Array.isArray(d?.results)
-            ? d!.results
-            : [];
-          if (rows.length === 0) return '';
-          const body = rows
-            .slice(0, 50)
-            .map((r, i) => `${r.rank ?? i + 1}. ${r.player_name}`)
-            .join(', ');
-          return `${label}: ${body}`;
-        };
-
-        const lifetimeMsg = stringifyTop(lifetimeData, 'Top 50 (Yearly)');
-        const monthMsg = stringifyTop(monthData, 'Top 50 (Monthly)');
-        const soloMsg = stringifyTop(soloData, 'Top 50 (Solo)');
-        const meritMsg = stringifyTop(meritData, 'Top 50 (Merit)');
-
-        const parts: string[] = [];
-        if (orderMsg) parts.push(orderMsg);
-        if (lifetimeMsg) parts.push(lifetimeMsg);
-        if (monthMsg) parts.push(monthMsg);
-        if (soloMsg) parts.push(soloMsg);
-        if (meritMsg) parts.push(meritMsg);
-
-        setMessages(parts);
+        const res = await fetch('/api/alerts', { cache: 'no-store' });
+        const data = res.ok ? await res.json() : null;
+        setAlerts(Array.isArray(data?.alerts) ? data.alerts : []);
       } catch {
         // ignore errors
       }
@@ -93,7 +30,7 @@ export default function AlertBar({
 
   // Show the bar every five minutes
   useEffect(() => {
-    if (messages.length === 0 || closed) return;
+    if (alerts.length === 0 || closed) return;
 
     const startCycle = () => {
       setIndex(0);
@@ -103,7 +40,7 @@ export default function AlertBar({
     startCycle();
     const interval = setInterval(startCycle, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [messages, closed]);
+  }, [alerts, closed]);
 
   // Recompute duration for each message and on resize
   useEffect(() => {
@@ -125,26 +62,29 @@ export default function AlertBar({
       cancelAnimationFrame(id);
       window.removeEventListener('resize', compute);
     };
-  }, [index, messages]);
+  }, [index, alerts]);
 
   const handleAnimationEnd = () => {
-    if (index < messages.length - 1) {
+    if (index < alerts.length - 1) {
       setIndex((i) => i + 1);
     } else {
       setVisible(false);
     }
   };
 
-  if (!visible || messages.length === 0 || closed) return null;
+  if (!visible || alerts.length === 0 || closed) return null;
 
   const handleClose = () => {
     setVisible(false);
     setClosed(true);
   };
 
+  const current = alerts[index];
+  const barVariant = current.variant ?? 'purple';
+
   return (
     <div
-      className={`${styles.bar} ${styles[`alertBar--${variant}`]}`}
+      className={`${styles.bar} ${styles[`alertBar--${barVariant}`]}`}
       role="status"
       style={{ ['--ticker-duration' as any]: `${durationSec}s` }} // consumed by CSS
     >
@@ -157,7 +97,7 @@ export default function AlertBar({
             ref={tickerRef}
             onAnimationEnd={handleAnimationEnd}
           >
-            {messages[index]}
+            {current.message}
           </div>
         </div>
         <button
