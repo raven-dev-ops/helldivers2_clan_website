@@ -398,6 +398,13 @@ export async function fetchHelldiversLeaderboard(options?: {
   } else {
     // Lifetime scope: aggregate per member
     // Use the latest name/clan as representative
+    if (options?.year && Number.isFinite(options.year)) {
+      const start = new Date(Date.UTC(options.year, 0, 1));
+      const end = new Date(Date.UTC(options.year + 1, 0, 1));
+      pipeline.push({
+        $match: { submittedAtDate: { $gte: start, $lt: end } },
+      });
+    }
     pipeline.push({ $sort: { submittedAtDate: 1 } });
     pipeline.push({
       $group: {

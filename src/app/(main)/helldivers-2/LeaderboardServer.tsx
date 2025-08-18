@@ -52,34 +52,23 @@ export default async function LeaderboardServer({
     sortDir,
     limit: String(limit),
     scope: 'lifetime',
+    year: '2025',
   }).toString();
   const yearlyUrl = `${protocol}://${host}/api/helldivers/leaderboard?${yearlyParams}`;
-
-  const soloParams = new URLSearchParams({
-    sortBy,
-    sortDir,
-    limit: String(limit),
-    scope: 'solo',
-  }).toString();
-  const soloUrl = `${protocol}://${host}/api/helldivers/leaderboard?${soloParams}`;
-
-  const [monthRes, weekRes, dayRes, yearlyRes, soloRes] = await Promise.all([
+  const [monthRes, weekRes, dayRes, yearlyRes] = await Promise.all([
     fetch(monthUrl, { cache: 'no-store' }),
     fetch(weekUrl, { cache: 'no-store' }),
     fetch(dayUrl, { cache: 'no-store' }),
     fetch(yearlyUrl, { cache: 'no-store' }),
-    fetch(soloUrl, { cache: 'no-store' }),
   ]);
 
   const monthData = monthRes.ok ? await monthRes.json() : undefined;
   const weekData = weekRes.ok ? await weekRes.json() : undefined;
   const dayData = dayRes.ok ? await dayRes.json() : undefined;
   const yearlyData = yearlyRes.ok ? await yearlyRes.json() : undefined;
-  const soloData = soloRes.ok ? await soloRes.json() : undefined;
 
   return (
     <HelldiversLeaderboard
-      initialSoloData={soloData}
       initialMonthData={monthData}
       initialYearlyData={yearlyData}
       initialWeekData={weekData}
