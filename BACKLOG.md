@@ -2,7 +2,7 @@
 
 ## Performance and Rate Limiting
 
-- [ ] Disable Next.js prefetch on /helldivers-2 routes to reduce unnecessary requests.
+- [x] Disable Next.js prefetch on /helldivers-2 routes to reduce unnecessary requests.
 - [ ] Debounce and coalesce client API fetches to prevent hitting rate limits.
 - [ ] Implement client-side exponential backoff honoring Retry-After on 429 responses.
 - [ ] Cache large media (e.g., gpd_background.mp4) with long-lived Cache-Control and lazy-load when visible.

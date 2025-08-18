@@ -57,7 +57,7 @@ export default function WarMap() {
           ))}
       </ul>
       <p className={styles.paragraph} style={{ marginTop: 8 }}>
-        <Link href="/helldivers-2/map" className={styles.link}>
+        <Link href="/helldivers-2/map" className={styles.link} prefetch={false}>
           Open full map
         </Link>
       </p>
