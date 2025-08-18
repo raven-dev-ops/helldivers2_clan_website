@@ -1,13 +1,18 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import styles from './AlertBar.module.css';
+import type { AlertVariant } from '@/_types/alerts';
 
 interface LeaderboardRow {
   player_name: string;
   rank?: number;
 }
 
-export default function AlertBar() {
+export default function AlertBar({
+  variant = 'purple',
+}: {
+  variant?: AlertVariant;
+}) {
   const [messages, setMessages] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
@@ -139,7 +144,7 @@ export default function AlertBar() {
 
   return (
     <div
-      className={styles.bar}
+      className={`${styles.bar} ${styles[`alertBar--${variant}`]}`}
       role="status"
       style={{ ['--ticker-duration' as any]: `${durationSec}s` }} // consumed by CSS
     >
