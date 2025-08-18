@@ -126,20 +126,20 @@ const Navbar = () => {
                       Weekly
                     </Link>
                     <Link
+                      href="/helldivers-2/leaderboard#daily"
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      prefetch={false}
+                    >
+                      Daily
+                    </Link>
+                    <Link
                       href="/helldivers-2/leaderboard#solo"
                       className={styles.dropdownItem}
                       role="menuitem"
                       prefetch={false}
                     >
-                      Solo
-                    </Link>
-                    <Link
-                      href="/helldivers-2/leaderboard#merit"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Merit
+                      Solo Only
                     </Link>
                   </div>
                 </div>

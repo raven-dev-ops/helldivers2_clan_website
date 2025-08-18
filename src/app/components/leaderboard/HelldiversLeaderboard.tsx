@@ -19,6 +19,14 @@ type SortField =
 
 type SortDir = 'asc' | 'desc';
 
+function getWeekNumber(d: Date) {
+  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil(((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
 interface LeaderboardRow {
   rank: number;
   id: string;
@@ -35,12 +43,6 @@ interface LeaderboardRow {
   AvgShotsFired?: number;
   AvgShotsHit?: number;
   AvgDeaths?: number;
-}
-
-interface MeritRow {
-  rank: number;
-  player_name: string;
-  meritPoints: number;
 }
 
 function HeaderButton({
@@ -323,7 +325,7 @@ export default function HelldiversLeaderboard({
   initialMonthData,
   initialYearlyData,
   initialWeekData,
-  initialMeritData,
+  initialDayData,
 }: {
   initialSoloData?: {
     sortBy: SortField;
@@ -349,7 +351,12 @@ export default function HelldiversLeaderboard({
     limit: number;
     results: LeaderboardRow[];
   };
-  initialMeritData?: { results: MeritRow[] };
+  initialDayData?: {
+    sortBy: SortField;
+    sortDir: SortDir;
+    limit: number;
+    results: LeaderboardRow[];
+  };
 }) {
   const [soloData, setSoloData] = useState<LeaderboardRow[]>(
     initialSoloData?.results || []
@@ -363,8 +370,8 @@ export default function HelldiversLeaderboard({
   const [weekData, setWeekData] = useState<LeaderboardRow[]>(
     initialWeekData?.results || []
   );
-  const [meritData, setMeritData] = useState<MeritRow[]>(
-    initialMeritData?.results || []
+  const [dayData, setDayData] = useState<LeaderboardRow[]>(
+    initialDayData?.results || []
   );
 
   const [soloLoading, setSoloLoading] = useState<boolean>(!initialSoloData);
@@ -372,13 +379,13 @@ export default function HelldiversLeaderboard({
   const [yearlyLoading, setYearlyLoading] =
     useState<boolean>(!initialYearlyData);
   const [weekLoading, setWeekLoading] = useState<boolean>(!initialWeekData);
-  const [meritLoading, setMeritLoading] = useState<boolean>(!initialMeritData);
+  const [dayLoading, setDayLoading] = useState<boolean>(!initialDayData);
 
   const [soloError, setSoloError] = useState<string | null>(null);
   const [monthError, setMonthError] = useState<string | null>(null);
   const [yearlyError, setYearlyError] = useState<string | null>(null);
   const [weekError, setWeekError] = useState<string | null>(null);
-  const [meritError, setMeritError] = useState<string | null>(null);
+  const [dayError, setDayError] = useState<string | null>(null);
 
   const [soloSortBy, setSoloSortBy] = useState<SortField>(
     initialSoloData?.sortBy || 'Kills'
@@ -404,12 +411,18 @@ export default function HelldiversLeaderboard({
   const [weekSortDir, setWeekSortDir] = useState<SortDir>(
     initialWeekData?.sortDir || 'desc'
   );
+  const [daySortBy, setDaySortBy] = useState<SortField>(
+    initialDayData?.sortBy || 'Kills'
+  );
+  const [daySortDir, setDaySortDir] = useState<SortDir>(
+    initialDayData?.sortDir || 'desc'
+  );
 
   const [soloSearch, setSoloSearch] = useState<string>('');
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [yearlyTotalsSearch, setYearlyTotalsSearch] = useState<string>('');
   const [weekSearch, setWeekSearch] = useState<string>('');
-  const [meritSearch, setMeritSearch] = useState<string>('');
+  const [daySearch, setDaySearch] = useState<string>('');
 
   const toggleSoloSort = (field: SortField) => {
     if (field === soloSortBy) {
@@ -450,6 +463,17 @@ export default function HelldiversLeaderboard({
     } else {
       setWeekSortBy(field);
       setWeekSortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
+    }
+  };
+
+  const toggleDaySort = (field: SortField) => {
+    if (field === daySortBy) {
+      setDaySortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setDaySortBy(field);
+      setDaySortDir(
         field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
       );
     }
@@ -556,6 +580,38 @@ export default function HelldiversLeaderboard({
 
   useEffect(() => {
     let isCancelled = false;
+    async function fetchDay() {
+      setDayLoading(true);
+      setDayError(null);
+      try {
+        const params = new URLSearchParams({
+          sortBy: daySortBy,
+          sortDir: daySortDir,
+          limit: '100',
+          scope: 'day',
+        });
+        const res = await fetch(
+          `/api/helldivers/leaderboard?${params.toString()}`,
+          { cache: 'no-store' }
+        );
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const payload = await res.json();
+        if (!isCancelled) setDayData(payload.results || []);
+      } catch (e: any) {
+        if (!isCancelled)
+          setDayError(e?.message || 'Failed to load leaderboard');
+      } finally {
+        if (!isCancelled) setDayLoading(false);
+      }
+    }
+    fetchDay();
+    return () => {
+      isCancelled = true;
+    };
+  }, [daySortBy, daySortDir]);
+
+  useEffect(() => {
+    let isCancelled = false;
     async function fetchYearly() {
       setYearlyLoading(true);
       setYearlyError(null);
@@ -602,9 +658,13 @@ export default function HelldiversLeaderboard({
     () => ({ sortBy: weekSortBy, sortDir: weekSortDir }),
     [weekSortBy, weekSortDir]
   );
+  const dayActiveSort = useMemo(
+    () => ({ sortBy: daySortBy, sortDir: daySortDir }),
+    [daySortBy, daySortDir]
+  );
 
   const [activeTab, setActiveTab] = useState<
-    'yearly' | 'monthly' | 'weekly' | 'solo' | 'merit'
+    'yearly' | 'monthly' | 'weekly' | 'daily' | 'solo'
   >('yearly');
 
   useEffect(() => {
@@ -614,8 +674,8 @@ export default function HelldiversLeaderboard({
         hash === 'solo' ||
         hash === 'monthly' ||
         hash === 'weekly' ||
-        hash === 'yearly' ||
-        hash === 'merit'
+        hash === 'daily' ||
+        hash === 'yearly'
       ) {
         setActiveTab(hash as typeof activeTab);
       }
@@ -625,40 +685,17 @@ export default function HelldiversLeaderboard({
     window.addEventListener('hashchange', setTabFromHash);
     return () => window.removeEventListener('hashchange', setTabFromHash);
   }, []);
-
-  useEffect(() => {
-    if (activeTab !== 'merit') return;
-    let cancelled = false;
-    async function fetchMerit() {
-      setMeritLoading(true);
-      setMeritError(null);
-      try {
-        const res = await fetch('/api/merit/leaderboard', {
-          cache: 'no-store',
-        });
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const payload = await res.json();
-        if (!cancelled) setMeritData(payload.results || []);
-      } catch (e: any) {
-        if (!cancelled)
-          setMeritError(e?.message || 'Failed to load leaderboard');
-      } finally {
-        if (!cancelled) setMeritLoading(false);
-      }
-    }
-    fetchMerit();
-    return () => {
-      cancelled = true;
-    };
-  }, [activeTab]);
-
-  const filteredMerit = meritSearch.trim()
-    ? meritData.filter((r) =>
-        (r.player_name || '')
-          .toLowerCase()
-          .includes(meritSearch.trim().toLowerCase())
-      )
-    : meritData;
+  const now = new Date();
+  const monthTitle = `Monthly Leaderboard - ${now.toLocaleString('default', {
+    month: 'long',
+  })} ${now.getUTCFullYear()}`;
+  const dayTitle = `Daily Leaderboard - ${now.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })}`;
+  const weekTitle = `Weekly Leaderboard - Week ${getWeekNumber(now)} of ${now.getUTCFullYear()}`;
 
   return (
     <div>
@@ -686,17 +723,17 @@ export default function HelldiversLeaderboard({
         </button>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('solo')}
-          aria-pressed={activeTab === 'solo'}
+          onClick={() => setActiveTab('daily')}
+          aria-pressed={activeTab === 'daily'}
         >
-          Solo
+          Daily
         </button>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('merit')}
-          aria-pressed={activeTab === 'merit'}
+          onClick={() => setActiveTab('solo')}
+          aria-pressed={activeTab === 'solo'}
         >
-          Merit
+          Solo Only
         </button>
       </div>
 
@@ -718,7 +755,7 @@ export default function HelldiversLeaderboard({
 
       {activeTab === 'monthly' && (
         <LeaderboardTableSection
-          title="Monthly Leaderboard"
+          title={monthTitle}
           rows={monthData}
           loading={monthLoading}
           error={monthError}
@@ -734,7 +771,7 @@ export default function HelldiversLeaderboard({
 
       {activeTab === 'weekly' && (
         <LeaderboardTableSection
-          title="Weekly Leaderboard"
+          title={weekTitle}
           rows={weekData}
           loading={weekLoading}
           error={weekError}
@@ -748,9 +785,25 @@ export default function HelldiversLeaderboard({
         />
       )}
 
+      {activeTab === 'daily' && (
+        <LeaderboardTableSection
+          title={dayTitle}
+          rows={dayData}
+          loading={dayLoading}
+          error={dayError}
+          activeSort={dayActiveSort}
+          onSort={toggleDaySort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={daySearch}
+          onSearch={setDaySearch}
+          sectionId="daily"
+        />
+      )}
+
       {activeTab === 'solo' && (
         <LeaderboardTableSection
-          title="Solo Leaderboard"
+          title="Solo Only Leaderboard"
           rows={soloData}
           loading={soloLoading}
           error={soloError}
@@ -762,66 +815,6 @@ export default function HelldiversLeaderboard({
           onSearch={setSoloSearch}
           sectionId="solo"
         />
-      )}
-
-      {activeTab === 'merit' && (
-        <section id="merit" className="content-section">
-          <h2 className="content-section-title with-border-bottom leaderboard-title">
-            Merit Leaderboard
-          </h2>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 12,
-              marginBottom: 12,
-            }}
-          >
-            <input
-              aria-label="Search Merit by player name"
-              placeholder="Search by player name..."
-              value={meritSearch}
-              onChange={(e) => setMeritSearch(e.target.value)}
-              className="input"
-              style={{ maxWidth: 320 }}
-            />
-          </div>
-          {meritError && <p className="text-paragraph">Error: {meritError}</p>}
-          {meritLoading ? (
-            <p className="text-paragraph">Loading leaderboard…</p>
-          ) : (
-            <div className="table-container">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th className="th text-center" style={{ width: 56 }}>
-                      #
-                    </th>
-                    <th className="th">Player</th>
-                    <th className="th text-right">Merit Points</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredMerit.map((row) => (
-                    <tr key={row.rank}>
-                      <td className="td text-center">{row.rank}</td>
-                      <td className="td">{row.player_name}</td>
-                      <td className="td text-right">{row.meritPoints}</td>
-                    </tr>
-                  ))}
-                  {!filteredMerit.length && (
-                    <tr>
-                      <td className="td" colSpan={3}>
-                        No players yet.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
       )}
     </div>
   );
