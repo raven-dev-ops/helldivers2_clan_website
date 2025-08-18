@@ -25,16 +25,20 @@ const authMiddleware = withAuth(
 
 export default async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/api')) {
+    if (req.nextUrl.pathname.startsWith('/api/auth')) {
+      return NextResponse.next();
+    }
     const ip =
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
+    const key = `${ip}:${req.nextUrl.pathname}`;
     const now = Date.now();
-    const entry = requests.get(ip) || { count: 0, start: now };
+    const entry = requests.get(key) || { count: 0, start: now };
     if (now - entry.start > RATE_LIMIT_WINDOW) {
       entry.count = 0;
       entry.start = now;
     }
     entry.count++;
-    requests.set(ip, entry);
+    requests.set(key, entry);
     if (entry.count > RATE_LIMIT_MAX) {
       console.warn(`Rate limit exceeded for ${ip} on ${req.nextUrl.pathname}`);
       return NextResponse.json(
