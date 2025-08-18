@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import styles from '../../HelldiversPage.module.css';
-import Quiz, { type Question } from '../../../training/Quiz'; // <-- adjust path if needed
+import Quiz, { type Question } from '../training/Quiz'; // <-- adjust path if needed
 
 export default function ApplyPage() {
   const [interest, setInterest] = useState('');
