@@ -201,7 +201,7 @@ const Navbar = () => {
                       role="menuitem"
                       prefetch={false}
                     >
-                      Join Now!
+                      Mod Team
                     </Link>
                   </div>
                 </div>
