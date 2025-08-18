@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import styles from '../../HelldiversPage.module.css';
-import Quiz, { type Question } from '../training/Quiz'; // <-- adjust path if needed
+import Quiz, { type Question } from '../training/Quiz'; // adjust path if needed
 
 export default function ApplyPage() {
   const [interest, setInterest] = useState('');
@@ -20,11 +20,8 @@ export default function ApplyPage() {
     'Share a favorite Helldivers 2 tactic.',
   ];
   const [promptIndex, setPromptIndex] = useState(0);
-
   useEffect(() => {
-    const id = setInterval(() => {
-      setPromptIndex((p) => (p + 1) % prompts.length);
-    }, 5000);
+    const id = setInterval(() => setPromptIndex((p) => (p + 1) % prompts.length), 5000);
     return () => clearInterval(id);
   }, []);
 
@@ -64,7 +61,7 @@ export default function ApplyPage() {
     }
   };
 
-  /* ---------- 25-question Moderation Quiz (Helldivers 2 scenarios) ---------- */
+  /* --- Moderator Readiness Quiz (25 questions) --- */
   const modQuestions: Question[] = [
     {
       question:
@@ -346,56 +343,45 @@ export default function ApplyPage() {
   return (
     <div className={styles.pageContainer}>
       <section className={styles.section}>
-        {/* HERO ROW */}
-        <div className={styles.applyHero}>
-          <div className={styles.applyCopy}>
-            <h2 className={styles.sectionTitle}>Join Now!</h2>
-            <p className={styles.paragraph}>
-              Help us keep comms clear, morale high, and missions efficient.
-              Moderators set the tone for Managed Democracy—on and off the field.
-            </p>
+        {/* --- FULL-WIDTH INTRO --- */}
+        <div className={styles.applyIntro}>
+          <h2 className={styles.sectionTitle}>Join Now!</h2>
+          <p className={styles.paragraph}>
+            Help us keep comms clear, morale high, and missions efficient.
+            Moderators set the tone for Managed Democracy—on and off the field.
+          </p>
 
-            <div className={styles.badgeRow}>
-              <span className={`${styles.badge} ${styles.badgeActive}`}>Clear Comms</span>
-              <span className={`${styles.badge} ${styles.badgeActive}`}>Team First</span>
-              <span className={`${styles.badge} ${styles.badgeActive}`}>Calm Under Fire</span>
-              <span className={`${styles.badge} ${styles.badgeActive}`}>Fair &amp; Consistent</span>
-            </div>
-
-            <ul className={styles.tipsList}>
-              <li>Model good conduct and de-escalate conflicts quickly.</li>
-              <li>Support new recruits and keep events running smoothly.</li>
-              <li>Document incidents and follow server guidelines.</li>
-            </ul>
+          <div className={styles.badgeRow}>
+            <span className={`${styles.badge} ${styles.badgeActive}`}>Clear Comms</span>
+            <span className={`${styles.badge} ${styles.badgeActive}`}>Team First</span>
+            <span className={`${styles.badge} ${styles.badgeActive}`}>Calm Under Fire</span>
+            <span className={`${styles.badge} ${styles.badgeActive}`}>Fair &amp; Consistent</span>
           </div>
 
-          {/* RIGHT: centered video + prompt */}
-          <div className={styles.videoSection}>
-            <div className={styles.videoWrapper}>
-              <iframe
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
-                title="Helldivers 2 Moderator Info"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className={styles.videoFrame}
-              />
-            </div>
-
-            <div className={styles.promptPanel}>
-              <div className={styles.promptHeading}>Think on this</div>
-              <p className={styles.promptText} aria-live="polite">
-                {prompts[promptIndex]}
-              </p>
-              <p className={styles.promptHint}>
-                Interviews are scheduled in your local time. Bring examples!
-              </p>
-            </div>
-          </div>
+          <ul className={styles.tipsList}>
+            <li>Model good conduct and de-escalate conflicts quickly.</li>
+            <li>Support new recruits and keep events running smoothly.</li>
+            <li>Document incidents and follow server guidelines.</li>
+          </ul>
         </div>
 
-        {/* FORM */}
-        <div className={styles.applyLayout}>
-          <form onSubmit={handleSubmit} className={styles.applicationForm} aria-describedby="apply-help">
+        {/* --- READINESS QUIZ (directly below intro) --- */}
+        <div className={styles.subsectionCard} style={{ marginTop: '1rem' }}>
+          <div className={styles.modQuizHeader}>
+            <h3 className={styles.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
+          </div>
+          <p className={styles.modQuizDesc}>
+            Scenarios reflect real Helldivers 2 comms: team-kills, intoxication, staff conduct, and escalation. 
+            Remember: enforcement requires <strong>3 other officers present</strong> and <strong>prior discussion in mod chat</strong> 
+            (except immediate safety risks). Admins have final say.
+          </p>
+          <Quiz title="Moderator Readiness Quiz" questions={modQuestions} />
+        </div>
+
+        {/* --- TWO-COLUMN: FORM LEFT, VIDEO + PROMPTS RIGHT --- */}
+        <div className={styles.applyTwoCol}>
+          {/* Left: application form (one column) */}
+          <form onSubmit={handleSubmit} className={styles.applicationFormWide} aria-describedby="apply-help">
             <p id="apply-help" className={styles.formHelper}>
               Short, specific answers beat long essays. You can elaborate during the interview.
             </p>
@@ -443,7 +429,6 @@ export default function ApplyPage() {
                   className={styles.input}
                 />
               </label>
-
               <label className={styles.fieldLabel}>
                 Interview Time
                 <input
@@ -476,19 +461,29 @@ export default function ApplyPage() {
               We only use this information to evaluate your application and schedule an interview.
             </p>
           </form>
-        </div>
 
-        {/* MODERATION QUIZ */}
-        <div className={styles.subsectionCard} style={{ marginTop: '1.5rem' }}>
-          <div className={styles.modQuizHeader}>
-            <h3 className={styles.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
+          {/* Right: video + rotating prompts (centered) */}
+          <div className={styles.videoColumn}>
+            <div className={styles.videoWrapper}>
+              <iframe
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                title="Helldivers 2 Moderator Info"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className={styles.videoFrame}
+              />
+            </div>
+
+            <div className={styles.promptPanel}>
+              <div className={styles.promptHeading}>Think on this</div>
+              <p className={styles.promptText} aria-live="polite">
+                {prompts[promptIndex]}
+              </p>
+              <p className={styles.promptHint}>
+                Interviews are scheduled in your local time. Bring examples!
+              </p>
+            </div>
           </div>
-          <p className={styles.modQuizDesc}>
-            Scenarios reflect real Helldivers 2 comms: team-kills, intoxication, staff conduct, and escalation. 
-            Remember: enforcement requires <strong>3 other officers present</strong> and <strong>prior discussion in mod chat</strong> 
-            (except immediate safety risks). Admins have final say.
-          </p>
-          <Quiz title="Moderator Readiness Quiz" questions={modQuestions} />
         </div>
       </section>
     </div>
