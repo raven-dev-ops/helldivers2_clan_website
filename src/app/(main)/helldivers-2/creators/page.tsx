@@ -208,8 +208,7 @@ export default function CreatorsPage() {
       <div className={styles.titleCard}>
         <h1 className={styles.pageTitle}>GPT Streamers</h1>
         <p className={styles.pageSubtitle}>
-          Discover or connect with content creators in the GPT community. You
-          must be an Officer to join the stream team.
+          Discover and connect with our GPT-powered content creators in the HD2 community.
         </p>
       </div>
 
