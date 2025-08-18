@@ -93,7 +93,7 @@ const Navbar = () => {
               const leaderboardLinkClass = `${styles.link} ${isLeaderboardActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={leaderboardLinkClass}>
+                  <Link href={href} className={leaderboardLinkClass} prefetch={false}>
                     Leaderboard
                   </Link>
                   <div
@@ -105,6 +105,7 @@ const Navbar = () => {
                       href="/helldivers-2/leaderboard#yearly"
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Yearly
                     </Link>
@@ -112,6 +113,7 @@ const Navbar = () => {
                       href="/helldivers-2/leaderboard#monthly"
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Monthly
                     </Link>
@@ -119,6 +121,7 @@ const Navbar = () => {
                       href="/helldivers-2/leaderboard#weekly"
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Weekly
                     </Link>
@@ -126,6 +129,7 @@ const Navbar = () => {
                       href="/helldivers-2/leaderboard#solo"
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Solo
                     </Link>
@@ -133,6 +137,7 @@ const Navbar = () => {
                       href="/helldivers-2/leaderboard#merit"
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Merit
                     </Link>
@@ -146,7 +151,7 @@ const Navbar = () => {
               const challengesLinkClass = `${styles.link} ${isChallengesActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={challengesLinkClass}>
+                  <Link href={href} className={challengesLinkClass} prefetch={false}>
                     Challenges
                   </Link>
                   <div
@@ -160,6 +165,7 @@ const Navbar = () => {
                         href={`${divisionBasePath}/challenges#${id}`}
                         className={styles.dropdownItem}
                         role="menuitem"
+                        prefetch={false}
                       >
                         {label}
                       </Link>
@@ -175,7 +181,7 @@ const Navbar = () => {
               const campaignsLinkClass = `${styles.link} ${isCampaignsActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={campaignsLinkClass}>
+                  <Link href={href} className={campaignsLinkClass} prefetch={false}>
                     Campaigns
                   </Link>
                   <div
@@ -189,6 +195,7 @@ const Navbar = () => {
                         href={`${divisionBasePath}/campaigns#${id}`}
                         className={styles.dropdownItem}
                         role="menuitem"
+                        prefetch={false}
                       >
                         {label}
                       </Link>
@@ -203,7 +210,7 @@ const Navbar = () => {
               const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={academyLinkClass}>
+                  <Link href={href} className={academyLinkClass} prefetch={false}>
                     Academy
                   </Link>
                   <div
@@ -215,6 +222,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/academy/training`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       My Training
                     </Link>
@@ -222,6 +230,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/academy/apply`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Join Now!
                     </Link>
@@ -235,7 +244,7 @@ const Navbar = () => {
               const streamersLinkClass = `${styles.link} ${isStreamersActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={streamersLinkClass}>
+                  <Link href={href} className={streamersLinkClass} prefetch={false}>
                     Streamers
                   </Link>
                   <div
@@ -247,6 +256,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/creators`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Twitch
                     </Link>
@@ -254,6 +264,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/creators#youtube`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       YouTube
                     </Link>
@@ -267,7 +278,7 @@ const Navbar = () => {
               const intelLinkClass = `${styles.link} ${isIntelActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={intelLinkClass}>
+                  <Link href={href} className={intelLinkClass} prefetch={false}>
                     Intel
                   </Link>
                   <div
@@ -279,6 +290,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/news/war-news`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       War News
                     </Link>
@@ -286,6 +298,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/news/major-orders`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Major Orders
                     </Link>
@@ -293,6 +306,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/news/galactic-map`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Galactic Map
                     </Link>
@@ -300,6 +314,7 @@ const Navbar = () => {
                       href={`${divisionBasePath}/news/super-store`}
                       className={styles.dropdownItem}
                       role="menuitem"
+                      prefetch={false}
                     >
                       Super Store
                     </Link>
@@ -308,7 +323,7 @@ const Navbar = () => {
               );
             }
             return (
-              <Link key={href} href={href} className={linkClass}>
+              <Link key={href} href={href} className={linkClass} prefetch={false}>
                 {label}
               </Link>
             );
@@ -362,6 +377,7 @@ const Navbar = () => {
               href={href}
               className={styles.link}
               onClick={() => setMobileMenuOpen(false)}
+              prefetch={false}
             >
               {label}
             </Link>
