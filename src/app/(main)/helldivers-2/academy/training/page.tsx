@@ -15,7 +15,7 @@ export default function TrainingPage() {
   return (
     <div className={styles.pageContainer}>
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Training</h2>
+        <h2 className={styles.sectionTitle}>My Training</h2>
         <p className={styles.paragraph}>
           Brush up on your Helldivers knowledge and tactics. Choose a quiz to
           test your memory and sharpen your strategies.
