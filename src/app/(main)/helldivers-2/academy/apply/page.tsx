@@ -347,7 +347,7 @@ export default function ApplyPage() {
         <div className={styles.introAndQuizRow}>
           {/* LEFT: Intro */}
           <div className={styles.introBlock}>
-            <h2 className={styles.sectionTitle}>Join Now!</h2>
+            <h2 className={styles.sectionTitle}>Join Our Mod Team Today!</h2>
             <p className={styles.paragraph}>
               Help us keep comms clear, morale high, and missions efficient. Moderators set the tone
               for Managed Democracy—on and off the field.
