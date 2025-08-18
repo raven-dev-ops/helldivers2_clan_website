@@ -4,6 +4,13 @@ import { useEffect, useMemo, useState } from 'react';
 import styles from '../../HelldiversPage.module.css';
 import Quiz, { type Question } from '../training/Quiz'; // adjust path if needed
 
+const PROMPTS = [
+  'What does democracy mean to you in Helldivers 2?',
+  'How would you handle disruptive players?',
+  'Why do you want to become a moderator?',
+  'Share a favorite Helldivers 2 tactic.',
+];
+
 export default function ApplyPage() {
   const [interest, setInterest] = useState('');
   const [about, setAbout] = useState('');
@@ -13,15 +20,11 @@ export default function ApplyPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const prompts = [
-    'What does democracy mean to you in Helldivers 2?',
-    'How would you handle disruptive players?',
-    'Why do you want to become a moderator?',
-    'Share a favorite Helldivers 2 tactic.',
-  ];
   const [promptIndex, setPromptIndex] = useState(0);
   useEffect(() => {
-    const id = setInterval(() => setPromptIndex((p) => (p + 1) % prompts.length), 5000);
+    const id = setInterval(() => {
+      setPromptIndex((p) => (p + 1) % PROMPTS.length);
+    }, 5000);
     return () => clearInterval(id);
   }, []);
 
@@ -482,7 +485,7 @@ export default function ApplyPage() {
             <div className={styles.promptPanel}>
               <div className={styles.promptHeading}>Think on this</div>
               <p className={styles.promptText} aria-live="polite">
-                {prompts[promptIndex]}
+                {PROMPTS[promptIndex]}
               </p>
               <p className={styles.promptHint}>
                 Interviews are scheduled in your local time. Bring examples!

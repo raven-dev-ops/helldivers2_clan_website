@@ -26,7 +26,7 @@ export default function MusicButton() {
       audio.pause();
       audioRef.current = null;
     };
-  }, []);
+  }, [volume]);
 
   useEffect(() => {
     if (audioRef.current) {

@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import {
   useEffect,
@@ -300,7 +301,6 @@ export default function ProfilePage() {
           {/* Sidebar (matches Settings look) */}
           <aside className={s.sidebar}>
             <div className={s.avatar}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={
                   userData?.customAvatarDataUrl ||
