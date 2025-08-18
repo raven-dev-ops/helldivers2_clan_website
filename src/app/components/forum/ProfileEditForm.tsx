@@ -1,4 +1,5 @@
 'use client';
+/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useRef, useState } from 'react';
 import ChangeAvatarModal from '@/app/components/profile/ChangeAvatarModal';
@@ -274,7 +275,6 @@ export default function ProfileEditForm() {
         {/* Sidebar */}
         <aside className={s.sidebar}>
           <div className={s.avatar}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={
                 userData?.customAvatarDataUrl ||

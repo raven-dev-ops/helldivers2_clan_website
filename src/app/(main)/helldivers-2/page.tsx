@@ -1,4 +1,5 @@
 // src/app/(main)/helldivers-2/page.tsx
+/* eslint-disable @next/next/no-img-element */
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FaDiscord, FaYoutube } from 'react-icons/fa';
