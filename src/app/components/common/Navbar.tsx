@@ -137,14 +137,6 @@ const Navbar = () => {
                     >
                       Daily
                     </Link>
-                    <Link
-                      href="/helldivers-2/leaderboard#solo"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Solo Only
-                    </Link>
                   </div>
                 </div>
               );
