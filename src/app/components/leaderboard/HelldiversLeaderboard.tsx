@@ -601,16 +601,16 @@ export default function HelldiversLeaderboard({
   );
 
   const [activeTab, setActiveTab] = useState<
-    'yearly' | 'monthly' | 'weekly' | 'daily'
-  >('yearly');
+    'daily' | 'weekly' | 'monthly' | 'yearly'
+  >('daily');
 
   useEffect(() => {
     const setTabFromHash = () => {
       const hash = window.location.hash.replace('#', '');
       if (
-        hash === 'monthly' ||
-        hash === 'weekly' ||
         hash === 'daily' ||
+        hash === 'weekly' ||
+        hash === 'monthly' ||
         hash === 'yearly'
       ) {
         setActiveTab(hash as typeof activeTab);
@@ -642,17 +642,10 @@ export default function HelldiversLeaderboard({
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('yearly')}
-          aria-pressed={activeTab === 'yearly'}
+          onClick={() => setActiveTab('daily')}
+          aria-pressed={activeTab === 'daily'}
         >
-          Yearly
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('monthly')}
-          aria-pressed={activeTab === 'monthly'}
-        >
-          Monthly
+          Daily
         </button>
         <button
           className="btn btn-secondary"
@@ -663,42 +656,33 @@ export default function HelldiversLeaderboard({
         </button>
         <button
           className="btn btn-secondary"
-          onClick={() => setActiveTab('daily')}
-          aria-pressed={activeTab === 'daily'}
+          onClick={() => setActiveTab('monthly')}
+          aria-pressed={activeTab === 'monthly'}
         >
-          Daily
+          Monthly
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('yearly')}
+          aria-pressed={activeTab === 'yearly'}
+        >
+          Yearly
         </button>
       </div>
 
-      {activeTab === 'yearly' && (
+      {activeTab === 'daily' && (
         <LeaderboardTableSection
-          title={yearlyTitle}
-          rows={yearlyData}
-          loading={yearlyLoading}
-          error={yearlyError}
-          activeSort={yearActiveSort}
-          onSort={toggleYearlySort}
+          title={dayTitle}
+          rows={dayData}
+          loading={dayLoading}
+          error={dayError}
+          activeSort={dayActiveSort}
+          onSort={toggleDaySort}
           showAverages={false}
           showTotals={true}
-          searchTerm={yearlyTotalsSearch}
-          onSearch={setYearlyTotalsSearch}
-          sectionId="yearly"
-        />
-      )}
-
-      {activeTab === 'monthly' && (
-        <LeaderboardTableSection
-          title={monthTitle}
-          rows={monthData}
-          loading={monthLoading}
-          error={monthError}
-          activeSort={monthActiveSort}
-          onSort={toggleMonthSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={monthSearch}
-          onSearch={setMonthSearch}
-          sectionId="monthly"
+          searchTerm={daySearch}
+          onSearch={setDaySearch}
+          sectionId="daily"
         />
       )}
 
@@ -718,22 +702,37 @@ export default function HelldiversLeaderboard({
         />
       )}
 
-      {activeTab === 'daily' && (
+      {activeTab === 'monthly' && (
         <LeaderboardTableSection
-          title={dayTitle}
-          rows={dayData}
-          loading={dayLoading}
-          error={dayError}
-          activeSort={dayActiveSort}
-          onSort={toggleDaySort}
+          title={monthTitle}
+          rows={monthData}
+          loading={monthLoading}
+          error={monthError}
+          activeSort={monthActiveSort}
+          onSort={toggleMonthSort}
           showAverages={false}
           showTotals={true}
-          searchTerm={daySearch}
-          onSearch={setDaySearch}
-          sectionId="daily"
+          searchTerm={monthSearch}
+          onSearch={setMonthSearch}
+          sectionId="monthly"
         />
       )}
 
+      {activeTab === 'yearly' && (
+        <LeaderboardTableSection
+          title={yearlyTitle}
+          rows={yearlyData}
+          loading={yearlyLoading}
+          error={yearlyError}
+          activeSort={yearActiveSort}
+          onSort={toggleYearlySort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={yearlyTotalsSearch}
+          onSearch={setYearlyTotalsSearch}
+          sectionId="yearly"
+        />
+      )}
     </div>
   );
 }
