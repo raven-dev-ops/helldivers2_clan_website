@@ -16,35 +16,42 @@ interface QuizProps {
 
 export default function Quiz({ title, questions }: QuizProps) {
   const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
-  const [score, setScore] = useState<number | null>(null);
-  const [showAnswers, setShowAnswers] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
+  const [score, setScore] = useState(0);
 
   const openModal = () => {
     setSelected(Array(questions.length).fill(-1));
-    setScore(null);
-    setShowAnswers(false);
+    setScore(0);
+    setShowAnswer(false);
+    setCurrent(0);
     setOpen(true);
   };
 
   const closeModal = () => setOpen(false);
 
-  const handleSelect = (qIndex: number, optionIndex: number) => {
+  const handleSelect = (optionIndex: number) => {
     setSelected((prev) => {
       const next = [...prev];
-      next[qIndex] = optionIndex;
+      next[current] = optionIndex;
       return next;
     });
   };
 
   const handleSubmit = () => {
-    let s = 0;
-    selected.forEach((sel, i) => {
-      if (sel === questions[i].answer) s++;
-    });
-    setScore(s);
-    setShowAnswers(true);
+    if (selected[current] === questions[current].answer) {
+      setScore((s) => s + 1);
+    }
+    setShowAnswer(true);
   };
+
+  const handleNext = () => {
+    setShowAnswer(false);
+    setCurrent((c) => c + 1);
+  };
+
+  const finished = current >= questions.length;
 
   return (
     <>
@@ -54,48 +61,65 @@ export default function Quiz({ title, questions }: QuizProps) {
       {open && (
         <div className={styles.overlay}>
           <div className={styles.modal} role="dialog" aria-modal="true">
+            <button
+              onClick={closeModal}
+              className={styles.closeButton}
+              aria-label="Close quiz"
+            >
+              ×
+            </button>
             <h3 className={styles.subHeading}>{title}</h3>
-            <ol className={`${styles.styledList} ${styles.decimal}`}>
-              {questions.map((q, qi) => (
-                <li key={qi} className={styles.listItem}>
-                  <p>{q.question}</p>
-                  {q.options.map((opt, oi) => {
-                    const isCorrect = showAnswers && oi === q.answer;
-                    const isIncorrect =
-                      showAnswers && selected[qi] === oi && oi !== q.answer;
-                    return (
-                      <label
-                        key={oi}
-                        className={`${isCorrect ? styles.correct : ''} ${
-                          isIncorrect ? styles.incorrect : ''
-                        }`}
-                        style={{ display: 'block' }}
-                      >
-                        <input
-                          type="radio"
-                          name={`q-${title}-${qi}`}
-                          checked={selected[qi] === oi}
-                          onChange={() => handleSelect(qi, oi)}
-                          disabled={showAnswers}
-                        />{' '}
-                        {opt}
-                      </label>
-                    );
-                  })}
-                </li>
-              ))}
-            </ol>
-            <button onClick={handleSubmit} className={styles.quizButton}>
-              Submit
-            </button>
-            {score !== null && (
-              <p>
-                Score: {score}/{questions.length}
-              </p>
+            {!finished ? (
+              <>
+                <p className={styles.question}>
+                  {current + 1}. {questions[current].question}
+                </p>
+                {questions[current].options.map((opt, oi) => {
+                  const isCorrect =
+                    showAnswer && oi === questions[current].answer;
+                  const isIncorrect =
+                    showAnswer &&
+                    selected[current] === oi &&
+                    oi !== questions[current].answer;
+                  return (
+                    <label
+                      key={oi}
+                      className={`${styles.optionLabel} ${
+                        isCorrect ? styles.correct : ''
+                      } ${isIncorrect ? styles.incorrect : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name={`q-${title}-${current}`}
+                        checked={selected[current] === oi}
+                        onChange={() => handleSelect(oi)}
+                        disabled={showAnswer}
+                      />{' '}
+                      {opt}
+                    </label>
+                  );
+                })}
+                {!showAnswer && (
+                  <button onClick={handleSubmit} className={styles.quizButton}>
+                    Submit
+                  </button>
+                )}
+                {showAnswer && (
+                  <button onClick={handleNext} className={styles.quizButton}>
+                    {current === questions.length - 1 ? 'Finish' : 'Next'}
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                <p>
+                  Score: {score}/{questions.length}
+                </p>
+                <button onClick={closeModal} className={styles.quizButton}>
+                  Close
+                </button>
+              </>
             )}
-            <button onClick={closeModal} className={styles.quizButton}>
-              Close
-            </button>
           </div>
         </div>
       )}
