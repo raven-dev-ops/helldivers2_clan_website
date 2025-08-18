@@ -18,7 +18,12 @@ export const VALID_SORT_FIELDS = [
 
 export type SortField = (typeof VALID_SORT_FIELDS)[number];
 export type SortDir = 'asc' | 'desc';
-export type LeaderboardScope = 'month' | 'week' | 'lifetime' | 'solo';
+export type LeaderboardScope =
+  | 'month'
+  | 'week'
+  | 'day'
+  | 'lifetime'
+  | 'solo';
 
 export interface HelldiversLeaderboardRow {
   rank: number;
@@ -79,7 +84,9 @@ export async function fetchHelldiversLeaderboard(options?: {
         ? 'solo'
         : options?.scope === 'week'
           ? 'week'
-          : 'month';
+          : options?.scope === 'day'
+            ? 'day'
+            : 'month';
 
   const client = await getMongoClientPromise();
   const db = client.db(getDbName());
@@ -153,6 +160,68 @@ export async function fetchHelldiversLeaderboard(options?: {
         ? options.year
         : now.getUTCFullYear();
     const { start, end } = getMonthRange(monthProvided - 1, yearProvided);
+    pipeline.push({ $match: { submittedAtDate: { $gte: start, $lt: end } } });
+
+    const sortStage: Record<string, 1 | -1> = {};
+    const dir: 1 | -1 = sortDir === 'asc' ? 1 : -1;
+    switch (sortBy) {
+      case 'Kills':
+        sortStage['numericKills'] = dir;
+        break;
+      case 'Accuracy':
+        sortStage['numericAccuracy'] = dir;
+        break;
+      case 'Shots Fired':
+        sortStage['numericShotsFired'] = dir;
+        break;
+      case 'Shots Hit':
+        sortStage['numericShotsHit'] = dir;
+        break;
+      case 'Deaths':
+        sortStage['numericDeaths'] = dir;
+        break;
+      case 'player_name':
+        sortStage['player_name'] = dir;
+        break;
+      case 'clan_name':
+        sortStage['clan_name'] = dir;
+        break;
+      case 'submitted_at':
+        sortStage['submittedAtDate'] = dir;
+        break;
+      default:
+        sortStage['numericKills'] = dir;
+        break;
+    }
+
+    pipeline.push({ $sort: sortStage });
+    pipeline.push({ $limit: limit });
+    pipeline.push({
+      $project: {
+        _id: 1,
+        player_name: 1,
+        Kills: 1,
+        Accuracy: 1,
+        'Shots Fired': 1,
+        'Shots Hit': 1,
+        Deaths: 1,
+        discord_id: 1,
+        discord_server_id: 1,
+        clan_name: 1,
+        submitted_by: 1,
+        submitted_at: 1,
+        numericKills: 1,
+        numericAccuracy: 1,
+        numericShotsFired: 1,
+        numericShotsHit: 1,
+        numericDeaths: 1,
+        submittedAtDate: 1,
+      },
+    });
+  } else if (scope === 'day') {
+    const end = new Date();
+    const start = new Date(end);
+    start.setUTCDate(end.getUTCDate() - 1);
     pipeline.push({ $match: { submittedAtDate: { $gte: start, $lt: end } } });
 
     const sortStage: Record<string, 1 | -1> = {};
