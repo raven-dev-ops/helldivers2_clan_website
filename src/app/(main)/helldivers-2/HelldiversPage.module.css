@@ -558,3 +558,173 @@
   display: block;
   margin-bottom: 0.5rem;
 }
+/* ===== Join Us (Apply) – Enhancements ===== */
+
+/* Larger, balanced hero row for copy + video */
+.applyHero {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 980px) {
+  .applyHero {
+    grid-template-columns: 1fr;
+  }
+}
+
+.applyCopy {
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Badges + tips */
+.badgeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0.5rem;
+}
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.tipsList {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* Right column: centered video + prompt */
+.videoSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* center the video and texts */
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.videoWrapper {
+  width: 100%;
+  max-width: 760px;      /* slightly bigger video */
+  aspect-ratio: 16 / 9;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+  background: var(--color-background);
+}
+
+.videoFrame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Prompt panel */
+.promptPanel {
+  width: 100%;
+  max-width: 720px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 0.9rem 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.promptHeading {
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 0.25rem;
+}
+.promptText {
+  color: var(--color-text-primary);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+.promptHint {
+  margin-top: 0.4rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* Form polish */
+.formHelper {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin: -0.25rem 0 0.5rem;
+}
+
+.fieldLabel {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--color-text-primary);
+}
+
+.charCount {
+  justify-self: end;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: -0.25rem;
+}
+
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+@media (max-width: 560px) {
+  .row2 { grid-template-columns: 1fr; }
+}
+
+.formError {
+  color: #dc2626;
+  margin-top: 0.25rem;
+}
+.formSuccess {
+  color: #16a34a;
+  margin-top: 0.25rem;
+}
+
+.ctaRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.secondaryButton {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.secondaryButton:hover {
+  background: var(--color-surface-alt);
+  border-color: var(--color-border-alt);
+}
+
+.privacyNote {
+  margin-top: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* Make the existing .applyLayout breathe a bit more on wide screens */
+@media (min-width: 768px) {
+  .applyLayout {
+    gap: 2.25rem;
+  }
+}
