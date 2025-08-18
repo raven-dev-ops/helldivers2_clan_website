@@ -475,18 +475,6 @@
   cursor: not-allowed;
 }
 
-/* --- Training Page --- */
-.trainingTopics {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.25rem;
-  padding-left: 18px;
-}
-@media (min-width: 640px) {
-  .trainingTopics {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
 .quizButton {
   margin-top: 0.5rem;
@@ -520,4 +508,31 @@
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.3);
+}
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #0f172a);
+  width: min(92vw, 720px);
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+}
+
+.correct {
+  color: #16a34a;
+}
+
+.incorrect {
+  color: #dc2626;
 }
