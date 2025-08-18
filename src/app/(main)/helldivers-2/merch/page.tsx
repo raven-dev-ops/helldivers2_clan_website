@@ -214,10 +214,10 @@ export default async function HelldiversMerchPage() {
                   product.description
                 ).replace(/<[^>]*>?/gm, '');
               } catch (e) {
-                logger.warn(
-                  'Could not decode/clean description for',
-                  { productName: product.name, error: e }
-                );
+                logger.warn('Could not decode/clean description for', {
+                  productName: product.name,
+                  error: e,
+                });
                 cleanDescription = product.description.replace(
                   /<[^>]*>?/gm,
                   ''

@@ -29,7 +29,10 @@ export async function POST(request: Request) {
     const parsed = applicationSchema.safeParse(json);
     if (!parsed.success) {
       return NextResponse.json(
-        { message: 'Validation Error', errors: parsed.error.flatten().fieldErrors },
+        {
+          message: 'Validation Error',
+          errors: parsed.error.flatten().fieldErrors,
+        },
         { status: 400 }
       );
     }

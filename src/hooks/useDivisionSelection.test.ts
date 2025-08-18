@@ -14,7 +14,9 @@ vi.mock('next-auth/react', () => ({
   useSession: () => mockUseSession(),
   signIn: (...args: any[]) => mockSignIn(...args),
 }));
-vi.mock('@/lib/logger', () => ({ logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() } }));
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+}));
 
 beforeEach(() => {
   mockPush.mockReset();
@@ -26,8 +28,14 @@ beforeEach(() => {
 
 describe('useDivisionSelection', () => {
   it('navigates when user is authenticated and API succeeds', async () => {
-    mockUseSession.mockReturnValue({ data: { user: { id: '1' } }, status: 'authenticated' });
-    (global.fetch as any).mockResolvedValue({ ok: true, json: () => Promise.resolve({}) });
+    mockUseSession.mockReturnValue({
+      data: { user: { id: '1' } },
+      status: 'authenticated',
+    });
+    (global.fetch as any).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({}),
+    });
 
     const { result } = renderHook(() => useDivisionSelection());
 

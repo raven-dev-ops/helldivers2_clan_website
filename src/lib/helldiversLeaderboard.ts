@@ -18,12 +18,7 @@ export const VALID_SORT_FIELDS = [
 
 export type SortField = (typeof VALID_SORT_FIELDS)[number];
 export type SortDir = 'asc' | 'desc';
-export type LeaderboardScope =
-  | 'month'
-  | 'week'
-  | 'day'
-  | 'lifetime'
-  | 'solo';
+export type LeaderboardScope = 'month' | 'week' | 'day' | 'lifetime' | 'solo';
 
 export interface HelldiversLeaderboardRow {
   rank: number;

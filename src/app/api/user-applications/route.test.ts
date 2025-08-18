@@ -4,7 +4,9 @@ import mongoose from 'mongoose';
 vi.mock('next-auth/next', () => ({ getServerSession: vi.fn() }));
 vi.mock('@/lib/authOptions', () => ({ getAuthOptions: vi.fn(() => ({})) }));
 vi.mock('@/lib/dbConnect', () => ({ default: vi.fn() }));
-vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() } }));
+vi.mock('@/lib/logger', () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
+}));
 vi.mock('@/models/UserApplication', () => {
   return {
     default: class {
@@ -16,7 +18,9 @@ vi.mock('@/models/UserApplication', () => {
 
 import { POST } from './route';
 import { getServerSession } from 'next-auth/next';
-const getServerSessionMock = getServerSession as unknown as ReturnType<typeof vi.fn>;
+const getServerSessionMock = getServerSession as unknown as ReturnType<
+  typeof vi.fn
+>;
 
 describe('POST /api/user-applications', () => {
   beforeEach(() => {
@@ -24,7 +28,9 @@ describe('POST /api/user-applications', () => {
   });
 
   it('returns 201 on successful submission', async () => {
-    getServerSessionMock.mockResolvedValue({ user: { id: new mongoose.Types.ObjectId().toString() } });
+    getServerSessionMock.mockResolvedValue({
+      user: { id: new mongoose.Types.ObjectId().toString() },
+    });
     const request = new Request('http://localhost', {
       method: 'POST',
       body: JSON.stringify({ type: 'mod', interest: 'help' }),
@@ -34,7 +40,9 @@ describe('POST /api/user-applications', () => {
   });
 
   it('returns 400 on validation error', async () => {
-    getServerSessionMock.mockResolvedValue({ user: { id: new mongoose.Types.ObjectId().toString() } });
+    getServerSessionMock.mockResolvedValue({
+      user: { id: new mongoose.Types.ObjectId().toString() },
+    });
     const request = new Request('http://localhost', {
       method: 'POST',
       body: JSON.stringify({}),

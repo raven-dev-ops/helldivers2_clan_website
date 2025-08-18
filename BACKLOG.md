@@ -50,7 +50,7 @@
 - [x] Add lazy loading for images.
 - [ ] Implement automatic backups for database.
 - [ ] Add server-side logging and monitoring.
-- [ ] Implement error reporting with Sentry.
+- [x] Implement error reporting with Sentry.
 - [ ] Add A/B testing framework.
 - [ ] Optimize bundle size.
 - [ ] Use CDN for static assets.
