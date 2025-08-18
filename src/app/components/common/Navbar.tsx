@@ -92,53 +92,14 @@ const Navbar = () => {
                 isClient && pathname.startsWith('/helldivers-2/leaderboard');
               const leaderboardLinkClass = `${styles.link} ${isLeaderboardActive ? styles.activeLink : ''}`;
               return (
-                <div key={href} className={styles.dropdown}>
-                  <Link
-                    href={href}
-                    className={leaderboardLinkClass}
-                    prefetch={false}
-                  >
-                    Leaderboard
-                  </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Leaderboard shortcuts"
-                  >
-                    <Link
-                      href="/helldivers-2/leaderboard#yearly"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Yearly
-                    </Link>
-                    <Link
-                      href="/helldivers-2/leaderboard#monthly"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Monthly
-                    </Link>
-                    <Link
-                      href="/helldivers-2/leaderboard#weekly"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Weekly
-                    </Link>
-                    <Link
-                      href="/helldivers-2/leaderboard#daily"
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Daily
-                    </Link>
-                  </div>
-                </div>
+                <Link
+                  key={href}
+                  href={href}
+                  className={leaderboardLinkClass}
+                  prefetch={false}
+                >
+                  Leaderboard
+                </Link>
               );
             }
             if (label === 'Challenges') {
