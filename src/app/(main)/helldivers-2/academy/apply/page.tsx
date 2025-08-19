@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import styles from '../../HelldiversPage.module.css';
+import base from '../../HelldiversBase.module.css';
+import styles from './Apply.module.css';
 import Quiz, { type Question } from '../training/Quiz'; // adjust path if needed
 
 const PROMPTS = [
@@ -344,14 +345,14 @@ export default function ApplyPage() {
   ];
 
   return (
-    <div className={styles.pageContainer}>
-      <section className={styles.section}>
+    <div className={base.pageContainer}>
+      <section className={base.section}>
         {/* --- INTRO (LEFT) + QUIZ (RIGHT) --- */}
         <div className={styles.introAndQuizRow}>
           {/* LEFT: Intro */}
           <div className={styles.introBlock}>
-            <h2 className={styles.sectionTitle}>Join Our Mod Team Today!</h2>
-            <p className={styles.paragraph}>
+            <h2 className={base.sectionTitle}>Join Our Mod Team Today!</h2>
+            <p className={base.paragraph}>
               Help us keep comms clear, morale high, and missions efficient. Moderators set the tone
               for Managed Democracy—on and off the field.
             </p>
@@ -372,11 +373,11 @@ export default function ApplyPage() {
 
           {/* RIGHT: Readiness Quiz */}
           <aside className={styles.quizSide}>
-            <div className={`${styles.subsectionCard} ${styles.quizSideCard}`}>
+            <div className={`${base.subsectionCard} ${styles.quizSideCard}`}>
               <div className={styles.modQuizHeader}>
-                <h3 className={styles.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
+                <h3 className={base.subHeading}>Moderator Readiness — 25-Question Scenario Quiz</h3>
               </div>
-              <p className={styles.modQuizDesc}>
+              <p className={`${base.paragraph} ${styles.modQuizDesc}`}>
                 Scenarios reflect real Helldivers 2 comms: team-kills, intoxication, staff conduct, and escalation.
                 Remember: enforcement requires <strong>3 other officers present</strong> and <strong>prior discussion in mod chat</strong>
                 (except immediate safety risks). Admins have final say.

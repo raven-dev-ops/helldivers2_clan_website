@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import styles from '../../HelldiversPage.module.css';
+import styles from './Quiz.module.css';
 
 export interface Question {
   question: string;

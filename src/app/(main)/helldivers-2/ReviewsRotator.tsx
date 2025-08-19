@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import styles from './HelldiversPage.module.css';
+import styles from './HelldiversBase.module.css';
 
 export interface Review {
   id: number;

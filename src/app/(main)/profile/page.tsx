@@ -12,7 +12,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-import styles from '../helldivers-2/HelldiversPage.module.css';
+import styles from '../helldivers-2/HelldiversBase.module.css';
 
 const videoStyle: CSSProperties = {
   position: 'fixed',

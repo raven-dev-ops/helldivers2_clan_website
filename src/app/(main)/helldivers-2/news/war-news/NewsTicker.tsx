@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import styles from './HelldiversPage.module.css';
+import styles from './HelldiversBase.module.css';
 
 type ApiNewsItem = {
   id?: string | number;

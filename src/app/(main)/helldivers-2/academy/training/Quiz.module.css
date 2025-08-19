@@ -36,9 +36,9 @@
   .correct { color: #16a34a; }
   .incorrect { color: #dc2626; }
   
-  .quizActions { margin-top: .75rem; display: flex; gap: .5rem; }
-  
-  .quizButton {
+.quizActions { margin-top: .75rem; display: flex; gap: .5rem; }
+
+.quizButton {
     flex: 1 1 0;
     padding: .6rem 1rem;
     background: var(--color-primary);
@@ -54,5 +54,12 @@
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
     box-shadow: 0 0 0 3px rgba(250,204,21,.25);
+  }
+
+  .subHeading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: .75rem;
   }
   

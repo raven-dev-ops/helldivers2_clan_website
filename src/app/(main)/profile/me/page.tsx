@@ -13,7 +13,7 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
 
-import styles from '../../helldivers-2/HelldiversPage.module.css';
+import base from '../../helldivers-2/HelldiversBase.module.css';
 import s from '@/app/components/forum/ProfileForm.module.css'; // reuse Settings layout styles
 
 const videoStyle: CSSProperties = {
@@ -224,11 +224,11 @@ export default function ProfilePage() {
   }, [userData?.name, soloData, monthData, lifetimeData]);
 
   if (status === 'loading' || loading) {
-    return <div className={styles.pageContainer}>Loading profile…</div>;
+    return <div className={base.pageContainer}>Loading profile…</div>;
   }
   if (!session) {
     return (
-      <div className={styles.pageContainer}>
+      <div className={base.pageContainer}>
         <p>
           Please <a href="/auth">sign in</a> to view your profile.
         </p>
@@ -269,7 +269,7 @@ export default function ProfilePage() {
 
   return (
     <div
-      className={styles.pageContainer}
+      className={base.pageContainer}
       style={{ position: 'relative', zIndex: 0 }}
     >
       {bgEnabled && (

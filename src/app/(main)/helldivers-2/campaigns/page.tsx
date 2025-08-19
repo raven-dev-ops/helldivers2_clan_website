@@ -3,7 +3,9 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import styles from '../HelldiversPage.module.css';
+import base from '../HelldiversBase.module.css';
+import exp from '../components/Expanders.module.css';
+import code from '@/app/components/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
 
 interface PrestigeMissionData {
@@ -101,39 +103,39 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className={styles.pageContainer}>
-      <section className={styles.section} id="gpt-campaign-missions">
-        <h2 className={styles.sectionTitle}>GPT Campaign Missions</h2>
-        <div className={styles.subsectionCard}>
-          <h3 className={styles.subHeading}>Rules & Requirements</h3>
-          <ul className={`${styles.styledList} ${styles.decimal}`}>
-            <li className={styles.listItem}>
+    <div className={base.pageContainer}>
+      <section className={base.section} id="gpt-campaign-missions">
+        <h2 className={base.sectionTitle}>GPT Campaign Missions</h2>
+        <div className={base.subsectionCard}>
+          <h3 className={base.subHeading}>Rules & Requirements</h3>
+          <ul className={`${base.styledList} ${base.decimal}`}>
+            <li className={base.listItem}>
               If it&apos;s on the map, it&apos;s in play unless the specific
               challenge level states otherwise.
             </li>
-            <li className={styles.listItem}>
+            <li className={base.listItem}>
               Video submissions must be one continuous, unedited recording. No
               cuts, splits, or speed-ups.
             </li>
-            <li className={styles.listItem}>
+            <li className={base.listItem}>
               Mission privacy must be set to Invite Only.
             </li>
           </ul>
         </div>
 
-        <div className={styles.subsectionCard}>
-          <h3 className={styles.subHeading}>John Helldiver Operations</h3>
+        <div className={base.subsectionCard}>
+          <h3 className={base.subHeading}>John Helldiver Operations</h3>
           {prestigeMissions.map((mission) => {
             const isExpanded = !!expanded[mission.id];
             return (
               <div
                 key={mission.id}
-                className={styles.challengeLevelContainer}
+                className={exp.challengeLevelContainer}
                 id={mission.id}
                 style={{ scrollMarginTop: 96 }}
               >
                 <div
-                  className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
+                  className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
                   onClick={() => toggleExpansion(mission.id)}
                   role="button"
                   aria-expanded={isExpanded}
@@ -144,19 +146,19 @@ export default function CampaignsPage() {
                     toggleExpansion(mission.id)
                   }
                 >
-                  <h4 className={styles.challengeLevelTitle}>
+                  <h4 className={base.subHeading}>
                     {mission.title}
                   </h4>
                   <FaChevronDown
-                    className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`}
+                    className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
                     aria-hidden="true"
                   />
                 </div>
                 <div
                   id={`mission-content-${mission.id}`}
-                  className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}
+                  className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
                 >
-                  <pre className={styles.codeBlock}>{mission.details}</pre>
+                  <pre className={code.codeBlock}>{mission.details}</pre>
                   {/* Video links removed per requirements */}
                 </div>
               </div>
@@ -178,7 +180,7 @@ export default function CampaignsPage() {
         </div>
       </section>
       {message && (
-        <p className={styles.paragraph} style={{ textAlign: 'center' }}>
+        <p className={base.paragraph} style={{ textAlign: 'center' }}>
           {message}
         </p>
       )}

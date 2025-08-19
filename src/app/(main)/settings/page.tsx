@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, type CSSProperties } from 'react';
-import styles from '../helldivers-2/HelldiversPage.module.css';
+import styles from '../helldivers-2/HelldiversBase.module.css';
 import ProfileEditForm from '@/app/components/forum/ProfileEditForm';
 
 const videoStyle: CSSProperties = {
