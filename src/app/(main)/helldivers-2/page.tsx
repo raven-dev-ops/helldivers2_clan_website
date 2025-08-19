@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FaDiscord, FaYoutube } from 'react-icons/fa';
 import { FaTiktok } from 'react-icons/fa6';
-import styles from './HelldiversPage.module.css';
+import styles from './HelldiversBase.module.css';
 
 // const YoutubeCarousel = dynamic(() => import('@/app/(main)/helldivers-2/YoutubeCarousel'));
 const ReviewsRotator = dynamic(

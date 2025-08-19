@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import useSWR from 'swr';
-import styles from './HelldiversPage.module.css';
+import styles from './HelldiversBase.module.css';
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 

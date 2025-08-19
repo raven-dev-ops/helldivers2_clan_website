@@ -5,8 +5,10 @@ import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
 
-// --- Import CSS Module ---
-import styles from '../HelldiversPage.module.css'; // Assuming styles are shared or copied
+// --- Import CSS Modules ---
+import base from '../HelldiversBase.module.css';
+import exp from '../components/Expanders.module.css';
+import code from '@/app/components/CodeBlocks.module.css';
 
 // --- John Helldiver Challenge Data ---
 interface ChallengeLevelData {
@@ -94,30 +96,29 @@ export default function HelldiverChallengesPage() {
   };
 
   return (
-    // Apply styles from the imported module
-    <div className={styles.pageContainer}>
+    <div className={base.pageContainer}>
       {/* === John Helldiver Missions === */}
-      <section className={styles.section} id="john-helldiver-missions">
-        <h2 className={styles.sectionTitle}>GPT Challenge Missions</h2>
-        <div className={styles.subsectionCard}>
-          <h3 className={styles.subHeading}>Rules & Requirements</h3>
-          <ul className={`${styles.styledList} ${styles.decimal}`}>
-            <li className={styles.listItem}>
+      <section className={base.section} id="john-helldiver-missions">
+        <h2 className={base.sectionTitle}>GPT Challenge Missions</h2>
+        <div className={base.subsectionCard}>
+          <h3 className={base.subHeading}>Rules & Requirements</h3>
+          <ul className={`${base.styledList} ${base.decimal}`}>
+            <li className={base.listItem}>
               If it's on the map, it's in play unless the specific challenge
               level states otherwise.
             </li>
-            <li className={styles.listItem}>
+            <li className={base.listItem}>
               Video submissions must be one continuous, unedited recording. No
               cuts, splits, or speed-ups.
             </li>
-            <li className={styles.listItem}>
+            <li className={base.listItem}>
               Mission privacy must be set to Invite Only.
             </li>
           </ul>
         </div>
 
-        <div className={styles.subsectionCard}>
-          <h3 className={styles.subHeading}>
+        <div className={base.subsectionCard}>
+          <h3 className={base.subHeading}>
             100% Complete To Unlock Role: John Helldiver
           </h3>
           {johnHelldiverLevels.map((challenge) => {
@@ -125,12 +126,12 @@ export default function HelldiverChallengesPage() {
             return (
               <div
                 key={challenge.id}
-                className={styles.challengeLevelContainer}
+                className={exp.challengeLevelContainer}
                 id={challenge.id}
                 style={{ scrollMarginTop: 96 }}
               >
                 <div
-                  className={`${styles.challengeHeader} ${!isExpanded ? styles.noBorderBottom : ''}`}
+                  className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
                   onClick={() => toggleExpansion(challenge.id)}
                   role="button"
                   aria-expanded={isExpanded}
@@ -141,19 +142,19 @@ export default function HelldiverChallengesPage() {
                     toggleExpansion(challenge.id)
                   }
                 >
-                  <h4 className={styles.challengeLevelTitle}>
+                  <h4 className={base.subHeading}>
                     {challenge.levelTitle}
                   </h4>
                   <FaChevronDown
-                    className={`${styles.expandIcon} ${isExpanded ? styles.rotated : ''}`}
+                    className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
                     aria-hidden="true"
                   />
                 </div>
                 <div
                   id={`challenge-content-${challenge.id}`}
-                  className={`${styles.challengeDetailsContent} ${isExpanded ? styles.expanded : ''}`}
+                  className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
                 >
-                  <pre className={styles.codeBlock}>{challenge.details}</pre>
+                  <pre className={code.codeBlock}>{challenge.details}</pre>
                 </div>
               </div>
             );

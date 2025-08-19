@@ -1,14 +1,14 @@
 // src/app/(main)/helldivers-2/academy/page.tsx
 'use client';
 
-import styles from '../HelldiversPage.module.css';
+import base from '../HelldiversBase.module.css';
 
 export default function AcademyPage() {
   return (
-    <div className={styles.pageContainer}>
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Academy</h2>
-        <p className={styles.paragraph}>
+    <div className={base.pageContainer}>
+      <section className={base.section}>
+        <h2 className={base.sectionTitle}>Academy</h2>
+        <p className={base.paragraph}>
           Welcome to the GPT Academy. Select a training module from the
           navigation.
         </p>
