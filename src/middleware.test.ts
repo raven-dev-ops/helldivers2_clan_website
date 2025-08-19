@@ -21,13 +21,29 @@ describe('rate limiting middleware', () => {
     expect(res.status).toBe(429);
   });
 
-  it('tracks limits per endpoint', async () => {
+  it('tracks limits per endpoint and scope', async () => {
     for (let i = 0; i < 10; i++) {
       expect((await middleware(createRequest('/api/first'))).status).toBe(200);
       expect((await middleware(createRequest('/api/second'))).status).toBe(200);
     }
     expect((await middleware(createRequest('/api/first'))).status).toBe(429);
     expect((await middleware(createRequest('/api/second'))).status).toBe(429);
+    // Different scopes should not share buckets
+    __rateLimitStore.clear();
+    for (let i = 0; i < 10; i++) {
+      expect(
+        (await middleware(createRequest('/api/first?scope=one'))).status
+      ).toBe(200);
+      expect(
+        (await middleware(createRequest('/api/first?scope=two'))).status
+      ).toBe(200);
+    }
+    expect((await middleware(createRequest('/api/first?scope=one'))).status).toBe(
+      429
+    );
+    expect((await middleware(createRequest('/api/first?scope=two'))).status).toBe(
+      429
+    );
   });
 
   it('skips /api/auth routes', async () => {

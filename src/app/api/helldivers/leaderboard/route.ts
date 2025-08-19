@@ -50,7 +50,11 @@ export async function GET(req: NextRequest) {
       month,
       year,
     });
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: {
+        'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+      },
+    });
   } catch (error: any) {
     logger.error('Error fetching helldivers leaderboard:', error);
     return NextResponse.json(

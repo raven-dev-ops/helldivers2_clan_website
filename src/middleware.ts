@@ -30,20 +30,29 @@ export default async function middleware(req: NextRequest) {
     }
     const ip =
       req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? '127.0.0.1';
-    const key = `${ip}:${req.nextUrl.pathname}`;
+    const scope = req.nextUrl.searchParams.get('scope') || '';
+    const key = `${ip}:${req.nextUrl.pathname}:${scope}`;
+
+    const isLeaderboard = req.nextUrl.pathname.startsWith(
+      '/api/helldivers/leaderboard'
+    );
+    const windowMs = isLeaderboard ? 10_000 : RATE_LIMIT_WINDOW;
+    const limit = isLeaderboard ? 8 : RATE_LIMIT_MAX;
+
     const now = Date.now();
     const entry = requests.get(key) || { count: 0, start: now };
-    if (now - entry.start > RATE_LIMIT_WINDOW) {
+    if (now - entry.start > windowMs) {
       entry.count = 0;
       entry.start = now;
     }
     entry.count++;
     requests.set(key, entry);
-    if (entry.count > RATE_LIMIT_MAX) {
+    if (entry.count > limit) {
       console.warn(`Rate limit exceeded for ${ip} on ${req.nextUrl.pathname}`);
+      const retryAfter = Math.ceil((entry.start + windowMs - now) / 1000);
       return NextResponse.json(
         { message: 'Too many requests' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': String(retryAfter) } }
       );
     }
     return NextResponse.next();

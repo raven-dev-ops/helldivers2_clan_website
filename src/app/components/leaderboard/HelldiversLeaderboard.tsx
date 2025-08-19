@@ -1,7 +1,8 @@
 // src/app/components/leaderboard/HelldiversLeaderboard.tsx
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import useSWR from 'swr';
 
 type SortField =
   | 'Kills'
@@ -322,301 +323,61 @@ function LeaderboardTableSection({
   );
 }
 
-export default function HelldiversLeaderboard({
-  initialMonthData,
-  initialYearlyData,
-  initialWeekData,
-  initialDayData,
-}: {
-  initialMonthData?: {
-    sortBy: SortField;
-    sortDir: SortDir;
-    limit: number;
-    results: LeaderboardRow[];
+export default function HelldiversLeaderboard() {
+  const fetcher = async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err: any = new Error('Failed to fetch');
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
   };
-  initialYearlyData?: {
-    sortBy: SortField;
-    sortDir: SortDir;
-    limit: number;
-    results: LeaderboardRow[];
-  };
-  initialWeekData?: {
-    sortBy: SortField;
-    sortDir: SortDir;
-    limit: number;
-    results: LeaderboardRow[];
-  };
-  initialDayData?: {
-    sortBy: SortField;
-    sortDir: SortDir;
-    limit: number;
-    results: LeaderboardRow[];
-  };
-}) {
-  const [monthData, setMonthData] = useState<LeaderboardRow[]>(
-    initialMonthData?.results || []
-  );
-  const [yearlyData, setYearlyData] = useState<LeaderboardRow[]>(
-    initialYearlyData?.results || []
-  );
-  const [weekData, setWeekData] = useState<LeaderboardRow[]>(
-    initialWeekData?.results || []
-  );
-  const [dayData, setDayData] = useState<LeaderboardRow[]>(
-    initialDayData?.results || []
+
+  const [sortBy, setSortBy] = useState<SortField>('Kills');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
+
+  const { data, error, isLoading } = useSWR(
+    `/api/helldivers/leaderboard/overview?sortBy=${sortBy}&sortDir=${sortDir}&limit=100`,
+    fetcher,
+    { refreshInterval: 60_000, revalidateOnFocus: false }
   );
 
-  const [monthLoading, setMonthLoading] = useState<boolean>(!initialMonthData);
-  const [yearlyLoading, setYearlyLoading] =
-    useState<boolean>(!initialYearlyData);
-  const [weekLoading, setWeekLoading] = useState<boolean>(!initialWeekData);
-  const [dayLoading, setDayLoading] = useState<boolean>(!initialDayData);
+  const monthData = data?.month?.results || [];
+  const weekData = data?.week?.results || [];
+  const dayData = data?.day?.results || [];
+  const yearlyData = data?.lifetime?.results || [];
 
-  const [monthError, setMonthError] = useState<string | null>(null);
-  const [yearlyError, setYearlyError] = useState<string | null>(null);
-  const [weekError, setWeekError] = useState<string | null>(null);
-  const [dayError, setDayError] = useState<string | null>(null);
-
-  const [monthSortBy, setMonthSortBy] = useState<SortField>(
-    initialMonthData?.sortBy || 'Kills'
-  );
-  const [monthSortDir, setMonthSortDir] = useState<SortDir>(
-    initialMonthData?.sortDir || 'desc'
-  );
-  const [yearlySortBy, setYearlySortBy] = useState<SortField>(
-    initialYearlyData?.sortBy || 'Kills'
-  );
-  const [yearlySortDir, setYearlySortDir] = useState<SortDir>(
-    initialYearlyData?.sortDir || 'desc'
-  );
-  const [weekSortBy, setWeekSortBy] = useState<SortField>(
-    initialWeekData?.sortBy || 'Kills'
-  );
-  const [weekSortDir, setWeekSortDir] = useState<SortDir>(
-    initialWeekData?.sortDir || 'desc'
-  );
-  const [daySortBy, setDaySortBy] = useState<SortField>(
-    initialDayData?.sortBy || 'Kills'
-  );
-  const [daySortDir, setDaySortDir] = useState<SortDir>(
-    initialDayData?.sortDir || 'desc'
-  );
+  const monthError = data?.month?.error ? `Request failed: ${data.month.error}` : null;
+  const weekError = data?.week?.error ? `Request failed: ${data.week.error}` : null;
+  const dayError = data?.day?.error ? `Request failed: ${data.day.error}` : null;
+  const yearlyError = data?.lifetime?.error ? `Request failed: ${data.lifetime.error}` : null;
 
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [yearlyTotalsSearch, setYearlyTotalsSearch] = useState<string>('');
   const [weekSearch, setWeekSearch] = useState<string>('');
   const [daySearch, setDaySearch] = useState<string>('');
 
-  const toggleMonthSort = (field: SortField) => {
-    if (field === monthSortBy) {
-      setMonthSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+  const toggleSort = (field: SortField) => {
+    if (field === sortBy) {
+      setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
-      setMonthSortBy(field);
-      setMonthSortDir(
-        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
-      );
+      setSortBy(field);
+      setSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
     }
   };
 
-  const toggleYearlySort = (field: SortField) => {
-    if (field === yearlySortBy) {
-      setYearlySortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setYearlySortBy(field);
-      setYearlySortDir(
-        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
-      );
-    }
-  };
+  const activeSort = { sortBy, sortDir };
 
-  const toggleWeekSort = (field: SortField) => {
-    if (field === weekSortBy) {
-      setWeekSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setWeekSortBy(field);
-      setWeekSortDir(
-        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
-      );
-    }
-  };
-
-  const toggleDaySort = (field: SortField) => {
-    if (field === daySortBy) {
-      setDaySortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setDaySortBy(field);
-      setDaySortDir(
-        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
-      );
-    }
-  };
-
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchMonth() {
-      setMonthLoading(true);
-      setMonthError(null);
-      try {
-        const now = new Date();
-        const params = new URLSearchParams({
-          sortBy: monthSortBy,
-          sortDir: monthSortDir,
-          limit: '100',
-          scope: 'month',
-          month: String(now.getUTCMonth() + 1),
-          year: String(now.getUTCFullYear()),
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const payload = await res.json();
-        if (!isCancelled) setMonthData(payload.results || []);
-      } catch (e: any) {
-        if (!isCancelled)
-          setMonthError(e?.message || 'Failed to load leaderboard');
-      } finally {
-        if (!isCancelled) setMonthLoading(false);
-      }
-    }
-    fetchMonth();
-    return () => {
-      isCancelled = true;
-    };
-  }, [monthSortBy, monthSortDir]);
-
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchWeek() {
-      setWeekLoading(true);
-      setWeekError(null);
-      try {
-        const params = new URLSearchParams({
-          sortBy: weekSortBy,
-          sortDir: weekSortDir,
-          limit: '100',
-          scope: 'week',
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const payload = await res.json();
-        if (!isCancelled) setWeekData(payload.results || []);
-      } catch (e: any) {
-        if (!isCancelled)
-          setWeekError(e?.message || 'Failed to load leaderboard');
-      } finally {
-        if (!isCancelled) setWeekLoading(false);
-      }
-    }
-    fetchWeek();
-    return () => {
-      isCancelled = true;
-    };
-  }, [weekSortBy, weekSortDir]);
-
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchDay() {
-      setDayLoading(true);
-      setDayError(null);
-      try {
-        const params = new URLSearchParams({
-          sortBy: daySortBy,
-          sortDir: daySortDir,
-          limit: '100',
-          scope: 'day',
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const payload = await res.json();
-        if (!isCancelled) setDayData(payload.results || []);
-      } catch (e: any) {
-        if (!isCancelled)
-          setDayError(e?.message || 'Failed to load leaderboard');
-      } finally {
-        if (!isCancelled) setDayLoading(false);
-      }
-    }
-    fetchDay();
-    return () => {
-      isCancelled = true;
-    };
-  }, [daySortBy, daySortDir]);
-
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchYearly() {
-      setYearlyLoading(true);
-      setYearlyError(null);
-      try {
-        const params = new URLSearchParams({
-          sortBy: yearlySortBy,
-          sortDir: yearlySortDir,
-          limit: '1000',
-          scope: 'lifetime',
-          year: '2025',
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        const payload = await res.json();
-        if (!isCancelled) setYearlyData(payload.results || []);
-      } catch (e: any) {
-        if (!isCancelled)
-          setYearlyError(e?.message || 'Failed to load leaderboard');
-      } finally {
-        if (!isCancelled) setYearlyLoading(false);
-      }
-    }
-    fetchYearly();
-    return () => {
-      isCancelled = true;
-    };
-  }, [yearlySortBy, yearlySortDir]);
-
-  const monthActiveSort = useMemo(
-    () => ({ sortBy: monthSortBy, sortDir: monthSortDir }),
-    [monthSortBy, monthSortDir]
-  );
-  const yearActiveSort = useMemo(
-    () => ({ sortBy: yearlySortBy, sortDir: yearlySortDir }),
-    [yearlySortBy, yearlySortDir]
-  );
-  const weekActiveSort = useMemo(
-    () => ({ sortBy: weekSortBy, sortDir: weekSortDir }),
-    [weekSortBy, weekSortDir]
-  );
-  const dayActiveSort = useMemo(
-    () => ({ sortBy: daySortBy, sortDir: daySortDir }),
-    [daySortBy, daySortDir]
-  );
-
-  const [activeTab, setActiveTab] = useState<
-    'daily' | 'weekly' | 'monthly' | 'yearly'
-  >('daily');
+  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily');
 
   useEffect(() => {
     const setTabFromHash = () => {
       const hash = window.location.hash.replace('#', '');
-      if (
-        hash === 'daily' ||
-        hash === 'weekly' ||
-        hash === 'monthly' ||
-        hash === 'yearly'
-      ) {
+      if (hash === 'daily' || hash === 'weekly' || hash === 'monthly' || hash === 'yearly') {
         setActiveTab(hash as typeof activeTab);
       }
     };
-
     setTabFromHash();
     window.addEventListener('hashchange', setTabFromHash);
     return () => window.removeEventListener('hashchange', setTabFromHash);
@@ -624,18 +385,16 @@ export default function HelldiversLeaderboard({
   useEffect(() => {
     window.location.hash = activeTab;
   }, [activeTab]);
+
   const now = new Date();
   const yearlyTitle = 'Yearly Leaderboard - 2025';
-  const monthTitle = `Monthly Leaderboard - ${now.toLocaleString('default', {
-    month: 'long',
-  })} ${now.getUTCFullYear()}`;
-  const dayTitle = `Daily Leaderboard - ${now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })}`;
+  const monthTitle = `Monthly Leaderboard - ${now.toLocaleString('default', { month: 'long' })} ${now.getUTCFullYear()}`;
+  const dayTitle = `Daily Leaderboard - ${now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`;
   const weekTitle = `Weekly Leaderboard - Week ${getWeekNumber(now)} of ${now.getUTCFullYear()}`;
+
+  if ((error as any)?.status === 429) {
+    return <div className="muted">Rate limited—retrying shortly…</div>;
+  }
 
   return (
     <div>
@@ -674,10 +433,10 @@ export default function HelldiversLeaderboard({
         <LeaderboardTableSection
           title={dayTitle}
           rows={dayData}
-          loading={dayLoading}
+          loading={isLoading}
           error={dayError}
-          activeSort={dayActiveSort}
-          onSort={toggleDaySort}
+          activeSort={activeSort}
+          onSort={toggleSort}
           showAverages={false}
           showTotals={true}
           searchTerm={daySearch}
@@ -690,10 +449,10 @@ export default function HelldiversLeaderboard({
         <LeaderboardTableSection
           title={weekTitle}
           rows={weekData}
-          loading={weekLoading}
+          loading={isLoading}
           error={weekError}
-          activeSort={weekActiveSort}
-          onSort={toggleWeekSort}
+          activeSort={activeSort}
+          onSort={toggleSort}
           showAverages={false}
           showTotals={true}
           searchTerm={weekSearch}
@@ -706,10 +465,10 @@ export default function HelldiversLeaderboard({
         <LeaderboardTableSection
           title={monthTitle}
           rows={monthData}
-          loading={monthLoading}
+          loading={isLoading}
           error={monthError}
-          activeSort={monthActiveSort}
-          onSort={toggleMonthSort}
+          activeSort={activeSort}
+          onSort={toggleSort}
           showAverages={false}
           showTotals={true}
           searchTerm={monthSearch}
@@ -722,10 +481,10 @@ export default function HelldiversLeaderboard({
         <LeaderboardTableSection
           title={yearlyTitle}
           rows={yearlyData}
-          loading={yearlyLoading}
+          loading={isLoading}
           error={yearlyError}
-          activeSort={yearActiveSort}
-          onSort={toggleYearlySort}
+          activeSort={activeSort}
+          onSort={toggleSort}
           showAverages={false}
           showTotals={true}
           searchTerm={yearlyTotalsSearch}
