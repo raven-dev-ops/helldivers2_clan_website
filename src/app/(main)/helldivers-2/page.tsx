@@ -9,8 +9,8 @@ import reviews from './reviews';
 
 // const YoutubeCarousel = dynamic(() => import('@/app/(main)/helldivers-2/YoutubeCarousel'));
 const ReviewsRotator = dynamic(
-  () => import('@/app/(main)/helldivers-2/ReviewsRotator'),
-  { ssr: false }
+  () => import('@/app/(main)/helldivers-2/ReviewsRotator')
+  // Note: do NOT pass { ssr: false } here — it's not allowed in Server Components.
 );
 
 export default function HelldiversPage() {
