@@ -1,0 +1,58 @@
+.overlay {
+    position: fixed; inset: 0; z-index: 50;
+    background: rgba(0,0,0,.6);
+    display: flex; align-items: center; justify-content: center;
+  }
+  
+  .modal {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    width: min(92vw, 720px);
+    max-height: 90vh; overflow-y: auto;
+    border-radius: 12px; padding: 1rem 1.5rem; position: relative;
+    display: flex; flex-direction: column; gap: .75rem;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 10px 32px rgba(0,0,0,.45);
+  }
+  
+  .closeButton {
+    position: absolute; top: .5rem; right: .5rem;
+    background: transparent; border: none; font-size: 1.25rem; cursor: pointer;
+    color: var(--color-text-primary);
+  }
+  
+  .question { margin-bottom: .5rem; }
+  
+  .optionLabel {
+    display: block; margin-bottom: .5rem;
+    color: var(--color-text-primary);
+    padding: .15rem .25rem;
+    border-radius: .375rem;
+    transition: background-color .15s ease;
+  }
+  .optionLabel:hover { background-color: rgba(255,255,255,.04); }
+  .optionLabel input[type="radio"] { accent-color: var(--color-primary); }
+  
+  .correct { color: #16a34a; }
+  .incorrect { color: #dc2626; }
+  
+  .quizActions { margin-top: .75rem; display: flex; gap: .5rem; }
+  
+  .quizButton {
+    flex: 1 1 0;
+    padding: .6rem 1rem;
+    background: var(--color-primary);
+    color: #000;
+    border: 1px solid transparent;
+    border-radius: .5rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease;
+  }
+  .quizButton:hover { background: var(--color-primary-hover); transform: translateY(-1px); }
+  .quizButton:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(250,204,21,.25);
+  }
+  

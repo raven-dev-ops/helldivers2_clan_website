@@ -1,4 +1,4 @@
-import NewsTicker from '@/app/(main)/helldivers-2/NewsTicker';
+import NewsTicker from '@/app/(main)/helldivers-2/news/war-news/NewsTicker';
 
 export default function WarNewsPage() {
   return (

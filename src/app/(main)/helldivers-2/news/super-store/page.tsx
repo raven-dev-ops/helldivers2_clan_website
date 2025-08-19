@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 
 const SuperStore = dynamic(
-  () => import('@/app/(main)/helldivers-2/SuperStore')
+  () => import('@/app/(main)/helldivers-2/news/super-store/SuperStore')
 );
 
 export default function SuperStorePage() {

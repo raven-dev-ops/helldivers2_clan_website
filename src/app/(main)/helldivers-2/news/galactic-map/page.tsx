@@ -1,7 +1,7 @@
 // src/app/(main)/helldivers-2/news/galactic-map/page.tsx
 import dynamic from 'next/dynamic';
 
-const WarMap = dynamic(() => import('@/app/(main)/helldivers-2/WarMap'));
+const WarMap = dynamic(() => import('@/app/(main)/helldivers-2/news/galactic-map/WarMap'));
 
 export default function GalacticMapPage() {
   return (

@@ -1,116 +1,40 @@
-/* src/app/(main)/helldivers-2/training/TrainingPage.module.css */
+/* Cards grid */
+.quizGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 700px){ .quizGrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1040px){ .quizGrid { grid-template-columns: repeat(3, 1fr); } }
 
-/* --- Page Layout --- */
-.pageContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 3rem 1rem 4rem;
-    color: var(--color-text-primary);
-    background: transparent; /* allow video/bg to show through */
-    min-height: 100vh;
-  }
-  
-  .section {
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background-color: var(--color-surface);
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  }
-  
-  .sectionTitle {
-    font-size: clamp(1.5rem, 4vw, 1.8rem);
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--color-primary);
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 0.75rem;
-  }
-  
-  .paragraph {
-    color: var(--color-text-secondary);
-    margin-bottom: 1.25rem;
-    line-height: 1.7;
-    font-size: 0.95rem;
-  }
-  @media (min-width: 768px) {
-    .paragraph { font-size: 1rem; }
-  }
-  
-  /* --- Subheading --- */
-  .subheading {
-    margin: 1.25rem 0 0.75rem;
-    font-size: clamp(1rem, 1.4vw, 1.125rem);
-    font-weight: 600;
-    color: var(--color-text-primary);
-  }
-  
-  /* --- Quiz Grid & Cards --- */
-  .quizGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
-    align-items: stretch;
-    margin-bottom: 1.5rem;
-  }
-  
-  .quizCard {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    background-color: var(--color-surface);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-    min-height: 180px;
-  }
-  
-  /* --- Actions (anchor buttons to bottom) --- */
-  .quizActions {
-    margin-top: auto;
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .quizButton {
-    flex: 1 1 0;
-    padding: 0.6rem 1rem;
-    background: var(--color-primary);
-    color: #000;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-weight: 600;
-    text-align: center;
-    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
-  }
-  
-  .quizButton:hover {
-    background: var(--color-primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  }
-  
-  .quizButton:active {
-    transform: translateY(0);
-    box-shadow: none;
-  }
-  
-  @media (max-width: 480px) {
-    .quizActions { flex-direction: column; }
-  }
-  
-  /* Optional utility: place any direct button inside card at the bottom */
-  .quizCard :where(button) {
-    width: 100%;
-  }
-  
-  .quizDescription {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-    margin: -0.25rem 0 0.75rem;
-    line-height: 1.4;
-  }
-  
+.quizCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: .5rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+}
+.quizCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  border-color: var(--color-border-alt);
+}
+
+.quizDescription {
+  color: var(--color-text-secondary);
+  margin: .5rem 0 .75rem;
+  line-height: 1.6;
+}
+
+.quizActions {
+  display: flex;
+  gap: .5rem;
+}
+
+/* The button here is just the launcher label area below a card heading.
+   The actual modal uses Quiz.module.css */
+.cardLaunchNote {
+  font-size: .85rem;
+  color: var(--color-text-muted);
+}

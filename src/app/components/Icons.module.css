@@ -1,0 +1,30 @@
+/* Discord & Social icon links */
+.discordIconLink,
+.socialIconLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.75rem;
+  vertical-align: middle;
+  color: var(--color-primary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.discordIconLink:hover,
+.socialIconLink:hover {
+  color: var(--color-primary-light);
+  transform: scale(1.1);
+}
+
+.discordIcon,
+.socialIcon {
+  width: 1em;
+  height: 1em;
+}
+
+.socialIconsGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 0.75rem;
+}
