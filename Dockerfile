@@ -4,6 +4,10 @@ FROM node:22.12.0-alpine
 # Set working directory
 WORKDIR /app
 
+# Set production environment and silence Node deprecation warnings
+ENV NODE_ENV=production
+ENV NODE_OPTIONS=--no-deprecation
+
 # Install dependencies with clean cache
 COPY package*.json ./
 RUN npm ci
