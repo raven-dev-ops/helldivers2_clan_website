@@ -2,7 +2,7 @@
 
 import useSWR from 'swr';
 import Link from 'next/link';
-import styles from './HelldiversBase.module.css';
+import styles from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
 
 const fetcher = (url: string) =>
   fetch(url, { headers: { Accept: 'application/json' } }).then((r) => r.json());
