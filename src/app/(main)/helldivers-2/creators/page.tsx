@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaTwitch, FaCircle } from 'react-icons/fa';
+import { FaTwitch, FaCircle, FaYoutube } from 'react-icons/fa';
 import styles from './CreatorsPage.module.css'; // Import the CSS Module
 import { logger } from '@/lib/logger';
 import base from '../HelldiversBase.module.css';
@@ -434,22 +434,44 @@ export default function CreatorsPage() {
         <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>
           YouTube
         </h2>
-        <p className={styles.pageSubtitle}>Coming soon.</p>
         <div className={styles.creatorsGrid}>
-          <div className={styles.creatorCard} style={{ opacity: 0.6 }}>
-            <div className={styles.embedWrapper} />
+          <div className={styles.creatorCard}>
+            <div className={styles.embedWrapper}>
+              <Image
+                src="/images/game-placeholder.png"
+                alt="GPT Fleet YouTube channel"
+                width={640}
+                height={360}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
             <div className={styles.infoSection}>
               <div className={styles.headerSection}>
-                <div className={styles.profileImagePlaceholder} />
+                <div className={styles.profileImagePlaceholder}>
+                  <FaYoutube className={styles.placeholderIcon} />
+                </div>
                 <div className={styles.channelInfo}>
-                  <div className={styles.channelNameLink}>YouTube</div>
-                  <div className={styles.channelUrlLink}>
-                    Integration not available yet
-                  </div>
+                  <a
+                    href="https://www.youtube.com/@gptfleet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.channelNameLink}
+                    title="GPT Fleet"
+                  >
+                    GPT Fleet
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@gptfleet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.channelUrlLink}
+                  >
+                    youtube.com/@gptfleet
+                  </a>
                 </div>
               </div>
               <p className={styles.noDescriptionText}>
-                Platform integration is not available yet.
+                Official GPT Fleet YouTube channel.
               </p>
             </div>
           </div>
