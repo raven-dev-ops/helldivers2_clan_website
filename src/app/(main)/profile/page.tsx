@@ -91,6 +91,10 @@ export default function ProfilePage() {
     fetcher
   );
 
+  const [syncingRoles, setSyncingRoles] = useState(false);
+  const [syncRolesError, setSyncRolesError] = useState<string | null>(null);
+  const [syncRolesMessage, setSyncRolesMessage] = useState<string | null>(null);
+
   useEffect(() => {
     if (status === 'authenticated') {
       (async () => {
@@ -117,6 +121,34 @@ export default function ProfilePage() {
     }
     return count === 7;
   }, [userData]);
+
+  const handleSyncRoles = async () => {
+    setSyncRolesError(null);
+    setSyncRolesMessage(null);
+    setSyncingRoles(true);
+    try {
+      const res = await fetch('/api/discord/roles', { cache: 'no-store' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || 'Failed to fetch roles');
+      if (!data.isMember) {
+        throw new Error('Join the Discord server and link your account.');
+      }
+      const roles = Array.isArray(data.roles) ? data.roles : [];
+      await fetch('/api/users/me', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ discordRoles: roles }),
+      });
+      setUserData((prev: any) => ({ ...prev, discordRoles: roles }));
+      setSyncRolesMessage('Roles synced');
+    } catch (e) {
+      setSyncRolesError(
+        e instanceof Error ? e.message : 'Failed to sync roles'
+      );
+    } finally {
+      setSyncingRoles(false);
+    }
+  };
 
   const [infoTab, setInfoTab] = useState<
     'roles' | 'awards' | 'squad' | 'rankings' | 'activity' | 'linked' | 'merit'
@@ -519,12 +551,30 @@ export default function ProfilePage() {
         </div>
 
         {infoTab === 'roles' && (
-          <div>
+          <div className="roles">
+            <button
+              className="btn btn-primary"
+              onClick={handleSyncRoles}
+              disabled={syncingRoles}
+              style={{ marginBottom: 12 }}
+            >
+              {syncingRoles ? 'Syncing…' : 'Sync Discord Roles'}
+            </button>
+            {syncRolesError && (
+              <p className="text-paragraph" style={{ color: '#f87171' }}>
+                {syncRolesError}
+              </p>
+            )}
+            {syncRolesMessage && (
+              <p className="text-paragraph" style={{ color: '#4ade80' }}>
+                {syncRolesMessage}
+              </p>
+            )}
             {Array.isArray(userData?.discordRoles) &&
             userData.discordRoles.length > 0 ? (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              <div className="role-chips">
                 {userData.discordRoles.map((r: any) => (
-                  <span key={r.id} className="inline-code">
+                  <span key={r.id} className="chip">
                     {r.name}
                   </span>
                 ))}
