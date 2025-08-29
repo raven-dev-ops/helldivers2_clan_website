@@ -36,25 +36,13 @@ export default function StatsSubmitForm() {
         }
 
         const now = new Date();
-        const qsSolo = new URLSearchParams({
-          scope: 'solo',
-          sortBy: 'Kills',
-          sortDir: 'desc',
-          limit: '1000',
-        }).toString();
-        const qsMonth = new URLSearchParams({
-          scope: 'month',
+        const qsBatch = new URLSearchParams({
+          scopes: 'solo,month,lifetime',
           sortBy: 'Kills',
           sortDir: 'desc',
           limit: '1000',
           month: String(now.getUTCMonth() + 1),
           year: String(now.getUTCFullYear()),
-        }).toString();
-        const qsLifetime = new URLSearchParams({
-          scope: 'lifetime',
-          sortBy: 'Kills',
-          sortDir: 'desc',
-          limit: '1000',
         }).toString();
         const qsAvg = new URLSearchParams({
           scope: 'lifetime',
@@ -63,23 +51,15 @@ export default function StatsSubmitForm() {
           limit: '1000',
         }).toString();
 
-        const [soloRes, monthRes, lifetimeRes, avgRes] = await Promise.all([
-          fetch(`/api/helldivers/leaderboard?${qsSolo}`, { cache: 'no-store' }),
-          fetch(`/api/helldivers/leaderboard?${qsMonth}`, {
-            cache: 'no-store',
-          }),
-          fetch(`/api/helldivers/leaderboard?${qsLifetime}`, {
+        const [batchRes, avgRes] = await Promise.all([
+          fetch(`/api/helldivers/leaderboard/batch?${qsBatch}`, {
             cache: 'no-store',
           }),
           fetch(`/api/helldivers/leaderboard?${qsAvg}`, { cache: 'no-store' }),
         ]);
 
-        const [soloJson, monthJson, lifetimeJson, avgJson] = await Promise.all([
-          soloRes.ok ? soloRes.json() : Promise.resolve({ results: [] }),
-          monthRes.ok ? monthRes.json() : Promise.resolve({ results: [] }),
-          lifetimeRes.ok
-            ? lifetimeRes.json()
-            : Promise.resolve({ results: [] }),
+        const [batchJson, avgJson] = await Promise.all([
+          batchRes.ok ? batchRes.json() : Promise.resolve({}),
           avgRes.ok ? avgRes.json() : Promise.resolve({ results: [] }),
         ]);
 
@@ -91,9 +71,9 @@ export default function StatsSubmitForm() {
           return idx >= 0 ? rows[idx].rank || idx + 1 : null;
         };
 
-        setSoloRank(findRank(soloJson.results || [], name));
-        setMonthRank(findRank(monthJson.results || [], name));
-        setLifetimeRank(findRank(lifetimeJson.results || [], name));
+        setSoloRank(findRank(batchJson.solo?.results || [], name));
+        setMonthRank(findRank(batchJson.month?.results || [], name));
+        setLifetimeRank(findRank(batchJson.lifetime?.results || [], name));
         setAverageRank(findRank(avgJson.results || [], name));
       } catch (e: any) {
         if (!cancelled) setError(e?.message || 'Failed to load rankings');

@@ -58,38 +58,21 @@ export default function ProfilePage() {
   const fetcher = (url: string) =>
     fetch(url, { cache: 'no-store' }).then((r) => r.json());
   const now = new Date();
-  const qsSolo = new URLSearchParams({
-    scope: 'solo',
-    sortBy: 'Kills',
-    sortDir: 'desc',
-    limit: '1000',
-  }).toString();
-  const qsMonth = new URLSearchParams({
-    scope: 'month',
+  const qsBatch = new URLSearchParams({
+    scopes: 'solo,month,lifetime',
     sortBy: 'Kills',
     sortDir: 'desc',
     limit: '1000',
     month: String(now.getUTCMonth() + 1),
     year: String(now.getUTCFullYear()),
   }).toString();
-  const qsLifetime = new URLSearchParams({
-    scope: 'lifetime',
-    sortBy: 'Kills',
-    sortDir: 'desc',
-    limit: '1000',
-  }).toString();
-  const { data: soloData } = useSWR(
-    `/api/helldivers/leaderboard?${qsSolo}`,
+  const { data: batchData } = useSWR(
+    `/api/helldivers/leaderboard/batch?${qsBatch}`,
     fetcher
   );
-  const { data: monthData } = useSWR(
-    `/api/helldivers/leaderboard?${qsMonth}`,
-    fetcher
-  );
-  const { data: lifetimeData } = useSWR(
-    `/api/helldivers/leaderboard?${qsLifetime}`,
-    fetcher
-  );
+  const soloData = batchData?.solo;
+  const monthData = batchData?.month;
+  const lifetimeData = batchData?.lifetime;
 
   const [syncingRoles, setSyncingRoles] = useState(false);
   const [syncRolesError, setSyncRolesError] = useState<string | null>(null);
