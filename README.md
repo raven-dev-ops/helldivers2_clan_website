@@ -62,6 +62,16 @@ RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX=10
 ```
 
+### Discord OAuth Scopes
+
+When configuring your Discord application, ensure the OAuth scopes include:
+
+- `identify`
+- `guilds`
+- `guilds.members.read`
+
+These scopes are required for Discord authentication and guild access.
+
 ### Local Development
 
 After installing dependencies and setting environment variables, start the development server:

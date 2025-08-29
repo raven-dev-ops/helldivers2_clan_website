@@ -12,6 +12,8 @@ declare module 'next-auth/jwt' {
     id: string;
     /** The provider used for the current session */
     provider?: string;
+    /** OAuth access token */
+    accessToken?: string;
     /** Example: The user's role */
     // role?: string;
   }
@@ -33,6 +35,8 @@ declare module 'next-auth' {
       /** Example: The user's role */
       // role?: string;
     } & DefaultSession['user']; // Merge with default fields (name, email, image)
+    /** OAuth access token */
+    accessToken?: string;
   }
 
   /**

@@ -12,6 +12,9 @@ export function getAuthOptions(): NextAuthOptions {
       DiscordProvider({
         clientId: process.env.DISCORD_CLIENT_ID!,
         clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+        authorization: {
+          params: { scope: 'identify guilds guilds.members.read' },
+        },
       }),
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -20,12 +23,15 @@ export function getAuthOptions(): NextAuthOptions {
     ],
     session: { strategy: 'jwt' },
     callbacks: {
-      async jwt({ token, user }) {
+      async jwt({ token, user, account }) {
         if (user?.id) token.id = user.id;
+        if (account?.access_token) token.accessToken = account.access_token;
         return token;
       },
       async session({ session, token }) {
         if (session.user && token.id) session.user.id = token.id as string;
+        if (token.accessToken)
+          session.accessToken = token.accessToken as string;
         return session;
       },
     },
