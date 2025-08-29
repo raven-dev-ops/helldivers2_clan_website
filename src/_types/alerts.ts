@@ -3,7 +3,8 @@ export type AlertType =
   | 'twitch_live'
   | 'youtube_live'
   | 'mission_submitted'
-  | 'major_order';
+  | 'major_order'
+  | 'leaderboard_update';
 export interface Alert {
   id: string;
   type: AlertType;
