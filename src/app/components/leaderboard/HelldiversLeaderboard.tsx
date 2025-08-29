@@ -383,7 +383,10 @@ export default function HelldiversLeaderboard() {
     return () => window.removeEventListener('hashchange', setTabFromHash);
   }, []);
   useEffect(() => {
-    window.location.hash = activeTab;
+    const hash = `#${activeTab}`;
+    if (window.location.hash !== hash) {
+      window.history.replaceState(null, '', hash);
+    }
   }, [activeTab]);
 
   const now = new Date();
