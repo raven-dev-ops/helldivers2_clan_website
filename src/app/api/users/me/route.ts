@@ -21,8 +21,8 @@ export async function GET() {
   // Attempt to sync Discord roles into the user profile (non-fatal)
   try {
     const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-    const GUILD_ID = '1214787549655203862';
-    if (BOT_TOKEN) {
+    const GUILD_ID = process.env.DISCORD_GUILD_ID;
+    if (BOT_TOKEN && GUILD_ID) {
       const client = await getMongoClientPromise();
       const db = client.db();
       const account = await db.collection('accounts').findOne({

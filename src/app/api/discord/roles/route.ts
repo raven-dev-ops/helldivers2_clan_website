@@ -5,7 +5,7 @@ import { getAuthOptions } from '@/lib/authOptions';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
 
-const GUILD_ID = '1214787549655203862';
+const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -14,8 +14,8 @@ export async function GET() {
   }
 
   const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-  if (!BOT_TOKEN) {
-    // Gracefully degrade if bot token is not set
+  if (!BOT_TOKEN || !GUILD_ID) {
+    // Gracefully degrade if bot token or guild ID is not set
     return NextResponse.json({ roles: [], isMember: false });
   }
 
