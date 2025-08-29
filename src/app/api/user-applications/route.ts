@@ -7,6 +7,7 @@ import UserApplicationModel from '@/models/UserApplication';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
+import { postDiscordWebhook } from '@/lib/discordWebhook';
 
 const userApplicationSchema = z.object({
   type: z.string({ required_error: 'type is required' }),
@@ -61,10 +62,9 @@ export async function POST(request: Request) {
           ).toISOString()}`
         );
       try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: lines.join('\n') }),
+        logger.info('Sending application webhook');
+        await postDiscordWebhook(webhookUrl, {
+          content: lines.join('\n'),
         });
       } catch (err) {
         logger.error('Failed to send application webhook:', err);
