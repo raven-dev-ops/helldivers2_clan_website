@@ -7,6 +7,9 @@ vi.mock('@/lib/dbConnect', () => ({ default: vi.fn() }));
 vi.mock('@/lib/logger', () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }));
+vi.mock('@/lib/discordWebhook', () => ({
+  postDiscordWebhook: vi.fn(),
+}));
 vi.mock('@/models/UserApplication', () => {
   return {
     default: class {
@@ -25,7 +28,6 @@ const getServerSessionMock = getServerSession as unknown as ReturnType<
 describe('POST /api/user-applications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (global as any).fetch = vi.fn().mockResolvedValue({ ok: true });
     process.env.DISCORD_APPLICATION_WEBHOOK_URL = 'https://example.com/webhook';
   });
 
@@ -39,9 +41,10 @@ describe('POST /api/user-applications', () => {
     });
     const response = await POST(request);
     expect(response.status).toBe(201);
-    expect(global.fetch).toHaveBeenCalledWith(
+    const { postDiscordWebhook } = await import('@/lib/discordWebhook');
+    expect(postDiscordWebhook).toHaveBeenCalledWith(
       'https://example.com/webhook',
-      expect.objectContaining({ method: 'POST' })
+      expect.objectContaining({ content: expect.any(String) })
     );
   });
 
