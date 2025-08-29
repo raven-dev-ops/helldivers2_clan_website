@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FaTwitch, FaCircle } from 'react-icons/fa';
 import styles from './CreatorsPage.module.css'; // Import the CSS Module
 import { logger } from '@/lib/logger';
+import base from '../HelldiversBase.module.css';
 
 // Define the structure for creator data fetched from *your* API route
 interface CreatorData {
@@ -204,7 +205,7 @@ export default function CreatorsPage() {
 
   return (
     // Use the page container class from the module
-    <main className={styles.pageContainer}>
+    <main className={`${base.pageContainer} ${styles.pageContainer}`}>
       <div className={styles.titleCard}>
         <h1 className={styles.pageTitle}>GPT Streamers</h1>
         <p className={styles.pageSubtitle}>

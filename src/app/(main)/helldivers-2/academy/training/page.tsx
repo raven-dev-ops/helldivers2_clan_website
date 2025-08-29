@@ -87,10 +87,10 @@ export default function TrainingPage() {
   const hd1Quizzes = chunk(hd1Questions, 10);
 
   return (
-    <div className={styles.pageContainer}>
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>My Training</h2>
-        <p className={styles.paragraph}>
+    <div className={base.pageContainer}>
+      <section className={base.section}>
+        <h2 className={base.sectionTitle}>My Training</h2>
+        <p className={base.paragraph}>
           Brush up on your Helldivers knowledge and tactics. Choose a quiz to
           test your memory and sharpen your strategies.
         </p>
