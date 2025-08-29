@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import styles from './HelldiversBase.module.css';
+import styles from '@/app/components/Reviews.module.css';
 
 export interface Review {
   id: number | string;
