@@ -9,125 +9,117 @@ const chunk = (arr: Question[], size: number) =>
     arr.slice(i * size, i * size + size)
   );
 
-// Keyword buckets for auto-tagging
-const BUCKETS: { label: string; keys: RegExp[] }[] = [
+const hd2Meta = [
   {
-    label: 'Stratagems',
-    keys: [/stratagem/i, /orbital/i, /eagle/i, /resupply/i, /shield/i, /gatling/i, /rail/i, /emplacement/i, /jump\s?pack/i],
+    title: 'Set 1 — Weapons, Gear, Lore & Factions',
+    description:
+      '10 questions • Core kit basics, when to use what, who we’re fighting, and why it matters.',
   },
   {
-    label: 'Enemies',
-    keys: [/terminid/i, /automaton/i, /illuminat/i, /cyborg/i, /charger/i, /bile/i, /hulk/i, /devastator/i, /shriek/i, /stalker/i, /tunnel/i],
+    title: 'Set 2 — Stratagems & Enemies',
+    description:
+      '10 questions • Call-in timing, safe throws, and enemy behaviors you must recognize.',
   },
   {
-    label: 'Weapons & Gear',
-    keys: [/rifle/i, /weapon/i, /pistol/i, /liberator/i, /breaker/i, /sickle/i, /railgun/i, /machine\s?gun/i, /\bexo\b/i, /\bexo-?44/i],
+    title: 'Set 3 — Stratagems, Ship & Progression',
+    description:
+      '10 questions • Ship upgrades, unlock paths, and which stratagems to bring as you advance.',
   },
   {
-    label: 'Tactics & Missions',
-    keys: [/mission/i, /escort/i, /eradicate/i, /liberat/i, /defen[cs]e/i, /survival/i, /nest/i, /nuke|launch/i, /difficulty/i],
+    title: 'Set 4 — Stratagems, Weapons & Gear',
+    description:
+      '10 questions • Loadout building, synergizing stratagems with your weapons and armor.',
   },
   {
-    label: 'Ship & Progression',
-    keys: [/warbond/i, /research|module/i, /ship/i, /armory/i, /upgrade/i, /samples/i, /rank|promotion/i],
-  },
-  {
-    label: 'Worlds & Hazards',
-    keys: [/biome|hazard/i, /snow|mud|acid|volcanic/i, /planet|sector|meridia/i],
-  },
-  {
-    label: 'Lore & Factions',
-    keys: [/super\s?earth/i, /president/i, /managed\s+democracy/i, /slogan|salute/i],
+    title: 'Set 5 — Stratagems, Tactics & Missions',
+    description:
+      '10 questions • Objective flow, team roles, and practical callouts under pressure.',
   },
 ];
 
-function scoreBuckets(qs: Question[]) {
-  const scores = new Map<string, number>();
-  const textBlob = qs.map((q) => q.question).join(' \n ');
-
-  BUCKETS.forEach(({ label, keys }) => {
-    const score = keys.reduce((acc, rx) => acc + (textBlob.match(rx)?.length ?? 0), 0);
-    scores.set(label, score);
-  });
-
-  // Sort by descending score
-  return [...scores.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .filter(([, s]) => s > 0)
-    .map(([label]) => label);
-}
-
-function metaForChunk(qs: Question[], base: 'Helldivers 2' | 'Helldivers 1', setIndex: number) {
-  const tags = scoreBuckets(qs);
-  const top1 = tags[0];
-  const top2 = tags[1];
-
-  const title =
-    top1 && top2
-      ? `${base} — ${top1} & ${top2} (Set ${setIndex + 1})`
-      : top1
-      ? `${base} — ${top1} (Set ${setIndex + 1})`
-      : `${base} — Mixed Knowledge (Set ${setIndex + 1})`;
-
-  const descParts = [
-    top1 ? top1.toLowerCase() : 'core mechanics',
-    top2 ? top2.toLowerCase() : 'general knowledge',
-  ];
-
-  const description =
-    base === 'Helldivers 2'
-      ? `10 questions on ${descParts[0]} and ${descParts[1]} from Helldivers 2—covering current meta, mission flow, and practical combat calls.`
-      : `10 questions on ${descParts[0]} and ${descParts[1]} from the original Helldivers—historical tactics and classic enemy/faction knowledge.`;
-
-  return { title, description };
-}
+const hd1Meta = [
+  {
+    title: 'Set 1 — Enemies, Tactics & Missions',
+    description:
+      '10 questions • Classic foes and the fundamentals that still teach good habits.',
+  },
+  {
+    title: 'Set 2 — Stratagems, Weapons & Gear',
+    description:
+      '10 questions • Old-school combos and kit choices that shaped the series.',
+  },
+  {
+    title: 'Set 3 — Stratagems, Tactics & Missions',
+    description:
+      '10 questions • Mission pacing and squad coordination from the original playbook.',
+  },
+  {
+    title: 'Set 4 — Tactics, Missions & Stratagems',
+    description:
+      '10 questions • Applying the right tool at the right time, then extracting alive.',
+  },
+  {
+    title: 'Set 5 — Ship, Progression & Stratagems',
+    description:
+      '10 questions • Upgrade priorities and role specialization over a campaign.',
+  },
+];
 
 export default function TrainingPage() {
   const hd2Quizzes = chunk(hd2Questions, 10);
   const hd1Quizzes = chunk(hd1Questions, 10);
 
   return (
-    <div className={styles.pageContainer}>
-      <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>My Training</h2>
-        <p className={styles.paragraph}>
-          Brush up on your Helldivers knowledge and tactics. Choose a quiz to
-          test your memory and sharpen your strategies.
+    <div className={base.pageContainer}>
+      <section className={base.section}>
+        <h2 className={base.sectionTitle}>My Training</h2>
+        <p className={base.paragraph}>
+          Level up fast. Pick a quiz, answer 10 questions, and learn the essentials.
         </p>
 
-        {/* Helldivers 2 */}
-        <h3 className={styles.subheading}>Helldivers 2</h3>
+        <h3 className={base.subHeading}>How it works</h3>
+        <ol className={base.ruleList}>
+          <li className={base.ruleListItem}>Choose a set</li>
+          <li className={base.ruleListItem}>Answer 10 questions</li>
+          <li className={base.ruleListItem}>See your score + tips</li>
+        </ol>
+
+        <h3 className={base.subHeading}>Helldivers 2</h3>
         <div className={styles.quizGrid}>
           {hd2Quizzes.map((qs, i) => {
-            const { title, description } = metaForChunk(qs, 'Helldivers 2', i);
+            const meta = hd2Meta[i];
             return (
               <div className={styles.quizCard} key={`hd2-${i}`}>
-                <h4>{title}</h4>
-                <p className={styles.quizDescription}>{description}</p>
+                <h4>{meta.title}</h4>
+                <p className={styles.quizDescription}>{meta.description}</p>
                 <div className={styles.quizActions}>
-                  <Quiz title={title} questions={qs} />
+                  <Quiz title={meta.title} questions={qs} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <p className={base.paragraph}>New to Helldivers? Start here.</p>
+
+        <h3 className={base.subHeading}>Helldivers 1 (Historical)</h3>
+        <div className={styles.quizGrid}>
+          {hd1Quizzes.map((qs, i) => {
+            const meta = hd1Meta[i];
+            return (
+              <div className={styles.quizCard} key={`hd1-${i}`}>
+                <h4>{meta.title}</h4>
+                <p className={styles.quizDescription}>{meta.description}</p>
+                <div className={styles.quizActions}>
+                  <Quiz title={meta.title} questions={qs} />
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Helldivers 1 */}
-        <h3 className={styles.subheading}>Helldivers 1 (Historical)</h3>
-        <div className={styles.quizGrid}>
-          {hd1Quizzes.map((qs, i) => {
-            const { title, description } = metaForChunk(qs, 'Helldivers 1', i);
-            return (
-              <div className={styles.quizCard} key={`hd1-${i}`}>
-                <h4>{title}</h4>
-                <p className={styles.quizDescription}>{description}</p>
-                <div className={styles.quizActions}>
-                  <Quiz title={title} questions={qs} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <p className={base.paragraph}>
+          <span className={base.strongText}>Tip:</span> Don’t memorize—visualize. Think about when and why you’d use each tool, not just what it does.
+        </p>
       </section>
     </div>
   );
