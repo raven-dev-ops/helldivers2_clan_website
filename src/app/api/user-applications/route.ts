@@ -45,6 +45,34 @@ export async function POST(request: Request) {
         : undefined,
     });
     await app.save();
+
+    const webhookUrl = process.env.DISCORD_APPLICATION_WEBHOOK_URL;
+    if (webhookUrl) {
+      const lines = [
+        `New application from ${session.user?.name || 'unknown user'}`,
+        `Type: ${type}`,
+        `Interest: ${interest}`,
+      ];
+      if (about) lines.push(`About: ${about}`);
+      if (interviewAvailability)
+        lines.push(
+          `Interview Availability: ${new Date(
+            interviewAvailability
+          ).toISOString()}`
+        );
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: lines.join('\n') }),
+        });
+      } catch (err) {
+        logger.error('Failed to send application webhook:', err);
+      }
+    } else {
+      logger.warn('DISCORD_APPLICATION_WEBHOOK_URL not set');
+    }
+
     return NextResponse.json(
       { message: 'Application submitted successfully!' },
       { status: 201 }

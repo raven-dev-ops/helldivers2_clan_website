@@ -25,6 +25,8 @@ const getServerSessionMock = getServerSession as unknown as ReturnType<
 describe('POST /api/user-applications', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (global as any).fetch = vi.fn().mockResolvedValue({ ok: true });
+    process.env.DISCORD_APPLICATION_WEBHOOK_URL = 'https://example.com/webhook';
   });
 
   it('returns 201 on successful submission', async () => {
@@ -37,6 +39,10 @@ describe('POST /api/user-applications', () => {
     });
     const response = await POST(request);
     expect(response.status).toBe(201);
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://example.com/webhook',
+      expect.objectContaining({ method: 'POST' })
+    );
   });
 
   it('returns 400 on validation error', async () => {
