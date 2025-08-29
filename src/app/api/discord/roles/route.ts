@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
+import { fetchDiscordRoles } from '@/lib/discordRoles';
 
 const GUILD_ID = process.env.DISCORD_GUILD_ID;
 
@@ -33,47 +34,18 @@ export async function GET() {
 
   const discordUserId = account.providerAccountId as string;
 
-  // Fetch member
-  const memberRes = await fetch(
-    `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`,
-    {
-      headers: { Authorization: `Bot ${BOT_TOKEN}` },
-      cache: 'no-store',
-    }
-  );
-
-  if (memberRes.status === 404) {
-    return NextResponse.json({ roles: [], isMember: false });
-  }
-  if (!memberRes.ok) {
-    const text = await memberRes.text().catch(() => '');
+  try {
+    const { roles, isMember } = await fetchDiscordRoles(
+      discordUserId,
+      BOT_TOKEN,
+      GUILD_ID
+    );
+    return NextResponse.json({ roles, isMember });
+  } catch (err) {
+    const details = err instanceof Error ? err.message : '';
     return NextResponse.json(
-      { error: 'discord_error', details: text },
+      { error: 'discord_error', details },
       { status: 502 }
     );
   }
-  const member = await memberRes.json();
-  const roleIds: string[] = member.roles || [];
-
-  // Fetch guild roles to map names
-  const rolesRes = await fetch(
-    `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
-    {
-      headers: { Authorization: `Bot ${BOT_TOKEN}` },
-      cache: 'no-store',
-    }
-  );
-  if (!rolesRes.ok) {
-    return NextResponse.json({ roleIds, roles: [], isMember: true });
-  }
-  const guildRoles: Array<
-    { id: string; name: string } & Record<string, unknown>
-  > = await rolesRes.json();
-  const idToName = new Map(guildRoles.map((r) => [r.id, r.name] as const));
-  const roles = roleIds
-    .map((id) => ({ id, name: idToName.get(id) || id }))
-    // Optionally filter @everyone
-    .filter((r) => r.name !== '@everyone');
-
-  return NextResponse.json({ roles, isMember: true });
 }

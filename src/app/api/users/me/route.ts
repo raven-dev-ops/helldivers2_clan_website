@@ -7,6 +7,7 @@ import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
+import { fetchDiscordRoles } from '@/lib/discordRoles';
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -31,48 +32,27 @@ export async function GET() {
       });
       const discordUserId = account?.providerAccountId as string | undefined;
       if (discordUserId) {
-        const memberRes = await fetch(
-          `https://discord.com/api/v10/guilds/${GUILD_ID}/members/${discordUserId}`,
-          { headers: { Authorization: `Bot ${BOT_TOKEN}` }, cache: 'no-store' }
+        const { roles, isMember } = await fetchDiscordRoles(
+          discordUserId,
+          BOT_TOKEN,
+          GUILD_ID
         );
-        if (memberRes.ok) {
-          const member = await memberRes.json();
-          const roleIds: string[] = member.roles || [];
-
-          const rolesRes = await fetch(
-            `https://discord.com/api/v10/guilds/${GUILD_ID}/roles`,
-            {
-              headers: { Authorization: `Bot ${BOT_TOKEN}` },
-              cache: 'no-store',
-            }
-          );
-          if (rolesRes.ok) {
-            const guildRoles: Array<
-              { id: string; name: string } & Record<string, unknown>
-            > = await rolesRes.json();
-            const idToName = new Map(
-              guildRoles.map((r) => [r.id, r.name] as const)
+        if (isMember) {
+          // Persist if different from stored value
+          const existing = Array.isArray(user.discordRoles)
+            ? user.discordRoles
+            : [];
+          const sameLength = existing.length === roles.length;
+          const same =
+            sameLength &&
+            existing.every((e) =>
+              roles.some((r) => r.id === e.id && r.name === e.name)
             );
-            const roles = roleIds
-              .map((id) => ({ id, name: idToName.get(id) || id }))
-              .filter((r) => r.name !== '@everyone');
-
-            // Persist if different from stored value
-            const existing = Array.isArray(user.discordRoles)
-              ? user.discordRoles
-              : [];
-            const sameLength = existing.length === roles.length;
-            const same =
-              sameLength &&
-              existing.every((e) =>
-                roles.some((r) => r.id === e.id && r.name === e.name)
-              );
-            if (!same) {
-              await UserModel.updateOne(
-                { _id: session.user.id },
-                { $set: { discordRoles: roles } }
-              );
-            }
+          if (!same) {
+            await UserModel.updateOne(
+              { _id: session.user.id },
+              { $set: { discordRoles: roles } }
+            );
           }
         }
       }
