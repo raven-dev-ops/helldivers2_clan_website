@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
+import useCachedVideo from '@/hooks/useCachedVideo';
 
 import base from '../../helldivers-2/HelldiversBase.module.css';
 import s from '@/app/components/forum/ProfileForm.module.css'; // reuse Settings layout styles
@@ -32,6 +33,8 @@ const overlayStyle: CSSProperties = {
   backgroundColor: 'rgba(16, 20, 31, 0.35)',
   zIndex: -1,
 };
+
+const VIDEO_SRC = '/videos/gpd_background.mp4';
 
 // Persist the same background preference used on Settings:
 const STORAGE_KEY = 'gpd:bg:motion';
@@ -61,6 +64,7 @@ export default function ProfilePage() {
   const savedRankingOnce = useRef(false);
 
   const [bgEnabled, setBgEnabled] = useState(true);
+  const cachedVideo = useCachedVideo(VIDEO_SRC);
   useEffect(() => {
     const saved =
       typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
@@ -258,14 +262,16 @@ export default function ProfilePage() {
       {bgEnabled && (
         <>
           <video
+            src={cachedVideo}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             style={videoStyle}
             key="bg-video-profile"
           >
-            <source src="/videos/gpd_background.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
           <div style={overlayStyle} />
         </>

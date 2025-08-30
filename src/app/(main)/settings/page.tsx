@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import styles from '../helldivers-2/HelldiversBase.module.css';
 import ProfileEditForm from '@/app/components/forum/ProfileEditForm';
+import useCachedVideo from '@/hooks/useCachedVideo';
 
 const videoStyle: CSSProperties = {
   position: 'fixed',
@@ -21,10 +22,13 @@ const overlayStyle: CSSProperties = {
   zIndex: -1,
 };
 
+const VIDEO_SRC = '/videos/gpd_background.mp4';
+
 const STORAGE_KEY = 'gpd:bg:motion'; // 'on' or 'off'
 
 export default function SettingsPage() {
   const [bgEnabled, setBgEnabled] = useState(true);
+  const cachedVideo = useCachedVideo(VIDEO_SRC);
 
   // Initialize from localStorage or prefers-reduced-motion
   useEffect(() => {
@@ -67,14 +71,16 @@ export default function SettingsPage() {
       {bgEnabled && (
         <>
           <video
+            src={cachedVideo}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             style={videoStyle}
             key="bg-video-settings"
           >
-            <source src="/videos/gpd_background.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
           <div style={overlayStyle} />
         </>

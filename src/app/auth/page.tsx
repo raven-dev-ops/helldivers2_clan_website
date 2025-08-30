@@ -9,6 +9,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Auth.module.css';
 import { logger } from '@/lib/logger';
+import useCachedVideo from '@/hooks/useCachedVideo';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';
 
@@ -22,6 +23,7 @@ export default function AuthPage() {
   const [userInteracted, setUserInteracted] = useState(false);
   const [volume, setVolume] = useState(0.15);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const videoSrc = useCachedVideo('/videos/gpd_background.mp4');
 
   // --- Functions ---
   const handleInteraction = () => {
@@ -120,16 +122,17 @@ export default function AuthPage() {
         {/* Background Video */}
         <video
           ref={videoRef}
+          src={videoSrc}
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
           className={styles.videoBackground}
           key="bg-video"
           onCanPlay={() => logger.info('Video ready')}
           onError={(e) => logger.error('Video Error Event:', e)}
         >
-          <source src="/videos/gpd_background.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <div className={styles.overlay}></div>
