@@ -345,10 +345,12 @@ export default function ApplyPage() {
   ];
 
   return (
-    <div className={base.pageContainer}>
-      <section className={base.section}>
-        {/* --- INTRO (LEFT) + QUIZ (RIGHT) --- */}
-        <div className={styles.introAndQuizRow}>
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
+      <div className={base.pageContainer}>
+        <section className={base.section}>
+          {/* --- INTRO (LEFT) + QUIZ (RIGHT) --- */}
+          <div className={styles.introAndQuizRow}>
           {/* LEFT: Intro */}
           <div className={styles.introBlock}>
             <h2 className={base.sectionTitle}>Join Our Mod Team Today!</h2>
@@ -495,6 +497,7 @@ export default function ApplyPage() {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }
