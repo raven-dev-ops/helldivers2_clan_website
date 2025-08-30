@@ -41,6 +41,12 @@ export default async function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-9638852588228916" />
         <script src="https://accounts.google.com/gsi/client" async />
+        <link
+          rel="preload"
+          as="video"
+          href="/videos/gpd_background.mp4"
+          type="video/mp4"
+        />
         {/* Bootstrap final theme before hydration; sync cookie + localStorage */}
         <Script id="theme-script" strategy="beforeInteractive">
           {`(function(){
@@ -59,6 +65,24 @@ export default async function RootLayout({
         <GoogleAnalytics />
       </head>
       <body className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+        <video
+          src="/videos/gpd_background.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: -3,
+            filter: 'brightness(0.6)',
+          }}
+        />
         <StyledComponentsRegistry>
           <AuthProvider>{children}</AuthProvider>
         </StyledComponentsRegistry>

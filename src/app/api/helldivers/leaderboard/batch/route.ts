@@ -8,6 +8,47 @@ import {
 } from '@/lib/helldiversLeaderboard';
 import { logger } from '@/lib/logger';
 
+// --- Simple in-memory LRU cache -------------------------------------------
+interface CacheEntry {
+  data: any;
+  expiresAt: number;
+}
+
+const CACHE_TTL_MS = 60_000; // 1 minute
+const MAX_CACHE_ENTRIES = 100;
+
+function getCache(): Map<string, CacheEntry> {
+  const globalForCache = globalThis as unknown as {
+    __helldivers_batch_cache__?: Map<string, CacheEntry>;
+  };
+  if (!globalForCache.__helldivers_batch_cache__) {
+    globalForCache.__helldivers_batch_cache__ = new Map();
+  }
+  return globalForCache.__helldivers_batch_cache__;
+}
+
+function getFromCache(key: string) {
+  const cache = getCache();
+  const entry = cache.get(key);
+  if (entry && entry.expiresAt > Date.now()) {
+    // refresh recency
+    cache.delete(key);
+    cache.set(key, entry);
+    return entry.data;
+  }
+  if (entry) cache.delete(key);
+  return null;
+}
+
+function setCache(key: string, data: any) {
+  const cache = getCache();
+  if (cache.size >= MAX_CACHE_ENTRIES) {
+    const oldestKey = cache.keys().next().value as string | undefined;
+    if (oldestKey) cache.delete(oldestKey);
+  }
+  cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+}
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
@@ -40,22 +81,46 @@ export async function GET(req: NextRequest) {
     const month = monthParam ? parseInt(monthParam, 10) : undefined;
     const year = yearParam ? parseInt(yearParam, 10) : undefined;
 
-    const results = await Promise.all(
-      scopes.map((scope) =>
-        fetchHelldiversLeaderboard({
-          sortBy,
-          sortDir,
-          limit,
-          scope,
-          month,
-          year,
-        })
-      )
-    );
     const out: Record<string, any> = {};
-    scopes.forEach((s, i) => {
-      out[s] = results[i];
+    const fetches: { scope: LeaderboardScope; key: string }[] = [];
+
+    scopes.forEach((scope) => {
+      const key = JSON.stringify({
+        sortBy,
+        sortDir,
+        limit,
+        scope,
+        month,
+        year,
+      });
+      const cached = getFromCache(key);
+      if (cached) {
+        out[scope] = cached;
+      } else {
+        fetches.push({ scope, key });
+      }
     });
+
+    if (fetches.length > 0) {
+      const results = await Promise.all(
+        fetches.map(({ scope }) =>
+          fetchHelldiversLeaderboard({
+            sortBy,
+            sortDir,
+            limit,
+            scope,
+            month,
+            year,
+          })
+        )
+      );
+      results.forEach((res, i) => {
+        const { scope, key } = fetches[i];
+        out[scope] = res;
+        setCache(key, res);
+      });
+    }
+
     return NextResponse.json(out, {
       headers: {
         'Cache-Control':

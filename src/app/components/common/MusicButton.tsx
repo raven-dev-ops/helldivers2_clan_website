@@ -12,6 +12,7 @@ export default function MusicButton() {
 
   useEffect(() => {
     const audio = new Audio('/audio/superearth_anthem.mp3');
+    audio.preload = 'none';
     audio.loop = false;
     audio.volume = volume;
     audioRef.current = audio;
