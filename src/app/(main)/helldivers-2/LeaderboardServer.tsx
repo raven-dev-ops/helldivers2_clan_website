@@ -6,9 +6,13 @@ import HelldiversLeaderboard from '@/app/components/leaderboard/HelldiversLeader
 export const dynamic = 'force-dynamic';
 
 async function fetchLeaderboard() {
-  const h = headers();
+  // Next 15: headers() returns a Promise<ReadonlyHeaders>
+  const h = await headers();
   const proto = h.get('x-forwarded-proto') ?? 'https';
-  const host = h.get('x-forwarded-host') ?? h.get('host');
+  const host =
+    h.get('x-forwarded-host') ??
+    h.get('host') ??
+    process.env.NEXT_PUBLIC_SITE_HOST;
   const base = `${proto}://${host}`;
   const res = await fetch(
     `${base}/api/helldivers/leaderboard/overview?sortBy=Kills&sortDir=desc&limit=100`,
