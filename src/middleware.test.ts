@@ -1,4 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+vi.mock('ioredis', async () => {
+  const RedisMock = (await import('ioredis-mock')).default;
+  return { default: RedisMock };
+});
 import middleware, { __rateLimitStore } from './middleware';
 import { NextRequest } from 'next/server';
 
@@ -8,8 +12,8 @@ const createRequest = (path: string) =>
   });
 
 describe('rate limiting middleware', () => {
-  beforeEach(() => {
-    __rateLimitStore.clear();
+  beforeEach(async () => {
+    await __rateLimitStore.flushall();
   });
 
   it('throttles after exceeding limit', async () => {
@@ -29,7 +33,7 @@ describe('rate limiting middleware', () => {
     expect((await middleware(createRequest('/api/first'))).status).toBe(429);
     expect((await middleware(createRequest('/api/second'))).status).toBe(429);
     // Different scopes should not share buckets
-    __rateLimitStore.clear();
+    await __rateLimitStore.flushall();
     for (let i = 0; i < 10; i++) {
       expect(
         (await middleware(createRequest('/api/first?scope=one'))).status
@@ -51,6 +55,6 @@ describe('rate limiting middleware', () => {
       const res = await middleware(createRequest('/api/auth/session'));
       expect(res.status).toBe(200);
     }
-    expect(__rateLimitStore.size).toBe(0);
+    expect(await __rateLimitStore.dbsize()).toBe(0);
   });
 });
