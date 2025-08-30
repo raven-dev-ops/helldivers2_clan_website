@@ -43,7 +43,7 @@ export default async function RootLayout({
         <script src="https://accounts.google.com/gsi/client" async />
         <link
           rel="preload"
-          as="video"
+          as="fetch"
           href="/videos/gpd_background.mp4"
           type="video/mp4"
         />
