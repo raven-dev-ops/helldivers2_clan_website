@@ -5,7 +5,7 @@
 - [x] Disable Next.js prefetch on /helldivers-2 routes to reduce unnecessary requests.
 - [ ] Debounce and coalesce client API fetches to prevent hitting rate limits.
 - [ ] Implement client-side exponential backoff honoring Retry-After on 429 responses.
-- [ ] Cache large media (e.g., gpd_background.mp4) with long-lived Cache-Control and lazy-load when visible.
+- [x] Cache large media (e.g., gpd_background.mp4) with long-lived Cache-Control and lazy-load when visible.
 - [ ] Provide batched leaderboard endpoint to fetch multiple scopes in one request and enforce limit ≤ 100.
 - [ ] Add server-side request coalescing, caching (SWR), and ETag/Last-Modified headers for leaderboard and major-order APIs.
 - [ ] Enhance rate limiting with sliding-window, per-route buckets, and Retry-After headers backed by Redis.
