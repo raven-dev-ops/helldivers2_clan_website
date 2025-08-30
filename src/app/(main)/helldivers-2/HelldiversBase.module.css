@@ -1,5 +1,18 @@
 /* ---------- Base container & sections ---------- */
+.wrapper {
+  position: relative;
+}
+
+.dividerLayer {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-background-alt);
+  z-index: 0;
+}
+
 .pageContainer {
+  position: relative;
+  z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 1rem 4rem;
@@ -8,55 +21,137 @@
   min-height: 100vh;
 }
 .section {
-  margin-bottom: 3rem; padding: 2rem;
+  margin-bottom: 3rem;
+  padding: 2rem;
   background-color: var(--color-surface);
-  border-radius: .5rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,.15);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   border: 1px solid var(--color-border);
 }
 .sectionTitle {
   font-size: clamp(1.5rem, 4vw, 1.8rem);
-  font-weight: 600; margin-bottom: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
   color: var(--color-primary);
   border-bottom: 1px solid var(--color-border);
-  padding-bottom: .75rem;
-  display: flex; align-items: center; gap: .75rem;
+  padding-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   scroll-margin-top: 84px;
 }
-.subHeading { font-size: 1.25rem; font-weight: 600; color: var(--color-text-primary); margin: 2rem 0 1rem; }
-.paragraph { color: var(--color-text-secondary); margin-bottom: 1.25rem; line-height: 1.7; font-size: .95rem; }
-@media (min-width: 768px){ .paragraph { font-size: 1rem; } }
-.strongText { font-weight: 600; color: var(--color-primary); }
-.link { color: var(--color-primary-light); text-decoration: underline; text-underline-offset: 2px; transition: color .2s ease; }
-.link:hover { color: var(--color-primary); }
+.subHeading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 2rem 0 1rem;
+}
+.paragraph {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.25rem;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+@media (min-width: 768px) {
+  .paragraph {
+    font-size: 1rem;
+  }
+}
+.strongText {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+.link {
+  color: var(--color-primary-light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s ease;
+}
+.link:hover {
+  color: var(--color-primary);
+}
 
 /* ---------- Lists & cards ---------- */
-.ruleList { list-style: decimal; padding-left: 1.75rem; margin-bottom: 1.5rem; color: var(--color-text-secondary); }
-.ruleListItem { margin-bottom: .6rem; line-height: 1.6; }
-.styledList { list-style: disc; padding-left: 1.25rem; margin: 0; }
-.listItem { margin-bottom: .5rem; line-height: 1.6; }
-.decimal { list-style: decimal; }
+.ruleList {
+  list-style: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary);
+}
+.ruleListItem {
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
+}
+.styledList {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0;
+}
+.listItem {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+.decimal {
+  list-style: decimal;
+}
 .subsectionCard {
   background-color: var(--color-surface-alt);
   border: 1px solid var(--color-border);
-  border-radius: .5rem; padding: 1.25rem; margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ---------- Images & split layout ---------- */
-.imageContainer { display: flex; justify-content: center; margin-bottom: 1.5rem; }
-.centeredImage { display: block; margin: 0 auto; max-width: 100%; height: auto; }
-
-.splitSection { display: grid; grid-template-columns: 1fr; gap: 1.5rem; align-items: center; }
-@media (min-width: 900px){ .splitSection { grid-template-columns: 1fr 1fr; } }
-.splitSection.reverse .splitImage { order: -1; }
-.splitImage .centeredImage {
-  width: 100%; max-width: 360px; height: 360px; object-fit: contain;
-  border-radius: .5rem; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
-@media (min-width: 900px){ .splitImage .centeredImage { max-width: 420px; height: 420px; } }
+.centeredImage {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.splitSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+@media (min-width: 900px) {
+  .splitSection {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.splitSection.reverse .splitImage {
+  order: -1;
+}
+.splitImage .centeredImage {
+  width: 100%;
+  max-width: 360px;
+  height: 360px;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+@media (min-width: 900px) {
+  .splitImage .centeredImage {
+    max-width: 420px;
+    height: 420px;
+  }
+}
 
 /* ---------- Utilities ---------- */
-.visuallyHidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px,1px,1px,1px); white-space: nowrap; }
+.visuallyHidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
 
 /* (Reduced motion styles moved to globals.css) */
-
