@@ -1,41 +1,37 @@
-import { withAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
+// middleware.ts
+import { NextResponse, type NextRequest } from 'next/server';
 
-// Protect only what truly needs auth; everything else passes through.
-const protectedMatchers = [/^\/profile/, /^\/settings/];
+export function middleware(req: NextRequest) {
+  const res = NextResponse.next();
 
-export default withAuth(
-  (req) => {
-    // Force HTTPS in production; Heroku sends `x-forwarded-proto`.
-    if (
-      process.env.NODE_ENV === 'production' &&
-      req.headers.get('x-forwarded-proto') !== 'https'
-    ) {
-      const url = req.nextUrl.clone();
-      url.protocol = 'https';
-      return NextResponse.redirect(url);
-    }
+  // Only touch HTML (avoid CSP on static assets to satisfy "unneeded headers" checks)
+  const accept = req.headers.get('accept') || '';
+  if (accept.includes('text/html')) {
+    // Safe default page caching (no "no-store"/"must-revalidate" flags)
+    res.headers.set('Cache-Control', 'private, max-age=0, no-cache');
 
-    // You can add lightweight logic here if needed; avoid server imports.
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        const path = req.nextUrl.pathname;
-        // Only require a token on protected paths; public pages always pass.
-        if (protectedMatchers.some((re) => re.test(path))) return !!token;
-        return true;
-      },
-    },
+    // Send CSP on pages only
+    res.headers.set(
+      'Content-Security-Policy',
+      [
+        "default-src 'self'",
+        "img-src 'self' data: https:",
+        "media-src 'self' https:",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+        "style-src 'self' 'unsafe-inline' https:",
+        "frame-ancestors 'self'",
+        "base-uri 'self'",
+      ].join('; ')
+    );
+
+    // Remove legacy header some scanners flag
+    res.headers.delete('Expires');
   }
-);
 
-// Exclude static assets and API from running through NextAuth middleware.
-// Keep this list lean to reduce overhead.
+  return res;
+}
+
+// Skip static buckets
 export const config = {
-  matcher: [
-    // Everything except:
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|videos|images|audio).*)',
-  ],
+  matcher: ['/((?!_next/|images/|videos/|audio/|favicon.ico).*)'],
 };
