@@ -1,8 +1,7 @@
 // src/app/components/leaderboard/HelldiversLeaderboard.tsx
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import useSWR from 'swr';
+import React, { useEffect, useMemo, useState } from 'react';
 
 type SortField =
   | 'Kills'
@@ -46,6 +45,52 @@ interface LeaderboardRow {
   AvgShotsFired?: number;
   AvgShotsHit?: number;
   AvgDeaths?: number;
+}
+
+interface LeaderboardPayload {
+  day?: { results: LeaderboardRow[]; error?: number };
+  week?: { results: LeaderboardRow[]; error?: number };
+  month?: { results: LeaderboardRow[]; error?: number };
+  lifetime?: { results: LeaderboardRow[]; error?: number };
+}
+
+const sortFieldMap: Record<SortField, keyof LeaderboardRow> = {
+  Kills: 'Kills',
+  Accuracy: 'Accuracy',
+  'Shots Fired': 'ShotsFired',
+  'Shots Hit': 'ShotsHit',
+  Deaths: 'Deaths',
+  player_name: 'player_name',
+  clan_name: 'clan_name',
+  submitted_at: 'submitted_at',
+  'Avg Kills': 'AvgKills',
+  'Avg Shots Fired': 'AvgShotsFired',
+  'Avg Shots Hit': 'AvgShotsHit',
+  'Avg Deaths': 'AvgDeaths',
+};
+
+function sortRows(
+  rows: LeaderboardRow[],
+  sortBy: SortField,
+  sortDir: SortDir
+): LeaderboardRow[] {
+  const key = sortFieldMap[sortBy];
+  const sorted = [...rows].sort((a, b) => {
+    const aVal: any = (a as any)[key];
+    const bVal: any = (b as any)[key];
+    const toNum = (v: any) => {
+      if (typeof v === 'number') return v;
+      const n = parseFloat(String(v).replace('%', ''));
+      return isNaN(n) ? null : n;
+    };
+    const aNum = toNum(aVal);
+    const bNum = toNum(bVal);
+    if (aNum !== null && bNum !== null) {
+      return aNum - bNum;
+    }
+    return String(aVal ?? '').localeCompare(String(bVal ?? ''));
+  });
+  return sortDir === 'asc' ? sorted : sorted.reverse();
 }
 
 function HeaderButton({
@@ -323,35 +368,45 @@ function LeaderboardTableSection({
   );
 }
 
-export default function HelldiversLeaderboard() {
-  const fetcher = async (url: string) => {
-    const res = await fetch(url);
-    if (!res.ok) {
-      const err: any = new Error('Failed to fetch');
-      err.status = res.status;
-      throw err;
-    }
-    return res.json();
-  };
-
+export default function HelldiversLeaderboard({
+  initialData,
+}: {
+  initialData: LeaderboardPayload;
+}) {
   const [sortBy, setSortBy] = useState<SortField>('Kills');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
 
-  const { data, error, isLoading } = useSWR(
-    `/api/helldivers/leaderboard/overview?sortBy=${sortBy}&sortDir=${sortDir}&limit=100`,
-    fetcher,
-    { refreshInterval: 60_000, revalidateOnFocus: false }
+  const monthData = useMemo(
+    () => sortRows(initialData.month?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
+  );
+  const weekData = useMemo(
+    () => sortRows(initialData.week?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
+  );
+  const dayData = useMemo(
+    () => sortRows(initialData.day?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
+  );
+  const yearlyData = useMemo(
+    () => sortRows(initialData.lifetime?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
   );
 
-  const monthData = data?.month?.results || [];
-  const weekData = data?.week?.results || [];
-  const dayData = data?.day?.results || [];
-  const yearlyData = data?.lifetime?.results || [];
+  const monthError = initialData.month?.error
+    ? `Request failed: ${initialData.month.error}`
+    : null;
+  const weekError = initialData.week?.error
+    ? `Request failed: ${initialData.week.error}`
+    : null;
+  const dayError = initialData.day?.error
+    ? `Request failed: ${initialData.day.error}`
+    : null;
+  const yearlyError = initialData.lifetime?.error
+    ? `Request failed: ${initialData.lifetime.error}`
+    : null;
 
-  const monthError = data?.month?.error ? `Request failed: ${data.month.error}` : null;
-  const weekError = data?.week?.error ? `Request failed: ${data.week.error}` : null;
-  const dayError = data?.day?.error ? `Request failed: ${data.day.error}` : null;
-  const yearlyError = data?.lifetime?.error ? `Request failed: ${data.lifetime.error}` : null;
+  const isLoading = false;
 
   const [monthSearch, setMonthSearch] = useState<string>('');
   const [yearlyTotalsSearch, setYearlyTotalsSearch] = useState<string>('');
@@ -363,18 +418,27 @@ export default function HelldiversLeaderboard() {
       setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortBy(field);
-      setSortDir(field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc');
+      setSortDir(
+        field === 'player_name' || field === 'clan_name' ? 'asc' : 'desc'
+      );
     }
   };
 
   const activeSort = { sortBy, sortDir };
 
-  const [activeTab, setActiveTab] = useState<'daily' | 'weekly' | 'monthly' | 'yearly'>('daily');
+  const [activeTab, setActiveTab] = useState<
+    'daily' | 'weekly' | 'monthly' | 'yearly'
+  >('daily');
 
   useEffect(() => {
     const setTabFromHash = () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash === 'daily' || hash === 'weekly' || hash === 'monthly' || hash === 'yearly') {
+      if (
+        hash === 'daily' ||
+        hash === 'weekly' ||
+        hash === 'monthly' ||
+        hash === 'yearly'
+      ) {
         setActiveTab(hash as typeof activeTab);
       }
     };
@@ -394,10 +458,6 @@ export default function HelldiversLeaderboard() {
   const monthTitle = `Monthly Leaderboard - ${now.toLocaleString('default', { month: 'long' })} ${now.getUTCFullYear()}`;
   const dayTitle = `Daily Leaderboard - ${now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`;
   const weekTitle = `Weekly Leaderboard - Week ${getWeekNumber(now)} of ${now.getUTCFullYear()}`;
-
-  if ((error as any)?.status === 429) {
-    return <div className="muted">Rate limited—retrying shortly…</div>;
-  }
 
   return (
     <div>
