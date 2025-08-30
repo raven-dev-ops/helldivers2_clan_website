@@ -4,8 +4,11 @@ import styles from '../HelldiversBase.module.css';
 
 export default function LeaderboardPage() {
   return (
-    <div className={styles.pageContainer}>
-      <LeaderboardServer />
+    <div className={styles.wrapper}>
+      <div className={styles.dividerLayer} />
+      <div className={styles.pageContainer}>
+        <LeaderboardServer />
+      </div>
     </div>
   );
 }
