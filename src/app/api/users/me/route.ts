@@ -7,7 +7,7 @@ import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
-import { fetchDiscordRoles } from '@/lib/discordRoles';
+const userCache = new Map<string, { data: Record<string, unknown>; expires: number }>();
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -15,84 +15,52 @@ export async function GET() {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
+  const now = Date.now();
+  const cached = userCache.get(session.user.id);
+  if (cached && cached.expires > now) {
+    return NextResponse.json(cached.data, {
+      headers: { 'Cache-Control': 'private, max-age=60' },
+    });
+  }
+
   await dbConnect();
   const user = await UserModel.findById(session.user.id).lean();
   if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
 
-  // Attempt to sync Discord roles into the user profile (non-fatal)
-  try {
-    const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-    const GUILD_ID = process.env.DISCORD_GUILD_ID;
-    if (BOT_TOKEN && GUILD_ID) {
-      const client = await getMongoClientPromise();
-      const db = client.db();
-      const account = await db.collection('accounts').findOne({
-        userId: new ObjectId(session.user.id),
-        provider: 'discord',
-      });
-      const discordUserId = account?.providerAccountId as string | undefined;
-      if (discordUserId) {
-        const { roles, isMember } = await fetchDiscordRoles(
-          discordUserId,
-          BOT_TOKEN,
-          GUILD_ID
-        );
-        if (isMember) {
-          // Persist if different from stored value
-          const existing = Array.isArray(user.discordRoles)
-            ? user.discordRoles
-            : [];
-          const sameLength = existing.length === roles.length;
-          const same =
-            sameLength &&
-            existing.every((e) =>
-              roles.some((r) => r.id === e.id && r.name === e.name)
-            );
-          if (!same) {
-            await UserModel.updateOne(
-              { _id: session.user.id },
-              { $set: { discordRoles: roles } }
-            );
-          }
-        }
-      }
-    }
-  } catch {
-    // ignore errors
-  }
+  const data = {
+    id: user._id.toString(),
+    name: user.name,
+    firstName: user.firstName ?? null,
+    middleName: user.middleName ?? null,
+    lastName: user.lastName ?? null,
+    email: user.email,
+    image: user.image,
+    division: user.division || null,
+    characterHeightCm: user.characterHeightCm ?? null,
+    characterWeightKg: user.characterWeightKg ?? null,
+    homeplanet: user.homeplanet ?? null,
+    background: user.background ?? null,
+    customAvatarDataUrl: user.customAvatarDataUrl ?? null,
+    callsign: user.callsign ?? null,
+    rankTitle: user.rankTitle ?? null,
+    favoriteWeapon: user.favoriteWeapon ?? null,
+    armor: user.armor ?? null,
+    motto: user.motto ?? null,
+    favoredEnemy: user.favoredEnemy ?? null,
+    meritPoints: user.meritPoints ?? 0,
+    twitchUrl: user.twitchUrl ?? null,
+    preferredHeightUnit: user.preferredHeightUnit ?? 'cm',
+    preferredWeightUnit: user.preferredWeightUnit ?? 'kg',
+    discordRoles: Array.isArray(user.discordRoles) ? user.discordRoles : [],
+    challengeSubmissions: user.challengeSubmissions ?? [],
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  } as Record<string, unknown>;
 
-  // Re-read to include potentially synced roles
-  const fresh = await UserModel.findById(session.user.id).lean();
+  userCache.set(session.user.id, { data, expires: now + 60 * 1000 });
 
-  return NextResponse.json({
-    id: fresh!._id.toString(),
-    name: fresh!.name,
-    firstName: fresh!.firstName ?? null,
-    middleName: fresh!.middleName ?? null,
-    lastName: fresh!.lastName ?? null,
-    email: fresh!.email,
-    image: fresh!.image,
-    division: fresh!.division || null,
-    characterHeightCm: fresh!.characterHeightCm ?? null,
-    characterWeightKg: fresh!.characterWeightKg ?? null,
-    homeplanet: fresh!.homeplanet ?? null,
-    background: fresh!.background ?? null,
-    customAvatarDataUrl: fresh!.customAvatarDataUrl ?? null,
-    callsign: fresh!.callsign ?? null,
-    rankTitle: fresh!.rankTitle ?? null,
-    favoriteWeapon: fresh!.favoriteWeapon ?? null,
-    armor: fresh!.armor ?? null,
-    motto: fresh!.motto ?? null,
-    favoredEnemy: fresh!.favoredEnemy ?? null,
-    meritPoints: fresh!.meritPoints ?? 0,
-    twitchUrl: fresh!.twitchUrl ?? null,
-    preferredHeightUnit: fresh!.preferredHeightUnit ?? 'cm',
-    preferredWeightUnit: fresh!.preferredWeightUnit ?? 'kg',
-    // include roles
-    discordRoles: Array.isArray(fresh!.discordRoles) ? fresh!.discordRoles : [],
-    challengeSubmissions: fresh!.challengeSubmissions ?? [],
-    createdAt: fresh!.createdAt,
-    updatedAt: fresh!.updatedAt,
+  return NextResponse.json(data, {
+    headers: { 'Cache-Control': 'private, max-age=60' },
   });
 }
 
