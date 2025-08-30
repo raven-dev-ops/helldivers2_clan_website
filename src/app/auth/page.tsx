@@ -131,7 +131,7 @@ export default function AuthPage() {
         </p>
 
         {/* Audio Player */}
-        <audio ref={audioRef} loop preload="auto">
+        <audio ref={audioRef} loop preload="none">
           <source src="/audio/superearth_anthem.mp3" type="audio/mpeg" />
           Your browser does not support the audio element.
         </audio>
