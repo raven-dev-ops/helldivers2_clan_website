@@ -1,12 +1,10 @@
-// src/app/api/discord/roles/route.ts
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
-import getMongoClientPromise from '@/lib/mongoClientPromise';
-import { ObjectId } from 'mongodb';
-import { fetchDiscordRoles } from '@/lib/discordRoles';
+import { getUserGuildMember, getGuildRolesViaBot, postDiscordWebhook } from '@/lib/discord';
 
-const GUILD_ID = process.env.DISCORD_GUILD_ID;
+export const dynamic = 'force-dynamic'; // never cache
+export const runtime = 'nodejs';
 
 export async function GET() {
   const session = await getServerSession(getAuthOptions());
@@ -14,38 +12,41 @@ export async function GET() {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
-  if (!BOT_TOKEN || !GUILD_ID) {
-    // Gracefully degrade if bot token or guild ID is not set
-    return NextResponse.json({ roles: [], isMember: false });
+  const guildId = process.env.DISCORD_GUILD_ID;
+  if (!guildId) {
+    return NextResponse.json({ error: 'server_misconfig', detail: 'DISCORD_GUILD_ID missing' }, { status: 500 });
   }
 
-  // Look up the user's Discord account to get their Discord user ID
-  const client = await getMongoClientPromise();
-  const db = client.db();
-  const account = await db.collection('accounts').findOne({
-    userId: new ObjectId(session.user.id),
-    provider: 'discord',
-  });
-
-  if (!account?.providerAccountId) {
-    return NextResponse.json({ roles: [], isMember: false });
+  const discordAccessToken = (session as any).discordAccessToken as string | undefined;
+  if (!discordAccessToken) {
+    await postDiscordWebhook(`🚫 No Discord access token for user ${session.user.id}`);
+    return NextResponse.json({ roles: [], reason: 'no_discord_token' }, { headers: { 'Cache-Control': 'no-store' } });
   }
 
-  const discordUserId = account.providerAccountId as string;
-
-  try {
-    const { roles, isMember } = await fetchDiscordRoles(
-      discordUserId,
-      BOT_TOKEN,
-      GUILD_ID
-    );
-    return NextResponse.json({ roles, isMember });
-  } catch (err) {
-    const details = err instanceof Error ? err.message : '';
-    return NextResponse.json(
-      { error: 'discord_error', details },
-      { status: 502 }
-    );
+  const member = await getUserGuildMember(discordAccessToken, guildId);
+  if ('error' in member) {
+    await postDiscordWebhook(`❌ Role read failed for user ${session.user.id} — ${member.error}${member.status ? ` (${member.status})` : ''}`);
+    return NextResponse.json({ roles: [], error: member.error, status: member.status }, { status: member.status ?? 502 });
   }
+
+  const roleIds = (member.roles ?? []) as string[];
+
+  // Optional: map IDs → names using a bot token (if provided)
+  let namedRoles = roleIds.map((id) => ({ id, name: null as string | null }));
+  const botRoles = await getGuildRolesViaBot(guildId, process.env.DISCORD_BOT_TOKEN).catch(() => null);
+  if (botRoles?.length) {
+    const nameMap = Object.fromEntries(botRoles.map((r) => [r.id, r.name]));
+    namedRoles = roleIds.map((id) => ({ id, name: nameMap[id] ?? null }));
+  }
+
+  await postDiscordWebhook(`✅ Synced ${roleIds.length} roles for user ${session.user.id}`);
+
+  return NextResponse.json(
+    {
+      roles: roleIds,
+      namedRoles,
+      guildMember: { user: member.user, nick: member.nick ?? null },
+    },
+    { headers: { 'Cache-Control': 'no-store' } }
+  );
 }
