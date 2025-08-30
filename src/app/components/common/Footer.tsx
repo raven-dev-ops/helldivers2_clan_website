@@ -7,15 +7,16 @@ import { FaFacebook } from 'react-icons/fa';
 import { SiKick } from 'react-icons/si';
 
 export default function Footer() {
-  const discordUrl = process.env.SOCIAL_DISCORD_URL;
-  const youtubeUrl = process.env.SOCIAL_YOUTUBE_URL;
-  const twitchUrl = process.env.SOCIAL_TWITCH_URL;
-  const tiktokUrl = process.env.SOCIAL_TIKTOK_URL;
-  const xUrl = process.env.SOCIAL_X_URL;
-  const instagramUrl = process.env.SOCIAL_INSTAGRAM_URL;
-  const metaUrl = process.env.SOCIAL_META_URL; // Using Facebook icon as closest available
-  const snapchatUrl = process.env.SOCIAL_SNAPCHAT_URL;
-  const kickUrl = process.env.SOCIAL_KICK_URL;
+  const discordUrl = process.env.NEXT_PUBLIC_SOCIAL_DISCORD_URL;
+  const youtubeUrl = process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL;
+  const twitchUrl = process.env.NEXT_PUBLIC_SOCIAL_TWITCH_URL;
+  const tiktokUrl = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL;
+  const xUrl = process.env.NEXT_PUBLIC_SOCIAL_X_URL;
+  const instagramUrl = process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM_URL;
+  const metaUrl =
+    process.env.NEXT_PUBLIC_SOCIAL_META_URL; // Using Facebook icon as closest available
+  const snapchatUrl = process.env.NEXT_PUBLIC_SOCIAL_SNAPCHAT_URL;
+  const kickUrl = process.env.NEXT_PUBLIC_SOCIAL_KICK_URL;
 
   const discordLinkForMessage = discordUrl || '/discord';
 
