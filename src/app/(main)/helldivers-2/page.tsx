@@ -14,9 +14,9 @@ const ReviewsRotator = dynamic(
 );
 
 export default function HelldiversPage() {
-  const discordUrl = process.env.SOCIAL_DISCORD_URL;
-  const youtubeUrl = process.env.SOCIAL_YOUTUBE_URL;
-  const tiktokUrl = process.env.SOCIAL_TIKTOK_URL;
+  const discordUrl = process.env.NEXT_PUBLIC_SOCIAL_DISCORD_URL;
+  const youtubeUrl = process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL;
+  const tiktokUrl = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL;
 
   return (
     <div className={styles.pageContainer}>
