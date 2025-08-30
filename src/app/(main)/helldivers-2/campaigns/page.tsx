@@ -103,93 +103,96 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className={base.pageContainer}>
-      <section className={base.section} id="gpt-campaign-missions">
-        <h2 className={base.sectionTitle}>GPT Campaign Missions</h2>
-        <div className={base.subsectionCard}>
-          <h3 className={base.subHeading}>Rules & Requirements</h3>
-          <ul className={`${base.styledList} ${base.decimal}`}>
-            <li className={base.listItem}>
-              If it&apos;s on the map, it&apos;s in play unless the specific
-              challenge level states otherwise.
-            </li>
-            <li className={base.listItem}>
-              Video submissions must be one continuous, unedited recording. No
-              cuts, splits, or speed-ups.
-            </li>
-            <li className={base.listItem}>
-              Mission privacy must be set to Invite Only.
-            </li>
-          </ul>
-        </div>
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
+      <div className={base.pageContainer}>
+        <section className={base.section} id="gpt-campaign-missions">
+          <h2 className={base.sectionTitle}>GPT Campaign Missions</h2>
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>Rules & Requirements</h3>
+            <ul className={`${base.styledList} ${base.decimal}`}>
+              <li className={base.listItem}>
+                If it&apos;s on the map, it&apos;s in play unless the specific
+                challenge level states otherwise.
+              </li>
+              <li className={base.listItem}>
+                Video submissions must be one continuous, unedited recording. No
+                cuts, splits, or speed-ups.
+              </li>
+              <li className={base.listItem}>
+                Mission privacy must be set to Invite Only.
+              </li>
+            </ul>
+          </div>
 
-        <div className={base.subsectionCard}>
-          <h3 className={base.subHeading}>John Helldiver Operations</h3>
-          {prestigeMissions.map((mission) => {
-            const isExpanded = !!expanded[mission.id];
-            return (
-              <div
-                key={mission.id}
-                className={exp.challengeLevelContainer}
-                id={mission.id}
-                style={{ scrollMarginTop: 96 }}
-              >
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>John Helldiver Operations</h3>
+            {prestigeMissions.map((mission) => {
+              const isExpanded = !!expanded[mission.id];
+              return (
                 <div
-                  className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
-                  onClick={() => toggleExpansion(mission.id)}
-                  role="button"
-                  aria-expanded={isExpanded}
-                  aria-controls={`mission-content-${mission.id}`}
-                  tabIndex={0}
-                  onKeyDown={(e) =>
-                    (e.key === 'Enter' || e.key === ' ') &&
-                    toggleExpansion(mission.id)
-                  }
+                  key={mission.id}
+                  className={exp.challengeLevelContainer}
+                  id={mission.id}
+                  style={{ scrollMarginTop: 96 }}
                 >
-                  <h4 className={base.subHeading}>
-                    {mission.title}
-                  </h4>
-                  <FaChevronDown
-                    className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
-                    aria-hidden="true"
-                  />
+                  <div
+                    className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
+                    onClick={() => toggleExpansion(mission.id)}
+                    role="button"
+                    aria-expanded={isExpanded}
+                    aria-controls={`mission-content-${mission.id}`}
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      (e.key === 'Enter' || e.key === ' ') &&
+                      toggleExpansion(mission.id)
+                    }
+                  >
+                    <h4 className={base.subHeading}>
+                      {mission.title}
+                    </h4>
+                    <FaChevronDown
+                      className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div
+                    id={`mission-content-${mission.id}`}
+                    className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
+                  >
+                    <pre className={code.codeBlock}>{mission.details}</pre>
+                    {/* Video links removed per requirements */}
+                  </div>
                 </div>
-                <div
-                  id={`mission-content-${mission.id}`}
-                  className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
-                >
-                  <pre className={code.codeBlock}>{mission.details}</pre>
-                  {/* Video links removed per requirements */}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <div
-          style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
-        >
-          <button
-            className="btn btn-secondary"
-            onClick={() => {
-              setMessage(null);
-              setIsSubmitModalOpen(true);
-            }}
+              );
+            })}
+          </div>
+          <div
+            style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
           >
-            Submit Campaign
-          </button>
-        </div>
-      </section>
-      {message && (
-        <p className={base.paragraph} style={{ textAlign: 'center' }}>
-          {message}
-        </p>
-      )}
-      <SubmitCampaignModal
-        isOpen={isSubmitModalOpen}
-        onClose={() => setIsSubmitModalOpen(false)}
-        onSubmitted={(msg) => setMessage(msg)}
-        missions={prestigeMissions}
-      />
+            <button
+              className="btn btn-secondary"
+              onClick={() => {
+                setMessage(null);
+                setIsSubmitModalOpen(true);
+              }}
+            >
+              Submit Campaign
+            </button>
+          </div>
+        </section>
+        {message && (
+          <p className={base.paragraph} style={{ textAlign: 'center' }}>
+            {message}
+          </p>
+        )}
+        <SubmitCampaignModal
+          isOpen={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+          onSubmitted={(msg) => setMessage(msg)}
+          missions={prestigeMissions}
+        />
+      </div>
     </div>
   );
 }
