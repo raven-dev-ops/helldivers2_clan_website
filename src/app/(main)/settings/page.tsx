@@ -13,15 +13,17 @@ const overlayStyle: CSSProperties = {
 
 export default function SettingsPage() {
   return (
-    <div className={styles.pageContainer} style={{ position: "relative", zIndex: 0 }}>
+    <div className={styles.wrapper}>
       <div style={overlayStyle} />
+      <div className={styles.dividerLayer} />
+      <div className={styles.pageContainer}>
+        <section className="content-section" style={{ position: "relative", zIndex: 1 }}>
+          <h2 className="content-section-title with-border-bottom">Settings</h2>
 
-      <section className="content-section" style={{ position: "relative", zIndex: 1 }}>
-        <h2 className="content-section-title with-border-bottom">Settings</h2>
-
-        {/* Character sheet */}
-        <ProfileEditForm />
-      </section>
+          {/* Character sheet */}
+          <ProfileEditForm />
+        </section>
+      </div>
     </div>
   );
 }
