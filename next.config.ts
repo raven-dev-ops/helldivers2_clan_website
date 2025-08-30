@@ -10,9 +10,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
-  experimental: {
-    typedRoutes: false,
-  },
+  typedRoutes: true,
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.behance.net' },
