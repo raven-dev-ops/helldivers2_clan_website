@@ -3,23 +3,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { FaMusic, FaPause } from 'react-icons/fa';
-import { logger } from '@/lib/logger';
 
 export default function MusicButton() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.1);
+  const INITIAL_VOLUME = 0.1;
+  const [volume, setVolume] = useState(INITIAL_VOLUME);
+  const [playError, setPlayError] = useState(false);
 
   useEffect(() => {
     const audio = new Audio('/audio/superearth_anthem.mp3');
     audio.preload = 'none';
     audio.loop = false;
-    audio.volume = volume;
+    audio.volume = INITIAL_VOLUME;
     audioRef.current = audio;
-    audio
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch((e) => logger.warn('Audio play failed:', e));
     const handleEnded = () => setIsPlaying(false);
     audio.addEventListener('ended', handleEnded);
     return () => {
@@ -27,7 +24,7 @@ export default function MusicButton() {
       audio.pause();
       audioRef.current = null;
     };
-  }, [volume]);
+  }, []);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -44,9 +41,10 @@ export default function MusicButton() {
       } else {
         await audioRef.current.play();
         setIsPlaying(true);
+        setPlayError(false);
       }
-    } catch (e) {
-      logger.warn('Audio play failed:', e);
+    } catch {
+      setPlayError(true);
     }
   };
 
@@ -81,6 +79,11 @@ export default function MusicButton() {
 
   return (
     <div style={containerStyle}>
+      {playError && (
+        <div style={{ fontSize: 12, marginBottom: 4, textAlign: 'center' }}>
+          Unable to play audio.
+        </div>
+      )}
       {isPlaying && (
         <div style={{ fontSize: 12, marginBottom: 4, textAlign: 'center' }}>
           Super Earth Anthem – Helldivers 2 OST
