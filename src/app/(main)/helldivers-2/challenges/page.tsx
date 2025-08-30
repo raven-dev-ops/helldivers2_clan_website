@@ -96,88 +96,91 @@ export default function HelldiverChallengesPage() {
   };
 
   return (
-    <div className={base.pageContainer}>
-      {/* === John Helldiver Missions === */}
-      <section className={base.section} id="john-helldiver-missions">
-        <h2 className={base.sectionTitle}>GPT Challenge Missions</h2>
-        <div className={base.subsectionCard}>
-          <h3 className={base.subHeading}>Rules & Requirements</h3>
-          <ul className={`${base.styledList} ${base.decimal}`}>
-            <li className={base.listItem}>
-              If it's on the map, it's in play unless the specific challenge
-              level states otherwise.
-            </li>
-            <li className={base.listItem}>
-              Video submissions must be one continuous, unedited recording. No
-              cuts, splits, or speed-ups.
-            </li>
-            <li className={base.listItem}>
-              Mission privacy must be set to Invite Only.
-            </li>
-          </ul>
-        </div>
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
+      <div className={base.pageContainer}>
+        {/* === John Helldiver Missions === */}
+        <section className={base.section} id="john-helldiver-missions">
+          <h2 className={base.sectionTitle}>GPT Challenge Missions</h2>
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>Rules & Requirements</h3>
+            <ul className={`${base.styledList} ${base.decimal}`}>
+              <li className={base.listItem}>
+                If it's on the map, it's in play unless the specific challenge
+                level states otherwise.
+              </li>
+              <li className={base.listItem}>
+                Video submissions must be one continuous, unedited recording.
+                No cuts, splits, or speed-ups.
+              </li>
+              <li className={base.listItem}>
+                Mission privacy must be set to Invite Only.
+              </li>
+            </ul>
+          </div>
 
-        <div className={base.subsectionCard}>
-          <h3 className={base.subHeading}>
-            100% Complete To Unlock Role: John Helldiver
-          </h3>
-          {johnHelldiverLevels.map((challenge) => {
-            const isExpanded = !!expandedChallenges[challenge.id];
-            return (
-              <div
-                key={challenge.id}
-                className={exp.challengeLevelContainer}
-                id={challenge.id}
-                style={{ scrollMarginTop: 96 }}
-              >
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>
+              100% Complete To Unlock Role: John Helldiver
+            </h3>
+            {johnHelldiverLevels.map((challenge) => {
+              const isExpanded = !!expandedChallenges[challenge.id];
+              return (
                 <div
-                  className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
-                  onClick={() => toggleExpansion(challenge.id)}
-                  role="button"
-                  aria-expanded={isExpanded}
-                  aria-controls={`challenge-content-${challenge.id}`}
-                  tabIndex={0}
-                  onKeyDown={(e) =>
-                    (e.key === 'Enter' || e.key === ' ') &&
-                    toggleExpansion(challenge.id)
-                  }
+                  key={challenge.id}
+                  className={exp.challengeLevelContainer}
+                  id={challenge.id}
+                  style={{ scrollMarginTop: 96 }}
                 >
-                  <h4 className={base.subHeading}>
-                    {challenge.levelTitle}
-                  </h4>
-                  <FaChevronDown
-                    className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
-                    aria-hidden="true"
-                  />
+                  <div
+                    className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
+                    onClick={() => toggleExpansion(challenge.id)}
+                    role="button"
+                    aria-expanded={isExpanded}
+                    aria-controls={`challenge-content-${challenge.id}`}
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      (e.key === 'Enter' || e.key === ' ') &&
+                      toggleExpansion(challenge.id)
+                    }
+                  >
+                    <h4 className={base.subHeading}>
+                      {challenge.levelTitle}
+                    </h4>
+                    <FaChevronDown
+                      className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div
+                    id={`challenge-content-${challenge.id}`}
+                    className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
+                  >
+                    <pre className={code.codeBlock}>{challenge.details}</pre>
+                  </div>
                 </div>
-                <div
-                  id={`challenge-content-${challenge.id}`}
-                  className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
-                >
-                  <pre className={code.codeBlock}>{challenge.details}</pre>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
 
-        <div
-          style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
-        >
-          <button
-            className="btn btn-secondary"
-            onClick={() => setIsSubmitModalOpen(true)}
+          <div
+            style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
           >
-            Submit Challenge
-          </button>
-        </div>
-      </section>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setIsSubmitModalOpen(true)}
+            >
+              Submit Challenge
+            </button>
+          </div>
+        </section>
 
-      <SubmitChallengeModal
-        isOpen={isSubmitModalOpen}
-        onClose={() => setIsSubmitModalOpen(false)}
-        onSubmitted={() => setIsSubmitModalOpen(false)}
-      />
+        <SubmitChallengeModal
+          isOpen={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+          onSubmitted={() => setIsSubmitModalOpen(false)}
+        />
+      </div>
     </div>
   );
 }
