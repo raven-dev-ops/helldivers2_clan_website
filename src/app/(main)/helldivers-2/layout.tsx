@@ -2,7 +2,6 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import useCachedVideo from '@/hooks/useCachedVideo';
 
 export default function HelldiversLayout({
   children,
@@ -12,19 +11,6 @@ export default function HelldiversLayout({
   const pathname = usePathname();
   const showExtraOverlay =
     pathname === '/helldivers-2' || pathname === '/helldivers-2/merch';
-
-  const videoSrc = useCachedVideo('/videos/gpd_background.mp4');
-
-  const videoStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-    zIndex: -3,
-    filter: 'brightness(0.6)',
-  };
 
   const gradientOverlayStyle: React.CSSProperties = {
     position: 'fixed',
@@ -43,19 +29,6 @@ export default function HelldiversLayout({
 
   return (
     <>
-      {/* Background Video */}
-      <video
-        src={videoSrc}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        style={videoStyle}
-        key="bg-video"
-      >
-        Your browser does not support the video tag.
-      </video>
       {showExtraOverlay && <div style={gradientOverlayStyle} />}
       <div style={overlayStyle} />
 

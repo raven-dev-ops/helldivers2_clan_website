@@ -1,38 +1,19 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
 import styles from '../helldivers-2/HelldiversBase.module.css';
-import useCachedVideo from '@/hooks/useCachedVideo';
 
-const videoStyle: CSSProperties = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  zIndex: -2,
-  filter: 'brightness(0.6)',
-};
 const overlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
   backgroundColor: 'rgba(16, 20, 31, 0.35)',
   zIndex: -1,
 };
-
-const VIDEO_SRC = '/videos/gpd_background.mp4';
 
 // Challenge names (levels 1-7) as in Challenges menu
 const CHALLENGE_LEVEL_LABELS: string[] = [
@@ -57,7 +38,6 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const savedRankingOnce = useRef(false);
-  const cachedVideo = useCachedVideo(VIDEO_SRC);
 
   const fetcher = (url: string) =>
     fetch(url, { cache: 'no-store' }).then((r) => r.json());
@@ -245,18 +225,6 @@ export default function ProfilePage() {
   return (
     <div className={styles.pageContainer}>
       {/* Background Video and Overlay */}
-      <video
-        src={cachedVideo}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        style={videoStyle}
-        key="bg-video-profile"
-      >
-        Your browser does not support the video tag.
-      </video>
       <div style={overlayStyle} />
 
       {/* Welcome title removed per requirements */}

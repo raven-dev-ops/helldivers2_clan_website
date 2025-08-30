@@ -12,32 +12,16 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-import useCachedVideo from '@/hooks/useCachedVideo';
 
 import base from '../../helldivers-2/HelldiversBase.module.css';
 import s from '@/app/components/forum/ProfileForm.module.css'; // reuse Settings layout styles
 
-const videoStyle: CSSProperties = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  zIndex: -2,
-  filter: 'brightness(0.6)',
-};
 const overlayStyle: CSSProperties = {
   position: 'fixed',
   inset: 0,
   backgroundColor: 'rgba(16, 20, 31, 0.35)',
   zIndex: -1,
 };
-
-const VIDEO_SRC = '/videos/gpd_background.mp4';
-
-// Persist the same background preference used on Settings:
-const STORAGE_KEY = 'gpd:bg:motion';
 
 const CHALLENGE_LEVEL_LABELS = [
   'Sabotage Proficiency',
@@ -63,19 +47,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const savedRankingOnce = useRef(false);
 
-  const [bgEnabled, setBgEnabled] = useState(true);
-  const cachedVideo = useCachedVideo(VIDEO_SRC);
-  useEffect(() => {
-    const saved =
-      typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
-    if (saved === 'on' || saved === 'off') setBgEnabled(saved === 'on');
-    else {
-      const prefersReduced =
-        typeof window !== 'undefined' &&
-        window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-      setBgEnabled(!prefersReduced);
-    }
-  }, []);
 
   const fetcher = (url: string) =>
     fetch(url, { cache: 'no-store' }).then((r) => r.json());
@@ -259,23 +230,7 @@ export default function ProfilePage() {
       className={base.pageContainer}
       style={{ position: 'relative', zIndex: 0 }}
     >
-      {bgEnabled && (
-        <>
-          <video
-            src={cachedVideo}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            style={videoStyle}
-            key="bg-video-profile"
-          >
-            Your browser does not support the video tag.
-          </video>
-          <div style={overlayStyle} />
-        </>
-      )}
+      <div style={overlayStyle} />
 
       {/* CHARACTER SHEET */}
       <section

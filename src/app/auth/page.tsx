@@ -9,7 +9,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from './Auth.module.css';
 import { logger } from '@/lib/logger';
-import useCachedVideo from '@/hooks/useCachedVideo';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';
 
@@ -18,12 +17,10 @@ export default function AuthPage() {
   const { status } = useSession();
   const router = useRouter();
   const audioRef = useRef<HTMLAudioElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
   const [volume, setVolume] = useState(0.15);
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
-  const videoSrc = useCachedVideo('/videos/gpd_background.mp4');
 
   // --- Functions ---
   const handleInteraction = () => {
@@ -31,11 +28,6 @@ export default function AuthPage() {
       logger.info('User interaction detected.');
       setUserInteracted(true);
       if (audioRef.current) audioRef.current.volume = volume;
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current
-          .play()
-          .catch((e) => logger.error('Video play error after interaction:', e));
-      }
     }
   };
 
@@ -83,19 +75,6 @@ export default function AuthPage() {
   }, [status, router]);
 
   useEffect(() => {
-    // Video Play Attempt
-    const videoElement = videoRef.current;
-    if (videoElement) {
-      videoElement.muted = true;
-      videoElement.playsInline = true;
-      if (videoElement.paused)
-        videoElement
-          .play()
-          .catch((e) => logger.warn('Video autoplay potentially blocked.', e));
-    }
-  }, []);
-
-  useEffect(() => {
     // Sync Volume State
     if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
@@ -119,22 +98,6 @@ export default function AuthPage() {
 
     return (
       <div className={styles.authContainer} onClick={handleInteraction}>
-        {/* Background Video */}
-        <video
-          ref={videoRef}
-          src={videoSrc}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className={styles.videoBackground}
-          key="bg-video"
-          onCanPlay={() => logger.info('Video ready')}
-          onError={(e) => logger.error('Video Error Event:', e)}
-        >
-          Your browser does not support the video tag.
-        </video>
         <div className={styles.overlay}></div>
 
         {/* Login Card */}
