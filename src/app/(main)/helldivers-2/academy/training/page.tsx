@@ -70,57 +70,63 @@ export default function TrainingPage() {
   const hd1Quizzes = chunk(hd1Questions, 10);
 
   return (
-    <div className={base.pageContainer}>
-      <section className={base.section}>
-        <h2 className={base.sectionTitle}>My Training</h2>
-        <p className={base.paragraph}>
-          Level up fast. Pick a quiz, answer 10 questions, and learn the essentials.
-        </p>
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
+      <div className={base.pageContainer}>
+        <section className={base.section}>
+          <h2 className={base.sectionTitle}>My Training</h2>
+          <p className={base.paragraph}>
+            Level up fast. Pick a quiz, answer 10 questions, and learn the
+            essentials.
+          </p>
 
-        <h3 className={base.subHeading}>How it works</h3>
-        <ol className={base.ruleList}>
-          <li className={base.ruleListItem}>Choose a set</li>
-          <li className={base.ruleListItem}>Answer 10 questions</li>
-          <li className={base.ruleListItem}>See your score + tips</li>
-        </ol>
+          <h3 className={base.subHeading}>How it works</h3>
+          <ol className={base.ruleList}>
+            <li className={base.ruleListItem}>Choose a set</li>
+            <li className={base.ruleListItem}>Answer 10 questions</li>
+            <li className={base.ruleListItem}>See your score + tips</li>
+          </ol>
 
-        <h3 className={base.subHeading}>Helldivers 2</h3>
-        <div className={styles.quizGrid}>
-          {hd2Quizzes.map((qs, i) => {
-            const meta = hd2Meta[i];
-            return (
-              <div className={styles.quizCard} key={`hd2-${i}`}>
-                <h4>{meta.title}</h4>
-                <p className={styles.quizDescription}>{meta.description}</p>
-                <div className={styles.quizActions}>
-                  <Quiz title={meta.title} questions={qs} />
+          <h3 className={base.subHeading}>Helldivers 2</h3>
+          <div className={styles.quizGrid}>
+            {hd2Quizzes.map((qs, i) => {
+              const meta = hd2Meta[i];
+              return (
+                <div className={styles.quizCard} key={`hd2-${i}`}>
+                  <h4>{meta.title}</h4>
+                  <p className={styles.quizDescription}>{meta.description}</p>
+                  <div className={styles.quizActions}>
+                    <Quiz title={meta.title} questions={qs} />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-        <p className={base.paragraph}>New to Helldivers? Start here.</p>
+              );
+            })}
+          </div>
+          <p className={base.paragraph}>New to Helldivers? Start here.</p>
 
-        <h3 className={base.subHeading}>Helldivers 1 (Historical)</h3>
-        <div className={styles.quizGrid}>
-          {hd1Quizzes.map((qs, i) => {
-            const meta = hd1Meta[i];
-            return (
-              <div className={styles.quizCard} key={`hd1-${i}`}>
-                <h4>{meta.title}</h4>
-                <p className={styles.quizDescription}>{meta.description}</p>
-                <div className={styles.quizActions}>
-                  <Quiz title={meta.title} questions={qs} />
+          <h3 className={base.subHeading}>Helldivers 1 (Historical)</h3>
+          <div className={styles.quizGrid}>
+            {hd1Quizzes.map((qs, i) => {
+              const meta = hd1Meta[i];
+              return (
+                <div className={styles.quizCard} key={`hd1-${i}`}>
+                  <h4>{meta.title}</h4>
+                  <p className={styles.quizDescription}>{meta.description}</p>
+                  <div className={styles.quizActions}>
+                    <Quiz title={meta.title} questions={qs} />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
 
-        <p className={base.paragraph}>
-          <span className={base.strongText}>Tip:</span> Don’t memorize—visualize. Think about when and why you’d use each tool, not just what it does.
-        </p>
-      </section>
+          <p className={base.paragraph}>
+            <span className={base.strongText}>Tip:</span> Don’t
+            memorize—visualize. Think about when and why you’d use each tool,
+            not just what it does.
+          </p>
+        </section>
+      </div>
     </div>
   );
 }
