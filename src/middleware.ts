@@ -6,6 +6,16 @@ const protectedMatchers = [/^\/profile/, /^\/settings/];
 
 export default withAuth(
   (req) => {
+    // Force HTTPS in production; Heroku sends `x-forwarded-proto`.
+    if (
+      process.env.NODE_ENV === 'production' &&
+      req.headers.get('x-forwarded-proto') !== 'https'
+    ) {
+      const url = req.nextUrl.clone();
+      url.protocol = 'https';
+      return NextResponse.redirect(url);
+    }
+
     // You can add lightweight logic here if needed; avoid server imports.
     return NextResponse.next();
   },
