@@ -60,6 +60,7 @@ DISCORD_CLIENT_ID=<discord-client-id>
 DISCORD_CLIENT_SECRET=<discord-client-secret>
 RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX=10
+REDIS_URL=redis://localhost:6379
 ```
 
 ### Discord OAuth Scopes
