@@ -168,103 +168,113 @@ export default async function HelldiversMerchPage() {
   }
 
   return (
-    <main className={styles.merchMainContainer}>
-      <div className={styles.titleCard}>
-        <h1 className={styles.merchPageTitle}>GPT Clan Collectibles</h1>
-        <p className={styles.merchDisclaimer}>
-          100% of all profit generated goes to our yearly charity drive vote on
-          by our members.
-        </p>
-      </div>
-
-      {errorOccurred ? (
-        <div className={styles.merchErrorText}>{errorMessage}</div>
-      ) : products.length === 0 && !errorOccurred ? (
-        <div className={styles.merchMessageText}>
-          No products available in this collection.
+    <div className={styles.wrapper}>
+      <div className={styles.dividerLayer} />
+      <main className={styles.merchMainContainer}>
+        <div className={styles.titleCard}>
+          <h1 className={styles.merchPageTitle}>GPT Clan Collectibles</h1>
+          <p className={styles.merchDisclaimer}>
+            100% of all profit generated goes to our yearly charity drive vote
+            on by our members.
+          </p>
         </div>
-      ) : (
-        <div className={styles.merchProductListContainer}>
-          {products.map((product, index) => {
-            let formattedPrice = '';
-            const firstVariant = product.variants?.[0];
-            if (
-              firstVariant?.unitPrice &&
-              typeof firstVariant.unitPrice.value === 'number'
-            ) {
-              const priceInfo = firstVariant.unitPrice;
-              const priceValue = priceInfo.value;
-              try {
-                formattedPrice = new Intl.NumberFormat('en-US', {
-                  style: 'currency',
-                  currency: priceInfo.currency || 'USD',
-                }).format(priceValue);
-              } catch {
-                formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency || 'USD'}`;
-              }
-            }
 
-            const imageUrl = product.images?.[0]?.url;
-            const imageAlt =
-              product.images?.[0]?.altText || product.name || 'Product image';
-            let cleanDescription = 'No description available.';
-            if (product.description) {
-              try {
-                cleanDescription = decodeHtmlEntities(
-                  product.description
-                ).replace(/<[^>]*>?/gm, '');
-              } catch (e) {
-                logger.warn('Could not decode/clean description for', {
-                  productName: product.name,
-                  error: e,
-                });
-                cleanDescription = product.description.replace(
-                  /<[^>]*>?/gm,
-                  ''
-                );
+        {errorOccurred ? (
+          <div className={styles.merchErrorText}>{errorMessage}</div>
+        ) : products.length === 0 && !errorOccurred ? (
+          <div className={styles.merchMessageText}>
+            No products available in this collection.
+          </div>
+        ) : (
+          <div className={styles.merchProductListContainer}>
+            {products.map((product, index) => {
+              let formattedPrice = '';
+              const firstVariant = product.variants?.[0];
+              if (
+                firstVariant?.unitPrice &&
+                typeof firstVariant.unitPrice.value === 'number'
+              ) {
+                const priceInfo = firstVariant.unitPrice;
+                const priceValue = priceInfo.value;
+                try {
+                  formattedPrice = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: priceInfo.currency || 'USD',
+                  }).format(priceValue);
+                } catch {
+                  formattedPrice = `$${priceValue.toFixed(2)} ${priceInfo.currency || 'USD'}`;
+                }
               }
-            }
 
-            return (
-              <Link
-                key={product.id}
-                href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.merchProductCardLink}
-                title={`View ${product.name} in store`}
-              >
-                <div className={styles.merchImageContainer}>
-                  {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={imageAlt}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className={styles.merchProductImage}
-                      priority={index < 4}
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div className={styles.merchImagePlaceholder}>No Image</div>
-                  )}
-                </div>
-                <div className={styles.merchDetailsContainer}>
-                  <h2 className={styles.merchProductName} title={product.name}>
-                    {product.name}
-                  </h2>
-                  <p className={styles.merchProductDescription}>
-                    {cleanDescription}
-                  </p>
-                  {formattedPrice && (
-                    <p className={styles.merchProductPrice}>{formattedPrice}</p>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
-    </main>
+              const imageUrl = product.images?.[0]?.url;
+              const imageAlt =
+                product.images?.[0]?.altText || product.name || 'Product image';
+              let cleanDescription = 'No description available.';
+              if (product.description) {
+                try {
+                  cleanDescription = decodeHtmlEntities(
+                    product.description
+                  ).replace(/<[^>]*>?/gm, '');
+                } catch (e) {
+                  logger.warn('Could not decode/clean description for', {
+                    productName: product.name,
+                    error: e,
+                  });
+                  cleanDescription = product.description.replace(
+                    /<[^>]*>?/gm,
+                    ''
+                  );
+                }
+              }
+
+              return (
+                <Link
+                  key={product.id}
+                  href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.merchProductCardLink}
+                  title={`View ${product.name} in store`}
+                >
+                  <div className={styles.merchImageContainer}>
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt={imageAlt}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className={styles.merchProductImage}
+                        priority={index < 4}
+                        style={{ objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <div className={styles.merchImagePlaceholder}>
+                        No Image
+                      </div>
+                    )}
+                  </div>
+                  <div className={styles.merchDetailsContainer}>
+                    <h2
+                      className={styles.merchProductName}
+                      title={product.name}
+                    >
+                      {product.name}
+                    </h2>
+                    <p className={styles.merchProductDescription}>
+                      {cleanDescription}
+                    </p>
+                    {formattedPrice && (
+                      <p className={styles.merchProductPrice}>
+                        {formattedPrice}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
