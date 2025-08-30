@@ -7,15 +7,15 @@ WORKDIR /app
 # Silence Node deprecation warnings
 ENV NODE_OPTIONS=--no-deprecation
 
-# Install all dependencies with clean cache
-COPY package*.json ./
-RUN npm ci
+# Enable Corepack and install dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && pnpm install --frozen-lockfile
 
 # Copy all app files
 COPY . .
 
 # Lint and build the Next.js app then remove dev dependencies
-RUN npm run lint && npm run build && npm prune --omit=dev
+RUN pnpm lint && pnpm build && pnpm prune --prod
 
 # Set production environment for runtime
 ENV NODE_ENV=production
@@ -24,4 +24,4 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Start the app
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]

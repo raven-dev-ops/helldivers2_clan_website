@@ -27,9 +27,19 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 - Node.js (v18 or higher recommended)
-- npm, yarn, or pnpm
+- pnpm (v9 or higher; enable via Corepack)
 - MongoDB instance (local or hosted)
 - Discord Developer account (for OAuth2 login)
+
+### Package Manager
+
+This project uses [pnpm](https://pnpm.io) for all workflows. If pnpm is not installed, enable it with:
+
+```bash
+corepack enable pnpm
+```
+
+All commands below assume pnpm.
 
 ### Installation
 
