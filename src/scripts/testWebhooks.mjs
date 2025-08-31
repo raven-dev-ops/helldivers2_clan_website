@@ -1,4 +1,5 @@
 // src/scripts/testWebhooks.mjs
+import 'dotenv/config';
 
 function log(level, message, meta) {
   console[level](
