@@ -10,8 +10,8 @@ ENV NODE_OPTIONS=--no-deprecation
 # Install pnpm directly (skip Corepack) and required build tools
 RUN apk add --no-cache python3 make g++ && npm i -g pnpm@9.12.3
 
-# Only copy manifest and lock file for better caching
-COPY package.json pnpm-lock.yaml ./
+# Only copy manifest for better caching
+COPY package.json ./
 
 # Install dependencies
 RUN pnpm install
