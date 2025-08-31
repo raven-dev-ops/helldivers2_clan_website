@@ -164,20 +164,12 @@ export async function POST(req: NextRequest) {
       savedPartner._id
     );
 
-    // --- 9. Type Assertion for savedPartner._id ---
-    // Assert that the saved document includes _id as an ObjectId
-    const savedPartnerTyped = savedPartner as IServerListing & {
-      _id: mongoose.Types.ObjectId;
-    };
-
-    // --- 10. Construct Return Data ---
     const result: ApiPartnerData = {
-      id: savedPartnerTyped._id.toString(),
-      name: savedPartnerTyped.discord_server_name,
-      inviteLink: savedPartnerTyped.discord_invite_link,
+      id: savedPartner.id,
+      name: savedPartner.discord_server_name,
+      inviteLink: savedPartner.discord_invite_link,
     };
 
-    // --- 9. Return Success Response ---
     return NextResponse.json(
       { message: 'Partner created successfully', partner: result },
       { status: 201 }
