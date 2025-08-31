@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   reactStrictMode: true,
   poweredByHeader: false, // remove `x-powered-by`
+  compress: true,
 
   images: {
     remotePatterns: [
@@ -53,6 +54,12 @@ const nextConfig: NextConfig = {
     return [
       // Global security headers everywhere
       { source: '/:path*', headers: securityHeaders() },
+
+      // Content negotiation caching
+      {
+        source: '/:path*',
+        headers: [{ key: 'Vary', value: 'Accept-Encoding' }],
+      },
 
       // Next build assets (CSS/JS): long cache + nosniff
       {
@@ -89,6 +96,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Accept-Ranges', value: 'bytes' },
         ],
       },
       {
@@ -96,9 +104,30 @@ const nextConfig: NextConfig = {
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Accept-Ranges', value: 'bytes' },
         ],
       },
     ];
+  },
+  async redirects() {
+    const isProd = process.env.NODE_ENV === 'production';
+    const mediaCdn = process.env.NEXT_PUBLIC_MEDIA_CDN_BASE_URL;
+    if (isProd && mediaCdn) {
+      const base = mediaCdn.replace(/\/$/, '');
+      return [
+        {
+          source: '/videos/:path*',
+          destination: `${base}/videos/:path*`,
+          permanent: true,
+        },
+        {
+          source: '/audio/:path*',
+          destination: `${base}/audio/:path*`,
+          permanent: true,
+        },
+      ];
+    }
+    return [];
   },
 };
 
