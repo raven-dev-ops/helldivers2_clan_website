@@ -71,6 +71,17 @@ DISCORD_CLIENT_SECRET=<discord-client-secret>
 RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX=10
 REDIS_URL=redis://localhost:6379
+DISCORD_WEBHOOK_URL=<default-fallback-webhook-url>
+DISCORD_APPLICATION_WEBHOOK_URL=<webhook-for-user-applications>
+DISCORD_LEADERBOARD_DAILY_WEBHOOK_URL=<webhook>
+DISCORD_LEADERBOARD_WEEKLY_WEBHOOK_URL=<webhook>
+DISCORD_LEADERBOARD_MONTHLY_WEBHOOK_URL=<webhook>
+DISCORD_LEADERBOARD_YEARLY_WEBHOOK_URL=<webhook>
+DISCORD_LEADERBOARD_SOLO_WEBHOOK_URL=<webhook>
+DISCORD_INTEL_WEBHOOK_URL=<webhook>
+DISCORD_TWITCH_WEBHOOK_URL=<webhook>
+DISCORD_GUILD_ID=<discord-guild-id>
+DISCORD_BOT_TOKEN=<bot-token-if-using-role-name-mapping>
 ```
 
 ### Discord OAuth Scopes
@@ -99,6 +110,18 @@ Run the test suite with:
 
 ```bash
 pnpm test
+```
+
+To validate outgoing webhooks, set the Discord webhook envs above and run:
+
+```bash
+pnpm webhooks:test
+```
+
+Health endpoint exposes presence of webhook envs (booleans only):
+
+```bash
+curl -s http://localhost:3000/api/health | jq .env
 ```
 
 ### Deployment

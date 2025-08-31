@@ -9,6 +9,9 @@ import { z } from 'zod';
 import { logger } from '@/lib/logger';
 import { postDiscordWebhook } from '@/lib/discordWebhook';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const userApplicationSchema = z.object({
   type: z.string({ required_error: 'type is required' }),
   interest: z.string({ required_error: 'interest is required' }),

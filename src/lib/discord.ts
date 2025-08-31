@@ -1,20 +1,25 @@
 const DISCORD_API = 'https://discord.com/api/v10';
 
-function withTimeout<T>(p: Promise<T>, ms = 8000): Promise<T> {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
+function withTimeout<T>(promise: Promise<T>, ms = 8000): Promise<T> {
+  let timer: any;
+  const timeoutPromise = new Promise<T>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('timeout')), ms);
+  });
   return Promise.race([
-    p.finally(() => clearTimeout(t)),
-    // @ts-ignore
+    promise.finally(() => clearTimeout(timer)),
+    timeoutPromise,
   ]);
 }
 
 export async function getUserGuildMember(accessToken: string, guildId: string) {
   try {
-    const res = await withTimeout(fetch(`${DISCORD_API}/users/@me/guilds/${guildId}/member`, {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 8000);
+    const res = await fetch(`${DISCORD_API}/users/@me/guilds/${guildId}/member`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       cache: 'no-store',
-    }));
+      signal: ctrl.signal,
+    }).finally(() => clearTimeout(t));
     if (res.status === 401 || res.status === 403) {
       return { error: 'forbidden_or_expired', status: res.status };
     }

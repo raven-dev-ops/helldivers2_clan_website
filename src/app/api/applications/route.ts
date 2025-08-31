@@ -8,6 +8,9 @@ import mongoose from 'mongoose';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 const applicationSchema = z.object({
   botIdentifier: z.string({ required_error: 'botIdentifier is required' }),
   serverName: z.string().optional(),
