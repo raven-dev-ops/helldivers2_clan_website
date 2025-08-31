@@ -73,7 +73,7 @@ TACTICS
   },
   {
     id: 'level-2',
-    levelTitle: 'Resource Denial',
+    levelTitle: 'JH2 Resource Denial',
     details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
 No Stratagems
 No Resupply
