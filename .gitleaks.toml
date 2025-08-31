@@ -1,0 +1,4 @@
+# Allow listing example env values while keeping real env files blocked
+[[allowlist.files]]
+description = "Allow example env file"
+regex = '''(^|/)\\.env\\.example$'''

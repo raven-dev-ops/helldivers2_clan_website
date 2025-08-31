@@ -21,7 +21,6 @@
 /build
 
 # misc
-.DS_Store
 *.pem
 
 # debug
@@ -30,10 +29,24 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Local env files (never commit)
+.env
 .env.local
-.env.example
+.env*.local
+.env.development*
+.env.test*
+.env.production*
+!.env.example
+
+# Logs
+*.log
+
+# OS/editor junk
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
 # vercel
 .vercel
