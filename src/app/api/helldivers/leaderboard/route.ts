@@ -1,5 +1,6 @@
 // src/app/api/helldivers/leaderboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { jsonWithETag } from '@/lib/httpCache';
 import {
   fetchHelldiversLeaderboard,
   VALID_SORT_FIELDS,
@@ -50,9 +51,9 @@ export async function GET(req: NextRequest) {
       month,
       year,
     });
-    return NextResponse.json(data, {
+    return jsonWithETag(req, data, {
       headers: {
-        'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
       },
     });
   } catch (error: any) {

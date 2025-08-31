@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { jsonWithETag } from '@/lib/httpCache';
 
 export const revalidate = 60; // CDN / ISR-friendly
 
@@ -45,11 +46,12 @@ export async function GET(req: NextRequest) {
     fetchScope(base, 'lifetime', sortBy, sortDir, Math.min(limit, 1000)),
   ]);
 
-  return NextResponse.json(
+  return jsonWithETag(
+    req,
     { day, week, month, lifetime },
     {
       headers: {
-        'Cache-Control': 's-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
       },
     }
   );
