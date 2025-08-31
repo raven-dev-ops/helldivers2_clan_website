@@ -12,8 +12,29 @@ function log(level, message, meta) {
   );
 }
 
+function maskDiscordWebhookUrl(url) {
+  try {
+    const parsed = new URL(url);
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    const isDiscordWebhook = parts[0] === 'api' && parts[1] === 'webhooks';
+    if (isDiscordWebhook && parts.length >= 3) {
+      const id = parts[2];
+      return `${parsed.hostname}/api/webhooks/${id}/***`;
+    }
+    return `${parsed.hostname}${parsed.pathname}`;
+  } catch {
+    return 'invalid_url';
+  }
+}
+
 async function postDiscordWebhook(webhookUrl, payload) {
-  log('info', 'Posting Discord webhook', { webhookUrl, payload });
+  const masked = maskDiscordWebhookUrl(webhookUrl);
+  const payloadMeta = {
+    hasContent: Boolean(payload?.content),
+    contentLength: payload?.content ? String(payload.content).length : 0,
+    embedsCount: Array.isArray(payload?.embeds) ? payload.embeds.length : 0,
+  };
+  log('info', 'Posting Discord webhook', { url: masked, payload: payloadMeta });
   const res = await fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -21,14 +42,10 @@ async function postDiscordWebhook(webhookUrl, payload) {
   });
   if (!res.ok) {
     const err = await res.text().catch(() => '');
-    log('error', 'Discord webhook failed', {
-      webhookUrl,
-      err,
-      status: res.status,
-    });
+    log('error', 'Discord webhook failed', { url: masked, err, status: res.status });
     throw new Error(`Discord webhook error ${res.status}: ${err}`);
   }
-  log('info', 'Discord webhook succeeded', { webhookUrl });
+  log('info', 'Discord webhook succeeded', { url: masked, status: res.status });
 }
 
 async function main() {
@@ -49,7 +66,7 @@ async function main() {
         content: `Test message for ${key}`,
       });
     } catch (err) {
-      log('error', `Failed to send test message for ${key}`, err);
+      log('error', `Failed to send test message for ${key}`, { error: String(err) });
     }
   }
 }

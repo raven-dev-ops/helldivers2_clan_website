@@ -1,3 +1,19 @@
+import { logger } from '@/lib/logger';
+
+function maskDiscordWebhookUrl(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    const isDiscordWebhook = parts[0] === 'api' && parts[1] === 'webhooks';
+    if (isDiscordWebhook && parts.length >= 3) {
+      const id = parts[2];
+      return `${parsed.hostname}/api/webhooks/${id}/***`;
+    }
+    return `${parsed.hostname}${parsed.pathname}`;
+  } catch {
+    return 'invalid_url';
+  }
+}
 const DISCORD_API = 'https://discord.com/api/v10';
 
 function withTimeout<T>(promise: Promise<T>, ms = 8000): Promise<T> {
@@ -49,10 +65,23 @@ export async function postDiscordWebhook(message: string) {
   const url = process.env.DISCORD_WEBHOOK_URL;
   if (!url) return;
   try {
-    await fetch(url, {
+    const masked = maskDiscordWebhookUrl(url);
+    logger.info('Posting default Discord webhook', {
+      url: masked,
+      payload: { hasContent: Boolean(message), contentLength: String(message ?? '').length },
+    });
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content: message }),
     });
-  } catch { /* ignore */ }
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      logger.error('Default Discord webhook failed', { url: masked, status: res.status, err });
+      return;
+    }
+    logger.info('Default Discord webhook succeeded', { url: masked });
+  } catch (e) {
+    logger.error('Default Discord webhook threw', { error: String(e) });
+  }
 }
