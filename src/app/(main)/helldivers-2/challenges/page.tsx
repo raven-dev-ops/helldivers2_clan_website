@@ -20,7 +20,7 @@ interface ChallengeLevelData {
 const johnHelldiverLevels: ChallengeLevelData[] = [
   {
     id: 'level-0',
-    levelTitle: 'Basic Clearance',
+    levelTitle: 'JH0 Basic Clearance',
     details: `#FORTRESS / MEGA NEST – Solo Base
 Extract Required
 
@@ -47,7 +47,7 @@ TACTICS
   },
   {
     id: 'level-1',
-    levelTitle: 'Sabotage Proficiency',
+    levelTitle: 'JH1 Sabotage Proficiency',
     details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
 No special restrictions
 Extract Required
@@ -99,7 +99,7 @@ TACTICS
   },
   {
     id: 'level-3',
-    levelTitle: 'ICBM Control',
+    levelTitle: 'JH3 ICBM Control',
     details: `#ICBM
 No Stratagems
 Extract Required
@@ -122,7 +122,7 @@ TACTICS
   },
   {
     id: 'level-4',
-    levelTitle: 'Flawless ICBM',
+    levelTitle: 'JH4 Flawless ICBM',
     details: `#ICBM
 No Stratagems
 No Resupply
@@ -140,7 +140,7 @@ TACTICS
   },
   {
     id: 'level-5',
-    levelTitle: 'Perfect Survey',
+    levelTitle: 'JH5 Perfect Survey',
     details: `#Geological Survey
 No Deaths
 Extract Required
@@ -158,7 +158,7 @@ TACTICS
   },
   {
     id: 'level-6',
-    levelTitle: 'Eagle Ace',
+    levelTitle: 'JH6 Eagle Ace',
     details: `#Capture Flag
 Eagles Only
 Extract Required
@@ -175,7 +175,7 @@ TACTICS
   },
   {
     id: 'level-7',
-    levelTitle: 'The Purist',
+    levelTitle: 'JH7 The Purist',
     details: `#ICBM
 No Stratagems
 Constitution Rifle + Senator with Throwing Knives
@@ -235,7 +235,7 @@ export default function HelldiverChallengesPage() {
 
           <div className={base.subsectionCard}>
             <h3 className={base.subHeading}>
-              100% Complete To Unlock Role: John Helldiver
+              Unlock Helldiver Class: John/Jane Helldiver
             </h3>
             {johnHelldiverLevels.map((challenge) => {
               const isExpanded = !!expandedChallenges[challenge.id];

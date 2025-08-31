@@ -17,7 +17,7 @@ interface PrestigeMissionData {
 const prestigeMissions: PrestigeMissionData[] = [
   {
     id: 'level-8',
-    title: 'Terminid Spawn Camp',
+    title: 'JH8 Terminid Spawn Camp',
     details: `Nuke Nursery Hive Drill Mission
 Full Clear (Main Objective, Sub Objective, All Nests)
 Must Extract
@@ -36,7 +36,7 @@ Railgun`,
   },
   {
     id: 'level-9',
-    title: 'Automaton Hell Strike',
+    title: 'JH9 Automaton Hell Strike',
     details: `Neutralize Orbital Cannons
 Full Clear (Main Objective, Sub Objectives, All Enemies)
 No Deaths
@@ -55,7 +55,7 @@ Rocket Sentry`,
   },
   {
     id: 'level-10',
-    title: 'Lethal Pacifist',
+    title: 'JH10 Lethal Pacifist',
     details: `ICBM
 Full Clear (Main Objective, Sub Objectives, All Enemies)
 No Deaths
@@ -75,7 +75,7 @@ Any Sentry`,
   },
   {
     id: 'level-11',
-    title: 'Total Area Scorching',
+    title: 'JH11 Total Area Scorching',
     details: `Command Bunkers
 Full Clear (Main Objective, Sub Objective)
 
@@ -107,7 +107,7 @@ export default function CampaignsPage() {
       <div className={base.dividerLayer} />
       <div className={base.pageContainer}>
         <section className={base.section} id="gpt-campaign-missions">
-          <h2 className={base.sectionTitle}>GPT Campaign Missions</h2>
+          <h2 className={base.sectionTitle}>GPT Prestige Operations</h2>
           <div className={base.subsectionCard}>
             <h3 className={base.subHeading}>Rules & Requirements</h3>
             <ul className={`${base.styledList} ${base.decimal}`}>
@@ -126,7 +126,7 @@ export default function CampaignsPage() {
           </div>
 
           <div className={base.subsectionCard}>
-            <h3 className={base.subHeading}>John Helldiver Operations</h3>
+            <h3 className={base.subHeading}>John/Jane Helldiver Campaigns</h3>
             {prestigeMissions.map((mission) => {
               const isExpanded = !!expanded[mission.id];
               return (
