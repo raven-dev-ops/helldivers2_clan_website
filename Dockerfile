@@ -14,7 +14,7 @@ RUN apk add --no-cache python3 make g++ && npm i -g pnpm@9.12.3
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy all app files
 COPY . .
