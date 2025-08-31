@@ -26,13 +26,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm lint --if-present
+        run: pnpm lint
 
       - name: Test
-        run: pnpm test --if-present
+        run: pnpm test
 
       - name: Build
-        run: pnpm build --if-present
+        run: pnpm build
 
       - name: Gitleaks (secret scan)
         uses: gitleaks/gitleaks-action@v2
