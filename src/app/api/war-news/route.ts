@@ -101,6 +101,15 @@ export async function GET(req: NextRequest) {
       })
       .reverse();
 
+    // If upstream returned nothing, keep previous ETag response valid to avoid spamming empty updates
+    if (!news.length) {
+      const headers = {
+        ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
+        'Content-Type': 'application/json; charset=utf-8',
+      } as Record<string, string>;
+      return new NextResponse(JSON.stringify({ news: [] }), { status: 200, headers });
+    }
+
     // ETag handling
     const body = { news };
     const etag = strongETagFrom(body);
