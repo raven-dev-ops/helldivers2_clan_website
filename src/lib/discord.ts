@@ -61,6 +61,51 @@ export async function getGuildRolesViaBot(guildId: string, botToken?: string) {
   return (await res.json()) as Array<{ id: string; name: string }>;
 }
 
+export async function postChannelMessageViaBot(
+  channelId: string,
+  payload: { content?: string; embeds?: unknown[] },
+  botToken?: string
+) {
+  const token = botToken || process.env.DISCORD_BOT_TOKEN;
+  if (!token) {
+    logger.error('Bot post skipped: DISCORD_BOT_TOKEN missing');
+    return;
+  }
+
+  try {
+    const hasContent = Boolean(payload?.content);
+    const embedsCount = Array.isArray(payload?.embeds) ? payload.embeds.length : 0;
+    logger.info('Posting bot message to channel', {
+      channelId,
+      payload: { hasContent, embedsCount },
+    });
+
+    const res = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bot ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const err = await res.text().catch(() => '');
+      logger.error('Bot message failed', {
+        channelId,
+        status: res.status,
+        err,
+      });
+      throw new Error(`Discord bot message error ${res.status}: ${err}`);
+    }
+
+    logger.info('Bot message succeeded', { channelId });
+  } catch (e) {
+    logger.error('Bot message threw', { channelId, error: String(e) });
+    throw e;
+  }
+}
+
 export async function postDiscordWebhook(message: string) {
   const url = process.env.DISCORD_WEBHOOK_URL;
   if (!url) return;
