@@ -90,7 +90,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
 
-  const webhook = process.env.DISCORD_WAR_NEWS_WEBHOOK_URL;
+  // Prefer unified INTEL webhook for all Intel posts; fallback to legacy WAR_NEWS if provided
+  const webhook = process.env.DISCORD_INTEL_WEBHOOK_URL || process.env.DISCORD_WAR_NEWS_WEBHOOK_URL;
   if (!webhook) {
     return NextResponse.json({ ok: false, reason: 'no_webhook_configured' }, { status: 400 });
   }
@@ -126,6 +127,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     ok: true,
     env: {
+      DISCORD_INTEL_WEBHOOK_URL: !!process.env.DISCORD_INTEL_WEBHOOK_URL,
       DISCORD_WAR_NEWS_WEBHOOK_URL: !!process.env.DISCORD_WAR_NEWS_WEBHOOK_URL,
     },
   });
