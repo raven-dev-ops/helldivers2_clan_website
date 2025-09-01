@@ -59,16 +59,26 @@ async function main() {
     return;
   }
 
+  let successCount = 0;
+  let failureCount = 0;
   for (const [key, url] of entries) {
     try {
       log('info', `Testing webhook ${key}`);
       await postDiscordWebhook(url, {
         content: `Test message for ${key}`,
       });
+      successCount += 1;
     } catch (err) {
       log('error', `Failed to send test message for ${key}`, { error: String(err) });
+      failureCount += 1;
     }
   }
+
+  log('info', 'Webhook test dispatch complete', {
+    total: entries.length,
+    successCount,
+    failureCount,
+  });
 }
 
 main();

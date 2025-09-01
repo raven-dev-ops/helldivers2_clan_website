@@ -2,8 +2,56 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+function isWordPressProbe(pathname: string): boolean {
+  const lower = pathname.toLowerCase();
+  return (
+    lower.includes('/wp-admin') ||
+    lower.includes('/wp-login.php') ||
+    lower.includes('/wp-content') ||
+    lower.includes('/wp-includes') ||
+    lower.endsWith('/wlwmanifest.xml') ||
+    lower.includes('wlwmanifest.xml') ||
+    lower.endsWith('/xmlrpc.php') ||
+    lower.includes('/xmlrpc.php') ||
+    lower.includes('/wp-json') ||
+    lower.includes('/wp-config.php') ||
+    lower.includes('/wp-sitemap.xml') ||
+    lower.includes('/wp-cron.php')
+  );
+}
+
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Correlate with platform/router logs via X-Request-ID
+  const incomingId = req.headers.get('x-request-id');
+  const requestId = incomingId || generateRequestId();
+
+  // Block obvious WordPress/CMS scanner probes with a fast 404
+  if (isWordPressProbe(pathname)) {
+    const notFound = new NextResponse('Not Found', { status: 404 });
+    notFound.headers.set('X-Request-ID', requestId);
+    return notFound;
+  }
+
+  // Enforce HTTPS in production for idempotent requests (avoid redirecting POST/PUT, etc.)
+  const method = req.method.toUpperCase();
+  const isIdempotent = method === 'GET' || method === 'HEAD';
+  const xfProto = req.headers.get('x-forwarded-proto');
+  const host = req.headers.get('host') || req.nextUrl.host;
+  const isLocalhost = host?.startsWith('localhost') || host === '127.0.0.1';
+  if (
+    process.env.NODE_ENV === 'production' &&
+    isIdempotent &&
+    !isLocalhost &&
+    xfProto && xfProto !== 'https'
+  ) {
+    const url = req.nextUrl.clone();
+    url.protocol = 'https';
+    const redirect = NextResponse.redirect(url, 308);
+    redirect.headers.set('X-Request-ID', requestId);
+    return redirect;
+  }
 
   const isAsset =
     pathname.startsWith('/_next/') ||
@@ -18,10 +66,8 @@ export function middleware(req: NextRequest) {
   const wantsHtml = accept.includes('text/html');
 
   const res = NextResponse.next();
-
+  
   // Propagate/assign X-Request-ID for correlation with platform/router logs
-  const incomingId = req.headers.get('x-request-id');
-  const requestId = incomingId || generateRequestId();
   res.headers.set('X-Request-ID', requestId);
 
   if (!isAsset && (wantsHtml || req.method === 'HEAD' || accept === '')) {

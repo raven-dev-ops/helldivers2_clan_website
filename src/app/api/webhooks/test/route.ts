@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { postDiscordWebhook } from '@/lib/discordWebhook';
+import { rateLimitOrResponse } from '@/lib/rateLimit';
 
 export const runtime = 'nodejs';
 
@@ -20,6 +21,8 @@ function gatherDiscordWebhookEntries(): Array<[string, string]> {
 }
 
 export async function GET(req: Request) {
+  const limited = await rateLimitOrResponse(req, { bucket: 'webhooks_test_get', windowMs: 60_000, max: 10 });
+  if (limited) return limited;
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -29,6 +32,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const limited = await rateLimitOrResponse(req, { bucket: 'webhooks_test_post', windowMs: 60_000, max: 5 });
+  if (limited) return limited;
   if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }
@@ -52,6 +57,16 @@ export async function POST(req: Request) {
       posted.push({ key, ok: false, reason: 'post_failed' });
     }
   }
+
+  const successCount = posted.filter((p) => p.ok).length;
+  const failureCount = posted.length - successCount;
+  const requestId = req.headers.get('x-request-id') ?? undefined;
+  logger.info('Webhook test dispatch complete', {
+    total: posted.length,
+    successCount,
+    failureCount,
+    requestId,
+  });
 
   return NextResponse.json({ ok: true, posted });
 }
