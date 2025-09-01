@@ -45,8 +45,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const savedRankingOnce = useRef(false);
 
-  const fetcher = (url: string) =>
-    fetch(url, { cache: 'no-store' }).then((r) => r.json());
+  const fetcher = (url: string) => fetch(url).then((r) => r.json());
   const now = new Date();
   const qsBatch = new URLSearchParams({
     scopes: 'solo,month,lifetime',
@@ -100,7 +99,7 @@ export default function ProfilePage() {
     setSyncRolesMessage(null);
     setSyncingRoles(true);
     try {
-      const res = await fetch('/api/discord/roles', { cache: 'no-store' });
+      const res = await fetch('/api/discord/roles');
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'Failed to fetch roles');
       if (!data.isMember) {

@@ -47,7 +47,7 @@ const Navbar = () => {
 
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
-      fetch('/api/users/me', { cache: 'no-store' })
+      fetch('/api/users/me')
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
           if (data) setMeritPoints(data.meritPoints ?? 0);
