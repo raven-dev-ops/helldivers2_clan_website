@@ -58,17 +58,17 @@ function normalize(raw: RawOrder, i: number): MajorOrder {
 }
 
 async function fetchUpstream() {
-  // Prefer HellHub assignments/major orders if available
-  const hh = await HellHubApi.getAssignments();
-  if (hh.ok && hh.data) {
-    return { ok: true, status: 200, statusText: 'OK', data: hh.data } as const;
-  }
-  // Fallback to Arrowhead assignments by war
+  // Prefer Arrowhead assignments by war for freshness
   const ah = await ArrowheadApi.getAssignments(null);
   if (ah.ok && ah.data) {
     return { ok: true, status: 200, statusText: 'OK', data: ah.data } as const;
   }
-  return { ok: false, status: ah.status, statusText: ah.statusText, data: null as any } as const;
+  // Fallback to HellHub assignments/major orders if available
+  const hh = await HellHubApi.getAssignments();
+  if (hh.ok && hh.data) {
+    return { ok: true, status: 200, statusText: 'OK', data: hh.data } as const;
+  }
+  return { ok: false, status: hh.status, statusText: hh.statusText, data: null as any } as const;
 }
 
 export async function GET() {

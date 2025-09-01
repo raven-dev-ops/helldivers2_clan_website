@@ -24,20 +24,22 @@ async function fetchUpstream(): Promise<{
   status: number;
   statusText: string;
 }> {
-  // Prefer HellHub planets and war metadata when available
+  // Prefer Arrowhead live Info for freshness
+  const ah = await ArrowheadApi.getWarInfo(null);
+  if (ah.ok && ah.data) {
+    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
+  }
+
+  // Fallback to HellHub aggregator
   try {
     const hh = await HellHubApi.getWar();
     if (hh.ok && hh.data) {
       return { ok: true, data: hh.data as any, status: 200, statusText: 'OK' };
     }
-  } catch {}
-
-  // Fallback to Arrowhead Info
-  const ah = await ArrowheadApi.getWarInfo(null);
-  if (ah.ok && ah.data) {
-    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
+    return { ok: false, data: undefined, status: hh.status, statusText: hh.statusText } as const;
+  } catch {
+    return { ok: false, data: undefined, status: 599, statusText: 'FetchError' } as const;
   }
-  return { ok: false, data: undefined, status: ah.status, statusText: ah.statusText };
 }
 
 export async function GET() {
