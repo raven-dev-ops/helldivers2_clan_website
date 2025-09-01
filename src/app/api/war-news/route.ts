@@ -5,7 +5,8 @@ import { ArrowheadApi } from '@/lib/arrowhead';
 import { logger } from '@/lib/logger';
 import { strongETagFrom, cacheHeaders } from '@/lib/http/etag';
 
-export const revalidate = 300; // 5 minutes
+// Reduce route-level cache to 30s to improve freshness
+export const revalidate = 30;
 export const runtime = 'nodejs';
 
 type Item = {
@@ -44,40 +45,45 @@ const pickDate = (n: Item) => {
 export async function GET(req: NextRequest) {
   try {
     const startedAt = Date.now();
-    // Prefer Arrowhead NewsFeed for freshness; fallback to HellHub aggregator
+    // Prefer HellHub aggregated news (usually freshest); fallback to Arrowhead NewsFeed
     let list: Item[] = [];
+    let tHellHub = 0;
+    let tArrowhead = 0;
+
     const t0 = Date.now();
-    const ah = await ArrowheadApi.getNewsFeed(null);
-    const tArrowhead = Date.now() - t0;
-    if (ah.ok && ah.data) {
-      const json: any = ah.data;
-      list = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
-    }
-    if (!list.length) {
-      const t1 = Date.now();
-      const hh = await HellHubApi.getNews();
-      const tHellHub = Date.now() - t1;
-      if (hh.ok && hh.data) {
-        const json: any = hh.data;
-        list = Array.isArray(json)
-          ? json
-          : Array.isArray(json?.news)
-          ? json.news
-          : [];
-      }
-      logger.info('war-news timings', {
-        timings: { arrowheadMs: tArrowhead, hellHubMs: tHellHub, totalMs: Date.now() - startedAt },
-      });
-    } else {
-      logger.info('war-news timings', {
-        timings: { arrowheadMs: tArrowhead, totalMs: Date.now() - startedAt },
-      });
+    const hh = await HellHubApi.getNews();
+    tHellHub = Date.now() - t0;
+    if (hh.ok && hh.data) {
+      const json: any = hh.data;
+      list = Array.isArray(json)
+        ? json
+        : Array.isArray(json?.news)
+        ? json.news
+        : Array.isArray(json?.data)
+        ? json.data
+        : [];
     }
 
+    if (!list.length) {
+      const t1 = Date.now();
+      const ah = await ArrowheadApi.getNewsFeed(null);
+      tArrowhead = Date.now() - t1;
+      if (ah.ok && ah.data) {
+        const json: any = ah.data;
+        list = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
+      }
+    }
+
+    logger.info('war-news timings', {
+      timings: { hellHubMs: tHellHub, arrowheadMs: tArrowhead, totalMs: Date.now() - startedAt },
+    });
+
     // Normalize and latest-first
+    // Normalize and sort newest-first by computed date
     const news = list
-      .map((n, i) => {
-        const date = pickDate(n);
+      .map((n, i) => ({ raw: n, index: i, date: pickDate(n) }))
+      .sort((a, b) => b.date.getTime() - a.date.getTime())
+      .map(({ raw: n, index: i, date }) => {
         const title =
           asString(n.title) ??
           asString((n as any).headline) ??
@@ -98,20 +104,19 @@ export async function GET(req: NextRequest) {
         ].filter(Boolean);
 
         return {
-          id: String(n.id ?? `${title}-${date.getTime()}-${i}`),
+          id: String((n as any).id ?? `${title}-${date.getTime()}-${i}`),
           title,
           message,
           date: date.toISOString(),
           url,
-          planet: asString(n.planet),
-          sector: asString(n.sector ?? (n as any).theater),
-          faction: asString(n.faction),
-          severity: asString(n.severity),
+          planet: asString((n as any).planet),
+          sector: asString((n as any).sector ?? (n as any).theater),
+          faction: asString((n as any).faction),
+          severity: asString((n as any).severity),
           source: 'Helldivers Training Manual',
           meta: metaBits.length ? metaBits.join(' · ') : undefined,
         };
-      })
-      .reverse();
+      });
 
     // If upstream returned nothing, keep previous ETag response valid to avoid spamming empty updates
     if (!news.length) {
