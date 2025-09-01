@@ -21,6 +21,7 @@ export interface IUser extends Document {
   characterWeightKg?: number | null;
   homeplanet?: string | null;
   background?: string | null;
+  sesName?: string | null;
   customAvatarDataUrl?: string | null;
   callsign?: string | null;
   rankTitle?: string | null;
@@ -106,6 +107,7 @@ const UserSchema = new Schema<IUser>(
     characterWeightKg: { type: Number, default: null },
     homeplanet: { type: String, default: null },
     background: { type: String, default: null },
+    sesName: { type: String, default: null },
     customAvatarDataUrl: { type: String, default: null },
     callsign: { type: String, default: null },
     rankTitle: { type: String, default: null },

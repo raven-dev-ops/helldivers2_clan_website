@@ -68,6 +68,8 @@ NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=<generate-a-secret-key>
 DISCORD_CLIENT_ID=<discord-client-id>
 DISCORD_CLIENT_SECRET=<discord-client-secret>
+# Optional: configure Super Store upstream JSON endpoint for /api/store/rotation
+SUPERSTORE_UPSTREAM=https://your-proxy-or-json-endpoint
 RATE_LIMIT_WINDOW_MS=60000
 RATE_LIMIT_MAX=10
 REDIS_URL=redis://localhost:6379
@@ -83,6 +85,10 @@ DISCORD_TWITCH_WEBHOOK_URL=<webhook>
 DISCORD_GUILD_ID=<discord-guild-id>
 DISCORD_BOT_TOKEN=<bot-token-if-using-role-name-mapping>
 ```
+
+Notes:
+- /api/users/me responses are cached privately for ~60s and the app now avoids unnecessary `cache: 'no-store'` on the client to reduce latency. Expect the profile data to update within a minute of changes.
+- /api/store/rotation returns empty arrays unless `SUPERSTORE_UPSTREAM` is set to a valid JSON endpoint (or proxy) that exposes the rotating sets.
 
 ### Discord OAuth Scopes
 

@@ -57,6 +57,7 @@ export async function GET(req: NextRequest) {
         'firstName',
         'middleName',
         'lastName',
+        'sesName',
         'email',
         'image',
         'division',
@@ -94,6 +95,7 @@ export async function GET(req: NextRequest) {
     lastName: user.lastName ?? null,
     email: user.email,
     image: user.image,
+    sesName: user.sesName ?? null,
     division: user.division ?? null,
     characterHeightCm: user.characterHeightCm ?? null,
     characterWeightKg: user.characterWeightKg ?? null,
@@ -144,6 +146,7 @@ export async function PUT(req: NextRequest) {
       'firstName',
       'middleName',
       'lastName',
+      'sesName',
       'characterHeightCm',
       'characterWeightKg',
       'homeplanet',
@@ -229,6 +232,7 @@ export async function PUT(req: NextRequest) {
       firstName,
       middleName,
       lastName,
+      sesName,
       characterHeightCm,
       characterWeightKg,
       homeplanet,
@@ -252,6 +256,7 @@ export async function PUT(req: NextRequest) {
     if (firstName !== undefined) updates.firstName = firstName ?? null;
     if (middleName !== undefined) updates.middleName = middleName ?? null;
     if (lastName !== undefined) updates.lastName = lastName ?? null;
+    if (sesName !== undefined) updates.sesName = sesName ?? null;
 
     if (characterHeightCm !== undefined) {
       const n = Number(characterHeightCm);
@@ -330,6 +335,7 @@ export async function PUT(req: NextRequest) {
       firstName: updated?.firstName ?? null,
       middleName: updated?.middleName ?? null,
       lastName: updated?.lastName ?? null,
+      sesName: updated?.sesName ?? null,
       division: updated?.division ?? null,
       characterHeightCm: updated?.characterHeightCm ?? null,
       characterWeightKg: updated?.characterWeightKg ?? null,
@@ -368,6 +374,7 @@ export async function PUT(req: NextRequest) {
     firstName: updated?.firstName ?? null,
     middleName: updated?.middleName ?? null,
     lastName: updated?.lastName ?? null,
+    sesName: updated?.sesName ?? null,
     email: updated?.email,
     image: updated?.image,
     division: updated?.division ?? null,

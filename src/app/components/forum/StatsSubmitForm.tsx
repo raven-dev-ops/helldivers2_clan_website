@@ -24,7 +24,7 @@ export default function StatsSubmitForm() {
       try {
         setLoading(true);
         setError(null);
-        const meRes = await fetch('/api/users/me', { cache: 'no-store' });
+        const meRes = await fetch('/api/users/me');
         if (!meRes.ok) throw new Error('Failed to load user');
         const me = await meRes.json();
         if (cancelled) return;
