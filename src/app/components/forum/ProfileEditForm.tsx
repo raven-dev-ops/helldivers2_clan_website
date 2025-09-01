@@ -96,7 +96,7 @@ export default function ProfileEditForm() {
     (async () => {
       try {
         setLoading(true);
-        const res = await fetch('/api/users/me', { signal: ac.signal });
+        const res = await fetch('/api/users/me?include=avatar', { signal: ac.signal });
         if (!res.ok) throw new Error(`Failed to load profile (${res.status})`);
         const data = (await res.json()) as UserMe;
 

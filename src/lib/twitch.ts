@@ -134,9 +134,17 @@ export async function fetchTwitchCreators(
       .map((login) => `user_login=${login}`)
       .join('&');
 
+    // Add short timeouts to upstream requests
+    const mkCtrl = () => {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 5000);
+      return { ctrl, t };
+    };
+    const u = mkCtrl();
+    const s = mkCtrl();
     const [userResponse, streamResponse] = await Promise.all([
-      fetch(`https://api.twitch.tv/helix/users?${userQuery}`, { headers }),
-      fetch(`https://api.twitch.tv/helix/streams?${streamQuery}`, { headers }),
+      fetch(`https://api.twitch.tv/helix/users?${userQuery}`, { headers, signal: u.ctrl.signal }).finally(() => clearTimeout(u.t)),
+      fetch(`https://api.twitch.tv/helix/streams?${streamQuery}`, { headers, signal: s.ctrl.signal }).finally(() => clearTimeout(s.t)),
     ]);
 
     if (!userResponse.ok)

@@ -1,9 +1,10 @@
 // src/app/api/war/info/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
+import { jsonWithETag } from '@/lib/httpCache';
 
-export const runtime = 'edge';            // optional: faster cold starts
+export const runtime = 'nodejs';          // use Node runtime for hashing/ETag
 export const revalidate = 60;             // 60s for fresher data during dev
 
 const MAX_AGE = 60;                       // 60s CDN cache
@@ -42,7 +43,7 @@ async function fetchUpstream(): Promise<{
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const { ok, data, status, statusText } = await fetchUpstream();
 
   const body: WarInfo =
@@ -60,20 +61,14 @@ export async function GET() {
         };
 
   const headers = {
-    // Shorter CDN caching for freshness while you validate
     'Cache-Control': `s-maxage=${MAX_AGE}, stale-while-revalidate=${MAX_AGE}`,
-    'Content-Type': 'application/json; charset=utf-8',
-  };
+  } as Record<string, string>;
 
-  if (!ok) {
-    // Return fallback but indicate we used it (helps telemetry/UI)
-    return NextResponse.json(
-      { ...body, _fallback: true, _error: `Upstream ${status} ${statusText}` },
-      { status: 200, headers }
-    );
-  }
+  const payload = !ok
+    ? { ...body, _fallback: true, _error: `Upstream ${status} ${statusText}` }
+    : body;
 
-  return NextResponse.json(body, { status: 200, headers });
+  return jsonWithETag(req, payload, { headers });
 }
 
 // Optional: lightweight HEAD for health checks / warmups, mirrors cache headers
