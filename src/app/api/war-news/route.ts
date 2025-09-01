@@ -6,8 +6,10 @@ import { logger } from '@/lib/logger';
 import { strongETagFrom, cacheHeaders } from '@/lib/http/etag';
 
 // Reduce route-level cache to 30s to improve freshness
-export const revalidate = 30;
+export const revalidate = 0;
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'default-no-store';
 
 type Item = {
   id?: string | number;
@@ -30,47 +32,93 @@ type Item = {
 const asString = (v: unknown) =>
   typeof v === 'string' && v.trim() ? v.trim() : undefined;
 
+// Parses a variety of upstream date formats safely.
+// - Accepts ISO strings containing a date
+// - Accepts epoch seconds/milliseconds (strings or numbers)
+// - Ignores short time-of-day strings (e.g., "00:48:19.330Z") which would map to 1970
+const parseDateValue = (raw: unknown): Date | null => {
+  if (raw == null) return null;
+  if (typeof raw === 'number') {
+    const n = raw;
+    // Treat plausible seconds since epoch as seconds; smaller numbers are ignored
+    const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+    const d = new Date(ms);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof raw === 'string') {
+    const s = raw.trim();
+    if (!s) return null;
+    // Pure digits -> numeric epoch
+    if (/^\d+$/.test(s)) {
+      const n = Number(s);
+      const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+      const d = new Date(ms);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    // Require a date component in the string
+    if (s.includes('T') || s.includes('-') || s.includes('/')) {
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+  return null;
+};
+
 const pickDate = (n: Item) => {
-  const raw =
-    (n as any).time ??
-    n.published ??
-    n.timestamp ??
-    n.updatedAt ??
-    n.createdAt ??
-    Date.now();
-  const d = new Date(raw as any);
-  return isNaN(d.getTime()) ? new Date() : d;
+  // Prefer fields that commonly contain full ISO timestamps; check 'time' last
+  const candidates: Array<unknown> = [
+    (n as any).published,
+    (n as any).timestamp,
+    (n as any).updatedAt,
+    (n as any).createdAt,
+    (n as any).time,
+  ];
+  for (const c of candidates) {
+    const d = parseDateValue(c);
+    if (d) return d;
+  }
+  return new Date();
 };
 
 export async function GET(req: NextRequest) {
   try {
     const startedAt = Date.now();
-    // Prefer HellHub aggregated news (usually freshest); fallback to Arrowhead NewsFeed
+    // Prefer Arrowhead NewsFeed for freshness; fallback to HellHub aggregated news
     let list: Item[] = [];
     let tHellHub = 0;
     let tArrowhead = 0;
+    let listSource: 'arrowhead' | 'hellhub' | undefined = undefined;
 
-    const t0 = Date.now();
-    const hh = await HellHubApi.getNews();
-    tHellHub = Date.now() - t0;
-    if (hh.ok && hh.data) {
-      const json: any = hh.data;
-      list = Array.isArray(json)
-        ? json
-        : Array.isArray(json?.news)
-        ? json.news
-        : Array.isArray(json?.data)
-        ? json.data
-        : [];
+    const tA = Date.now();
+    const ah = await ArrowheadApi.getNewsFeed(null);
+    tArrowhead = Date.now() - tA;
+    if (ah.ok && ah.data) {
+      const json: any = ah.data;
+      const arr = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
+      if (arr.length) {
+        list = arr as Item[];
+        listSource = 'arrowhead';
+      }
     }
 
     if (!list.length) {
-      const t1 = Date.now();
-      const ah = await ArrowheadApi.getNewsFeed(null);
-      tArrowhead = Date.now() - t1;
-      if (ah.ok && ah.data) {
-        const json: any = ah.data;
-        list = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
+      const tH = Date.now();
+      const hh = await HellHubApi.getNews();
+      tHellHub = Date.now() - tH;
+      if (hh.ok && hh.data) {
+        const json: any = hh.data;
+        const arr = Array.isArray(json)
+          ? json
+          : Array.isArray(json?.news)
+          ? json.news
+          : Array.isArray(json?.data)
+          ? json.data
+          : [];
+        if (arr.length) {
+          list = arr as Item[];
+          listSource = 'hellhub';
+        }
       }
     }
 
@@ -94,13 +142,16 @@ export async function GET(req: NextRequest) {
           asString((n as any).body) ??
           asString((n as any).description);
         const url = asString(n.url) ?? asString(n.link);
-
+        const source =
+          asString((n as any).source) ||
+          asString((n as any).author) ||
+          (listSource === 'arrowhead' ? 'Arrowhead' : undefined);
         const metaBits = [
           asString(n.planet),
           asString(n.sector ?? (n as any).theater),
           asString(n.faction),
           asString(n.severity),
-          'Helldivers Training Manual',
+          source,
         ].filter(Boolean);
 
         return {
@@ -113,7 +164,7 @@ export async function GET(req: NextRequest) {
           sector: asString((n as any).sector ?? (n as any).theater),
           faction: asString((n as any).faction),
           severity: asString((n as any).severity),
-          source: 'Helldivers Training Manual',
+          source,
           meta: metaBits.length ? metaBits.join(' · ') : undefined,
         };
       });
@@ -121,7 +172,7 @@ export async function GET(req: NextRequest) {
     // If upstream returned nothing, keep previous ETag response valid to avoid spamming empty updates
     if (!news.length) {
       const headers = {
-        ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
+        'Cache-Control': 'no-store',
         'Content-Type': 'application/json; charset=utf-8',
       } as Record<string, string>;
       return new NextResponse(JSON.stringify({ news: [] }), { status: 200, headers });
@@ -132,7 +183,7 @@ export async function GET(req: NextRequest) {
     const etag = strongETagFrom(body);
     const ifNoneMatch = req.headers.get('if-none-match');
     const headers = {
-      ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
+      'Cache-Control': 'no-store',
       ETag: etag,
       'Content-Type': 'application/json; charset=utf-8',
     } as Record<string, string>;
@@ -152,7 +203,7 @@ export async function GET(req: NextRequest) {
       {
         status: 200,
         headers: {
-          ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
+          'Cache-Control': 'no-store',
         },
       }
     );
