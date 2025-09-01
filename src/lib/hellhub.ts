@@ -82,10 +82,30 @@ export function getEffects(query: string = '') {
   return fetchJson(`/api/effects${qs}`);
 }
 
-export function getNews(query: string = '') {
+export async function getNews(query: string = ''): Promise<FetchJsonResult<any>> {
   const qs = query ? (query.startsWith('?') ? query : `?${query}`) : '';
-  // Some mirrors provide news under /api/news or /api/war/news; adjust if needed
-  return fetchJson(`/api/news${qs}`);
+  // Some mirrors provide news under different paths; try a few in order.
+  const candidates = [
+    `/api/news${qs}`,
+    `/api/war/news${qs}`,
+    `/news${qs}`,
+  ];
+
+  let last: FetchJsonResult<any> | null = null;
+  for (const path of candidates) {
+    const res = await fetchJson(path);
+    last = res;
+    const data: any = res.data;
+    const arr = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.news)
+      ? data.news
+      : Array.isArray(data?.data)
+      ? data.data
+      : [];
+    if (res.ok && arr.length) return res;
+  }
+  return last || { ok: false, status: 404, statusText: 'NotFound', data: null };
 }
 
 export const HellHubApi = {
