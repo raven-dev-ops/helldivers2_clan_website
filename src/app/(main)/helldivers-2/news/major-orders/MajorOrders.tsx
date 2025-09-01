@@ -60,82 +60,9 @@ export default function MajorOrders() {
   if (isLoading) return <div>Loading Major Orders…</div>;
   if (error) return <div>Couldn’t load Major Orders.</div>;
 
-  const orders = Array.isArray(data?.orders) ? (data!.orders as MajorOrder[]) : [];
-
-  if (!orders.length) return <div className={styles.section}>No current Major Orders.</div>;
-
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>Major Orders</h3>
-      <ul className={styles.styledList} style={{ paddingLeft: 18 }}>
-        {orders.slice(0, 5).map((o, idx) => {
-          const progressPct = pct(o.progress);
-          return (
-            <li key={o.id || idx} className={styles.listItem}>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-                <div style={{ fontWeight: 600 }}>{o.title || 'Major Order'}</div>
-                {o.reward && (
-                  <span
-                    style={{
-                      marginLeft: 6,
-                      fontSize: '0.8rem',
-                      padding: '0.15rem 0.5rem',
-                      borderRadius: 999,
-                      border: '1px solid var(--color-border)',
-                      background: 'var(--color-surface-alt)',
-                      color: 'var(--color-text-secondary)',
-                    }}
-                  >
-                    Reward: {o.reward}
-                  </span>
-                )}
-              </div>
-
-              {o.description && <div className={styles.paragraph}>{o.description}</div>}
-
-              {typeof progressPct === 'number' && (
-                <div
-                  aria-label="Progress"
-                  role="progressbar"
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                  aria-valuenow={progressPct}
-                  style={{ margin: '0.25rem 0 0.5rem' }}
-                >
-                  <div
-                    style={{
-                      height: 8,
-                      borderRadius: 999,
-                      background: 'rgba(255,255,255,0.08)',
-                      border: '1px solid var(--color-border)',
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: `${progressPct}%`,
-                        height: '100%',
-                        background: 'var(--color-primary)',
-                      }}
-                    />
-                  </div>
-                  <div
-                    className={styles.paragraph}
-                    style={{ marginTop: 4, marginBottom: 0, opacity: 0.85 }}
-                  >
-                    Progress: {progressPct}%
-                    {o.goal ? ` · Goal: ${o.goal}` : ''}
-                  </div>
-                </div>
-              )}
-
-              <div className={styles.paragraph} style={{ marginBottom: 0 }}>
-                Expires: {formatDateTime(o.expires)} {`(${timeLeft(o.expires)})`}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+      {JSON.stringify(data ?? null, null, 2)}
+    </pre>
   );
 }

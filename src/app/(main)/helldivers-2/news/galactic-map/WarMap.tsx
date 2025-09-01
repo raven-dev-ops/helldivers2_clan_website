@@ -23,43 +23,9 @@ export default function WarMap() {
   if (statusErr || infoErr) return <div>Failed to load war data.</div>;
   if (!status || !info) return <div>Failed to load war data.</div>;
 
-  const planets = Array.isArray(info?.planets)
-    ? info.planets
-    : Array.isArray(info?.data?.planets)
-    ? info.data.planets
-    : [];
-
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>Galactic War</h3>
-
-      <p className={styles.paragraph}>
-        Planets tracked: {Array.isArray(planets) ? planets.length : 0}
-      </p>
-
-      <ul
-        className={styles.styledList}
-        style={{ maxHeight: 300, overflow: 'auto', paddingLeft: 18 }}
-      >
-        {Array.isArray(planets) &&
-          planets.slice(0, 25).map((p: any) => (
-            <li key={p.index ?? p.id ?? p.name} className={styles.listItem}>
-              <div style={{ fontWeight: 600 }}>{p.name || 'Unknown Planet'}</div>
-              <div className={styles.paragraph} style={{ marginBottom: 0 }}>
-                biome: {p.biome || 'unknown'} — hazards:{' '}
-                {Array.isArray(p.environmentals)
-                  ? p.environmentals.join(', ') || 'none'
-                  : 'none'}
-              </div>
-            </li>
-          ))}
-      </ul>
-
-      <p className={styles.paragraph} style={{ marginTop: 8 }}>
-        <Link href="/helldivers-2/map" className={styles.link} prefetch={false}>
-          Open full map
-        </Link>
-      </p>
-    </div>
+    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+      {JSON.stringify({ status, info }, null, 2)}
+    </pre>
   );
 }
