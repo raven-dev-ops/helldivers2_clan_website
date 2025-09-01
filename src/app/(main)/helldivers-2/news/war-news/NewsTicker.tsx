@@ -98,8 +98,9 @@ export default function NewsTicker() {
     '/api/war-news', // ✅ use your new proxy route
     fetcher,
     {
-      refreshInterval: 5 * 60 * 1000,
-      revalidateOnFocus: false,
+      // Poll more frequently and revalidate on window focus for freshness
+      refreshInterval: 60 * 1000,
+      revalidateOnFocus: true,
     }
   );
 
