@@ -72,7 +72,7 @@ export default function ProfilePage() {
       (async () => {
         setLoading(true);
         const [resMe, resLast] = await Promise.all([
-          fetch('/api/users/me'),
+          fetch('/api/users/me?include=avatar,submissions'),
           fetch('/api/users/profile/last'),
         ]);
         const data = await resMe.json();

@@ -9,6 +9,7 @@ import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongoClientPromise';
 import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
+import { jsonWithETag } from '@/lib/httpCache';
 
 type Cached = { data: Record<string, unknown>; expires: number };
 const userCache = new Map<string, Cached>();
@@ -29,7 +30,7 @@ function json(
   });
 }
 
-/** GET /api/users/me — session-scoped profile (cached for 60s) */
+/** GET /api/users/me — session-scoped profile (cached for 60s, ETag, selective fields) */
 export async function GET(req: NextRequest) {
   const startedAt = Date.now();
   const rid = req.headers.get('x-request-id') || cryptoRandomId();
@@ -39,54 +40,72 @@ export async function GET(req: NextRequest) {
   const tAuth = Date.now() - t0;
   if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
+  // Parse include query: e.g., ?include=avatar,submissions
+  const { searchParams } = new URL(req.url);
+  const includeParam = (searchParams.get('include') || '').trim();
+  const includeSet = new Set(
+    includeParam
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean)
+  );
+  const includeKey = Array.from(includeSet).sort().join(',');
+
   const now = Date.now();
-  const cached = userCache.get(session.user.id);
+  const cacheKey = `${session.user.id}|${includeKey}`;
+  const cached = userCache.get(cacheKey);
   if (cached && cached.expires > now) {
     logger.info('users.me cache hit', { requestId: rid });
-    return json(cached.data, undefined, rid);
+    return jsonWithETag(req, cached.data, {
+      headers: {
+        'Cache-Control': 'private, max-age=60, stale-while-revalidate=600',
+        Vary: 'Cookie',
+        ...(rid ? { 'X-Request-ID': rid } : {}),
+      },
+    });
   }
 
   const t1 = Date.now();
   await dbConnect();
   const tDbConnect = Date.now() - t1;
   const t2 = Date.now();
+  const baseFields = [
+    'name',
+    'firstName',
+    'middleName',
+    'lastName',
+    'sesName',
+    'email',
+    'image',
+    'division',
+    'characterHeightCm',
+    'characterWeightKg',
+    'homeplanet',
+    'background',
+    'callsign',
+    'rankTitle',
+    'favoriteWeapon',
+    'armor',
+    'motto',
+    'favoredEnemy',
+    'meritPoints',
+    'twitchUrl',
+    'preferredHeightUnit',
+    'preferredWeightUnit',
+    'discordRoles',
+    'createdAt',
+    'updatedAt',
+  ];
+  if (includeSet.has('avatar')) baseFields.push('customAvatarDataUrl');
+  if (includeSet.has('submissions')) baseFields.push('challengeSubmissions');
   const user = await UserModel.findById(session.user.id)
-    .select(
-      [
-        'name',
-        'firstName',
-        'middleName',
-        'lastName',
-        'sesName',
-        'email',
-        'image',
-        'division',
-        'characterHeightCm',
-        'characterWeightKg',
-        'homeplanet',
-        'background',
-        'customAvatarDataUrl',
-        'callsign',
-        'rankTitle',
-        'favoriteWeapon',
-        'armor',
-        'motto',
-        'favoredEnemy',
-        'meritPoints',
-        'twitchUrl',
-        'preferredHeightUnit',
-        'preferredWeightUnit',
-        'discordRoles',
-        'challengeSubmissions',
-        'createdAt',
-        'updatedAt',
-      ].join(' ')
-    )
+    .select(baseFields.join(' '))
     .lean();
   const tDbQuery = Date.now() - t2;
 
   if (!user) return json({ error: 'not_found' }, { status: 404 }, rid);
 
+  // Build slim base payload by default; include heavy fields only when requested
   const data: Record<string, unknown> = {
     id: user._id.toString(),
     name: user.name,
@@ -101,7 +120,6 @@ export async function GET(req: NextRequest) {
     characterWeightKg: user.characterWeightKg ?? null,
     homeplanet: user.homeplanet ?? null,
     background: user.background ?? null,
-    customAvatarDataUrl: user.customAvatarDataUrl ?? null,
     callsign: user.callsign ?? null,
     rankTitle: user.rankTitle ?? null,
     favoriteWeapon: user.favoriteWeapon ?? null,
@@ -113,18 +131,30 @@ export async function GET(req: NextRequest) {
     preferredHeightUnit: user.preferredHeightUnit ?? 'cm',
     preferredWeightUnit: user.preferredWeightUnit ?? 'kg',
     discordRoles: Array.isArray(user.discordRoles) ? user.discordRoles : [],
-    challengeSubmissions: user.challengeSubmissions ?? [],
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
 
-  userCache.set(session.user.id, { data, expires: now + 60_000 });
+  if (includeSet.has('avatar')) {
+    data.customAvatarDataUrl = user.customAvatarDataUrl ?? null;
+  }
+  if (includeSet.has('submissions')) {
+    data.challengeSubmissions = user.challengeSubmissions ?? [];
+  }
+
+  userCache.set(cacheKey, { data, expires: now + 60_000 });
   const totalMs = Date.now() - startedAt;
   logger.info('users.me timings', {
     requestId: rid,
     timings: { authMs: tAuth, dbConnectMs: tDbConnect, dbQueryMs: tDbQuery, serializeMs: Date.now() - t2 - tDbQuery, totalMs },
   });
-  return json(data, undefined, rid);
+  return jsonWithETag(req, data, {
+    headers: {
+      'Cache-Control': 'private, max-age=60, stale-while-revalidate=600',
+      Vary: 'Cookie',
+      ...(rid ? { 'X-Request-ID': rid } : {}),
+    },
+  });
 }
 
 /** PUT /api/users/me — update profile (multipart or JSON) */
@@ -367,7 +397,12 @@ export async function PUT(req: NextRequest) {
     logger.error('Failed to write User_Profiles snapshot', { requestId: rid, error: String(e) });
   }
 
-  userCache.delete(session.user.id);
+  // Invalidate all cached variants (any includeKey) for this user
+  for (const key of Array.from(userCache.keys())) {
+    if (key === session.user.id || key.startsWith(`${session.user.id}|`)) {
+      userCache.delete(key);
+    }
+  }
   return json({
     id: updated?._id.toString(),
     name: updated?.name,
@@ -424,7 +459,11 @@ export async function DELETE(req: NextRequest) {
   const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
   await appDb.collection('User_Profiles').deleteOne({ user_id: userId });
 
-  userCache.delete(session.user.id);
+  for (const key of Array.from(userCache.keys())) {
+    if (key === session.user.id || key.startsWith(`${session.user.id}|`)) {
+      userCache.delete(key);
+    }
+  }
   return json({ ok: true }, undefined, rid);
 }
 

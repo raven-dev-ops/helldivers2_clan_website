@@ -109,6 +109,22 @@ export async function postChannelMessageViaBot(
 export async function postDiscordWebhook(message: string) {
   const url = process.env.DISCORD_WEBHOOK_URL;
   if (!url) return;
+  // Idempotency: skip duplicate messages within a short window
+  const dedupeTtlMs = 60_000;
+  const globalForDedupe = globalThis as unknown as {
+    __discord_webhook_dedupe__?: Map<string, number>;
+  };
+  if (!globalForDedupe.__discord_webhook_dedupe__) {
+    globalForDedupe.__discord_webhook_dedupe__ = new Map();
+  }
+  const dedupe = globalForDedupe.__discord_webhook_dedupe__;
+  const key = (message || '').trim();
+  const now = Date.now();
+  const last = key ? dedupe.get(key) : undefined;
+  if (key && last && last + dedupeTtlMs > now) {
+    logger.info('Skipping duplicate Discord webhook within 60s');
+    return;
+  }
   try {
     const masked = maskDiscordWebhookUrl(url);
     logger.info('Posting default Discord webhook', {
@@ -125,6 +141,7 @@ export async function postDiscordWebhook(message: string) {
       logger.error('Default Discord webhook failed', { url: masked, status: res.status, err });
       return;
     }
+    if (key) dedupe.set(key, now);
     logger.info('Default Discord webhook succeeded', { url: masked });
   } catch (e) {
     logger.error('Default Discord webhook threw', { error: String(e) });

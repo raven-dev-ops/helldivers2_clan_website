@@ -1,9 +1,10 @@
 // src/app/api/war/status/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
+import { jsonWithETag } from '@/lib/httpCache';
 
-export const runtime = 'edge';          // faster startup (optional)
+export const runtime = 'nodejs';        // use Node runtime for hashing/ETag
 export const revalidate = 60;           // ISR: 60s
 
 const MAX_AGE = 60;                     // CDN cache: 60s
@@ -35,7 +36,7 @@ async function fetchUpstream(): Promise<{
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const { ok, data, status, statusText } = await fetchUpstream();
 
   const body: WarStatus =
@@ -48,12 +49,11 @@ export async function GET() {
           _error: `Upstream ${status} ${statusText}`,
         };
 
-  const headers = {
-    'Cache-Control': `s-maxage=${MAX_AGE}, stale-while-revalidate=${STALE_AGE}`,
-    'Content-Type': 'application/json; charset=utf-8',
-  };
-
-  return NextResponse.json(body, { status: 200, headers });
+  return jsonWithETag(req, body, {
+    headers: {
+      'Cache-Control': `s-maxage=${MAX_AGE}, stale-while-revalidate=${STALE_AGE}`,
+    },
+  });
 }
 
 export async function HEAD() {
