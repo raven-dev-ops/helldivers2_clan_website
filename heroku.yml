@@ -3,3 +3,4 @@ build:
     web: Dockerfile
 run:
   web: pnpm start
+  worker: pnpm run scheduler
