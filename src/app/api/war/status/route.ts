@@ -17,20 +17,22 @@ async function fetchUpstream(): Promise<{
   status: number;
   statusText: string;
 }> {
-  // 1) Try HellHub aggregator first
+  // 1) Try Arrowhead live API first for freshness
+  const ah = await ArrowheadApi.getWarStatus(null);
+  if (ah.ok && ah.data) {
+    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
+  }
+
+  // 2) Fallback to HellHub aggregator
   try {
     const hh = await HellHubApi.getWar();
     if (hh.ok && hh.data) {
       return { ok: true, data: hh.data as any, status: 200, statusText: 'OK' };
     }
-  } catch {}
-
-  // 2) Fallback to Arrowhead live API
-  const ah = await ArrowheadApi.getWarStatus(null);
-  if (ah.ok && ah.data) {
-    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
+    return { ok: false, data: null, status: hh.status, statusText: hh.statusText } as const;
+  } catch {
+    return { ok: false, data: null, status: 599, statusText: 'FetchError' } as const;
   }
-  return { ok: false, data: null, status: ah.status, statusText: ah.statusText };
 }
 
 export async function GET() {

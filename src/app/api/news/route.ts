@@ -15,11 +15,11 @@ export const revalidate = 300;
  */
 export async function GET() {
   try {
-    // Prefer HellHub aggregated news; fallback to Arrowhead NewsFeed
+    // Prefer Arrowhead NewsFeed for freshness; fallback to HellHub aggregated news
     let items: any[] = [];
-    const hh = await HellHubApi.getNews();
-    if (hh.ok && hh.data) {
-      const raw = hh.data as any;
+    const ah = await ArrowheadApi.getNewsFeed(null);
+    if (ah.ok && ah.data) {
+      const raw = ah.data as any;
       items = Array.isArray(raw?.news)
         ? raw.news
         : Array.isArray(raw?.data)
@@ -29,9 +29,9 @@ export async function GET() {
         : [];
     }
     if (!items.length) {
-      const ah = await ArrowheadApi.getNewsFeed(null);
-      if (ah.ok && ah.data) {
-        const raw = ah.data as any;
+      const hh = await HellHubApi.getNews();
+      if (hh.ok && hh.data) {
+        const raw = hh.data as any;
         items = Array.isArray(raw?.news)
           ? raw.news
           : Array.isArray(raw?.data)
