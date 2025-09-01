@@ -5,7 +5,7 @@
 import useSWR from 'swr';
 import styles from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url, { headers: { Accept: 'application/json' } }).then((r) => r.json());
 
 export default function SuperStore() {
   const { data, isLoading } = useSWR('/api/store/rotation', fetcher, {
