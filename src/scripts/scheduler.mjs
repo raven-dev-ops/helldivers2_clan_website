@@ -33,6 +33,12 @@ async function post(path) {
 async function runOnce() {
 	// Trigger war-news (up to 3 items)
 	await post('/api/cron/post-war-news');
+	// Trigger major orders summary (up to 3 orders)
+	await post('/api/cron/post-major-orders');
+	// Trigger galactic map summary
+	await post('/api/cron/post-galactic-map');
+	// Trigger super store rotation
+	await post('/api/cron/post-super-store');
 	// Trigger leaderboards (all scopes and partner channels)
 	await post('/api/cron/post-leaderboards');
 }

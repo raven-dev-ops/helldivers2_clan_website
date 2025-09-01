@@ -35,9 +35,6 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.24.0
         version: 2.26.0
-      jsdom:
-        specifier: ^26.1.0
-        version: 26.1.0
       mongodb:
         specifier: ^5.9.2
         version: 5.9.2
@@ -138,6 +135,9 @@ importers:
       ioredis-mock:
         specifier: ^8.9.0
         version: 8.9.0(@types/ioredis-mock@8.2.6(ioredis@5.7.0))(ioredis@5.7.0)
+      jsdom:
+        specifier: ^26.1.0
+        version: 26.1.0
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
