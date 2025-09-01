@@ -1,5 +1,7 @@
 // src/app/api/news/route.ts
 import { NextResponse } from 'next/server';
+import { HellHubApi } from '@/lib/hellhub';
+import { ArrowheadApi } from '@/lib/arrowhead';
 
 // Cache for five minutes. War news does not change often.
 export const revalidate = 300;
@@ -13,30 +15,32 @@ export const revalidate = 300;
  */
 export async function GET() {
   try {
-    const url = 'https://api.helldivers2.com/api/war/news';
-    const upstream = await fetch(url, {
-      headers: {
-        'User-Agent': 'GPT-Fleet-CommunitySite/1.0',
-        Accept: 'application/json',
-      },
-      // Allow Next.js to cache on the edge for the same length as the
-      // revalidate period to minimise calls to the upstream service.
-      next: { revalidate: 300 },
-    });
-
-    if (!upstream.ok) throw new Error('upstream');
-
-    const raw = await upstream.json();
-
-    // Some upstreams return `{ news: [...] }` others `{ data: [...] }` or even
-    // an array directly.  Normalise the shape here.
-    const items: any[] = Array.isArray(raw?.news)
-      ? raw.news
-      : Array.isArray(raw?.data)
+    // Prefer HellHub aggregated news; fallback to Arrowhead NewsFeed
+    let items: any[] = [];
+    const hh = await HellHubApi.getNews();
+    if (hh.ok && hh.data) {
+      const raw = hh.data as any;
+      items = Array.isArray(raw?.news)
+        ? raw.news
+        : Array.isArray(raw?.data)
         ? raw.data
         : Array.isArray(raw)
+        ? raw
+        : [];
+    }
+    if (!items.length) {
+      const ah = await ArrowheadApi.getNewsFeed(null);
+      if (ah.ok && ah.data) {
+        const raw = ah.data as any;
+        items = Array.isArray(raw?.news)
+          ? raw.news
+          : Array.isArray(raw?.data)
+          ? raw.data
+          : Array.isArray(raw)
           ? raw
           : [];
+      }
+    }
 
     const news = items.map((n, i) => ({
       id: n.id ?? i,

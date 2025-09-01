@@ -1,12 +1,12 @@
 // src/app/api/war/info/route.ts
 import { NextResponse } from 'next/server';
+import { HellHubApi } from '@/lib/hellhub';
+import { ArrowheadApi } from '@/lib/arrowhead';
 
 export const runtime = 'edge';            // optional: faster cold starts
 export const revalidate = 60;             // 60s for fresher data during dev
 
 const MAX_AGE = 60;                       // 60s CDN cache
-const UPSTREAM = 'https://helldiverstrainingmanual.com/api/v1/war/info';
-const UA = 'GPT-Fleet-CommunitySite/1.0';
 
 type WarInfo = {
   planets?: Array<{
@@ -24,37 +24,20 @@ async function fetchUpstream(): Promise<{
   status: number;
   statusText: string;
 }> {
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 8000); // 8s timeout
-
+  // Prefer HellHub planets and war metadata when available
   try {
-    const res = await fetch(UPSTREAM, {
-      headers: {
-        'User-Agent': UA,
-        Accept: 'application/json',
-      },
-      // cache via Next’s ISR; CDN cache headers are set on the response below
-      next: { revalidate: MAX_AGE },
-      cache: 'force-cache',
-      signal: ac.signal,
-    });
-
-    const ct = res.headers.get('content-type') || '';
-    const isJSON = ct.includes('application/json');
-
-    let data: any;
-    if (isJSON) {
-      try {
-        data = await res.json();
-      } catch {
-        // fall through to error path below
-      }
+    const hh = await HellHubApi.getWar();
+    if (hh.ok && hh.data) {
+      return { ok: true, data: hh.data as any, status: 200, statusText: 'OK' };
     }
+  } catch {}
 
-    return { ok: res.ok && !!data, data, status: res.status, statusText: res.statusText };
-  } finally {
-    clearTimeout(timer);
+  // Fallback to Arrowhead Info
+  const ah = await ArrowheadApi.getWarInfo(null);
+  if (ah.ok && ah.data) {
+    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
   }
+  return { ok: false, data: undefined, status: ah.status, statusText: ah.statusText };
 }
 
 export async function GET() {
