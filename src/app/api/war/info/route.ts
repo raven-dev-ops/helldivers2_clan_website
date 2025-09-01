@@ -2,9 +2,9 @@
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';            // optional: faster cold starts
-export const revalidate = 86400;          // 24h (default for this route)
+export const revalidate = 60;             // 60s for fresher data during dev
 
-const MAX_AGE = 60 * 60 * 24;             // 24h
+const MAX_AGE = 60;                       // 60s CDN cache
 const UPSTREAM = 'https://helldiverstrainingmanual.com/api/v1/war/info';
 const UA = 'GPT-Fleet-CommunitySite/1.0';
 
@@ -75,7 +75,7 @@ export async function GET() {
         };
 
   const headers = {
-    // CDN caching (Vercel/any proxy): 24h max-age, allow stale while revalidating
+    // Shorter CDN caching for freshness while you validate
     'Cache-Control': `s-maxage=${MAX_AGE}, stale-while-revalidate=${MAX_AGE}`,
     'Content-Type': 'application/json; charset=utf-8',
   };

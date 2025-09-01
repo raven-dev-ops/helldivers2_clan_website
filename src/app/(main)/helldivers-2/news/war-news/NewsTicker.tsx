@@ -106,42 +106,9 @@ export default function NewsTicker() {
   if (isLoading) return <div>Loading war news…</div>;
   if (error) return <div>Couldn’t load war news.</div>;
 
-  const items: ApiNewsItem[] = Array.isArray(data?.news) ? data!.news! : [];
-  const uiItems = items.map(normalize).sort((a, b) => b.date.getTime() - a.date.getTime());
-  const top = uiItems.slice(0, 10);
-
-  if (!top.length) return <div>No war news available.</div>;
-
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>War News</h3>
-      <ul className={styles.styledList} style={{ paddingLeft: 18 }}>
-        {top.map((n) => (
-          <li key={n.id} className={styles.listItem}>
-            <div style={{ fontWeight: 700, lineHeight: 1.25 }}>
-              {n.url ? (
-                <a href={n.url} target="_blank" rel="noreferrer">
-                  {n.title}
-                </a>
-              ) : (
-                n.title
-              )}
-            </div>
-
-            {n.meta && (
-              <div className={styles.paragraph} style={{ opacity: 0.9 }}>
-                {n.meta}
-              </div>
-            )}
-
-            {n.message && <div className={styles.paragraph}>{n.message}</div>}
-
-            <div className={styles.paragraph} style={{ marginBottom: 0 }}>
-              {formatDateTime(n.date)}
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+      {JSON.stringify(data ?? null, null, 2)}
+    </pre>
   );
 }
