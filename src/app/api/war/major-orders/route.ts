@@ -22,6 +22,8 @@ type MajorOrder = {
   reward?: string;
   source?: string;
   date?: string;        // ISO (published/issued/start time)
+  // Optional start time to detect active orders when "expires" is missing
+  start?: string;
 };
 
 type ApiShape = { orders: MajorOrder[] };
@@ -77,7 +79,10 @@ const pickIssuedDate = (raw: RawOrder): Date | null => {
   return null;
 };
 const toISO = (v: any) => {
-  const d = new Date(v);
+  if (v == null) return undefined;
+  const n = typeof v === 'string' && /^\d+$/.test(v) ? Number(v) : v;
+  const ms = typeof n === 'number' ? (n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n) : n;
+  const d = new Date(ms);
   return isNaN(d.getTime()) ? undefined : d.toISOString();
 };
 
@@ -110,6 +115,7 @@ function normalize(raw: RawOrder, i: number, defaultSource?: string): MajorOrder
     reward: asString(raw.reward ?? raw.rewards?.[0]?.name),
     source: asString((raw as any).source) ?? defaultSource ?? 'Arrowhead',
     date: issued ? issued.toISOString() : undefined,
+    start: toISO((raw as any).start ?? (raw as any).startTime ?? (raw as any).activation ?? (raw as any).activationTime),
   };
 }
 
@@ -141,27 +147,35 @@ export async function GET() {
   let orders: MajorOrder[] = [];
   if (ok && rawList.length) {
     const now = Date.now();
-    const annotated = rawList
-      .map((r, i) => {
-        const d = pickIssuedDate(r);
-        return { raw: r, idx: i, issued: d };
-      })
-      .filter((x) => x.issued && now - (x.issued as Date).getTime() <= TWENTY_FOUR_HOURS_MS)
-      .sort((a, b) => (b.issued as Date).getTime() - (a.issued as Date).getTime());
+    const normalized = rawList.map((r, i) => normalize(r, i, source));
 
-    orders = annotated.map(({ raw, idx, issued }) => normalize(raw, idx, source));
+    // Determine activity window. Keep orders that are either:
+    // - Active now (start <= now < expires), or
+    // - Issued within the last 24 hours when no explicit window is present
+    const eligible = normalized.filter((o) => {
+      const startMs = o.start ? new Date(o.start).getTime() : NaN;
+      const expireMs = o.expires ? new Date(o.expires).getTime() : NaN;
+      const dateMs = o.date ? new Date(o.date).getTime() : NaN;
+
+      const hasWindow = Number.isFinite(startMs) || Number.isFinite(expireMs);
+      const activeNow =
+        (Number.isFinite(startMs) ? startMs <= now : true) &&
+        (Number.isFinite(expireMs) ? now < expireMs : true);
+
+      const recentIssued = Number.isFinite(dateMs) && now - dateMs <= TWENTY_FOUR_HOURS_MS;
+
+      return (hasWindow && activeNow) || (!hasWindow && recentIssued);
+    });
+
+    orders = (eligible.length ? eligible : normalized)
+      .sort((a, b) => {
+        const ad = a.date ? new Date(a.date).getTime() : 0;
+        const bd = b.date ? new Date(b.date).getTime() : 0;
+        return bd - ad;
+      })
+      .slice(0, 5); // cap to a reasonable number
   } else {
-    orders = [
-      {
-        id: 'sample-1',
-        title: 'Secure 10 planets for Super Earth',
-        description: 'Liberate any planets to contribute.',
-        expires: new Date(Date.now() + 86_400_000).toISOString(),
-        source: 'Sample',
-        progress: 0,
-        goal: 10,
-      },
-    ];
+    orders = [];
   }
 
   const body: ApiShape = ok && rawList.length ? { orders } : ({ orders, _fallback: true as any, _error: `Upstream ${status} ${statusText}` } as any);

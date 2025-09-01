@@ -11,6 +11,8 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'default-no-store';
 
+const TWENTY_FOUR_HOURS_MS = 86_400_000;
+
 type Item = {
   id?: string | number;
   title?: string;
@@ -126,9 +128,8 @@ export async function GET(req: NextRequest) {
       timings: { hellHubMs: tHellHub, arrowheadMs: tArrowhead, totalMs: Date.now() - startedAt },
     });
 
-    // Normalize and latest-first
     // Normalize and sort newest-first by computed date
-    const news = list
+    const newsAll = list
       .map((n, i) => ({ raw: n, index: i, date: pickDate(n) }))
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .map(({ raw: n, index: i, date }) => {
@@ -168,6 +169,13 @@ export async function GET(req: NextRequest) {
           meta: metaBits.length ? metaBits.join(' · ') : undefined,
         };
       });
+
+    // Filter to last 24 hours for freshness
+    const now = Date.now();
+    const news = newsAll.filter((item) => {
+      const t = new Date(item.date as any).getTime();
+      return Number.isFinite(t) && now - t <= TWENTY_FOUR_HOURS_MS;
+    });
 
     // If upstream returned nothing, keep previous ETag response valid to avoid spamming empty updates
     if (!news.length) {
