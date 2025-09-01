@@ -1,13 +1,13 @@
 // src/app/api/war/status/route.ts
 import { NextResponse } from 'next/server';
+import { HellHubApi } from '@/lib/hellhub';
+import { ArrowheadApi } from '@/lib/arrowhead';
 
 export const runtime = 'edge';          // faster startup (optional)
 export const revalidate = 60;           // ISR: 60s
 
 const MAX_AGE = 60;                     // CDN cache: 60s
 const STALE_AGE = 120;                  // serve stale while revalidating
-const UPSTREAM = 'https://helldiverstrainingmanual.com/api/v1/war/status';
-const UA = 'GPT-Fleet-CommunitySite/1.0';
 
 type WarStatus = Record<string, any>;
 
@@ -17,35 +17,20 @@ async function fetchUpstream(): Promise<{
   status: number;
   statusText: string;
 }> {
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 8000); // 8s timeout
-
+  // 1) Try HellHub aggregator first
   try {
-    const r = await fetch(UPSTREAM, {
-      headers: { 'User-Agent': UA, Accept: 'application/json' },
-      next: { revalidate: MAX_AGE },
-      cache: 'force-cache',
-      signal: ac.signal,
-    });
-
-    const ct = r.headers.get('content-type') || '';
-    if (!ct.includes('application/json')) {
-      return { ok: false, data: null, status: r.status, statusText: r.statusText };
+    const hh = await HellHubApi.getWar();
+    if (hh.ok && hh.data) {
+      return { ok: true, data: hh.data as any, status: 200, statusText: 'OK' };
     }
+  } catch {}
 
-    let data: any = null;
-    try {
-      data = await r.json();
-    } catch {
-      /* ignore parse error -> treat as not ok */
-    }
-
-    return { ok: r.ok && !!data, data, status: r.status, statusText: r.statusText };
-  } catch (e: any) {
-    return { ok: false, data: null, status: 599, statusText: e?.name || 'FetchError' };
-  } finally {
-    clearTimeout(timer);
+  // 2) Fallback to Arrowhead live API
+  const ah = await ArrowheadApi.getWarStatus(null);
+  if (ah.ok && ah.data) {
+    return { ok: true, data: ah.data as any, status: 200, statusText: 'OK' };
   }
+  return { ok: false, data: null, status: ah.status, statusText: ah.statusText };
 }
 
 export async function GET() {

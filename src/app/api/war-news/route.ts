@@ -1,10 +1,9 @@
 // src/app/api/war-news/route.ts
 import { NextResponse } from 'next/server';
+import { HellHubApi } from '@/lib/hellhub';
+import { ArrowheadApi } from '@/lib/arrowhead';
 
 export const revalidate = 300; // 5 minutes
-
-const UPSTREAM = 'https://helldiverstrainingmanual.com/api/v1/war/news';
-const UA = 'GPT-Fleet-CommunitySite/1.0';
 
 type Item = {
   id?: string | number;
@@ -41,20 +40,25 @@ const pickDate = (n: Item) => {
 
 export async function GET() {
   try {
-    const r = await fetch(UPSTREAM, {
-      headers: { 'User-Agent': UA, Accept: 'application/json' },
-      next: { revalidate: 300 },
-      cache: 'no-store',
-    });
-
-    if (!r.ok) throw new Error(`upstream ${r.status}`);
-
-    const json = await r.json();
-    const list: Item[] = Array.isArray(json)
-      ? json
-      : Array.isArray((json as any)?.news)
-      ? (json as any).news
-      : [];
+    // Prefer HellHub news if available (aggregated)
+    let list: Item[] = [];
+    const hh = await HellHubApi.getNews();
+    if (hh.ok && hh.data) {
+      const json: any = hh.data;
+      list = Array.isArray(json)
+        ? json
+        : Array.isArray(json?.news)
+        ? json.news
+        : [];
+    }
+    if (!list.length) {
+      // Fallback to Arrowhead NewsFeed for current war
+      const ah = await ArrowheadApi.getNewsFeed(null);
+      if (ah.ok && ah.data) {
+        const json: any = ah.data;
+        list = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
+      }
+    }
 
     // Normalize and latest-first
     const news = list

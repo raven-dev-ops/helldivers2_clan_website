@@ -1,12 +1,12 @@
 // src/app/api/war/major-orders/route.ts
 import { NextResponse } from 'next/server';
+import { HellHubApi } from '@/lib/hellhub';
+import { ArrowheadApi } from '@/lib/arrowhead';
 
 export const runtime = 'edge';          // optional: faster cold starts
 export const revalidate = 300;          // 5 min
 
 const MAX_AGE = 300;                    // 5 min
-const UPSTREAM = 'https://helldiverstrainingmanual.com/api/v1/war/major-orders';
-const UA = 'GPT-Fleet-CommunitySite/1.0';
 
 type RawOrder = Record<string, any>;
 type MajorOrder = {
@@ -17,7 +17,7 @@ type MajorOrder = {
   progress?: number;    // 0..1 or absolute (depends on upstream)
   goal?: number;
   reward?: string;
-  source: 'Helldivers Training Manual';
+  source?: string;
 };
 
 type ApiShape = { orders: MajorOrder[] };
@@ -53,33 +53,22 @@ function normalize(raw: RawOrder, i: number): MajorOrder {
         ? raw.target
         : undefined,
     reward: asString(raw.reward ?? raw.rewards?.[0]?.name),
-    source: 'Helldivers Training Manual',
+    source: asString((raw as any).source) ?? 'HellHub / Arrowhead',
   };
 }
 
 async function fetchUpstream() {
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), 8000); // 8s timeout
-  try {
-    const r = await fetch(UPSTREAM, {
-      headers: { 'User-Agent': UA, Accept: 'application/json' },
-      next: { revalidate: MAX_AGE },
-      cache: 'force-cache',
-      signal: ac.signal,
-    });
-
-    const ct = r.headers.get('content-type') || '';
-    if (!ct.includes('application/json')) {
-      return { ok: false, status: r.status, statusText: r.statusText, data: null as any };
-    }
-
-    const json = await r.json();
-    return { ok: r.ok, status: r.status, statusText: r.statusText, data: json };
-  } catch (e: any) {
-    return { ok: false, status: 599, statusText: e?.name || 'FetchError', data: null as any };
-  } finally {
-    clearTimeout(timer);
+  // Prefer HellHub assignments/major orders if available
+  const hh = await HellHubApi.getAssignments();
+  if (hh.ok && hh.data) {
+    return { ok: true, status: 200, statusText: 'OK', data: hh.data } as const;
   }
+  // Fallback to Arrowhead assignments by war
+  const ah = await ArrowheadApi.getAssignments(null);
+  if (ah.ok && ah.data) {
+    return { ok: true, status: 200, statusText: 'OK', data: ah.data } as const;
+  }
+  return { ok: false, status: ah.status, statusText: ah.statusText, data: null as any } as const;
 }
 
 export async function GET() {
@@ -87,8 +76,10 @@ export async function GET() {
 
   const rawList: RawOrder[] = Array.isArray(data)
     ? data
-    : Array.isArray(data?.orders)
-    ? data.orders
+    : Array.isArray((data as any)?.orders)
+    ? (data as any).orders
+    : Array.isArray((data as any)?.assignments)
+    ? (data as any).assignments
     : [];
 
   const orders: MajorOrder[] =
@@ -100,7 +91,7 @@ export async function GET() {
             title: 'Secure 10 planets for Super Earth',
             description: 'Liberate any planets to contribute.',
             expires: new Date(Date.now() + 86_400_000).toISOString(),
-            source: 'Helldivers Training Manual',
+            source: 'Sample',
             progress: 0,
             goal: 10,
           },
