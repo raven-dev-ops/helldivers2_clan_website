@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
+import { logger } from '@/lib/logger';
 import { strongETagFrom, cacheHeaders } from '@/lib/http/etag';
 
 export const revalidate = 300; // 5 minutes
@@ -42,9 +43,12 @@ const pickDate = (n: Item) => {
 
 export async function GET(req: NextRequest) {
   try {
+    const startedAt = Date.now();
     // Prefer HellHub news if available (aggregated)
     let list: Item[] = [];
+    const t0 = Date.now();
     const hh = await HellHubApi.getNews();
+    const tHellHub = Date.now() - t0;
     if (hh.ok && hh.data) {
       const json: any = hh.data;
       list = Array.isArray(json)
@@ -55,11 +59,20 @@ export async function GET(req: NextRequest) {
     }
     if (!list.length) {
       // Fallback to Arrowhead NewsFeed for current war
+      const t1 = Date.now();
       const ah = await ArrowheadApi.getNewsFeed(null);
+      const tArrowhead = Date.now() - t1;
       if (ah.ok && ah.data) {
         const json: any = ah.data;
         list = Array.isArray(json) ? json : Array.isArray(json?.news) ? json.news : [];
       }
+      logger.info('war-news timings', {
+        timings: { hellHubMs: tHellHub, arrowheadMs: tArrowhead, totalMs: Date.now() - startedAt },
+      });
+    } else {
+      logger.info('war-news timings', {
+        timings: { hellHubMs: tHellHub, totalMs: Date.now() - startedAt },
+      });
     }
 
     // Normalize and latest-first
