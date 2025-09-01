@@ -4,9 +4,11 @@ import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
 
 export const runtime = 'edge';          // optional: faster cold starts
-export const revalidate = 300;          // 5 min
+export const revalidate = 0;            // disable route cache; rely on headers
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'default-no-store';
 
-const MAX_AGE = 300;                    // 5 min
+const MAX_AGE = 60;                     // 60s CDN cache for freshness
 
 type RawOrder = Record<string, any>;
 type MajorOrder = {

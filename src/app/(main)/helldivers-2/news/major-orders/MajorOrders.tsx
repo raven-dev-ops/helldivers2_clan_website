@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import styles from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
 
 const fetcher = (url: string) =>
-  fetch(url, { headers: { Accept: 'application/json' } }).then((r) => r.json());
+  fetch(url, { cache: 'no-store', headers: { Accept: 'application/json' } }).then((r) => r.json());
 
 type MajorOrder = {
   id: string;
@@ -53,7 +53,7 @@ export default function MajorOrders() {
     fetcher,
     {
       refreshInterval: 5 * 60 * 1000,
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
     }
   );
 

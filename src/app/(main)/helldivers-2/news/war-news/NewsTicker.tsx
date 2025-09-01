@@ -45,16 +45,45 @@ const fetcher = async (url: string): Promise<ApiResponse> => {
 const asString = (v: unknown) =>
   typeof v === 'string' && v.trim().length ? v.trim() : undefined;
 
+const parseDateValue = (raw: unknown): Date | null => {
+  if (raw == null) return null;
+  if (typeof raw === 'number') {
+    const n = raw;
+    const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+    const d = new Date(ms);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof raw === 'string') {
+    const s = raw.trim();
+    if (!s) return null;
+    if (/^\d+$/.test(s)) {
+      const n = Number(s);
+      const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+      const d = new Date(ms);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    if (s.includes('T') || s.includes('-') || s.includes('/')) {
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+  return null;
+};
+
 const pickDate = (n: ApiNewsItem): Date => {
-  const raw =
-    (n as any).time ??
-    n.published ??
-    n.timestamp ??
-    n.updatedAt ??
-    n.createdAt ??
-    Date.now();
-  const d = new Date(raw as any);
-  return isNaN(d.getTime()) ? new Date() : d;
+  const candidates: Array<unknown> = [
+    (n as any).published,
+    (n as any).timestamp,
+    (n as any).updatedAt,
+    (n as any).createdAt,
+    (n as any).time,
+  ];
+  for (const c of candidates) {
+    const d = parseDateValue(c);
+    if (d) return d;
+  }
+  return new Date();
 };
 
 const normalize = (n: ApiNewsItem): UINews => {
@@ -107,9 +136,14 @@ export default function NewsTicker() {
   if (isLoading) return <div>Loading war news…</div>;
   if (error) return <div>Couldn’t load war news.</div>;
 
+  // Normalize and sort newest-first to ensure correct order regardless of API
+  const items: UINews[] = Array.isArray(data?.news)
+    ? data!.news.map(normalize).sort((a, b) => b.date.getTime() - a.date.getTime())
+    : [];
+
   return (
     <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-      {JSON.stringify(data ?? null, null, 2)}
+      {JSON.stringify({ news: items }, null, 2)}
     </pre>
   );
 }
