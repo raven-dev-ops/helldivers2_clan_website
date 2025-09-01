@@ -19,6 +19,11 @@ export function middleware(req: NextRequest) {
 
   const res = NextResponse.next();
 
+  // Propagate/assign X-Request-ID for correlation with platform/router logs
+  const incomingId = req.headers.get('x-request-id');
+  const requestId = incomingId || generateRequestId();
+  res.headers.set('X-Request-ID', requestId);
+
   if (!isAsset && (wantsHtml || req.method === 'HEAD' || accept === '')) {
     // ✅ Allow Google Identity Services (GIS)
     const csp = [
@@ -49,4 +54,16 @@ export function middleware(req: NextRequest) {
   }
 
   return res;
+}
+
+function generateRequestId(): string {
+  try {
+    const buf = new Uint8Array(16);
+    crypto.getRandomValues(buf);
+    return Array.from(buf)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } catch {
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
 }

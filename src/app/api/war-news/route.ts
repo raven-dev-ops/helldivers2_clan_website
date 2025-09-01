@@ -1,9 +1,11 @@
 // src/app/api/war-news/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
+import { strongETagFrom, cacheHeaders } from '@/lib/http/etag';
 
 export const revalidate = 300; // 5 minutes
+export const runtime = 'nodejs';
 
 type Item = {
   id?: string | number;
@@ -38,7 +40,7 @@ const pickDate = (n: Item) => {
   return isNaN(d.getTime()) ? new Date() : d;
 };
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     // Prefer HellHub news if available (aggregated)
     let list: Item[] = [];
@@ -99,14 +101,20 @@ export async function GET() {
       })
       .reverse();
 
-    return NextResponse.json(
-      { news },
-      {
-        headers: {
-          'Cache-Control': 's-maxage=300, stale-while-revalidate=300',
-        },
-      }
-    );
+    // ETag handling
+    const body = { news };
+    const etag = strongETagFrom(body);
+    const ifNoneMatch = req.headers.get('if-none-match');
+    const headers = {
+      ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
+      ETag: etag,
+      'Content-Type': 'application/json; charset=utf-8',
+    } as Record<string, string>;
+
+    if (ifNoneMatch && ifNoneMatch === etag) {
+      return new NextResponse(null, { status: 304, headers });
+    }
+    return new NextResponse(JSON.stringify(body), { status: 200, headers });
   } catch (err: any) {
     // Safe fallback
     return NextResponse.json(
@@ -118,7 +126,7 @@ export async function GET() {
       {
         status: 200,
         headers: {
-          'Cache-Control': 's-maxage=60, stale-while-revalidate=120',
+          ...cacheHeaders({ maxAgeSeconds: 30, staleWhileRevalidateSeconds: 300 }),
         },
       }
     );

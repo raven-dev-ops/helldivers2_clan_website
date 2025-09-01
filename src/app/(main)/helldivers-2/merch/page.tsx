@@ -1,6 +1,6 @@
 // src/app/(main)/helldivers-2/merch/page.tsx
 import Image from 'next/image';
-import Link from 'next/link';
+import NoPrefetchLink from '@/app/components/NoPrefetchLink';
 import React from 'react';
 import styles from './MerchPage.module.css';
 import { logger } from '@/lib/logger';
@@ -228,7 +228,7 @@ export default async function HelldiversMerchPage() {
               }
 
               return (
-                <Link
+                <NoPrefetchLink
                   key={product.id}
                   href={`https://gptfleet-shop.fourthwall.com/products/${product.slug}`}
                   target="_blank"
@@ -269,7 +269,7 @@ export default async function HelldiversMerchPage() {
                       </p>
                     )}
                   </div>
-                </Link>
+                </NoPrefetchLink>
               );
             })}
           </div>

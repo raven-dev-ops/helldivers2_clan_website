@@ -1,7 +1,7 @@
 // src/app/api/users/me/route.ts
 export const runtime = 'nodejs';
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
@@ -15,28 +15,41 @@ const userCache = new Map<string, Cached>();
 
 function json(
   data: any,
-  init?: { status?: number; headers?: Record<string, string> }
+  init?: { status?: number; headers?: Record<string, string> },
+  requestId?: string
 ) {
   return NextResponse.json(data, {
     status: init?.status,
     headers: {
       'Cache-Control': 'private, max-age=60',
       Vary: 'Cookie',
+      ...(requestId ? { 'X-Request-ID': requestId } : {}),
       ...(init?.headers ?? {}),
     },
   });
 }
 
 /** GET /api/users/me — session-scoped profile (cached for 60s) */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const startedAt = Date.now();
+  const rid = req.headers.get('x-request-id') || cryptoRandomId();
+
+  const t0 = Date.now();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 });
+  const tAuth = Date.now() - t0;
+  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
   const now = Date.now();
   const cached = userCache.get(session.user.id);
-  if (cached && cached.expires > now) return json(cached.data);
+  if (cached && cached.expires > now) {
+    logger.info('users.me cache hit', { requestId: rid });
+    return json(cached.data, undefined, rid);
+  }
 
+  const t1 = Date.now();
   await dbConnect();
+  const tDbConnect = Date.now() - t1;
+  const t2 = Date.now();
   const user = await UserModel.findById(session.user.id)
     .select(
       [
@@ -69,8 +82,9 @@ export async function GET() {
       ].join(' ')
     )
     .lean();
+  const tDbQuery = Date.now() - t2;
 
-  if (!user) return json({ error: 'not_found' }, { status: 404 });
+  if (!user) return json({ error: 'not_found' }, { status: 404 }, rid);
 
   const data: Record<string, unknown> = {
     id: user._id.toString(),
@@ -103,13 +117,19 @@ export async function GET() {
   };
 
   userCache.set(session.user.id, { data, expires: now + 60_000 });
-  return json(data);
+  const totalMs = Date.now() - startedAt;
+  logger.info('users.me timings', {
+    requestId: rid,
+    timings: { authMs: tAuth, dbConnectMs: tDbConnect, dbQueryMs: tDbQuery, serializeMs: Date.now() - t2 - tDbQuery, totalMs },
+  });
+  return json(data, undefined, rid);
 }
 
 /** PUT /api/users/me — update profile (multipart or JSON) */
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
+  const rid = req.headers.get('x-request-id') || cryptoRandomId();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 });
+  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
   await dbConnect();
 
@@ -173,7 +193,7 @@ export async function PUT(req: Request) {
         const buf = Buffer.from(await file.arrayBuffer());
         updates.customAvatarDataUrl = `data:${file.type};base64,${buf.toString('base64')}`;
       } else if (file.size > MAX_AVATAR) {
-        logger.warn?.('Avatar skipped: too large');
+        logger.warn?.('Avatar skipped: too large', { requestId: rid });
       }
     }
 
@@ -338,7 +358,7 @@ export async function PUT(req: Request) {
       { upsert: true }
     );
   } catch (e) {
-    logger.error('Failed to write User_Profiles snapshot', e);
+    logger.error('Failed to write User_Profiles snapshot', { requestId: rid, error: String(e) });
   }
 
   userCache.delete(session.user.id);
@@ -370,13 +390,14 @@ export async function PUT(req: Request) {
     discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
     createdAt: updated?.createdAt,
     updatedAt: updated?.updatedAt,
-  });
+  }, undefined, rid);
 }
 
 /** DELETE /api/users/me — delete user + auth artifacts */
-export async function DELETE() {
+export async function DELETE(req: NextRequest) {
+  const rid = req.headers.get('x-request-id') || cryptoRandomId();
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 });
+  if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
   await dbConnect();
   const userId = new ObjectId(session.user.id);
@@ -397,5 +418,18 @@ export async function DELETE() {
   await appDb.collection('User_Profiles').deleteOne({ user_id: userId });
 
   userCache.delete(session.user.id);
-  return json({ ok: true });
+  return json({ ok: true }, undefined, rid);
+}
+
+function cryptoRandomId(): string {
+  try {
+    // Node 18+/Web Crypto
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } catch {
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
+  }
 }

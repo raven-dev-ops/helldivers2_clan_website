@@ -1,5 +1,6 @@
 // src/lib/hellhub.ts
 // Client for the HellHub community API mirror/aggregator
+import { fetchWithRevalidate } from '@/lib/helldivers/fetch';
 
 const DEFAULT_BASE = 'https://api-hellhub-collective.koyeb.app';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';
@@ -31,20 +32,16 @@ function parseRateHeaders(res: Response) {
   };
 }
 
-async function fetchJson<T = any>(path: string, init?: RequestInit, timeoutMs = 8000): Promise<FetchJsonResult<T>> {
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), timeoutMs);
+async function fetchJson<T = any>(path: string, init?: RequestInit): Promise<FetchJsonResult<T>> {
   try {
-    const res = await fetch(`${getBaseUrl()}${path}`, {
+    const res = await fetchWithRevalidate(`${getBaseUrl()}${path}`, {
+      ...init,
+      revalidateSeconds: 30, // TASK-2: reduce refetch churn with 30s revalidate
       headers: {
         'User-Agent': USER_AGENT,
-        Accept: 'application/json',
         ...(init?.headers || {}),
       },
-      cache: 'no-store',
-      ...init,
-      signal: ac.signal,
-    });
+    } as any);
     const rate = parseRateHeaders(res);
     const ct = res.headers.get('content-type') || '';
     if (!ct.includes('application/json')) {
@@ -57,8 +54,6 @@ async function fetchJson<T = any>(path: string, init?: RequestInit, timeoutMs = 
     return { ok: res.ok && !!data, status: res.status, statusText: res.statusText, data, rate };
   } catch (e: any) {
     return { ok: false, status: 599, statusText: e?.name || 'FetchError', data: null };
-  } finally {
-    clearTimeout(timer);
   }
 }
 

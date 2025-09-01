@@ -1,5 +1,6 @@
 // src/lib/arrowhead.ts
 // Lightweight client for Arrowhead's live game endpoints
+import { fetchWithRevalidate } from '@/lib/helldivers/fetch';
 
 const DEFAULT_BASE = 'https://api.live.prod.thehelldiversgame.com/api';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';
@@ -15,36 +16,37 @@ function getBaseUrl(): string {
   return process.env.ARROWHEAD_API_BASE || DEFAULT_BASE;
 }
 
-async function fetchJson<T = any>(path: string, init?: RequestInit, timeoutMs = 8000): Promise<FetchJsonResult<T>> {
-  const ac = new AbortController();
-  const timer = setTimeout(() => ac.abort(), timeoutMs);
+async function fetchJson<T = any>(path: string, init?: RequestInit): Promise<FetchJsonResult<T>> {
   try {
-    const res = await fetch(`${getBaseUrl()}${path}`, {
-      headers: {
-        'User-Agent': USER_AGENT,
-        Accept: 'application/json',
-        ...(init?.headers || {}),
-      },
-      cache: 'no-store',
-      ...init,
-      signal: ac.signal,
-    });
+    const { response, data } = await (async () => {
+      const res = await fetchWithRevalidate(`${getBaseUrl()}${path}`, {
+        ...init,
+        // 30s revalidation window on upstream fetches per TASK-2
+        revalidateSeconds: 30,
+        headers: {
+          'User-Agent': USER_AGENT,
+          ...(init?.headers || {}),
+        },
+      } as any);
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) {
+        return { response: res, data: null as any };
+      }
+      let parsed: any = null;
+      try {
+        parsed = await res.json();
+      } catch {}
+      return { response: res, data: parsed };
+    })();
 
-    const ct = res.headers.get('content-type') || '';
-    if (!ct.includes('application/json')) {
-      return { ok: false, status: res.status, statusText: res.statusText, data: null };
-    }
-    let data: any = null;
-    try {
-      data = await res.json();
-    } catch {
-      /* ignore parse errors */
-    }
-    return { ok: res.ok && !!data, status: res.status, statusText: res.statusText, data };
+    return {
+      ok: response.ok && !!data,
+      status: response.status,
+      statusText: response.statusText,
+      data,
+    };
   } catch (e: any) {
     return { ok: false, status: 599, statusText: e?.name || 'FetchError', data: null };
-  } finally {
-    clearTimeout(timer);
   }
 }
 
