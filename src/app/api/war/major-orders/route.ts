@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 export const fetchCache = 'default-no-store';
 
 const MAX_AGE = 60;                     // 60s CDN cache for freshness
+const TWENTY_FOUR_HOURS_MS = 86_400_000;
 
 type RawOrder = Record<string, any>;
 type MajorOrder = {
@@ -20,22 +21,74 @@ type MajorOrder = {
   goal?: number;
   reward?: string;
   source?: string;
+  date?: string;        // ISO (published/issued/start time)
 };
 
 type ApiShape = { orders: MajorOrder[] };
 
 const asString = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
+const parseDateValue = (raw: unknown): Date | null => {
+  if (raw == null) return null;
+  if (typeof raw === 'number') {
+    const n = raw;
+    const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+    const d = new Date(ms);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (typeof raw === 'string') {
+    const s = raw.trim();
+    if (!s) return null;
+    if (/^\d+$/.test(s)) {
+      const n = Number(s);
+      const ms = n < 1e12 ? (n > 1e9 ? n * 1000 : NaN) : n;
+      const d = new Date(ms);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    if (s.includes('T') || s.includes('-') || s.includes('/')) {
+      const d = new Date(s);
+      return isNaN(d.getTime()) ? null : d;
+    }
+    return null;
+  }
+  return null;
+};
+
+const pickIssuedDate = (raw: RawOrder): Date | null => {
+  const candidates: Array<unknown> = [
+    (raw as any).published,
+    (raw as any).timestamp,
+    (raw as any).updatedAt,
+    (raw as any).createdAt,
+    (raw as any).time,
+    (raw as any).start,
+    (raw as any).startTime,
+    (raw as any).begin,
+    (raw as any).beginTime,
+    (raw as any).issuedAt,
+    (raw as any).issueTime,
+    (raw as any).activation,
+    (raw as any).activationTime,
+    (raw as any).date,
+  ];
+  for (const c of candidates) {
+    const d = parseDateValue(c);
+    if (d) return d;
+  }
+  return null;
+};
 const toISO = (v: any) => {
   const d = new Date(v);
   return isNaN(d.getTime()) ? undefined : d.toISOString();
 };
 
-function normalize(raw: RawOrder, i: number): MajorOrder {
+function normalize(raw: RawOrder, i: number, defaultSource?: string): MajorOrder {
   const title =
     asString(raw.title) ??
     asString(raw.name) ??
     asString(raw.headline) ??
     'Major Order';
+
+  const issued = pickIssuedDate(raw);
 
   return {
     id: String(raw.id ?? `${title}-${raw.expires ?? raw.expiry ?? i}`),
@@ -55,7 +108,8 @@ function normalize(raw: RawOrder, i: number): MajorOrder {
         ? raw.target
         : undefined,
     reward: asString(raw.reward ?? raw.rewards?.[0]?.name),
-    source: asString((raw as any).source) ?? 'HellHub / Arrowhead',
+    source: asString((raw as any).source) ?? defaultSource ?? 'Arrowhead',
+    date: issued ? issued.toISOString() : undefined,
   };
 }
 
@@ -63,18 +117,18 @@ async function fetchUpstream() {
   // Prefer Arrowhead assignments by war for freshness
   const ah = await ArrowheadApi.getAssignments(null);
   if (ah.ok && ah.data) {
-    return { ok: true, status: 200, statusText: 'OK', data: ah.data } as const;
+    return { ok: true, status: 200, statusText: 'OK', data: ah.data, source: 'Arrowhead' as const } as const;
   }
   // Fallback to HellHub assignments/major orders if available
   const hh = await HellHubApi.getAssignments();
   if (hh.ok && hh.data) {
-    return { ok: true, status: 200, statusText: 'OK', data: hh.data } as const;
+    return { ok: true, status: 200, statusText: 'OK', data: hh.data, source: 'HellHub' as const } as const;
   }
-  return { ok: false, status: hh.status, statusText: hh.statusText, data: null as any } as const;
+  return { ok: false, status: hh.status, statusText: hh.statusText, data: null as any, source: undefined } as const;
 }
 
 export async function GET() {
-  const { ok, data, status, statusText } = await fetchUpstream();
+  const { ok, data, status, statusText, source } = await fetchUpstream();
 
   const rawList: RawOrder[] = Array.isArray(data)
     ? data
@@ -84,23 +138,33 @@ export async function GET() {
     ? (data as any).assignments
     : [];
 
-  const orders: MajorOrder[] =
-    ok && rawList.length
-      ? rawList.map(normalize)
-      : [
-          {
-            id: 'sample-1',
-            title: 'Secure 10 planets for Super Earth',
-            description: 'Liberate any planets to contribute.',
-            expires: new Date(Date.now() + 86_400_000).toISOString(),
-            source: 'Sample',
-            progress: 0,
-            goal: 10,
-          },
-        ];
+  let orders: MajorOrder[] = [];
+  if (ok && rawList.length) {
+    const now = Date.now();
+    const annotated = rawList
+      .map((r, i) => {
+        const d = pickIssuedDate(r);
+        return { raw: r, idx: i, issued: d };
+      })
+      .filter((x) => x.issued && now - (x.issued as Date).getTime() <= TWENTY_FOUR_HOURS_MS)
+      .sort((a, b) => (b.issued as Date).getTime() - (a.issued as Date).getTime());
 
-  const body: ApiShape =
-    ok && rawList.length ? { orders } : { orders, _fallback: true as any, _error: `Upstream ${status} ${statusText}` } as any;
+    orders = annotated.map(({ raw, idx, issued }) => normalize(raw, idx, source));
+  } else {
+    orders = [
+      {
+        id: 'sample-1',
+        title: 'Secure 10 planets for Super Earth',
+        description: 'Liberate any planets to contribute.',
+        expires: new Date(Date.now() + 86_400_000).toISOString(),
+        source: 'Sample',
+        progress: 0,
+        goal: 10,
+      },
+    ];
+  }
+
+  const body: ApiShape = ok && rawList.length ? { orders } : ({ orders, _fallback: true as any, _error: `Upstream ${status} ${statusText}` } as any);
 
   const headers = {
     'Cache-Control': `s-maxage=${MAX_AGE}, stale-while-revalidate=${MAX_AGE}`,
