@@ -83,6 +83,10 @@ const pickDate = (n: Item) => {
   return null;
 };
 
+// Type guard that narrows to objects with a non-NaN Date in the `date` field
+const hasValidDate = <T extends { date: Date | null }>(x: T): x is T & { date: Date } =>
+  x.date instanceof Date && !isNaN(x.date.getTime());
+
 export async function GET(req: NextRequest) {
   try {
     const startedAt = Date.now();
@@ -131,7 +135,7 @@ export async function GET(req: NextRequest) {
     // Normalize and sort newest-first by computed date
     const newsAll = list
       .map((n, i) => ({ raw: n, index: i, date: pickDate(n) }))
-      .filter((x) => x.date instanceof Date && !isNaN(x.date.getTime()))
+      .filter(hasValidDate)
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .map(({ raw: n, index: i, date }) => {
         const title =
