@@ -110,6 +110,7 @@ export async function GET(req: NextRequest) {
     let tHellHub = 0;
     let tArrowhead = 0;
     let listSource: 'arrowhead' | 'hellhub' | undefined = undefined;
+    let sourceStatus: { arrowhead?: 'ok' | 'empty' | 'error'; hellhub?: 'ok' | 'empty' | 'error' } = {};
 
     const tA = Date.now();
     const ah = await ArrowheadApi.getNewsFeed(null, { cache: 'no-store' });
@@ -120,7 +121,12 @@ export async function GET(req: NextRequest) {
       if (arr.length) {
         list = arr as Item[];
         listSource = 'arrowhead';
+        sourceStatus.arrowhead = 'ok';
+      } else {
+        sourceStatus.arrowhead = 'empty';
       }
+    } else {
+      sourceStatus.arrowhead = 'error';
     }
 
     if (!list.length) {
@@ -139,13 +145,30 @@ export async function GET(req: NextRequest) {
         if (arr.length) {
           list = arr as Item[];
           listSource = 'hellhub';
+          sourceStatus.hellhub = 'ok';
+        } else {
+          sourceStatus.hellhub = 'empty';
         }
+      } else {
+        sourceStatus.hellhub = 'error';
       }
     }
 
+    const totalMs = Date.now() - startedAt;
+    const rawCount = Array.isArray(list) ? list.length : 0;
     logger.info('war-news timings', {
-      timings: { hellHubMs: tHellHub, arrowheadMs: tArrowhead, totalMs: Date.now() - startedAt },
+      timings: { hellHubMs: tHellHub, arrowheadMs: tArrowhead, totalMs },
+      sourceStatus,
+      rawCount,
+      chosenSource: listSource,
     });
+    if (rawCount === 0) {
+      logger.warn('war-news empty upstream', { sourceStatus, timings: { totalMs } });
+    }
+    const WARN_MS = 200;
+    if (totalMs > WARN_MS) {
+      logger.warn('war-news slow', { timings: { totalMs }, thresholdMs: WARN_MS, sourceStatus });
+    }
 
     // Normalize and sort newest-first by computed date
     const newsAll = list
@@ -217,7 +240,12 @@ export async function GET(req: NextRequest) {
     if (ifNoneMatch && ifNoneMatch === etag) {
       return new NextResponse(null, { status: 304, headers });
     }
-    return new NextResponse(JSON.stringify(body), { status: 200, headers });
+    const resp = new NextResponse(JSON.stringify(body), { status: 200, headers });
+    logger.info('war-news result', { resultCount: news.length, windowHours: Math.round(windowMs / (60 * 60 * 1000)), limit });
+    if (news.length === 0) {
+      logger.warn('war-news empty result', { resultCount: 0, windowMs, limit, sourceStatus });
+    }
+    return resp;
   } catch (err: any) {
     // Safe fallback
     return NextResponse.json(
