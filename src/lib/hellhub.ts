@@ -82,7 +82,7 @@ export function getEffects(query: string = '') {
   return fetchJson(`/api/effects${qs}`);
 }
 
-export async function getNews(query: string = ''): Promise<FetchJsonResult<any>> {
+export async function getNews(query: string = '', init?: RequestInit): Promise<FetchJsonResult<any>> {
   const qs = query ? (query.startsWith('?') ? query : `?${query}`) : '';
   // Some mirrors provide news under different paths; try a few in order.
   const candidates = [
@@ -93,7 +93,7 @@ export async function getNews(query: string = ''): Promise<FetchJsonResult<any>>
 
   let last: FetchJsonResult<any> | null = null;
   for (const path of candidates) {
-    const res = await fetchJson(path);
+    const res = await fetchJson(path, init);
     last = res;
     const data: any = res.data;
     const arr = Array.isArray(data)

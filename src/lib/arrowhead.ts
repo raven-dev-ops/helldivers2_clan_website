@@ -81,10 +81,13 @@ export async function getWarInfo(warId?: number | string | null): Promise<FetchJ
   return fetchJson(`/WarSeason/${id}/Info`);
 }
 
-export async function getNewsFeed(warId?: number | string | null): Promise<FetchJsonResult<any[]>> {
+export async function getNewsFeed(
+  warId?: number | string | null,
+  init?: RequestInit
+): Promise<FetchJsonResult<any[]>> {
   const id = await ensureWarId(warId);
   if (id == null) return { ok: false, status: 400, statusText: 'NoWarId', data: null };
-  return fetchJson(`/NewsFeed/${id}`);
+  return fetchJson(`/NewsFeed/${id}`, init);
 }
 
 export async function getAssignments(warId?: number | string | null): Promise<FetchJsonResult<any>> {
