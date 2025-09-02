@@ -1,6 +1,6 @@
 // src/lib/hellhub.ts
 // Client for the HellHub community API mirror/aggregator
-import { fetchWithRevalidate } from '@/lib/helldivers/fetch';
+import { fetchWithRevalidate, FetchWithRevalidateOptions } from '@/lib/helldivers/fetch';
 
 const DEFAULT_BASE = 'https://api-hellhub-collective.koyeb.app';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';
@@ -32,11 +32,12 @@ function parseRateHeaders(res: Response) {
   };
 }
 
-async function fetchJson<T = any>(path: string, init?: RequestInit): Promise<FetchJsonResult<T>> {
+async function fetchJson<T = any>(path: string, init?: FetchWithRevalidateOptions): Promise<FetchJsonResult<T>> {
   try {
     const res = await fetchWithRevalidate(`${getBaseUrl()}${path}`, {
       ...init,
-      revalidateSeconds: 30, // TASK-2: reduce refetch churn with 30s revalidate
+      // Default to 30s revalidation unless caller overrides
+      revalidateSeconds: init?.revalidateSeconds ?? 30,
       headers: {
         'User-Agent': USER_AGENT,
         ...(init?.headers || {}),
@@ -82,7 +83,7 @@ export function getEffects(query: string = '') {
   return fetchJson(`/api/effects${qs}`);
 }
 
-export async function getNews(query: string = ''): Promise<FetchJsonResult<any>> {
+export async function getNews(query: string = '', init?: FetchWithRevalidateOptions): Promise<FetchJsonResult<any>> {
   const qs = query ? (query.startsWith('?') ? query : `?${query}`) : '';
   // Some mirrors provide news under different paths; try a few in order.
   const candidates = [
@@ -93,7 +94,7 @@ export async function getNews(query: string = ''): Promise<FetchJsonResult<any>>
 
   let last: FetchJsonResult<any> | null = null;
   for (const path of candidates) {
-    const res = await fetchJson(path);
+    const res = await fetchJson(path, init);
     last = res;
     const data: any = res.data;
     const arr = Array.isArray(data)
