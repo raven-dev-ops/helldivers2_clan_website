@@ -71,8 +71,9 @@ const parseDateValue = (raw: unknown): Date | null => {
   return null;
 };
 
-const pickDate = (n: ApiNewsItem): Date => {
+const pickDate = (n: ApiNewsItem): Date | null => {
   const candidates: Array<unknown> = [
+    (n as any).date,
     (n as any).published,
     (n as any).timestamp,
     (n as any).updatedAt,
@@ -83,11 +84,11 @@ const pickDate = (n: ApiNewsItem): Date => {
     const d = parseDateValue(c);
     if (d) return d;
   }
-  return new Date();
+  return null;
 };
 
 const normalize = (n: ApiNewsItem): UINews => {
-  const date = pickDate(n);
+  const date = pickDate(n) ?? new Date(0);
   const title =
     asString(n.title) ??
     asString((n as any).headline) ??
