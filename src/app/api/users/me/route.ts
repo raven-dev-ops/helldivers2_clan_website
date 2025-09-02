@@ -55,7 +55,8 @@ export async function GET(req: NextRequest) {
   const cacheKey = `${session.user.id}|${includeKey}`;
   const cached = userCache.get(cacheKey);
   if (cached && cached.expires > now) {
-    logger.info('users.me cache hit', { requestId: rid });
+    const sizeBytes = Buffer.byteLength(JSON.stringify(cached.data));
+    logger.info('users.me cache hit', { requestId: rid, sizeBytes });
     return jsonWithETag(req, cached.data, {
       headers: {
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=600',
@@ -144,10 +145,17 @@ export async function GET(req: NextRequest) {
 
   userCache.set(cacheKey, { data, expires: now + 60_000 });
   const totalMs = Date.now() - startedAt;
+  const sizeBytes = Buffer.byteLength(JSON.stringify(data));
   logger.info('users.me timings', {
     requestId: rid,
     timings: { authMs: tAuth, dbConnectMs: tDbConnect, dbQueryMs: tDbQuery, serializeMs: Date.now() - t2 - tDbQuery, totalMs },
+    sizeBytes,
+    include: includeKey,
   });
+  const WARN_MS = 200;
+  if (totalMs > WARN_MS) {
+    logger.warn('users.me slow', { requestId: rid, timings: { totalMs }, thresholdMs: WARN_MS, include: includeKey });
+  }
   return jsonWithETag(req, data, {
     headers: {
       'Cache-Control': 'private, max-age=60, stale-while-revalidate=600',

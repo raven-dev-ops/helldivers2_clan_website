@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
 import type { Alert } from '@/_types/alerts';
 
 export async function GET(request: Request) {
+  const startedAt = Date.now();
   const now = new Date().toISOString();
   const alerts: Alert[] = [];
+  let twitchLiveCount = 0;
+  let leaderboardAdded = false;
 
   const origin = new URL(request.url).origin;
 
@@ -25,6 +29,7 @@ export async function GET(request: Request) {
             url: `https://www.twitch.tv/${c.channelName}`,
             createdAt: now,
           });
+          twitchLiveCount += 1;
         });
     }
   } catch {
@@ -49,10 +54,22 @@ export async function GET(request: Request) {
           url: '/helldivers-2/leaderboard',
           createdAt: now,
         });
+        leaderboardAdded = true;
       }
     }
   } catch {
     // ignore leaderboard errors
+  }
+
+  const totalMs = Date.now() - startedAt;
+  const counts = { total: alerts.length, twitchLive: twitchLiveCount, leaderboard: leaderboardAdded ? 1 : 0 };
+  logger.info('alerts summary', { counts, timings: { totalMs } });
+  if (alerts.length === 0) {
+    logger.warn('alerts empty', { counts, timings: { totalMs } });
+  }
+  const WARN_MS = 150;
+  if (totalMs > WARN_MS) {
+    logger.warn('alerts slow', { counts, timings: { totalMs }, thresholdMs: WARN_MS });
   }
 
   return NextResponse.json({ alerts });
