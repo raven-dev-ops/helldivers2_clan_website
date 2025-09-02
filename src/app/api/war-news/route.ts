@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
     let listSource: 'arrowhead' | 'hellhub' | undefined = undefined;
 
     const tA = Date.now();
-    const ah = await ArrowheadApi.getNewsFeed(null);
+    const ah = await ArrowheadApi.getNewsFeed(null, { cache: 'no-store' });
     tArrowhead = Date.now() - tA;
     if (ah.ok && ah.data) {
       const json: any = ah.data;
@@ -125,7 +125,7 @@ export async function GET(req: NextRequest) {
 
     if (!list.length) {
       const tH = Date.now();
-      const hh = await HellHubApi.getNews();
+      const hh = await HellHubApi.getNews('', { cache: 'no-store' });
       tHellHub = Date.now() - tH;
       if (hh.ok && hh.data) {
         const json: any = hh.data;
