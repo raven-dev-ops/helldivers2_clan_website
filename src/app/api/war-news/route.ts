@@ -80,7 +80,7 @@ const pickDate = (n: Item) => {
     const d = parseDateValue(c);
     if (d) return d;
   }
-  return new Date();
+  return null;
 };
 
 export async function GET(req: NextRequest) {
@@ -131,6 +131,7 @@ export async function GET(req: NextRequest) {
     // Normalize and sort newest-first by computed date
     const newsAll = list
       .map((n, i) => ({ raw: n, index: i, date: pickDate(n) }))
+      .filter((x) => x.date instanceof Date && !isNaN(x.date.getTime()))
       .sort((a, b) => b.date.getTime() - a.date.getTime())
       .map(({ raw: n, index: i, date }) => {
         const title =
@@ -160,6 +161,7 @@ export async function GET(req: NextRequest) {
           title,
           message,
           date: date.toISOString(),
+          published: date.toISOString(),
           url,
           planet: asString((n as any).planet),
           sector: asString((n as any).sector ?? (n as any).theater),
@@ -173,7 +175,7 @@ export async function GET(req: NextRequest) {
     // Filter to last 24 hours for freshness
     const now = Date.now();
     const news = newsAll.filter((item) => {
-      const t = new Date(item.date as any).getTime();
+      const t = new Date((item as any).published || (item as any).date).getTime();
       return Number.isFinite(t) && now - t <= TWENTY_FOUR_HOURS_MS;
     });
 
