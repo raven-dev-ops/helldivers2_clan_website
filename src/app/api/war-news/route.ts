@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { HellHubApi } from '@/lib/hellhub';
 import { ArrowheadApi } from '@/lib/arrowhead';
 import { logger } from '@/lib/logger';
-import { strongETagFrom, cacheHeaders } from '@/lib/http/etag';
+import { strongETagFrom } from '@/lib/http/etag';
 
 // Reduce route-level cache to 30s to improve freshness
 export const revalidate = 0;
@@ -11,7 +11,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'default-no-store';
 
-const TWENTY_FOUR_HOURS_MS = 86_400_000;
+// Query-tunable window and limit with sensible defaults
+const DEFAULT_HOURS = 72; // broaden window to reduce empty responses
+const MAX_HOURS = 24 * 30; // cap at 30 days
+const DEFAULT_LIMIT = 10;
+const MAX_LIMIT = 20;
 
 type Item = {
   id?: string | number;
@@ -90,6 +94,17 @@ const hasValidDate = <T extends { date: Date | null }>(x: T): x is T & { date: D
 export async function GET(req: NextRequest) {
   try {
     const startedAt = Date.now();
+    const urlObj = new URL(req.url);
+    const hoursParam = Number(urlObj.searchParams.get('hours'));
+    const windowMs =
+      Number.isFinite(hoursParam) && hoursParam > 0 && hoursParam <= MAX_HOURS
+        ? hoursParam * 60 * 60 * 1000
+        : DEFAULT_HOURS * 60 * 60 * 1000;
+    const limitParam = Number(urlObj.searchParams.get('limit'));
+    const limit =
+      Number.isFinite(limitParam) && limitParam > 0 && limitParam <= MAX_LIMIT
+        ? Math.floor(limitParam)
+        : DEFAULT_LIMIT;
     // Prefer Arrowhead NewsFeed for freshness; fallback to HellHub aggregated news
     let list: Item[] = [];
     let tHellHub = 0;
@@ -176,20 +191,17 @@ export async function GET(req: NextRequest) {
         };
       });
 
-    // Filter to last 24 hours for freshness
+    // Filter by requested window for freshness, then apply limit
     const now = Date.now();
-    const news = newsAll.filter((item) => {
+    let news = newsAll.filter((item) => {
       const t = new Date((item as any).published || (item as any).date).getTime();
-      return Number.isFinite(t) && now - t <= TWENTY_FOUR_HOURS_MS;
+      return Number.isFinite(t) && now - t <= windowMs;
     });
+    if (limit && news.length > limit) news = news.slice(0, limit);
 
-    // If upstream returned nothing, keep previous ETag response valid to avoid spamming empty updates
-    if (!news.length) {
-      const headers = {
-        'Cache-Control': 'no-store',
-        'Content-Type': 'application/json; charset=utf-8',
-      } as Record<string, string>;
-      return new NextResponse(JSON.stringify({ news: [] }), { status: 200, headers });
+    // If nothing within the window, fall back to latest items regardless of age
+    if (!news.length && newsAll.length) {
+      news = limit ? newsAll.slice(0, limit) : newsAll;
     }
 
     // ETag handling
