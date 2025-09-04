@@ -17,31 +17,34 @@ interface CreatorData {
   isLive: boolean;
 }
 
-// Lightweight stats type
-interface CreatorStats {
-  kills?: number;
-  accuracy?: string;
-  deaths?: number;
-}
-
 // List of Twitch channel *names* used to initially populate the state
 const initialTwitchChannelNames = [
   'mrswimson',
   'helldiver_black_snow',
   'gingercynic',
   'chappzs',
+  'darincboy',
+];
+
+const youtubeCreators = [
+  {
+    name: 'GPT Fleet',
+    channelId: 'UCp2w5Gz7kR5_2J4_2dJ4yZQ',
+    youtubeHandle: '@gptfleet',
+    description: 'Official GPT Fleet YouTube channel.',
+  },
+  {
+    name: 'darincboy',
+    channelId: 'UC5gW5-a0P9-xfx2HCH-pE5A',
+    youtubeHandle: '@darincboy',
+    description: 'Variety streamer with a focus on community and fun.',
+  },
 ];
 
 export default function CreatorsPage() {
   const [creatorsData, setCreatorsData] = useState<CreatorData[]>([]);
   const [isLoadingPage, setIsLoadingPage] = useState(true);
   const [pageError, setPageError] = useState<string | null>(null);
-  // Lightweight leaderboard stats for featured profile card
-  const [featuredStats, setFeaturedStats] = useState<CreatorStats | null>(null);
-  // Per-creator stats map
-  const [creatorStats, setCreatorStats] = useState<
-    Record<string, CreatorStats>
-  >({});
 
   useEffect(() => {
     let isMounted = true;
@@ -106,103 +109,6 @@ export default function CreatorsPage() {
     (c) => !featured || c.channelName !== featured.channelName
   );
 
-  // Fetch minimal leaderboard stats for featured creator (client-side for now)
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchFeaturedStats() {
-      if (!featured) {
-        setFeaturedStats(null);
-        return;
-      }
-      try {
-        const now = new Date();
-        const params = new URLSearchParams({
-          sortBy: 'Kills',
-          sortDir: 'desc',
-          limit: '100',
-          scope: 'month',
-          month: String(now.getUTCMonth() + 1),
-          year: String(now.getUTCFullYear()),
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Leaderboard fetch failed: ${res.status}`);
-        const payload = await res.json();
-        const rows: any[] = payload?.results || [];
-        const match = rows.find(
-          (r) =>
-            (r.player_name || '').toLowerCase() ===
-            (featured.displayName || featured.channelName).toLowerCase()
-        );
-        if (!isCancelled) {
-          setFeaturedStats(
-            match
-              ? {
-                  kills: Number(match.Kills) || 0,
-                  accuracy: String(match.Accuracy) || '',
-                  deaths: Number(match.Deaths) || 0,
-                }
-              : null
-          );
-        }
-      } catch (_e) {
-        if (!isCancelled) setFeaturedStats(null);
-      }
-    }
-    fetchFeaturedStats();
-    return () => {
-      isCancelled = true;
-    };
-  }, [featured]);
-
-  // Fetch stats for all creators displayed in grid (best-effort)
-  useEffect(() => {
-    let isCancelled = false;
-    async function fetchAllStats() {
-      try {
-        const now = new Date();
-        const params = new URLSearchParams({
-          sortBy: 'Kills',
-          sortDir: 'desc',
-          limit: '1000',
-          scope: 'month',
-          month: String(now.getUTCMonth() + 1),
-          year: String(now.getUTCFullYear()),
-        });
-        const res = await fetch(
-          `/api/helldivers/leaderboard?${params.toString()}`,
-          { cache: 'no-store' }
-        );
-        if (!res.ok) throw new Error(`Leaderboard fetch failed: ${res.status}`);
-        const payload = await res.json();
-        const rows: any[] = payload?.results || [];
-        const map: Record<string, CreatorStats> = {};
-        creatorsData.forEach((creator) => {
-          const key = creator.displayName || creator.channelName;
-          const match = rows.find(
-            (r) => (r.player_name || '').toLowerCase() === key.toLowerCase()
-          );
-          if (match) {
-            map[creator.channelName] = {
-              kills: Number(match.Kills) || 0,
-              accuracy: String(match.Accuracy) || '',
-              deaths: Number(match.Deaths) || 0,
-            };
-          }
-        });
-        if (!isCancelled) setCreatorStats(map);
-      } catch (_e) {
-        if (!isCancelled) setCreatorStats({});
-      }
-    }
-    if (creatorsData.length) fetchAllStats();
-    return () => {
-      isCancelled = true;
-    };
-  }, [creatorsData]);
-
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
@@ -251,7 +157,6 @@ export default function CreatorsPage() {
                         alt={`${featured.displayName || featured.channelName} avatar`}
                         width={56}
                         height={56}
-                        unoptimized
                       />
                     ) : (
                       <FaTwitch />
@@ -264,17 +169,6 @@ export default function CreatorsPage() {
                     <div className={styles.playerSubline}>
                       twitch.tv/{featured.channelName}
                     </div>
-                  </div>
-                </div>
-                <div className={styles.playerStats}>
-                  <div className={styles.playerStat}>
-                    Kills: {featuredStats?.kills ?? '—'}
-                  </div>
-                  <div className={styles.playerStat}>
-                    Accuracy: {featuredStats?.accuracy ?? '—'}
-                  </div>
-                  <div className={styles.playerStat}>
-                    Deaths: {featuredStats?.deaths ?? '—'}
                   </div>
                 </div>
                 <div className={styles.playerActions}>
@@ -367,7 +261,6 @@ export default function CreatorsPage() {
                               (e.currentTarget as any).src =
                                 '/images/placeholder.png';
                             }} // Fallback placeholder
-                            unoptimized // Good practice for external images not known at build time
                           />
                         ) : (
                           <div className={styles.profileImagePlaceholder}>
@@ -401,22 +294,6 @@ export default function CreatorsPage() {
                         </a>
                       </div>
                     </div>
-
-                    {/* Inline stats row per creator if available */}
-                    <div className={styles.playerStats}>
-                      <div className={styles.playerStat}>
-                        Kills: {creatorStats[creator.channelName]?.kills ?? '—'}
-                      </div>
-                      <div className={styles.playerStat}>
-                        Accuracy:{' '}
-                        {creatorStats[creator.channelName]?.accuracy ?? '—'}
-                      </div>
-                      <div className={styles.playerStat}>
-                        Deaths:{' '}
-                        {creatorStats[creator.channelName]?.deaths ?? '—'}
-                      </div>
-                    </div>
-
                     {creator.description ? (
                       <p className={styles.descriptionText}>
                         {creator.description}
@@ -439,46 +316,51 @@ export default function CreatorsPage() {
             YouTube
           </h2>
           <div className={styles.creatorsGrid}>
-            <div className={styles.creatorCard}>
-              <div className={styles.embedWrapper}>
-                <Image
-                  src="/images/game-placeholder.png"
-                  alt="GPT Fleet YouTube channel"
-                  width={640}
-                  height={360}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              </div>
-              <div className={styles.infoSection}>
-                <div className={styles.headerSection}>
-                  <div className={styles.profileImagePlaceholder}>
-                    <FaYoutube className={styles.placeholderIcon} />
-                  </div>
-                  <div className={styles.channelInfo}>
-                    <a
-                      href="https://www.youtube.com/@gptfleet"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.channelNameLink}
-                      title="GPT Fleet"
-                    >
-                      GPT Fleet
-                    </a>
-                    <a
-                      href="https://www.youtube.com/@gptfleet"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.channelUrlLink}
-                    >
-                      youtube.com/@gptfleet
-                    </a>
-                  </div>
+            {youtubeCreators.map((creator) => (
+              <div key={creator.channelId} className={styles.creatorCard}>
+                <div className={styles.embedWrapper}>
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={`https://www.youtube.com/embed/videoseries?list=UU${creator.channelId.substring(2)}`}
+                    title={`${creator.name}'s Latest Videos`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className={styles.twitchEmbed}
+                  ></iframe>
                 </div>
-                <p className={styles.noDescriptionText}>
-                  Official GPT Fleet YouTube channel.
-                </p>
+                <div className={styles.infoSection}>
+                  <div className={styles.headerSection}>
+                    <div className={styles.profileImagePlaceholder}>
+                      <FaYoutube className={styles.placeholderIcon} />
+                    </div>
+                    <div className={styles.channelInfo}>
+                      <a
+                        href={`https://www.youtube.com/${creator.youtubeHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.channelNameLink}
+                        title={creator.name}
+                      >
+                        {creator.name}
+                      </a>
+                      <a
+                        href={`https://www.youtube.com/${creator.youtubeHandle}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.channelUrlLink}
+                      >
+                        youtube.com/{creator.youtubeHandle}
+                      </a>
+                    </div>
+                  </div>
+                  <p className={styles.noDescriptionText}>
+                    {creator.description}
+                  </p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>

@@ -66,7 +66,6 @@ const Navbar = () => {
       { href: '/helldivers-2/campaigns', label: 'Campaigns' },
       { href: '/helldivers-2/academy', label: 'Academy' },
       { href: '/helldivers-2/creators', label: 'Streamers' },
-      { href: '/helldivers-2/news/war-news', label: 'Intel' },
     ];
   };
   const standardNavItems = getNavItems();
@@ -222,56 +221,6 @@ const Navbar = () => {
                 >
                   Streamers
                 </Link>
-              );
-            }
-            if (label === 'Intel') {
-              const isIntelActive =
-                isClient && pathname.startsWith(`${divisionBasePath}/news`);
-              const intelLinkClass = `${styles.link} ${isIntelActive ? styles.activeLink : ''}`;
-              return (
-                <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={intelLinkClass} prefetch={false}>
-                    Intel
-                  </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Intel shortcuts"
-                  >
-                    <Link
-                      href={`${divisionBasePath}/news/war-news`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      War News
-                    </Link>
-                    <Link
-                      href={`${divisionBasePath}/news/major-orders`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Major Orders
-                    </Link>
-                    <Link
-                      href={`${divisionBasePath}/news/galactic-map`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Galactic Map
-                    </Link>
-                    <Link
-                      href={`${divisionBasePath}/news/super-store`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Super Store
-                    </Link>
-                  </div>
-                </div>
               );
             }
             return (
