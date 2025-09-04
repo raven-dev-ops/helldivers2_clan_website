@@ -79,9 +79,9 @@ export function middleware(req: NextRequest) {
       "frame-ancestors 'self'",
 
       // Allow embeds from Twitch, YouTube, and Google
-      "frame-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com",
+      "frame-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com https://www.youtube-nocookie.com https://*.youtube.com",
       // (Safari fallback)
-      "child-src 'self' https://accounts.google.com",
+      "child-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com https://www.youtube-nocookie.com https://*.youtube.com",
 
       // Allow scripts from Google
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
