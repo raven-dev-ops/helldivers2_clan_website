@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-enenum Theme {
+enum Theme {
   Light = 'light',
   Dark = 'dark',
 }
