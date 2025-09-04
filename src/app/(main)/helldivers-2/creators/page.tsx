@@ -322,12 +322,13 @@ export default function CreatorsPage() {
                   <iframe
                     width="100%"
                     height="100%"
-                    src={`https://www.youtube.com/embed/live_stream?channel=${creator.channelId}&autoplay=1&mute=1`}
-                    title={`${creator.name}'s Live Stream`}
+                    src={`https://www.youtube.com/embed/videoseries?list=${`UU${creator.channelId.slice(2)}`}&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`}
+                    title={`${creator.name} Latest Uploads`}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     className={styles.twitchEmbed}
+                    referrerPolicy="strict-origin-when-cross-origin"
                   ></iframe>
                 </div>
                 <div className={styles.infoSection}>
