@@ -118,7 +118,7 @@ export default function Quiz({ title, questions }: QuizProps) {
   return (
     <>
       <button onClick={openModal} className={styles.quizButton}>
-        {title}
+        Take Quiz
       </button>
 
       {open && mounted &&

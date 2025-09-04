@@ -18,10 +18,28 @@ export default function HelldiversPage() {
   const youtubeUrl = process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE_URL;
   const tiktokUrl = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL;
 
+  const helldiversChannelId = 'UCkH5t4g_7-tA4n5-d-lVd-g';
+  const latestVideoPlaylistId = `UU${helldiversChannelId.substring(2)}`;
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.dividerLayer} />
       <div className={styles.pageContainer}>
+        {/* YouTube Video Section */}
+        <section className={styles.section}>
+          <div className={styles.youtubeEmbed}>
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/videoseries?list=${latestVideoPlaylistId}&autoplay=1&mute=1`}
+              title="Helldivers 2 Latest Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </section>
+
         {/* === Reviews Section === */}
         <ReviewsRotator reviews={reviews} />
 

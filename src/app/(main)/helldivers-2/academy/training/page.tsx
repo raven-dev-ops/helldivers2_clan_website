@@ -11,27 +11,27 @@ const chunk = (arr: Question[], size: number) =>
 
 const hd2Meta = [
   {
-    title: 'Set 1 — Weapons, Gear, Lore & Factions',
+    title: 'Weapons, Gear, Lore & Factions',
     description:
       '10 questions • Core kit basics, when to use what, who we’re fighting, and why it matters.',
   },
   {
-    title: 'Set 2 — Stratagems & Enemies',
+    title: 'Stratagems & Enemies',
     description:
       '10 questions • Call-in timing, safe throws, and enemy behaviors you must recognize.',
   },
   {
-    title: 'Set 3 — Stratagems, Ship & Progression',
+    title: 'Stratagems, Ship & Progression',
     description:
       '10 questions • Ship upgrades, unlock paths, and which stratagems to bring as you advance.',
   },
   {
-    title: 'Set 4 — Stratagems, Weapons & Gear',
+    title: 'Stratagems, Weapons & Gear',
     description:
       '10 questions • Loadout building, synergizing stratagems with your weapons and armor.',
   },
   {
-    title: 'Set 5 — Stratagems, Tactics & Missions',
+    title: 'Stratagems, Tactics & Missions',
     description:
       '10 questions • Objective flow, team roles, and practical callouts under pressure.',
   },
@@ -39,27 +39,27 @@ const hd2Meta = [
 
 const hd1Meta = [
   {
-    title: 'Set 1 — Enemies, Tactics & Missions',
+    title: 'Enemies, Tactics & Missions',
     description:
       '10 questions • Classic foes and the fundamentals that still teach good habits.',
   },
   {
-    title: 'Set 2 — Stratagems, Weapons & Gear',
+    title: 'Stratagems, Weapons & Gear',
     description:
       '10 questions • Old-school combos and kit choices that shaped the series.',
   },
   {
-    title: 'Set 3 — Stratagems, Tactics & Missions',
+    title: 'Stratagems, Tactics & Missions',
     description:
       '10 questions • Mission pacing and squad coordination from the original playbook.',
   },
   {
-    title: 'Set 4 — Tactics, Missions & Stratagems',
+    title: 'Tactics, Missions & Stratagems',
     description:
       '10 questions • Applying the right tool at the right time, then extracting alive.',
   },
   {
-    title: 'Set 5 — Ship, Progression & Stratagems',
+    title: 'Ship, Progression & Stratagems',
     description:
       '10 questions • Upgrade priorities and role specialization over a campaign.',
   },
