@@ -1,29 +1,51 @@
 "use client";
 
-import type { CSSProperties } from "react";
-import styles from "../helldivers-2/HelldiversBase.module.css";
+import { useState } from "react";
+import baseStyles from "../helldivers-2/HelldiversBase.module.css";
+import styles from './Settings.module.css';
 import ProfileEditForm from "@/app/components/forum/ProfileEditForm";
 
-const overlayStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(16, 20, 31, 0.35)",
-  zIndex: -1,
-};
-
 export default function SettingsPage() {
-  return (
-    <div className={styles.wrapper}>
-      <div style={overlayStyle} />
-      <div className={styles.dividerLayer} />
-      <div className={styles.pageContainer}>
-        <section className="content-section" style={{ position: "relative", zIndex: 1 }}>
-          <h2 className="content-section-title with-border-bottom">Settings</h2>
+  const [activeTab, setActiveTab] = useState('profile');
 
-          {/* Character sheet */}
-          <ProfileEditForm />
-        </section>
-      </div>
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'profile':
+        return <ProfileEditForm />;
+      // Add other settings sections here
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className={baseStyles.wrapper}>
+        <div className={baseStyles.dividerLayer} />
+        <div className={baseStyles.pageContainer}>
+            <header className={styles.settingsHeader}>
+                <h1 className={styles.settingsTitle}>Settings</h1>
+                <p className={styles.settingsSubtitle}>
+                    Manage your account and profile settings.
+                </p>
+            </header>
+
+            <div className={styles.gridContainer}>
+                <aside className={styles.sidebar}>
+                    <button
+                        className={styles.sidebarButton}
+                        onClick={() => setActiveTab('profile')}
+                        aria-pressed={activeTab === 'profile'}
+                    >
+                        Profile
+                    </button>
+                    {/* Add other settings tabs here */}
+                </aside>
+
+                <main className={styles.content}>
+                    {renderContent()}
+                </main>
+            </div>
+        </div>
     </div>
   );
 }

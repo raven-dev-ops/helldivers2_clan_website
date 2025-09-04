@@ -1,9 +1,9 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChangeAvatarModal from '@/app/components/profile/ChangeAvatarModal';
-import s from './ProfileForm.module.css';
+import s from './ProfileEditForm.module.css';
 
 type UnitHeight = 'cm' | 'in';
 type UnitWeight = 'kg' | 'lb';
@@ -12,7 +12,7 @@ interface UserMe {
   firstName?: string | null;
   middleName?: string | null;
   lastName?: string | null;
-  sesName?: string | null; // NEW: S.E.S. Destroyer name
+  sesName?: string | null;
   characterHeightCm?: number | null;
   characterWeightKg?: number | null;
   homeplanet?: string | null;
@@ -33,23 +33,14 @@ interface UserMe {
 export default function ProfileEditForm() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [userData, setUserData] = useState<UserMe | null>(null);
-
-  // Delete-arming
-  const [deleteArmed, setDeleteArmed] = useState(false);
-  const [deleteHoverSecondsLeft, setDeleteHoverSecondsLeft] =
-    useState<number>(30);
-  const deleteHoverIntervalRef = useRef<number | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [confirmText, setConfirmText] = useState('');
-  const [modalError, setModalError] = useState<string | null>(null);
+  const [isChangeImageOpen, setIsChangeImageOpen] = useState(false);
 
   // Fields
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [sesName, setSesName] = useState(''); // NEW
+  const [sesName, setSesName] = useState('');
   const [characterHeightCm, setCharacterHeightCm] = useState('');
   const [characterWeightKg, setCharacterWeightKg] = useState('');
   const [heightUnit, setHeightUnit] = useState<UnitHeight>('cm');
@@ -62,17 +53,10 @@ export default function ProfileEditForm() {
   const [armor, setArmor] = useState('');
   const [motto, setMotto] = useState('');
   const [favoredEnemy, setFavoredEnemy] = useState('');
-  const [twitchUrl, setTwitchUrl] = useState('');
-  const [isChangeImageOpen, setIsChangeImageOpen] = useState(false);
 
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>(
-    'idle'
-  );
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // utils
-  const clampNum = (n: number, min: number, max: number) =>
-    isNaN(n) ? NaN : Math.min(max, Math.max(min, n));
   const cmToIn = (cmStr: string) => {
     const cm = parseFloat(cmStr);
     return isNaN(cm) ? '' : Math.round(cm / 2.54).toString();
@@ -90,7 +74,6 @@ export default function ProfileEditForm() {
     return isNaN(lb) ? '' : Math.round(lb / 2.2046226218).toString();
   };
 
-  // load
   useEffect(() => {
     const ac = new AbortController();
     (async () => {
@@ -104,17 +87,9 @@ export default function ProfileEditForm() {
         setFirstName(data.firstName ?? '');
         setMiddleName(data.middleName ?? '');
         setLastName(data.lastName ?? '');
-        setSesName(data.sesName ?? ''); // NEW
-        setCharacterHeightCm(
-          typeof data.characterHeightCm === 'number'
-            ? String(data.characterHeightCm)
-            : ''
-        );
-        setCharacterWeightKg(
-          typeof data.characterWeightKg === 'number'
-            ? String(data.characterWeightKg)
-            : ''
-        );
+        setSesName(data.sesName ?? '');
+        setCharacterHeightCm(typeof data.characterHeightCm === 'number' ? String(data.characterHeightCm) : '');
+        setCharacterWeightKg(typeof data.characterWeightKg === 'number' ? String(data.characterWeightKg) : '');
         setHomeplanet(data.homeplanet ?? '');
         setBackground(data.background ?? '');
         setCallsign(data.callsign ?? '');
@@ -123,18 +98,8 @@ export default function ProfileEditForm() {
         setArmor(data.armor ?? '');
         setMotto(data.motto ?? '');
         setFavoredEnemy(data.favoredEnemy ?? '');
-        setTwitchUrl(data.twitchUrl ?? '');
-        if (
-          data.preferredHeightUnit === 'cm' ||
-          data.preferredHeightUnit === 'in'
-        )
-          setHeightUnit(data.preferredHeightUnit);
-        if (
-          data.preferredWeightUnit === 'kg' ||
-          data.preferredWeightUnit === 'lb'
-        )
-          setWeightUnit(data.preferredWeightUnit);
-      } catch {
+        if (data.preferredHeightUnit) setHeightUnit(data.preferredHeightUnit);
+        if (data.preferredWeightUnit) setWeightUnit(data.preferredWeightUnit);
       } finally {
         if (!ac.signal.aborted) setLoading(false);
       }
@@ -142,28 +107,14 @@ export default function ProfileEditForm() {
     return () => ac.abort();
   }, []);
 
-  // cleanup interval
-  useEffect(() => {
-    return () => {
-      if (deleteHoverIntervalRef.current !== null) {
-        window.clearInterval(deleteHoverIntervalRef.current);
-        deleteHoverIntervalRef.current = null;
-      }
-    };
-  }, []);
-
   const buildPayload = (): UserMe => {
-    const h = characterHeightCm.trim()
-      ? clampNum(parseFloat(characterHeightCm), 0, 300)
-      : NaN;
-    const w = characterWeightKg.trim()
-      ? clampNum(parseFloat(characterWeightKg), 0, 600)
-      : NaN;
+    const h = characterHeightCm.trim() ? parseFloat(characterHeightCm) : NaN;
+    const w = characterWeightKg.trim() ? parseFloat(characterWeightKg) : NaN;
     return {
       firstName: firstName || null,
       middleName: middleName || null,
       lastName: lastName || null,
-      sesName: sesName || null, // NEW
+      sesName: sesName || null,
       characterHeightCm: isNaN(h) ? null : h,
       characterWeightKg: isNaN(w) ? null : w,
       homeplanet: homeplanet || null,
@@ -174,7 +125,6 @@ export default function ProfileEditForm() {
       armor: armor || null,
       motto: motto || null,
       favoredEnemy: favoredEnemy || null,
-      twitchUrl: twitchUrl || null,
       preferredHeightUnit: heightUnit,
       preferredWeightUnit: weightUnit,
     };
@@ -206,491 +156,142 @@ export default function ProfileEditForm() {
     }
   };
 
-  // delete logic unchanged
-  const handleDeleteHoverStart = () => {
-    if (deleteHoverIntervalRef.current !== null || deleteArmed) return;
-    setDeleteHoverSecondsLeft(30);
-    deleteHoverIntervalRef.current = window.setInterval(() => {
-      setDeleteHoverSecondsLeft((prev) => {
-        if (prev <= 1) {
-          if (deleteHoverIntervalRef.current !== null) {
-            window.clearInterval(deleteHoverIntervalRef.current);
-            deleteHoverIntervalRef.current = null;
-          }
-          setDeleteArmed(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-  const handleDeleteHoverEnd = () => {
-    if (deleteArmed) return;
-    if (deleteHoverIntervalRef.current !== null) {
-      window.clearInterval(deleteHoverIntervalRef.current);
-      deleteHoverIntervalRef.current = null;
-    }
-    setDeleteHoverSecondsLeft(30);
-  };
-  const openDeleteModal = () => {
-    setShowDeleteModal(true);
-    setConfirmText('');
-    setModalError(null);
-  };
-  const handleDeleteAccount = async () => {
-    if (confirmText !== 'I renounce democracy') {
-      setModalError('Incorrect confirmation text');
-      return;
-    }
-    setDeleting(true);
-    try {
-      const res = await fetch('/api/users/me', { method: 'DELETE' });
-      if (res.ok) {
-        window.location.href = '/auth';
-      } else {
-        setModalError('Failed to delete account.');
-      }
-    } finally {
-      setDeleting(false);
-    }
-  };
   const handleAvatarSaved = (dataUrl: string) => {
     setUserData((prev) => ({ ...(prev || {}), customAvatarDataUrl: dataUrl }));
     setIsChangeImageOpen(false);
   };
 
-  if (loading)
-    return (
-      <div className="card" style={{ padding: '1rem' }}>
-        Loading profile…
-      </div>
-    );
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <form className={`card ${s.form}`} onSubmit={(e) => e.preventDefault()}>
-      <div className={s.layout}>
-        {/* Sidebar */}
-        <aside className={s.sidebar}>
-          <div className={s.avatar}>
-            <img
-              src={
-                userData?.customAvatarDataUrl ||
-                userData?.image ||
-                '/images/avatar-default.png'
-              }
-              alt="Avatar"
-              loading="lazy"
-            />
-          </div>
-          <button
-            type="button"
-            className="link-button"
-            onClick={() => setIsChangeImageOpen(true)}
-          >
-            Change image
-          </button>
-
-          {/* Links */}
-          <section className={s.section}>
-            <h3 className={s.sectionTitle}>Links</h3>
-            {twitchUrl ? (
-              <div className={s.linkRow}>
-                <a
-                  href={twitchUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-button"
-                >
-                  {twitchUrl}
-                </a>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setTwitchUrl('')}
-                >
-                  Unlink
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  const url = window.prompt('Enter your Twitch channel URL');
-                  if (url) setTwitchUrl(url.trim());
-                }}
-                style={{
-                  backgroundColor: '#9146FF',
-                  color: '#fff',
-                  padding: '0.5rem 1rem',
-                  borderRadius: 4,
-                  width: '100%',
-                }}
-              >
-                Link Twitch Account
-              </button>
-            )}
-            <p className={s.smallNote}>
-              Add your Twitch to appear on creator lists and your profile.
-            </p>
-          </section>
-
-          {/* Danger Zone */}
-          <section className={`${s.section} ${s.danger}`}>
-            <h3 className={s.sectionTitle}>Danger Zone</h3>
-            <button
-              type="button"
-              onMouseEnter={handleDeleteHoverStart}
-              onMouseLeave={handleDeleteHoverEnd}
-              onClick={() => {
-                if (deleteArmed) openDeleteModal();
-              }}
-              disabled={deleting}
-              className="btn btn-secondary danger"
-              title={
-                deleteArmed
-                  ? 'Click to permanently delete your account'
-                  : undefined
-              }
-              aria-label={
-                deleteArmed
-                  ? 'Delete account'
-                  : `Hold ${String(deleteHoverSecondsLeft).padStart(2, '0')} seconds to arm delete`
-              }
-              style={{ width: '100%' }}
-            >
-              {deleting
-                ? 'Deleting…'
-                : deleteArmed
-                  ? 'Delete Account'
-                  : `Hold ${String(deleteHoverSecondsLeft).padStart(2, '0')}s`}
+    <form className={s.formContainer} onSubmit={(e) => e.preventDefault()}>
+        <div className={s.avatarSection}>
+            <div className={s.avatar}>
+                <img
+                    src={userData?.customAvatarDataUrl || userData?.image || '/images/avatar-default.png'}
+                    alt="Avatar"
+                    loading="lazy"
+                />
+            </div>
+            <button type="button" className={s.button} onClick={() => setIsChangeImageOpen(true)}>
+                Change Avatar
             </button>
-            <p className={s.smallNote}>
-              This action is permanent and cannot be undone.
-            </p>
-          </section>
-        </aside>
+        </div>
 
-        {/* Main */}
-        <main>
-          {/* Identity */}
-          <section className={s.section}>
-            <h3 className={s.sectionTitle}>Identity</h3>
-            <div className={`${s.grid} cols2`}>
-              <label className={`field field-sm ${s.w20}`}>
-                <strong className="label">First Name</strong>
-                <input
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
-                />
-              </label>
-              <label className={`field field-sm ${s.w20}`}>
-                <strong className="label">Middle Name</strong>
-                <input
-                  value={middleName}
-                  onChange={(e) => setMiddleName(e.target.value)}
-                  placeholder="Middle name"
-                />
-              </label>
-              <label className={`field field-sm ${s.w20}`}>
-                <strong className="label">Last Name</strong>
-                <input
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name"
-                />
-              </label>
-              <label className={`field field-sm ${s.w24}`}>
-                <strong className="label">Callsign</strong>
-                <input
-                  value={callsign}
-                  onChange={(e) => setCallsign(e.target.value)}
-                  placeholder="e.g., Eagle-1"
-                />
-              </label>
-              <label className={`field field-sm ${s.w24}`}>
-                <strong className="label">Rank</strong>
-                <input
-                  value={rankTitle}
-                  onChange={(e) => setRankTitle(e.target.value)}
-                  placeholder="e.g., Captain"
-                />
-              </label>
-              <label className={`field field-sm ${s.w24}`}>
-                <strong className="label">Homeplanet</strong>
-                <input
-                  value={homeplanet}
-                  onChange={(e) => setHomeplanet(e.target.value)}
-                  placeholder="e.g., Arrakis"
-                />
-              </label>
-              <label className={`field field-sm ${s.w32}`}>
-                <strong className="label">S.E.S. (Destroyer) Name</strong>{' '}
-                {/* NEW */}
-                <input
-                  value={sesName}
-                  onChange={(e) => setSesName(e.target.value)}
-                  placeholder="e.g., Super Earth Vengeance"
-                />
-              </label>
-            </div>
-          </section>
-
-          {/* Character Stats */}
-          <section className={s.section}>
-            <h3 className={s.sectionTitle}>Character Stats</h3>
-            <div className={`${s.grid} cols3`}>
-              <label className="field field-sm">
-                <strong className="label">
-                  Height{' '}
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={() =>
-                      setHeightUnit((u) => (u === 'cm' ? 'in' : 'cm'))
-                    }
-                    aria-label={`Toggle height unit (current: ${heightUnit})`}
-                  >
-                    ({heightUnit})
-                  </button>
-                </strong>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={
-                    heightUnit === 'cm'
-                      ? characterHeightCm
-                      : cmToIn(characterHeightCm)
-                  }
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (heightUnit === 'cm') setCharacterHeightCm(val);
-                    else setCharacterHeightCm(inToCm(val));
-                  }}
-                  placeholder={heightUnit === 'cm' ? '180' : '71'}
-                  min={0}
-                  max={heightUnit === 'cm' ? 300 : 120}
-                />
-              </label>
-
-              <label className="field field-sm">
-                <strong className="label">
-                  Weight{' '}
-                  <button
-                    type="button"
-                    className="link-button"
-                    onClick={() =>
-                      setWeightUnit((u) => (u === 'kg' ? 'lb' : 'kg'))
-                    }
-                    aria-label={`Toggle weight unit (current: ${weightUnit})`}
-                  >
-                    ({weightUnit})
-                  </button>
-                </strong>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={
-                    weightUnit === 'kg'
-                      ? characterWeightKg
-                      : kgToLb(characterWeightKg)
-                  }
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (weightUnit === 'kg') setCharacterWeightKg(val);
-                    else setCharacterWeightKg(lbToKg(val));
-                  }}
-                  placeholder={weightUnit === 'kg' ? '80' : '176'}
-                  min={0}
-                  max={weightUnit === 'kg' ? 600 : 1300}
-                />
-              </label>
-
-              <label className="field field-sm">
-                <strong className="label">Favored Enemy</strong>
-                <input
-                  value={favoredEnemy}
-                  onChange={(e) => setFavoredEnemy(e.target.value)}
-                  placeholder="e.g., Terminids"
-                />
-              </label>
-            </div>
-          </section>
-
-          {/* Loadout & Preferences */}
-          <section className={s.section}>
-            <h3 className={s.sectionTitle}>Loadout & Preferences</h3>
-            <div className={`${s.grid} cols3`}>
-              <label className="field field-sm">
-                <strong className="label">Favorite Weapon</strong>
-                <input
-                  value={favoriteWeapon}
-                  onChange={(e) => setFavoriteWeapon(e.target.value)}
-                  placeholder="e.g., Breaker"
-                />
-              </label>
-              <label className="field field-sm">
-                <strong className="label">Armor</strong>
-                <input
-                  value={armor}
-                  onChange={(e) => setArmor(e.target.value)}
-                  placeholder="e.g., FS-23 Battle Master"
-                />
-              </label>
-              <label className={`field field-sm ${s.full}`}>
-                <strong className="label">Motto</strong>
-                <input
-                  value={motto}
-                  onChange={(e) => setMotto(e.target.value)}
-                  placeholder="e.g., For Super Earth!"
-                />
-              </label>
-            </div>
-          </section>
-
-          {/* Roleplay Bio */}
-          <section className={s.section}>
-            <h3 className={s.sectionTitle}>Roleplay Bio</h3>
-            <div className={s.grid}>
-              <label className={`field field-sm ${s.full}`}>
-                <strong className="label">Background</strong>
-                <textarea
-                  className="min-h"
-                  value={background}
-                  onChange={(e) => setBackground(e.target.value)}
-                  placeholder="RP character background"
-                />
-              </label>
-            </div>
-          </section>
-
-          {/* Save */}
-          <section className={s.section}>
-            <div className={s.actions}>
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="btn btn-primary"
-                aria-live="polite"
-              >
-                {saving ? 'Saving…' : 'Save Profile'}
-              </button>
-              <span
-                aria-live="polite"
-                className={`save-status${saveStatus === 'error' ? ' error' : ''}`}
-              >
-                {saveStatus === 'success'
-                  ? 'Saved!'
-                  : saveStatus === 'error'
-                    ? saveError || 'Error saving.'
-                    : ''}
-              </span>
-            </div>
-          </section>
-        </main>
+      <div className={s.formSection}>
+        <h3 className={s.sectionTitle}>Identity</h3>
+        <div className={s.grid}>
+          <label className={s.field}>
+            <strong className={s.label}>First Name</strong>
+            <input className={s.input} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Middle Name</strong>
+            <input className={s.input} value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Last Name</strong>
+            <input className={s.input} value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Callsign</strong>
+            <input className={s.input} value={callsign} onChange={(e) => setCallsign(e.target.value)} placeholder="e.g., Eagle-1" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Rank</strong>
+            <input className={s.input} value={rankTitle} onChange={(e) => setRankTitle(e.target.value)} placeholder="e.g., Captain" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Homeplanet</strong>
+            <input className={s.input} value={homeplanet} onChange={(e) => setHomeplanet(e.target.value)} placeholder="e.g., Arrakis" />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>S.E.S. (Destroyer) Name</strong>
+            <input className={s.input} value={sesName} onChange={(e) => setSesName(e.target.value)} placeholder="e.g., Super Earth Vengeance" />
+          </label>
+        </div>
       </div>
 
-      {/* Modals */}
+      <div className={s.formSection}>
+        <h3 className={s.sectionTitle}>Character Stats</h3>
+        <div className={s.grid}>
+          <label className={s.field}>
+            <strong className={s.label}>Height ({heightUnit})</strong>
+            <input
+              className={s.input}
+              type="number"
+              value={heightUnit === 'cm' ? characterHeightCm : cmToIn(characterHeightCm)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCharacterHeightCm(heightUnit === 'cm' ? val : inToCm(val));
+              }}
+              placeholder={heightUnit === 'cm' ? '180' : '71'}
+            />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Weight ({weightUnit})</strong>
+            <input
+              className={s.input}
+              type="number"
+              value={weightUnit === 'kg' ? characterWeightKg : kgToLb(characterWeightKg)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCharacterWeightKg(weightUnit === 'kg' ? val : lbToKg(val));
+              }}
+              placeholder={weightUnit === 'kg' ? '80' : '176'}
+            />
+          </label>
+          <label className={s.field}>
+            <strong className={s.label}>Favored Enemy</strong>
+            <input className={s.input} value={favoredEnemy} onChange={(e) => setFavoredEnemy(e.target.value)} placeholder="e.g., Terminids" />
+          </label>
+        </div>
+      </div>
+
+      <div className={s.formSection}>
+        <h3 className={s.sectionTitle}>Loadout & Preferences</h3>
+        <div className={s.grid}>
+            <label className={s.field}>
+                <strong className={s.label}>Favorite Weapon</strong>
+                <input className={s.input} value={favoriteWeapon} onChange={(e) => setFavoriteWeapon(e.target.value)} placeholder="e.g., Breaker" />
+            </label>
+            <label className={s.field}>
+                <strong className={s.label}>Armor</strong>
+                <input className={s.input} value={armor} onChange={(e) => setArmor(e.target.value)} placeholder="e.g., FS-23 Battle Master" />
+            </label>
+            <label className={s.field}>
+                <strong className={s.label}>Motto</strong>
+                <input className={s.input} value={motto} onChange={(e) => setMotto(e.target.value)} placeholder="e.g., For Super Earth!" />
+            </label>
+        </div>
+      </div>
+
+      <div className={s.formSection}>
+        <h3 className={s.sectionTitle}>Roleplay Bio</h3>
+        <div className={s.grid}>
+          <label className={s.field}>
+            <strong className={s.label}>Background</strong>
+            <textarea className={s.textarea} value={background} onChange={(e) => setBackground(e.target.value)} placeholder="RP character background" />
+          </label>
+        </div>
+      </div>
+
+      <div className={s.actions}>
+        <button type="button" onClick={handleSave} disabled={saving} className={s.button}>
+          {saving ? 'Saving…' : 'Save Profile'}
+        </button>
+        <span className={`${s.statusMessage} ${saveStatus === 'success' ? s.success : s.error}`}>
+          {saveStatus === 'success' && 'Saved!'}
+          {saveStatus === 'error' && (saveError || 'Error saving.')}
+        </span>
+      </div>
+
       {isChangeImageOpen && (
         <ChangeAvatarModal
-          initialImageUrl={
-            userData?.customAvatarDataUrl || userData?.image || ''
-          }
+          initialImageUrl={userData?.customAvatarDataUrl || userData?.image || ''}
           onCancel={() => setIsChangeImageOpen(false)}
           onSaved={handleAvatarSaved}
         />
-      )}
-      {showDeleteModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-title"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-          }}
-        >
-          <div
-            style={{
-              background: '#1f2937',
-              padding: '1.5rem',
-              borderRadius: 8,
-              width: '90%',
-              maxWidth: 420,
-            }}
-          >
-            <h2
-              id="delete-title"
-              style={{ marginTop: 0, marginBottom: '.75rem' }}
-            >
-              Confirm Account Deletion
-            </h2>
-            <p style={{ marginBottom: '1rem' }}>
-              Type "I renounce democracy" to confirm account deletion.
-            </p>
-            <input
-              type="text"
-              value={confirmText}
-              onChange={(e) => setConfirmText(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '.5rem',
-                marginBottom: '1rem',
-                borderRadius: 4,
-                border: '1px solid #374151',
-                background: '#111827',
-                color: '#f9fafb',
-              }}
-              aria-label='Type "I renounce democracy" to confirm'
-            />
-            {modalError && (
-              <p style={{ color: '#dc2626', marginBottom: '1rem' }}>
-                {modalError}
-              </p>
-            )}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '.5rem',
-              }}
-            >
-              <button
-                type="button"
-                onClick={() => setShowDeleteModal(false)}
-                style={{
-                  padding: '.5rem 1rem',
-                  background: '#6b7280',
-                  color: '#fff',
-                  borderRadius: 4,
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleDeleteAccount}
-                disabled={deleting || confirmText !== 'I renounce democracy'}
-                style={{
-                  padding: '.5rem 1rem',
-                  background: '#dc2626',
-                  color: '#fff',
-                  borderRadius: 4,
-                }}
-              >
-                {deleting ? 'Deleting…' : 'Confirm'}
-              </button>
-            </div>
-          </div>
-        </div>
       )}
     </form>
   );

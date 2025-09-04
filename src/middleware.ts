@@ -71,26 +71,25 @@ export function middleware(req: NextRequest) {
   res.headers.set('X-Request-ID', requestId);
 
   if (!isAsset && (wantsHtml || req.method === 'HEAD' || accept === '')) {
-    // ✅ Allow Google Identity Services (GIS)
+    // ✅ Allow Google Identity Services (GIS), Twitch, and YouTube
     const csp = [
       "default-src 'self'",
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'self'",
 
-      // GIS iframes
-      "frame-src 'self' https://accounts.google.com",
+      // Allow embeds from Twitch, YouTube, and Google
+      "frame-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com",
       // (Safari fallback)
       "child-src 'self' https://accounts.google.com",
 
-      // Allow the GIS script
+      // Allow scripts from Google
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
-      // Some scanners specifically check -elem; mirror the allowlist here too
       "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com",
 
       // Your existing allowances
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https: blob:",
+      "img-src 'self' data: https: blob: https://static-cdn.jtvnw.net", // Added Twitch's CDN
       "font-src 'self' data: https:",
       "connect-src 'self' https: wss:",
 
