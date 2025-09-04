@@ -15,8 +15,6 @@ type Module = {
   cta: { label: string; href: string };
 };
 
-const MOD_TEAM_URL = '/mod-team';
-
 const MODULES: Module[] = [
   {
     id: 'environmental',
@@ -118,38 +116,19 @@ const MODULES: Module[] = [
     ],
     cta: { label: 'Open module', href: '/academy/xenology' },
   },
-  {
-    id: 'command',
-    title: 'Command',
-    subtitle: 'Fleet Commander • Democracy Officer • Loyalty Officer',
-    img: 'https://placehold.co/800x450?text=Command',
-    imgAlt: 'Placeholder image for the Command module',
-    description: 'How our leadership structure works and how to step up.',
-    basic: [
-      'Fleet Commander (junior mod): squad coordination & comms',
-      'Democracy Officer (mod): events, culture, moderation',
-      'Loyalty Officer (admin): systems, security, escalation',
-    ],
-    advanced: [
-      'SOPs: moderation ladder & incident playbooks',
-      'Event ops: briefing, debrief, AARs',
-      'Cross-server coordination & chain of command',
-    ],
-    cta: { label: 'Apply at the Mod Team page', href: MOD_TEAM_URL },
-  },
 ];
 
 export default function AcademyPage() {
   return (
-    <div className={base.wrapper}>
+    <div className={styles['academy-main-container']}>
       <div className={base.dividerLayer} />
       <div className={base.pageContainer}>
         <section className={base.section} aria-labelledby="academy-title">
-          <h2 id="academy-title" className={base.sectionTitle}>
+          <h2 id="academy-title" className={styles['academy-page-title']}>
             Academy
           </h2>
           <p className={base.paragraph}>
-            Six training modules covering environments, equipment, tactics, enemies, and leadership.
+            Five training modules covering environments, equipment, tactics, and enemies.
           </p>
 
           <div className={styles.modulesGrid} role="list">
