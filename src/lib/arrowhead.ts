@@ -1,6 +1,6 @@
 // src/lib/arrowhead.ts
 // Lightweight client for Arrowhead's live game endpoints
-import { fetchWithRevalidate } from '@/lib/helldivers/fetch';
+import { fetchWithRevalidate, FetchWithRevalidateOptions } from '@/lib/helldivers/fetch';
 
 const DEFAULT_BASE = 'https://api.live.prod.thehelldiversgame.com/api';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';
@@ -16,18 +16,18 @@ function getBaseUrl(): string {
   return process.env.ARROWHEAD_API_BASE || DEFAULT_BASE;
 }
 
-async function fetchJson<T = any>(path: string, init?: RequestInit): Promise<FetchJsonResult<T>> {
+async function fetchJson<T = any>(path: string, init?: FetchWithRevalidateOptions): Promise<FetchJsonResult<T>> {
   try {
     const { response, data } = await (async () => {
       const res = await fetchWithRevalidate(`${getBaseUrl()}${path}`, {
         ...init,
-        // 30s revalidation window on upstream fetches per TASK-2
-        revalidateSeconds: 30,
+        // Default 30s revalidation; callers may override via init.revalidateSeconds
+        revalidateSeconds: init?.revalidateSeconds ?? 30,
         headers: {
           'User-Agent': USER_AGENT,
           ...(init?.headers || {}),
         },
-      } as any);
+      });
       const ct = res.headers.get('content-type') || '';
       if (!ct.includes('application/json')) {
         return { response: res, data: null as any };
@@ -83,7 +83,7 @@ export async function getWarInfo(warId?: number | string | null): Promise<FetchJ
 
 export async function getNewsFeed(
   warId?: number | string | null,
-  init?: RequestInit
+  init?: FetchWithRevalidateOptions
 ): Promise<FetchJsonResult<any[]>> {
   const id = await ensureWarId(warId);
   if (id == null) return { ok: false, status: 400, statusText: 'NoWarId', data: null };
