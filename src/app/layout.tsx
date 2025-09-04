@@ -1,4 +1,6 @@
 // src/app/layout.tsx
+'use client';
+
 import type { Metadata } from 'next';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -9,15 +11,11 @@ import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry'
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import MusicButton from '@/app/components/common/MusicButton';
 import GoogleAnalytics from '@/app/components/common/GoogleAnalytics';
+import { SessionProvider } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'Galactic Phantom Division | GPT FLEET',
-  description: 'We are the last Helldivers. Stay free.',
-};
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -57,7 +55,9 @@ export default async function RootLayout({
           }}
         />
         <StyledComponentsRegistry>
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <SessionProvider>{children}</SessionProvider>
+          </ThemeProvider>
         </StyledComponentsRegistry>
         <MusicButton />
       </body>
