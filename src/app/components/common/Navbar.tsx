@@ -64,7 +64,7 @@ const Navbar = () => {
       { href: '/helldivers-2/leaderboard', label: 'Leaderboard' },
       { href: '/helldivers-2/challenges', label: 'Challenges' },
       { href: '/helldivers-2/campaigns', label: 'Campaigns' },
-      { href: '/helldivers-2/academy', label: 'Academy' },
+      { href: '/academy', label: 'Academy' },
       { href: '/helldivers-2/creators', label: 'Streamers' },
     ];
   };
@@ -164,44 +164,6 @@ const Navbar = () => {
                         {label}
                       </Link>
                     ))}
-                  </div>
-                </div>
-              );
-            }
-            if (label === 'Academy') {
-              const isAcademyActive =
-                isClient && pathname.startsWith(`${divisionBasePath}/academy`);
-              const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
-              return (
-                <div key={href} className={styles.dropdown}>
-                  <Link
-                    href={href}
-                    className={academyLinkClass}
-                    prefetch={false}
-                  >
-                    Academy
-                  </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Academy pages"
-                  >
-                    <Link
-                      href={`${divisionBasePath}/academy/training`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      My Training
-                    </Link>
-                    <Link
-                      href={`${divisionBasePath}/academy/apply`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
-                      Mod Team
-                    </Link>
                   </div>
                 </div>
               );

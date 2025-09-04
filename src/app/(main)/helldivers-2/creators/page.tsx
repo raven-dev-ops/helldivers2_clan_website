@@ -322,8 +322,8 @@ export default function CreatorsPage() {
                   <iframe
                     width="100%"
                     height="100%"
-                    src={`https://www.youtube.com/embed/videoseries?list=UU${creator.channelId.substring(2)}`}
-                    title={`${creator.name}'s Latest Videos`}
+                    src={`https://www.youtube.com/embed/live_stream?channel=${creator.channelId}&autoplay=1&mute=1`}
+                    title={`${creator.name}'s Live Stream`}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

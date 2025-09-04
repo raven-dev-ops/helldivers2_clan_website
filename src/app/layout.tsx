@@ -6,7 +6,6 @@ import 'swiper/css/pagination';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import StyledComponentsRegistry from '@/app/components/StyledComponentsRegistry';
-import AuthProvider from '@/app/components/providers/AuthProvider';
 import { ThemeProvider } from '@/app/providers/ThemeProvider';
 import MusicButton from '@/app/components/common/MusicButton';
 import GoogleAnalytics from '@/app/components/common/GoogleAnalytics';
@@ -58,9 +57,7 @@ export default async function RootLayout({
           }}
         />
         <StyledComponentsRegistry>
-          <ThemeProvider>
-            <AuthProvider>{children}</AuthProvider>
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </StyledComponentsRegistry>
         <MusicButton />
       </body>

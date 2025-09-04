@@ -1,0 +1,113 @@
+.academy-page {
+  color: #E0E0E0;
+}
+
+.academy-header {
+  text-align: center;
+  padding: 4rem 1rem;
+  background: rgba(17, 24, 39, 0.8);
+  border-radius: 12px;
+  margin-bottom: 3rem;
+}
+
+.academy-title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+}
+
+.academy-subtitle {
+  font-size: 1.25rem;
+  color: #B0B0B0;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.academy-section {
+  margin-bottom: 3rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #FFD700;
+}
+
+.curriculum-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.curriculum-card {
+  background: rgba(23, 30, 45, 0.9);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #333;
+}
+
+.curriculum-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #FFD700;
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #C0C0C0;
+  line-height: 1.6;
+}
+
+.enrollment-content {
+  background: rgba(17, 24, 39, 0.8);
+  padding: 2.5rem;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.enrollment-description {
+  font-size: 1.1rem;
+  color: #B0B0B0;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.enroll-button {
+  display: inline-block;
+  background-color: #FFD700;
+  color: #111827;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.enroll-button:hover {
+  background-color: #E6C200;
+  transform: scale(1.05);
+}
