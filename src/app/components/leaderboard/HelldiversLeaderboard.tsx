@@ -135,6 +135,7 @@ function LeaderboardTableSection({
   searchTerm,
   onSearch,
   sectionId,
+  tabsNode,
 }: {
   title: string;
   rows: LeaderboardRow[];
@@ -147,6 +148,7 @@ function LeaderboardTableSection({
   searchTerm: string;
   onSearch: (v: string) => void;
   sectionId?: string;
+  tabsNode?: React.ReactNode;
 }) {
   const hasAverages =
     showAverages &&
@@ -176,6 +178,7 @@ function LeaderboardTableSection({
       <h2 className="content-section-title with-border-bottom leaderboard-title">
         {title}
       </h2>
+      {tabsNode}
       <div
         style={{
           display: 'flex',
@@ -483,146 +486,159 @@ export default function HelldiversLeaderboard({
 
   return (
     <div>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('daily')}
-          aria-pressed={activeTab === 'daily'}
-        >
-          Daily
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('weekly')}
-          aria-pressed={activeTab === 'weekly'}
-        >
-          Weekly
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('monthly')}
-          aria-pressed={activeTab === 'monthly'}
-        >
-          Monthly
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('yearly')}
-          aria-pressed={activeTab === 'yearly'}
-        >
-          Yearly
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('solo')}
-          aria-pressed={activeTab === 'solo'}
-        >
-          Solo
-        </button>
-        <button
-          className="btn btn-secondary"
-          onClick={() => setActiveTab('squad')}
-          aria-pressed={activeTab === 'squad'}
-        >
-          Squad
-        </button>
-      </div>
+      {(() => {
+        const tabs = (
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('daily')}
+              aria-pressed={activeTab === 'daily'}
+            >
+              Daily
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('weekly')}
+              aria-pressed={activeTab === 'weekly'}
+            >
+              Weekly
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('monthly')}
+              aria-pressed={activeTab === 'monthly'}
+            >
+              Monthly
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('yearly')}
+              aria-pressed={activeTab === 'yearly'}
+            >
+              Yearly
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('solo')}
+              aria-pressed={activeTab === 'solo'}
+            >
+              Solo
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setActiveTab('squad')}
+              aria-pressed={activeTab === 'squad'}
+            >
+              Squad
+            </button>
+          </div>
+        );
+        return (
+          <>
+            {activeTab === 'daily' && (
+              <LeaderboardTableSection
+                title={dayTitle}
+                rows={dayData}
+                loading={isLoading}
+                error={dayError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={daySearch}
+                onSearch={setDaySearch}
+                sectionId="daily"
+                tabsNode={tabs}
+              />
+            )}
 
-      {activeTab === 'daily' && (
-        <LeaderboardTableSection
-          title={dayTitle}
-          rows={dayData}
-          loading={isLoading}
-          error={dayError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={daySearch}
-          onSearch={setDaySearch}
-          sectionId="daily"
-        />
-      )}
+            {activeTab === 'weekly' && (
+              <LeaderboardTableSection
+                title={weekTitle}
+                rows={weekData}
+                loading={isLoading}
+                error={weekError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={weekSearch}
+                onSearch={setWeekSearch}
+                sectionId="weekly"
+                tabsNode={tabs}
+              />
+            )}
 
-      {activeTab === 'weekly' && (
-        <LeaderboardTableSection
-          title={weekTitle}
-          rows={weekData}
-          loading={isLoading}
-          error={weekError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={weekSearch}
-          onSearch={setWeekSearch}
-          sectionId="weekly"
-        />
-      )}
+            {activeTab === 'monthly' && (
+              <LeaderboardTableSection
+                title={monthTitle}
+                rows={monthData}
+                loading={isLoading}
+                error={monthError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={monthSearch}
+                onSearch={setMonthSearch}
+                sectionId="monthly"
+                tabsNode={tabs}
+              />
+            )}
 
-      {activeTab === 'monthly' && (
-        <LeaderboardTableSection
-          title={monthTitle}
-          rows={monthData}
-          loading={isLoading}
-          error={monthError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={monthSearch}
-          onSearch={setMonthSearch}
-          sectionId="monthly"
-        />
-      )}
+            {activeTab === 'yearly' && (
+              <LeaderboardTableSection
+                title={yearlyTitle}
+                rows={yearlyData}
+                loading={isLoading}
+                error={yearlyError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={yearlyTotalsSearch}
+                onSearch={setYearlyTotalsSearch}
+                sectionId="yearly"
+                tabsNode={tabs}
+              />
+            )}
 
-      {activeTab === 'yearly' && (
-        <LeaderboardTableSection
-          title={yearlyTitle}
-          rows={yearlyData}
-          loading={isLoading}
-          error={yearlyError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={yearlyTotalsSearch}
-          onSearch={setYearlyTotalsSearch}
-          sectionId="yearly"
-        />
-      )}
+            {activeTab === 'solo' && (
+              <LeaderboardTableSection
+                title={soloTitle}
+                rows={soloData}
+                loading={isLoading}
+                error={soloError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={soloSearch}
+                onSearch={setSoloSearch}
+                sectionId="solo"
+                tabsNode={tabs}
+              />
+            )}
 
-      {activeTab === 'solo' && (
-        <LeaderboardTableSection
-          title={soloTitle}
-          rows={soloData}
-          loading={isLoading}
-          error={soloError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={soloSearch}
-          onSearch={setSoloSearch}
-          sectionId="solo"
-        />
-      )}
-
-      {activeTab === 'squad' && (
-        <LeaderboardTableSection
-          title={squadTitle}
-          rows={squadData}
-          loading={isLoading}
-          error={squadError}
-          activeSort={activeSort}
-          onSort={toggleSort}
-          showAverages={false}
-          showTotals={true}
-          searchTerm={squadSearch}
-          onSearch={setSquadSearch}
-          sectionId="squad"
-        />
-      )}
+            {activeTab === 'squad' && (
+              <LeaderboardTableSection
+                title={squadTitle}
+                rows={squadData}
+                loading={isLoading}
+                error={squadError}
+                activeSort={activeSort}
+                onSort={toggleSort}
+                showAverages={false}
+                showTotals={true}
+                searchTerm={squadSearch}
+                onSearch={setSquadSearch}
+                sectionId="squad"
+                tabsNode={tabs}
+              />
+            )}
+          </>
+        );
+      })()}
     </div>
   );
 }
