@@ -18,8 +18,6 @@ export default function Footer() {
   const snapchatUrl = process.env.NEXT_PUBLIC_SOCIAL_SNAPCHAT_URL;
   const kickUrl = process.env.NEXT_PUBLIC_SOCIAL_KICK_URL;
 
-  const discordLinkForMessage = discordUrl || '/discord';
-
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -133,17 +131,6 @@ export default function Footer() {
             </a>
           )}
         </div>
-        <p className={styles.discordMessage}>
-          Questions, comments, or concerns?{' '}
-          <a
-            href={discordLinkForMessage}
-            target={discordUrl ? '_blank' : undefined}
-            rel={discordUrl ? 'noopener noreferrer' : undefined}
-            className={styles.discordMessageLink}
-          >
-            Submit a ticket in our discord!
-          </a>
-        </p>
         <p>
           © {new Date().getFullYear()} Galactic Phantom Division. All rights
           reserved.
