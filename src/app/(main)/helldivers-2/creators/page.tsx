@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaTwitch, FaCircle, FaYoutube } from 'react-icons/fa';
+import { FaTwitch, FaCircle } from 'react-icons/fa';
 import styles from './CreatorsPage.module.css'; // Import the CSS Module
 import { logger } from '@/lib/logger';
 import base from '../HelldiversBase.module.css';
@@ -26,20 +26,6 @@ const initialTwitchChannelNames = [
   'darcyboy',
 ];
 
-const youtubeCreators = [
-  {
-    name: 'GPT Fleet',
-    channelId: 'UCp2w5Gz7kR5_2J4_2dJ4yZQ',
-    youtubeHandle: '@gptfleet',
-    description: 'Official GPT Fleet YouTube channel.',
-  },
-  {
-    name: 'darincboy',
-    channelId: 'UC5gW5-a0P9-xfx2HCH-pE5A',
-    youtubeHandle: '@darincboy',
-    description: 'Variety streamer with a focus on community and fun.',
-  },
-];
 
 export default function CreatorsPage() {
   const [creatorsData, setCreatorsData] = useState<CreatorData[]>([]);
@@ -310,60 +296,7 @@ export default function CreatorsPage() {
           </>
         )}
 
-        {/* Other Platforms Sections */}
-        <div id="youtube" style={{ marginTop: '3rem' }}>
-          <h2 className={styles.pageTitle} style={{ fontSize: '1.5rem' }}>
-            YouTube
-          </h2>
-          <div className={styles.creatorsGrid}>
-            {youtubeCreators.map((creator) => (
-              <div key={creator.channelId} className={styles.creatorCard}>
-                <div className={styles.embedWrapper}>
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    src={`https://www.youtube.com/embed/videoseries?list=${`UU${creator.channelId.slice(2)}`}&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`}
-                    title={`${creator.name} Latest Uploads`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className={styles.twitchEmbed}
-                    referrerPolicy="strict-origin-when-cross-origin"
-                  ></iframe>
-                </div>
-                <div className={styles.infoSection}>
-                  <div className={styles.headerSection}>
-                    <div className={styles.profileImagePlaceholder}>
-                      <FaYoutube className={styles.placeholderIcon} />
-                    </div>
-                    <div className={styles.channelInfo}>
-                      <a
-                        href={`https://www.youtube.com/${creator.youtubeHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.channelNameLink}
-                        title={creator.name}
-                      >
-                        {creator.name}
-                      </a>
-                      <a
-                        href={`https://www.youtube.com/${creator.youtubeHandle}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.channelUrlLink}
-                      >
-                        youtube.com/{creator.youtubeHandle}
-                      </a>
-                    </div>
-                  </div>
-                  <p className={styles.noDescriptionText}>
-                    {creator.description}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
       </main>
     </div>
   );
