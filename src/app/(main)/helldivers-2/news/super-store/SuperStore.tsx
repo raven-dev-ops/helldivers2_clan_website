@@ -1,6 +1,5 @@
 // src/app/(main)/helldivers-2/SuperStore.tsx
 'use client';
-/* eslint-disable @next/next/no-img-element */
 
 import useSWR from 'swr';
 import styles from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
