@@ -2,8 +2,8 @@
 'use client';
 
 import { signIn, useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { FaDiscord, FaPlay, FaPause } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,10 +12,11 @@ import { logger } from '@/lib/logger';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';
 
-export default function AuthPage() {
+function AuthInner() {
   // --- State and Refs ---
   const { status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [userInteracted, setUserInteracted] = useState(false);
@@ -71,8 +72,11 @@ export default function AuthPage() {
   // --- Effects ---
   useEffect(() => {
     // Auth Redirect
-    if (status === 'authenticated') router.replace('/');
-  }, [status, router]);
+    if (status === 'authenticated') {
+      const callbackUrl = searchParams?.get('callbackUrl') || '/';
+      router.replace(callbackUrl);
+    }
+  }, [status, router, searchParams]);
 
   useEffect(() => {
     // Sync Volume State
@@ -116,7 +120,8 @@ export default function AuthPage() {
             <button
               onClick={() => {
                 handleInteraction();
-                signIn('discord', { callbackUrl: '/' });
+                const callbackUrl = searchParams?.get('callbackUrl') || '/';
+                signIn('discord', { callbackUrl });
               }}
               className={styles.discordButton}
             >
@@ -190,4 +195,18 @@ export default function AuthPage() {
 
   // Fallback
   return null;
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className={styles.loadingOverlay}>
+          <p className={styles.loadingText}>Loading…</p>
+        </div>
+      }
+    >
+      <AuthInner />
+    </Suspense>
+  );
 }
