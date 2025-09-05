@@ -52,6 +52,8 @@ interface LeaderboardPayload {
   week?: { results: LeaderboardRow[]; error?: number };
   month?: { results: LeaderboardRow[]; error?: number };
   lifetime?: { results: LeaderboardRow[]; error?: number };
+  solo?: { results: LeaderboardRow[]; error?: number };
+  squad?: { results: LeaderboardRow[]; error?: number };
 }
 
 const sortFieldMap: Record<SortField, keyof LeaderboardRow> = {
@@ -392,6 +394,14 @@ export default function HelldiversLeaderboard({
     () => sortRows(initialData.lifetime?.results || [], sortBy, sortDir),
     [initialData, sortBy, sortDir]
   );
+  const soloData = useMemo(
+    () => sortRows(initialData.solo?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
+  );
+  const squadData = useMemo(
+    () => sortRows(initialData.squad?.results || [], sortBy, sortDir),
+    [initialData, sortBy, sortDir]
+  );
 
   const monthError = initialData.month?.error
     ? `Request failed: ${initialData.month.error}`
@@ -405,6 +415,12 @@ export default function HelldiversLeaderboard({
   const yearlyError = initialData.lifetime?.error
     ? `Request failed: ${initialData.lifetime.error}`
     : null;
+  const soloError = initialData.solo?.error
+    ? `Request failed: ${initialData.solo.error}`
+    : null;
+  const squadError = initialData.squad?.error
+    ? `Request failed: ${initialData.squad.error}`
+    : null;
 
   const isLoading = false;
 
@@ -412,6 +428,8 @@ export default function HelldiversLeaderboard({
   const [yearlyTotalsSearch, setYearlyTotalsSearch] = useState<string>('');
   const [weekSearch, setWeekSearch] = useState<string>('');
   const [daySearch, setDaySearch] = useState<string>('');
+  const [soloSearch, setSoloSearch] = useState<string>('');
+  const [squadSearch, setSquadSearch] = useState<string>('');
 
   const toggleSort = (field: SortField) => {
     if (field === sortBy) {
@@ -427,7 +445,7 @@ export default function HelldiversLeaderboard({
   const activeSort = { sortBy, sortDir };
 
   const [activeTab, setActiveTab] = useState<
-    'daily' | 'weekly' | 'monthly' | 'yearly'
+    'daily' | 'weekly' | 'monthly' | 'yearly' | 'solo' | 'squad'
   >('daily');
 
   useEffect(() => {
@@ -437,7 +455,9 @@ export default function HelldiversLeaderboard({
         hash === 'daily' ||
         hash === 'weekly' ||
         hash === 'monthly' ||
-        hash === 'yearly'
+        hash === 'yearly' ||
+        hash === 'solo' ||
+        hash === 'squad'
       ) {
         setActiveTab(hash as typeof activeTab);
       }
@@ -458,6 +478,8 @@ export default function HelldiversLeaderboard({
   const monthTitle = `Monthly Leaderboard - ${now.toLocaleString('default', { month: 'long' })} ${now.getUTCFullYear()}`;
   const dayTitle = `Daily Leaderboard - ${now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}`;
   const weekTitle = `Weekly Leaderboard - Week ${getWeekNumber(now)} of ${now.getUTCFullYear()}`;
+  const soloTitle = 'Solo Leaderboard';
+  const squadTitle = 'Squad Leaderboard';
 
   return (
     <div>
@@ -489,6 +511,20 @@ export default function HelldiversLeaderboard({
           aria-pressed={activeTab === 'yearly'}
         >
           Yearly
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('solo')}
+          aria-pressed={activeTab === 'solo'}
+        >
+          Solo
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => setActiveTab('squad')}
+          aria-pressed={activeTab === 'squad'}
+        >
+          Squad
         </button>
       </div>
 
@@ -553,6 +589,38 @@ export default function HelldiversLeaderboard({
           searchTerm={yearlyTotalsSearch}
           onSearch={setYearlyTotalsSearch}
           sectionId="yearly"
+        />
+      )}
+
+      {activeTab === 'solo' && (
+        <LeaderboardTableSection
+          title={soloTitle}
+          rows={soloData}
+          loading={isLoading}
+          error={soloError}
+          activeSort={activeSort}
+          onSort={toggleSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={soloSearch}
+          onSearch={setSoloSearch}
+          sectionId="solo"
+        />
+      )}
+
+      {activeTab === 'squad' && (
+        <LeaderboardTableSection
+          title={squadTitle}
+          rows={squadData}
+          loading={isLoading}
+          error={squadError}
+          activeSort={activeSort}
+          onSort={toggleSort}
+          showAverages={false}
+          showTotals={true}
+          searchTerm={squadSearch}
+          onSearch={setSquadSearch}
+          sectionId="squad"
         />
       )}
     </div>
