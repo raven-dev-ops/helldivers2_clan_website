@@ -1,4 +1,3 @@
-'use client';
 import base from '../../helldivers-2/HelldiversBase.module.css';
 import styles from '../AcademyPage.module.css';
 import { notFound } from 'next/navigation';
