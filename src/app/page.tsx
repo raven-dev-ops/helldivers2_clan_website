@@ -14,6 +14,8 @@ import 'swiper/css/effect-coverflow';
 
 // Import the GameCard component
 import GameCard from '@/app/components/common/GameCard'; // Adjust path if needed
+import ReviewsRotator from '@/app/(main)/helldivers-2/ReviewsRotator';
+import { reviews as helldiversReviews } from '@/app/(main)/helldivers-2/reviews';
 
 // --- Define Type for Game Division Data ---
 interface GameDivision {
@@ -260,6 +262,7 @@ export default function Home() {
             </Swiper>
           </SwiperWrapper>
         </CarouselSection>
+        <ReviewsRotator reviews={helldiversReviews} />
       </Container>
     );
   }
