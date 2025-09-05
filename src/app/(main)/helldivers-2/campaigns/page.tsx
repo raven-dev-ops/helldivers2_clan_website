@@ -7,6 +7,7 @@ import base from '../HelldiversBase.module.css';
 import exp from '../components/Expanders.module.css';
 import code from '@/app/components/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
+import YoutubeCarousel, { type YoutubeVideo } from '../YoutubeCarousel';
 
 interface PrestigeMissionData {
   id: string;
@@ -93,6 +94,15 @@ Mortar Sentry`,
   },
 ];
 
+// Map of campaign ID -> list of YouTube videos. Fill these arrays with embed URLs
+// to display videos in the carousel for each campaign.
+const campaignVideos: Record<string, YoutubeVideo[]> = {
+  'level-8': [],
+  'level-9': [],
+  'level-10': [],
+  'level-11': [],
+};
+
 export default function CampaignsPage() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -161,7 +171,17 @@ export default function CampaignsPage() {
                     className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
                   >
                     <pre className={code.codeBlock}>{mission.details}</pre>
-                    {/* Video links removed per requirements */}
+                    {/* YouTube videos placeholder / carousel */}
+                    {campaignVideos[mission.id] && campaignVideos[mission.id].length > 0 ? (
+                      <YoutubeCarousel videos={campaignVideos[mission.id]} />
+                    ) : (
+                      <>
+                        <div className={base.youtubeEmbed} aria-label="YouTube videos placeholder" />
+                        <p className={base.paragraph} style={{ textAlign: 'center', marginTop: 8 }}>
+                          No videos added yet for this campaign.
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               );
