@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
+import YoutubeCarouselPlaceholder from '../YoutubeCarouselPlaceholder';
 
 // --- Import CSS Modules ---
 import base from '../HelldiversBase.module.css';
@@ -15,6 +16,7 @@ interface ChallengeLevelData {
   id: string;
   levelTitle: string;
   details: string;
+  videoUrls?: string[];
 }
 
 const johnHelldiverLevels: ChallengeLevelData[] = [
@@ -44,6 +46,7 @@ RECOMMENDED LOADOUTS & STRATAGEMS (allowed):
 TACTICS
 • FORTRESS: Consider drop‑podding onto fabricators to delete spawns early; then clear AA/gun towers and extract. Keep moving between cover; don’t farm.
 • MEGA NEST: Run the rim clockwise, destroy bug holes first, save heavy ordnance for Impalers/Bile Titans and the “Titan hole”. Call heavy eagle/orbital just before you jump down to a cluster.`,
+    videoUrls: [],
   },
   {
     id: 'level-1',
@@ -70,6 +73,7 @@ RECOMMENDED LOADOUTS & STRATAGEMS (allowed):
 
 TACTICS
 • Move objective‑to‑objective; don’t fight the whole map. Use Eagles/Orbitals to clear bunkers, radar, or cannons from outside. Kill scouts first to avoid endless adds. Plant explosives and leave—don’t linger.`,
+    videoUrls: [],
   },
   {
     id: 'level-2',
@@ -96,6 +100,7 @@ RECOMMENDED LOADOUTS (no stratagems / no resupply):
 
 TACTICS
 • Don’t open fights you can bypass. Use terrain, smoke (if your grenade slot allows), and dives to break contact. Finish the objective and extract—this is a denial op.`,
+    videoUrls: [],
   },
   {
     id: 'level-3',
@@ -119,6 +124,7 @@ RECOMMENDED LOADOUTS (no stratagems):
 
 TACTICS
 • Clear perimeter before entering silo. Inside: sprint console‑to‑console, dive to break line‑of‑sight, and save stims for exit. Memorize the panel order so you’re not reading under fire.`,
+    videoUrls: [],
   },
   {
     id: 'level-4',
@@ -137,6 +143,7 @@ RECOMMENDED LOADOUTS (no stratagems / no resupply):
 
 TACTICS
 • Plan your route and commit. Pre‑clear outside, then execute the silo in one push. Only fight what blocks the path, keep moving, and use dives to cancel enemy attacks. If you lose tempo, reset outside.`,
+    videoUrls: [],
   },
   {
     id: 'level-5',
@@ -155,6 +162,7 @@ RECOMMENDED LOADOUTS & STRATAGEMS (allowed):
 
 TACTICS
 • Objectives are Seismic Probe(s) → Prospecting Drill. Set sentries to create intersecting arcs, keep enemies at standoff, and rotate around the drill to clear burrowers. Start the extract immediately after final data uplink; don’t stay to farm.`,
+    videoUrls: [],
   },
   {
     id: 'level-6',
@@ -172,6 +180,7 @@ RECOMMENDED EAGLES (pick 4):
 
 TACTICS
 • The flag raises for ~1m40s while a Helldiver stays inside the zone. Saluting speeds the raise per player. Kite around the edge of the circle and chain eagles ahead of your path to keep the lane clear; don’t stand on the pole. Save 500kg for emergency clears or the final 20%. Extract immediately after success.`,
+    videoUrls: [],
   },
   {
     id: 'level-7',
@@ -195,6 +204,7 @@ RECOMMENDED LOADOUT (per rules):
 
 TACTICS
 • Route all side objectives first to snowball XP/samples and reduce world spawns, then commit to the silo. Avoid sustained fights; the Constitution is accurate but not a horde‑clearer. Knives stagger/stun hunters and interrupt specials; finish with headshots. Inside the silo, sprint panel‑to‑panel and dive through melee windups. For the exception: the Break‑Action Shotgun may be picked up if found, but drop it before extract to keep the spirit of the run.`,
+    videoUrls: [],
   },
 ];
 
@@ -271,6 +281,10 @@ export default function HelldiverChallengesPage() {
                     className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
                   >
                     <pre className={code.codeBlock}>{challenge.details}</pre>
+                    <YoutubeCarouselPlaceholder
+                      videoUrls={challenge.videoUrls}
+                      title={challenge.levelTitle}
+                    />
                   </div>
                 </div>
               );

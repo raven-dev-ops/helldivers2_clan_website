@@ -198,3 +198,21 @@
   height: 100%;
   border: 0;
 }
+/* Placeholder styles */
+.youtubePlaceholder {
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+.youtubePlaceholderTitle {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--color-text-primary);
+}
+.youtubePlaceholderText {
+  margin: 0;
+  font-size: 0.95rem;
+}
