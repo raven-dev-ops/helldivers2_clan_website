@@ -18,7 +18,7 @@ export const VALID_SORT_FIELDS = [
 
 export type SortField = (typeof VALID_SORT_FIELDS)[number];
 export type SortDir = 'asc' | 'desc';
-export type LeaderboardScope = 'month' | 'week' | 'day' | 'lifetime' | 'solo';
+export type LeaderboardScope = 'month' | 'week' | 'day' | 'lifetime' | 'solo' | 'squad';
 
 export interface HelldiversLeaderboardRow {
   rank: number;
@@ -77,11 +77,13 @@ export async function fetchHelldiversLeaderboard(options?: {
       ? 'lifetime'
       : options?.scope === 'solo'
         ? 'solo'
-        : options?.scope === 'week'
-          ? 'week'
-          : options?.scope === 'day'
-            ? 'day'
-            : 'month';
+        : options?.scope === 'squad'
+          ? 'squad'
+          : options?.scope === 'week'
+            ? 'week'
+            : options?.scope === 'day'
+              ? 'day'
+              : 'month';
 
   const client = await getMongoClientPromise();
   const db = client.db(getDbName());
@@ -542,7 +544,9 @@ export async function fetchHelldiversLeaderboard(options?: {
       ? 'Lifetime_Stats'
       : scope === 'solo'
         ? 'Solo_Stats'
-        : 'User_Stats';
+        : scope === 'squad'
+          ? 'Squad_Stats'
+          : 'User_Stats';
   const cursor = db
     .collection(collectionName)
     .aggregate(pipeline, { allowDiskUse: true });

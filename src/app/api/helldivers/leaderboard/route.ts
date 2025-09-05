@@ -35,11 +35,13 @@ export async function GET(req: NextRequest) {
         ? 'lifetime'
         : scopeParam === 'solo'
           ? 'solo'
-          : scopeParam === 'week'
-            ? 'week'
-            : scopeParam === 'day'
-              ? 'day'
-              : 'month';
+          : scopeParam === 'squad'
+            ? 'squad'
+            : scopeParam === 'week'
+              ? 'week'
+              : scopeParam === 'day'
+                ? 'day'
+                : 'month';
     const month = monthParam ? parseInt(monthParam, 10) : undefined;
     const year = yearParam ? parseInt(yearParam, 10) : undefined;
 
