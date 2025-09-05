@@ -47,6 +47,8 @@ export const TWITCH_CHANNEL_NAMES = [
   'chappzs',
   'popekingx',
   'mr_black_snow',
+  'helldiver_black_snow',
+  'darcyboy',
 ];
 
 export async function getTwitchAppAccessToken(): Promise<string | null> {
