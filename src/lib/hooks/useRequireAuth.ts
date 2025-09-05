@@ -15,7 +15,9 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/auth');
+      const returnTo = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
+      const url = `/auth?callbackUrl=${encodeURIComponent(returnTo)}`;
+      router.push(url);
     }
   }, [status, router]);
 

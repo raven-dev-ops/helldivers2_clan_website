@@ -1,9 +1,6 @@
 'use client';
 
 import styled, { keyframes } from 'styled-components';
-import { useSession, signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 // --- Swiper Imports ---
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -202,76 +199,46 @@ const SignInButton = styled.button`
 // --- End Styled Components ---
 
 export default function Home() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  // Authentication Effect
-  useEffect(() => {
-    if (status === 'unauthenticated') router.replace('/auth');
-  }, [status, router]);
-
-  // Loading State
-  if (status === 'loading')
-    return (
-      <Container style={{ minHeight: '100vh' }}>
-        <LoadingMessage>Loading...</LoadingMessage>
-      </Container>
-    );
-
-  // Unauthenticated State
-  if (status === 'unauthenticated') return null;
-
-  // Authenticated State
-  if (status === 'authenticated' && session?.user) {
-    return (
-      <Container>
-        <CarouselSection>
-          {/* Title Removed */}
-          <SwiperWrapper>
-            <Swiper
-              modules={[Navigation, EffectCoverflow, A11y]}
-              effect="coverflow"
-              grabCursor
-              centeredSlides
-              loop={gameDivisions.length > 4}
-              slidesPerView={'auto'} // Keep as auto
-              spaceBetween={-50} // Adjust for bigger base cards + scaling
-              coverflowEffect={{
-                rotate: 20,
-                stretch: -100, // More negative stretch needed
-                depth: 250, // Adjust depth
-                modifier: 1,
-                scale: 0.6, // Inactive scale
-                slideShadows: false,
-              }}
-              navigation={true}
-              a11y={{ prevSlideMessage: 'Previous', nextSlideMessage: 'Next' }}
-              className="mySwiper"
-            >
-              {/* Map over explicitly typed array */}
-              {gameDivisions.map((game) => (
-                <SwiperSlide key={game.id}>
-                  <GameCard
-                    title={game.title}
-                    imageUrl={game.imageUrl}
-                    href={game.href}
-                    comingSoon={game.comingSoon}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </SwiperWrapper>
-        </CarouselSection>
-        <ReviewsRotator reviews={helldiversReviews} />
-      </Container>
-    );
-  }
-
-  // Fallback Error State
   return (
-    <FallbackContainer style={{ minHeight: '100vh' }}>
-      {' '}
-      {/* ... Error content ... */}{' '}
-    </FallbackContainer>
+    <Container>
+      <CarouselSection>
+        {/* Title Removed */}
+        <SwiperWrapper>
+          <Swiper
+            modules={[Navigation, EffectCoverflow, A11y]}
+            effect="coverflow"
+            grabCursor
+            centeredSlides
+            loop={gameDivisions.length > 4}
+            slidesPerView={'auto'} // Keep as auto
+            spaceBetween={-50} // Adjust for bigger base cards + scaling
+            coverflowEffect={{
+              rotate: 20,
+              stretch: -100, // More negative stretch needed
+              depth: 250, // Adjust depth
+              modifier: 1,
+              scale: 0.6, // Inactive scale
+              slideShadows: false,
+            }}
+            navigation={true}
+            a11y={{ prevSlideMessage: 'Previous', nextSlideMessage: 'Next' }}
+            className="mySwiper"
+          >
+            {/* Map over explicitly typed array */}
+            {gameDivisions.map((game) => (
+              <SwiperSlide key={game.id}>
+                <GameCard
+                  title={game.title}
+                  imageUrl={game.imageUrl}
+                  href={game.href}
+                  comingSoon={game.comingSoon}
+                />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </SwiperWrapper>
+      </CarouselSection>
+      <ReviewsRotator reviews={helldiversReviews} />
+    </Container>
   );
 }
