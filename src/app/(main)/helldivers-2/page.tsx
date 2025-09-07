@@ -17,7 +17,6 @@ export default function HelldiversPage() {
   const discordUrl = 'https://discord.gg/gptfleet';
   const youtubeUrl = 'https://www.youtube.com/@gptfleet';
   const tiktokUrl = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL;
-  const uploadsPlaylistId = process.env.NEXT_PUBLIC_YT_UPLOADS_PLAYLIST_ID;
 
   return (
     <div className={styles.wrapper}>
@@ -29,11 +28,7 @@ export default function HelldiversPage() {
             <iframe
               width="100%"
               height="100%"
-              src={
-                uploadsPlaylistId
-                  ? `https://www.youtube.com/embed/videoseries?list=${uploadsPlaylistId}&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`
-                  : `https://www.youtube.com/embed?listType=user_uploads&list=gptfleet&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1`
-              }
+              src="https://www.youtube.com/embed?listType=user_uploads&list=gptfleet&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1"
               title="GPT Fleet YouTube Channel"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -56,28 +51,7 @@ export default function HelldiversPage() {
                   aria-label="Discord"
                   className={styles.socialIconLink}
                 >
-                  <FaDiscord className={styles.socialIcon} />
                 </Link>
-                <Link
-                  href={youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="YouTube"
-                  className={styles.socialIconLink}
-                >
-                  <FaYoutube className={styles.socialIcon} />
-                </Link>
-                {tiktokUrl && (
-                  <Link
-                    href={tiktokUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="TikTok"
-                    className={styles.socialIconLink}
-                  >
-                    <FaTiktok className={styles.socialIcon} />
-                  </Link>
-                )}
               </span>
             </h2>
             <p className={styles.paragraph}>
