@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/academy/page.tsx
-'use client';
+import Link from 'next/link';
 import base from '../HelldiversBase.module.css';
 import styles from './AcademyPage.module.css';
 
@@ -30,11 +30,11 @@ const MODULES: Module[] = [
       'Hazards: meteor/artillery zones, lightning, seismic shockwaves, acid pools',
     ],
     advanced: [
-      'Route planning: pre‑mark safeholds and fallback lines around hazard zones',
-      'Adaptation: bring stuns/smokes for low‑vis and sentries for lane control',
+      'Route planning: pre-mark safeholds and fallback lines around hazard zones',
+      'Adaptation: bring stuns/smokes for low-vis and sentries for lane control',
       'Timing: start objectives between weather waves; call Pelican early',
     ],
-    cta: { label: 'Open module', href: '/academy#environmental' },
+    cta: { label: 'Open module', href: '/helldivers-2/academy#environmental' },
   },
   {
     id: 'weaponry',
@@ -45,8 +45,8 @@ const MODULES: Module[] = [
     description:
       'Choose the right tool and range for the job; manage recoil, reloads, and penetration.',
     basic: [
-      'Primary archetypes: AR‑23 Liberator (AR), SG‑225 Breaker (Shotgun), DMR‑8 Diligence (DMR)',
-      'Energy/Plasma: LAS‑16 Sickle (horde sustain), PLAS‑1 Scorcher (splash)',
+      'Primary archetypes: AR-23 Liberator (AR), SG-225 Breaker (Shotgun), DMR-8 Diligence (DMR)',
+      'Energy/Plasma: LAS-16 Sickle (horde sustain), PLAS-1 Scorcher (splash)',
       'Support/AT: Railgun, Recoilless Rifle, Autocannon for armor threats',
     ],
     advanced: [
@@ -54,7 +54,7 @@ const MODULES: Module[] = [
       'Target priority: spawners, artillery, commanders before fodder',
       'Ammo economy: share resupplies; rotate roles as mags run low',
     ],
-    cta: { label: 'Open module', href: '/academy#loadouts' },
+    cta: { label: 'Open module', href: '/helldivers-2/academy#loadouts' },
   },
   {
     id: 'armory',
@@ -71,10 +71,10 @@ const MODULES: Module[] = [
     ],
     advanced: [
       'Role gearing: Demo (AT focus), Anchor (line holding), Support (revives/backpacks)',
-      'Damage mitigation: plan for friendly‑fire and explosive radii',
-      'Team comp: at least two anti‑armor sources per squad',
+      'Damage mitigation: plan for friendly-fire and explosive radii',
+      'Team comp: at least two anti-armor sources per squad',
     ],
-    cta: { label: 'Open module', href: '/academy#loadouts' },
+    cta: { label: 'Open module', href: '/helldivers-2/academy#loadouts' },
   },
   {
     id: 'stratagems',
@@ -87,14 +87,14 @@ const MODULES: Module[] = [
     basic: [
       'Categories: Offensive (Eagle/Orbitals), Defensive (Sentries/Mines), Utility (Resupply/Shield)',
       'Timing & danger zones: announce throws; clear teammates before impact',
-      'Line‑of‑sight & terrain: use ridges/walls to block blast and shrapnel',
+      'Line-of-sight & terrain: use ridges/walls to block blast and shrapnel',
     ],
     advanced: [
       'Combos: Stun → Railcannon; Smoke → Uplinks; Barrages to hold extracts',
       'Sentry placement: behind cover, overlapping arcs, avoid friendly lanes',
-      'Cooldown management: pre‑cast Eagles before timers; stagger orbitals',
+      'Cooldown management: pre-cast Eagles before timers; stagger orbitals',
     ],
-    cta: { label: 'Open module', href: '/academy#stratagems' },
+    cta: { label: 'Open module', href: '/helldivers-2/academy#stratagems' },
   },
   {
     id: 'xenology',
@@ -112,9 +112,9 @@ const MODULES: Module[] = [
     advanced: [
       'Counterplay: AT for Chargers/Tanks; EMP/Impact vs. bots; fire vs. bugs',
       'Threat triage: artillery, snipers, and breeders before fodder',
-      'Crowd control vs. single‑target: swap roles as the fight evolves',
+      'Crowd control vs. single-target: swap roles as the fight evolves',
     ],
-    cta: { label: 'Open module', href: '/academy#enemies' },
+    cta: { label: 'Open module', href: '/helldivers-2/academy#enemies' },
   },
 ];
 
@@ -143,7 +143,13 @@ export default function AcademyPage() {
                 aria-labelledby={`${m.id}-title`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={m.img} alt={m.imgAlt} className={styles.moduleImage} />
+                <img
+                  src={m.img}
+                  alt={m.imgAlt}
+                  className={styles.moduleImage}
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div className={styles.moduleContent}>
                   <h3 id={`${m.id}-title`} className={styles.moduleTitle}>
                     {m.title}
@@ -174,9 +180,13 @@ export default function AcademyPage() {
                     </div>
                   </div>
 
-                  <a href={m.cta.href} className={styles.ctaButton} aria-label={m.cta.label}>
+                  <Link
+                    href={m.cta.href}
+                    className={styles.ctaButton}
+                    aria-label={m.cta.label}
+                  >
                     {m.cta.label}
-                  </a>
+                  </Link>
                 </div>
               </article>
             ))}
