@@ -168,6 +168,35 @@ const Navbar = () => {
                 </div>
               );
             }
+            if (label === 'Academy') {
+              const isAcademyActive = isClient && pathname.startsWith('/academy');
+              const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
+              return (
+                <div key={href} className={styles.dropdown}>
+                  <Link href={href} className={academyLinkClass} prefetch={false}>
+                    Academy
+                  </Link>
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Academy">
+                    <Link
+                      href={`/academy`}
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      prefetch={false}
+                    >
+                      Overview
+                    </Link>
+                    <Link
+                      href={`/helldivers-2/academy/apply`}
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      prefetch={false}
+                    >
+                      Apply to Mod
+                    </Link>
+                  </div>
+                </div>
+              );
+            }
             if (label === 'Streamers') {
               const isStreamersActive =
                 isClient && pathname.startsWith(`${divisionBasePath}/creators`);
@@ -239,17 +268,41 @@ const Navbar = () => {
         <div
           className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}
         >
-          {standardNavItems.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={styles.link}
-              onClick={() => setMobileMenuOpen(false)}
-              prefetch={false}
-            >
-              {label}
-            </Link>
-          ))}
+          {standardNavItems.map(({ href, label }) => {
+            if (label === 'Academy') {
+              return (
+                <div key={href}>
+                  <Link
+                    href={href}
+                    className={styles.link}
+                    onClick={() => setMobileMenuOpen(false)}
+                    prefetch={false}
+                  >
+                    Academy
+                  </Link>
+                  <Link
+                    href={'/helldivers-2/academy/apply'}
+                    className={styles.link}
+                    onClick={() => setMobileMenuOpen(false)}
+                    prefetch={false}
+                  >
+                    Apply to Mod
+                  </Link>
+                </div>
+              );
+            }
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={styles.link}
+                onClick={() => setMobileMenuOpen(false)}
+                prefetch={false}
+              >
+                {label}
+              </Link>
+            );
+          })}
           {sessionStatus === 'authenticated' ? (
             <>
               <Link
