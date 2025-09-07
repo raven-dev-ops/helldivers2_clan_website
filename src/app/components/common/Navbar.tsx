@@ -183,7 +183,6 @@ const Navbar = () => {
                       role="menuitem"
                       prefetch={false}
                     >
-                      Overview
                     </Link>
                     <Link
                       href={`/helldivers-2/academy/apply`}
@@ -191,7 +190,7 @@ const Navbar = () => {
                       role="menuitem"
                       prefetch={false}
                     >
-                      Apply to Mod
+                      Mod Application
                     </Link>
                   </div>
                 </div>
