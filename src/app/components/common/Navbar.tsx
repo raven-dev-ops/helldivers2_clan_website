@@ -33,18 +33,25 @@ const CAMPAIGN_LABELS: Array<{ id: string; label: string }> = [
 ];
 
 const Navbar = () => {
-  const [isClient, setIsClient] = useState(false); // State to track client-side mount
+  const [isClient, setIsClient] = useState(false);
   const [meritPoints, setMeritPoints] = useState<number | null>(null);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const pathname = usePathname();
   const { status: sessionStatus } = useSession();
 
+  // ----- Paths (single source of truth)
+  const divisionBasePath = '/helldivers-2';
+  const ACADEMY_BASE = `${divisionBasePath}/academy`;
+  const ACADEMY_APPLY = `${ACADEMY_BASE}/apply`;
+  const ACADEMY_MY = `${ACADEMY_BASE}/training`; // My Training
+
   // Mark component as mounted on client
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Fetch merit points when authenticated
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
       fetch('/api/users/me')
@@ -57,20 +64,16 @@ const Navbar = () => {
   }, [sessionStatus]);
 
   // --- Define Nav Items ---
-  const getNavItems = (): NavItem[] => {
-    return [
-      { href: '/helldivers-2', label: 'Home' },
-      { href: '/helldivers-2/merch', label: 'Shop' },
-      { href: '/helldivers-2/leaderboard', label: 'Leaderboard' },
-      { href: '/helldivers-2/challenges', label: 'Challenges' },
-      { href: '/helldivers-2/campaigns', label: 'Campaigns' },
-      { href: '/academy', label: 'Academy' },
-      { href: '/helldivers-2/creators', label: 'Streamers' },
-    ];
-  };
+  const getNavItems = (): NavItem[] => [
+    { href: `${divisionBasePath}`, label: 'Home' },
+    { href: `${divisionBasePath}/merch`, label: 'Shop' },
+    { href: `${divisionBasePath}/leaderboard`, label: 'Leaderboard' },
+    { href: `${divisionBasePath}/challenges`, label: 'Challenges' },
+    { href: `${divisionBasePath}/campaigns`, label: 'Campaigns' },
+    { href: ACADEMY_BASE, label: 'Academy' },
+    { href: `${divisionBasePath}/creators`, label: 'Streamers' },
+  ];
   const standardNavItems = getNavItems();
-
-  const divisionBasePath = '/helldivers-2';
 
   return (
     <nav className={styles.nav}>
@@ -82,43 +85,33 @@ const Navbar = () => {
         >
           {isMobileMenuOpen ? '✕' : '☰'}
         </button>
+
         <div className={styles.desktopMenu}>
           {standardNavItems.map(({ href, label }) => {
             const isActive = isClient && pathname === href;
             const linkClass = `${styles.link} ${isActive ? styles.activeLink : ''}`;
+
             if (label === 'Leaderboard') {
               const isLeaderboardActive =
-                isClient && pathname.startsWith('/helldivers-2/leaderboard');
+                isClient && pathname.startsWith(`${divisionBasePath}/leaderboard`);
               const leaderboardLinkClass = `${styles.link} ${isLeaderboardActive ? styles.activeLink : ''}`;
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={leaderboardLinkClass}
-                  prefetch={false}
-                >
+                <Link key={href} href={href} className={leaderboardLinkClass} prefetch={false}>
                   Leaderboard
                 </Link>
               );
             }
+
             if (label === 'Challenges') {
               const isChallengesActive =
-                isClient && pathname.startsWith('/helldivers-2/challenges');
+                isClient && pathname.startsWith(`${divisionBasePath}/challenges`);
               const challengesLinkClass = `${styles.link} ${isChallengesActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link
-                    href={href}
-                    className={challengesLinkClass}
-                    prefetch={false}
-                  >
+                  <Link href={href} className={challengesLinkClass} prefetch={false}>
                     Challenges
                   </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Challenge levels"
-                  >
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Challenge levels">
                     {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
                       <Link
                         key={id}
@@ -134,25 +127,17 @@ const Navbar = () => {
                 </div>
               );
             }
+
             if (label === 'Campaigns') {
               const isCampaignsActive =
-                isClient &&
-                pathname.startsWith(`${divisionBasePath}/campaigns`);
+                isClient && pathname.startsWith(`${divisionBasePath}/campaigns`);
               const campaignsLinkClass = `${styles.link} ${isCampaignsActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link
-                    href={href}
-                    className={campaignsLinkClass}
-                    prefetch={false}
-                  >
+                  <Link href={href} className={campaignsLinkClass} prefetch={false}>
                     Campaigns
                   </Link>
-                  <div
-                    className={styles.dropdownMenu}
-                    role="menu"
-                    aria-label="Campaign missions"
-                  >
+                  <div className={styles.dropdownMenu} role="menu" aria-label="Campaign missions">
                     {CAMPAIGN_LABELS.map(({ id, label }) => (
                       <Link
                         key={id}
@@ -168,58 +153,45 @@ const Navbar = () => {
                 </div>
               );
             }
+
             if (label === 'Academy') {
-              const isAcademyActive = isClient && pathname.startsWith('/academy');
+              const isAcademyActive = isClient && pathname.startsWith(ACADEMY_BASE);
               const academyLinkClass = `${styles.link} ${isAcademyActive ? styles.activeLink : ''}`;
               return (
                 <div key={href} className={styles.dropdown}>
-                  <Link href={href} className={academyLinkClass} prefetch={false}>
+                  <Link href={ACADEMY_BASE} className={academyLinkClass} prefetch={false}>
                     Academy
                   </Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Academy">
-                    <Link
-                      href={`/academy`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
+                    <Link href={ACADEMY_BASE} className={styles.dropdownItem} role="menuitem" prefetch={false}>
+                      Overview
                     </Link>
-                    <Link
-                      href={`/helldivers-2/academy/apply`}
-                      className={styles.dropdownItem}
-                      role="menuitem"
-                      prefetch={false}
-                    >
+                    <Link href={ACADEMY_APPLY} className={styles.dropdownItem} role="menuitem" prefetch={false}>
                       Mod Application
                     </Link>
+                    {sessionStatus === 'authenticated' && (
+                      <Link href={ACADEMY_MY} className={styles.dropdownItem} role="menuitem" prefetch={false}>
+                        My Training
+                      </Link>
+                    )}
                   </div>
                 </div>
               );
             }
+
             if (label === 'Streamers') {
               const isStreamersActive =
                 isClient && pathname.startsWith(`${divisionBasePath}/creators`);
-              const streamersLinkClass = `${styles.link} ${
-                isStreamersActive ? styles.activeLink : ''
-              }`;
+              const streamersLinkClass = `${styles.link} ${isStreamersActive ? styles.activeLink : ''}`;
               return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={streamersLinkClass}
-                  prefetch={false}
-                >
+                <Link key={href} href={href} className={streamersLinkClass} prefetch={false}>
                   Streamers
                 </Link>
               );
             }
+
             return (
-              <Link
-                key={href}
-                href={href}
-                className={linkClass}
-                prefetch={false}
-              >
+              <Link key={href} href={href} className={linkClass} prefetch={false}>
                 {label}
               </Link>
             );
@@ -236,23 +208,11 @@ const Navbar = () => {
               >
                 {`Profile${meritPoints !== null ? ` (${meritPoints})` : ''}`}
               </Link>
-              <div
-                className={styles.dropdownMenu}
-                role="menu"
-                aria-label="Profile actions"
-              >
-                <Link
-                  href="/settings"
-                  className={styles.dropdownItem}
-                  role="menuitem"
-                >
+              <div className={styles.dropdownMenu} role="menu" aria-label="Profile actions">
+                <Link href="/settings" className={styles.dropdownItem} role="menuitem">
                   Settings
                 </Link>
-                <button
-                  onClick={() => signOut()}
-                  className={styles.dropdownItem}
-                  role="menuitem"
-                >
+                <button onClick={() => signOut()} className={styles.dropdownItem} role="menuitem">
                   Sign out
                 </button>
               </div>
@@ -264,15 +224,19 @@ const Navbar = () => {
           )}
           <ThemeToggle />
         </div>
+
+        {/* Mobile menu */}
         <div
-          className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}
+          className={`${styles.mobileMenu} ${
+            isMobileMenuOpen ? styles.mobileMenuOpen : ''
+          }`}
         >
           {standardNavItems.map(({ href, label }) => {
             if (label === 'Academy') {
               return (
                 <div key={href}>
                   <Link
-                    href={href}
+                    href={ACADEMY_BASE}
                     className={styles.link}
                     onClick={() => setMobileMenuOpen(false)}
                     prefetch={false}
@@ -280,13 +244,23 @@ const Navbar = () => {
                     Academy
                   </Link>
                   <Link
-                    href={'/helldivers-2/academy/apply'}
+                    href={ACADEMY_APPLY}
                     className={styles.link}
                     onClick={() => setMobileMenuOpen(false)}
                     prefetch={false}
                   >
-                    Apply to Mod
+                    Mod Application
                   </Link>
+                  {sessionStatus === 'authenticated' && (
+                    <Link
+                      href={ACADEMY_MY}
+                      className={styles.link}
+                      onClick={() => setMobileMenuOpen(false)}
+                      prefetch={false}
+                    >
+                      My Training
+                    </Link>
+                  )}
                 </div>
               );
             }
@@ -302,6 +276,7 @@ const Navbar = () => {
               </Link>
             );
           })}
+
           {sessionStatus === 'authenticated' ? (
             <>
               <Link
