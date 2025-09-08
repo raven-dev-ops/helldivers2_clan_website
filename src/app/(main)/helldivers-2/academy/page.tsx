@@ -1,5 +1,7 @@
 // src/app/(main)/helldivers-2/academy/page.tsx
-import Link from 'next/link';
+'use client';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
 import base from '../HelldiversBase.module.css';
 import styles from './AcademyPage.module.css';
 
@@ -12,7 +14,12 @@ type Module = {
   description: string;
   basic: string[];
   advanced: string[];
-  cta: { label: string; href: string };
+  // Added: richer modal content
+  details: {
+    paragraphs: string[];
+    tips?: string[];
+    cautions?: string[];
+  };
 };
 
 const MODULES: Module[] = [
@@ -20,48 +27,70 @@ const MODULES: Module[] = [
     id: 'environmental',
     title: 'Environmental',
     subtitle: 'Planetary concerns / considerations',
-    img: 'https://placehold.co/800x450?text=Environmental',
-    imgAlt: 'Placeholder image for the Environmental module',
+    img: 'https://placehold.co/1200x675?text=Environmental',
+    imgAlt: 'Environmental conditions affecting combat',
     description:
       'Understand how biomes, weather, and hazards change your plan of attack and extraction.',
     basic: [
-      'Biomes: desert, arctic, forest, swamp — affects visibility and mobility',
+      'Biomes: desert, arctic, forest, swamp — impacts visibility & mobility',
       'Weather: sandstorms, blizzards, fog/night ops — shorten engagement ranges',
       'Hazards: meteor/artillery zones, lightning, seismic shockwaves, acid pools',
     ],
     advanced: [
-      'Route planning: pre-mark safeholds and fallback lines around hazard zones',
-      'Adaptation: bring stuns/smokes for low-vis and sentries for lane control',
+      'Route planning: pre-mark safeholds & fallback lines around hazard zones',
+      'Adaptation: bring stuns/smokes for low-vis, sentries for lane control',
       'Timing: start objectives between weather waves; call Pelican early',
     ],
-    cta: { label: 'Open module', href: '/helldivers-2/academy#environmental' },
+    details: {
+      paragraphs: [
+        'Environmental factors control tempo. Use storms and night ops to break line of sight, rotate squads, and reposition heavy weapons without drawing cross-map aggro.',
+        'Meteor/artillery events can be weaponized: fight with your back to their impact lanes so incoming waves path through damage.',
+      ],
+      tips: [
+        'In blizzards, marksmen swap to close-range secondaries; rely on sentry arcs.',
+        'Lightning disables bots briefly—time pushes between strikes.',
+      ],
+      cautions: [
+        'Acid pools destroy extract lanes—scan and plan alternates before uplinks.',
+      ],
+    },
   },
   {
     id: 'weaponry',
     title: 'Weaponry',
     subtitle: 'Types, range, description',
-    img: 'https://placehold.co/800x450?text=Weaponry',
-    imgAlt: 'Placeholder image for the Weaponry module',
+    img: 'https://placehold.co/1200x675?text=Weaponry',
+    imgAlt: 'Helldiver weapons on a rack',
     description:
       'Choose the right tool and range for the job; manage recoil, reloads, and penetration.',
     basic: [
-      'Primary archetypes: AR-23 Liberator (AR), SG-225 Breaker (Shotgun), DMR-8 Diligence (DMR)',
-      'Energy/Plasma: LAS-16 Sickle (horde sustain), PLAS-1 Scorcher (splash)',
+      'Primaries: AR-23 Liberator (AR), SG-225 Breaker (Shotgun), DMR-8 Diligence (DMR)',
+      'Energy/Plasma: LAS-16 Sickle (sustain), PLAS-1 Scorcher (splash)',
       'Support/AT: Railgun, Recoilless Rifle, Autocannon for armor threats',
     ],
     advanced: [
-      'Armor breakpoints: Chargers (leg joints), Hulks/Devs (vents/power units)',
+      'Armor breakpoints: Chargers legs; Hulks/Devs vents/power units',
       'Target priority: spawners, artillery, commanders before fodder',
       'Ammo economy: share resupplies; rotate roles as mags run low',
     ],
-    cta: { label: 'Open module', href: '/helldivers-2/academy#loadouts' },
+    details: {
+      paragraphs: [
+        'Think in roles: Anchor (lane denial), Demo (armor delete), Flex (revives/utility). Slot your primary to complement squad gaps.',
+        'Penetration and stagger matter more than raw DPS when kiting armored waves.',
+      ],
+      tips: [
+        'Railgun (safe mode off) deletes vents through soft cover.',
+        'Autocannon + smoke = safe turreting in open fields.',
+      ],
+      cautions: ['Breaker friendly-fire cones are wide—announce pushes.'],
+    },
   },
   {
     id: 'armory',
     title: 'Armory',
     subtitle: 'Types, range, description',
-    img: 'https://placehold.co/800x450?text=Armory',
-    imgAlt: 'Placeholder image for the Armory module',
+    img: 'https://placehold.co/1200x675?text=Armory',
+    imgAlt: 'Helldiver armor sets on mannequins',
     description:
       'Balance protection and mobility; pick armor that matches your role and mission.',
     basic: [
@@ -74,51 +103,186 @@ const MODULES: Module[] = [
       'Damage mitigation: plan for friendly-fire and explosive radii',
       'Team comp: at least two anti-armor sources per squad',
     ],
-    cta: { label: 'Open module', href: '/helldivers-2/academy#loadouts' },
+    details: {
+      paragraphs: [
+        'Heavier kits shine in static objectives; light kits excel at map control and tag-and-drag.',
+        'Armor choice dictates revive reliability; heavier anchors should carry utility grenades.',
+      ],
+      tips: ['Heavy + shield backpack = clutch extra life on extracts.'],
+      cautions: ['Don’t over-stack heavy; squad mobility collapses under meteor spam.'],
+    },
   },
   {
     id: 'stratagems',
     title: 'Stratagems',
     subtitle: 'Type, warnings, advantage',
-    img: 'https://placehold.co/800x450?text=Stratagems',
-    imgAlt: 'Placeholder image for the Stratagems module',
+    img: 'https://placehold.co/1200x675?text=Stratagems',
+    imgAlt: 'Stratagem beacons being thrown',
     description:
       'Call down the right support at the right time while managing risk to your squad.',
     basic: [
       'Categories: Offensive (Eagle/Orbitals), Defensive (Sentries/Mines), Utility (Resupply/Shield)',
       'Timing & danger zones: announce throws; clear teammates before impact',
-      'Line-of-sight & terrain: use ridges/walls to block blast and shrapnel',
+      'LOS & terrain: use ridges/walls to block blast & shrapnel',
     ],
     advanced: [
       'Combos: Stun → Railcannon; Smoke → Uplinks; Barrages to hold extracts',
       'Sentry placement: behind cover, overlapping arcs, avoid friendly lanes',
-      'Cooldown management: pre-cast Eagles before timers; stagger orbitals',
+      'Cooldowns: pre-cast Eagles before timers; stagger orbitals',
     ],
-    cta: { label: 'Open module', href: '/helldivers-2/academy#stratagems' },
+    details: {
+      paragraphs: [
+        'Treat orbitals like terrain you place: shape enemy paths, then exploit with AT bursts.',
+        'Pre-call Eagle runs on spawner pings to keep pressure low during objective inputs.',
+      ],
+      tips: ['Mortar sentry behind low wall = safe infinite suppression.'],
+      cautions: ['Announce precision strikes—no surprise blue-on-blue.'],
+    },
   },
   {
     id: 'xenology',
     title: 'Xenology',
     subtitle: 'Race, armor type, weakness, strengths',
-    img: 'https://placehold.co/800x450?text=Xenology',
-    imgAlt: 'Placeholder image for the Xenology module',
+    img: 'https://placehold.co/1200x675?text=Xenology',
+    imgAlt: 'Enemy faction silhouettes',
     description:
       'Know your enemy: identify armor types, behaviors, and the counters that work.',
     basic: [
       'Factions: Terminids (melee swarms) and Automatons (ranged armor)',
       'Weak points: Charger legs, Bile Titan head/back; Bot vents/power units',
-      'Spawners and commanders: eliminate to reduce pressure',
+      'Spawners & commanders: eliminate to reduce pressure',
     ],
     advanced: [
-      'Counterplay: AT for Chargers/Tanks; EMP/Impact vs. bots; fire vs. bugs',
-      'Threat triage: artillery, snipers, and breeders before fodder',
-      'Crowd control vs. single-target: swap roles as the fight evolves',
+      'Counters: AT vs Chargers/Tanks; EMP/Impact vs bots; fire vs bugs',
+      'Threat triage: artillery, snipers, breeders before fodder',
+      'CC vs single-target: swap roles as the fight evolves',
     ],
-    cta: { label: 'Open module', href: '/helldivers-2/academy#enemies' },
+    details: {
+      paragraphs: [
+        'Terminids reward kiting funnels and fire DoTs; Automatons demand cover discipline and angle denial.',
+        'Kill-chain: commanders → spawners → heavies → chaff; starve waves at the source.',
+      ],
+      tips: ['Impact grenades pop bot vents on flanks without exposing the squad.'],
+      cautions: ['Don’t chase breeders into fog—bait them into sentry arcs.'],
+    },
   },
 ];
 
 export default function AcademyPage() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  const selectedModule = useMemo(
+    () => MODULES.find((m) => m.id === selectedId) ?? null,
+    [selectedId]
+  );
+
+  // Lock/unlock background scroll when modal opens/closes
+  useEffect(() => {
+    const { body } = document;
+    if (selectedModule) {
+      const prev = body.style.overflow;
+      body.style.overflow = 'hidden';
+      return () => {
+        body.style.overflow = prev || '';
+      };
+    }
+  }, [selectedModule]);
+
+  // ESC to close, and focus management
+  useEffect(() => {
+    if (!selectedModule) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setSelectedId(null);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    // focus close button when modal opens
+    closeBtnRef.current?.focus();
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selectedModule]);
+
+  const openModal = (id: string, trigger: HTMLButtonElement | null) => {
+    lastTriggerRef.current = trigger;
+    setSelectedId(id);
+  };
+
+  const closeModal = () => {
+    setSelectedId(null);
+    // return focus to the trigger button
+    lastTriggerRef.current?.focus();
+  };
+
+  // Inline modal styles (kept here to avoid adding a new CSS file)
+  const modalStyles = {
+    backdrop: {
+      position: 'fixed' as const,
+      inset: 0,
+      background: 'rgba(0,0,0,0.55)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '1rem',
+    },
+    dialog: {
+      background: '#1f2937', // gray-800 card, to match site
+      color: '#e5e7eb', // text-gray-200
+      border: '1px solid #374151', // gray-700
+      borderRadius: '0.75rem',
+      width: 'min(960px, 96vw)',
+      maxHeight: '90vh',
+      overflowY: 'auto' as const,
+      boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
+      position: 'relative' as const,
+    },
+    header: {
+      padding: '1rem 1.25rem',
+      borderBottom: '1px solid #374151',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '1rem',
+    },
+    body: { padding: '1rem 1.25rem 1.5rem' },
+    hero: {
+      width: '100%',
+      aspectRatio: '16/9',
+      objectFit: 'cover' as const,
+      borderBottom: '1px solid #374151',
+    },
+    close: {
+      background: 'transparent',
+      color: '#e5e7eb',
+      border: '1px solid #4b5563',
+      borderRadius: '0.375rem',
+      padding: '0.375rem 0.625rem',
+      cursor: 'pointer',
+    },
+    row: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '1.25rem',
+      marginTop: '1rem',
+    },
+    listCard: {
+      border: '1px solid #374151',
+      borderRadius: '0.5rem',
+      padding: '0.75rem 1rem',
+      background: '#111827', // gray-900 panel
+    },
+    listTitle: {
+      fontWeight: 700,
+      color: '#facc15',
+      marginBottom: '0.5rem',
+      borderBottom: '1px solid #374151',
+      paddingBottom: '0.25rem',
+    },
+  };
+
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
@@ -131,7 +295,9 @@ export default function AcademyPage() {
         </header>
 
         <section className={base.section} aria-labelledby="academy-title">
-          <h3 id="academy-title" className={base.sectionTitle}>Training Modules</h3>
+          <h3 id="academy-title" className={base.sectionTitle}>
+            Training Modules
+          </h3>
 
           <div className={styles.modulesGrid} role="list">
             {MODULES.map((m) => (
@@ -180,19 +346,134 @@ export default function AcademyPage() {
                     </div>
                   </div>
 
-                  <Link
-                    href={m.cta.href}
+                  <button
                     className={styles.ctaButton}
-                    aria-label={m.cta.label}
+                    aria-label={`Open ${m.title} module`}
+                    onClick={(e) => openModal(m.id, e.currentTarget)}
                   >
-                    {m.cta.label}
-                  </Link>
+                    Open module
+                  </button>
                 </div>
               </article>
             ))}
           </div>
         </section>
       </div>
+
+      {/* Modal */}
+      {selectedModule && (
+        <div
+          style={modalStyles.backdrop}
+          onClick={closeModal}
+          aria-hidden={false}
+        >
+          <div
+            style={modalStyles.dialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="academy-modal-title"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Hero image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={selectedModule.img}
+              alt={selectedModule.imgAlt}
+              style={modalStyles.hero}
+            />
+
+            <div style={modalStyles.header}>
+              <div>
+                <h3 id="academy-modal-title" className={base.sectionTitle} style={{ marginBottom: 4 }}>
+                  {selectedModule.title}
+                </h3>
+                <p className={styles.moduleSubtitle} style={{ margin: 0 }}>
+                  {selectedModule.subtitle}
+                </p>
+              </div>
+              <button
+                ref={closeBtnRef}
+                onClick={closeModal}
+                style={modalStyles.close}
+                aria-label="Close module"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={modalStyles.body}>
+              {/* Long description */}
+              {selectedModule.details.paragraphs.map((p) => (
+                <p key={p.slice(0, 24)} className={base.paragraph}>
+                  {p}
+                </p>
+              ))}
+
+              {/* Tips / Cautions (if any) */}
+              <div style={modalStyles.row}>
+                {selectedModule.details.tips && selectedModule.details.tips.length > 0 && (
+                  <div style={modalStyles.listCard}>
+                    <div style={modalStyles.listTitle}>Tips</div>
+                    <ul className={base.styledList}>
+                      {selectedModule.details.tips.map((t) => (
+                        <li key={t} className={base.listItem}>
+                          {t}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {selectedModule.details.cautions && selectedModule.details.cautions.length > 0 && (
+                  <div style={modalStyles.listCard}>
+                    <div style={modalStyles.listTitle}>Cautions</div>
+                    <ul className={base.styledList}>
+                      {selectedModule.details.cautions.map((c) => (
+                        <li key={c} className={base.listItem}>
+                          {c}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Basic / Advanced again for quick reference in modal */}
+              <div style={{ ...modalStyles.row, marginTop: '1.25rem' }}>
+                <div style={modalStyles.listCard}>
+                  <div style={modalStyles.listTitle}>Basic</div>
+                  <ul className={base.styledList}>
+                    {selectedModule.basic.map((item) => (
+                      <li key={item} className={base.listItem}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div style={modalStyles.listCard}>
+                  <div style={modalStyles.listTitle}>Advanced</div>
+                  <ul className={base.styledList}>
+                    {selectedModule.advanced.map((item) => (
+                      <li key={item} className={base.listItem}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '1.25rem', textAlign: 'right' }}>
+                <button
+                  onClick={closeModal}
+                  className={styles.ctaButton}
+                  aria-label="Close module"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
