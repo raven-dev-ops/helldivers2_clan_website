@@ -28,9 +28,10 @@ export default function HelldiversPage() {
             <iframe
               width="100%"
               height="100%"
-              src="https://www.youtube.com/embed?listType=user_uploads&list=gptfleet&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1"
-              title="GPT Fleet YouTube Channel"
-              frameBorder="0"
+              // Use specific featured video; keep modest branding + autoplay muted
+              src="https://www.youtube.com/embed/LiVr7VOykDs?si=NxGDOVzyHbggVlV1&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1"
+              title="GPT Fleet — Featured Video"
+              frameBorder={0}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
@@ -51,7 +52,28 @@ export default function HelldiversPage() {
                   aria-label="Discord"
                   className={styles.socialIconLink}
                 >
+                  <FaDiscord className={styles.socialIcon} />
                 </Link>
+                <Link
+                  href={youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="YouTube"
+                  className={styles.socialIconLink}
+                >
+                  <FaYoutube className={styles.socialIcon} />
+                </Link>
+                {tiktokUrl && (
+                  <Link
+                    href={tiktokUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="TikTok"
+                    className={styles.socialIconLink}
+                  >
+                    <FaTiktok className={styles.socialIcon} />
+                  </Link>
+                )}
               </span>
             </h2>
             <p className={styles.paragraph}>
@@ -78,6 +100,7 @@ export default function HelldiversPage() {
               alt="Ultra Sad Helldiver"
               className={styles.centeredImage}
               loading="lazy"
+              decoding="async"
             />
           </div>
         </section>
@@ -112,6 +135,7 @@ export default function HelldiversPage() {
               alt="New to the Fight"
               className={styles.centeredImage}
               loading="lazy"
+              decoding="async"
             />
           </div>
         </section>
@@ -144,6 +168,7 @@ export default function HelldiversPage() {
               alt="Seasoned Helldiver Veteran"
               className={styles.centeredImage}
               loading="lazy"
+              decoding="async"
             />
           </div>
         </section>
