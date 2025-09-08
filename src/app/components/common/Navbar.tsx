@@ -75,6 +75,8 @@ const Navbar = () => {
   ];
   const standardNavItems = getNavItems();
 
+  const closeMobile = () => setMobileMenuOpen(false);
+
   return (
     <nav className={styles.nav}>
       <div className={styles.container}>
@@ -86,6 +88,7 @@ const Navbar = () => {
           {isMobileMenuOpen ? '✕' : '☰'}
         </button>
 
+        {/* Desktop menu */}
         <div className={styles.desktopMenu}>
           {standardNavItems.map(({ href, label }) => {
             const isActive = isClient && pathname === href;
@@ -163,9 +166,6 @@ const Navbar = () => {
                     Academy
                   </Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Academy">
-                    <Link href={ACADEMY_BASE} className={styles.dropdownItem} role="menuitem" prefetch={false}>
-                      Overview
-                    </Link>
                     <Link href={ACADEMY_APPLY} className={styles.dropdownItem} role="menuitem" prefetch={false}>
                       Mod Application
                     </Link>
@@ -225,70 +225,102 @@ const Navbar = () => {
           <ThemeToggle />
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — mirrors desktop items, closes on click */}
         <div
           className={`${styles.mobileMenu} ${
             isMobileMenuOpen ? styles.mobileMenuOpen : ''
           }`}
         >
-          {standardNavItems.map(({ href, label }) => {
-            if (label === 'Academy') {
-              return (
-                <div key={href}>
-                  <Link
-                    href={ACADEMY_BASE}
-                    className={styles.link}
-                    onClick={() => setMobileMenuOpen(false)}
-                    prefetch={false}
-                  >
-                    Academy
-                  </Link>
-                  <Link
-                    href={ACADEMY_APPLY}
-                    className={styles.link}
-                    onClick={() => setMobileMenuOpen(false)}
-                    prefetch={false}
-                  >
-                    Mod Application
-                  </Link>
-                  {sessionStatus === 'authenticated' && (
-                    <Link
-                      href={ACADEMY_MY}
-                      className={styles.link}
-                      onClick={() => setMobileMenuOpen(false)}
-                      prefetch={false}
-                    >
-                      My Training
-                    </Link>
-                  )}
-                </div>
-              );
-            }
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={styles.link}
-                onClick={() => setMobileMenuOpen(false)}
-                prefetch={false}
-              >
-                {label}
-              </Link>
-            );
-          })}
+          {/* Home, Shop, Leaderboard, Streamers */}
+          <Link href={`${divisionBasePath}`} className={styles.link} onClick={closeMobile} prefetch={false}>
+            Home
+          </Link>
+          <Link href={`${divisionBasePath}/merch`} className={styles.link} onClick={closeMobile} prefetch={false}>
+            Shop
+          </Link>
+          <Link
+            href={`${divisionBasePath}/leaderboard`}
+            className={styles.link}
+            onClick={closeMobile}
+            prefetch={false}
+          >
+            Leaderboard
+          </Link>
 
+          {/* Challenges + subitems (same as desktop) */}
+          <Link
+            href={`${divisionBasePath}/challenges`}
+            className={styles.link}
+            onClick={closeMobile}
+            prefetch={false}
+          >
+            Challenges
+          </Link>
+          {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
+            <Link
+              key={id}
+              href={`${divisionBasePath}/challenges#${id}`}
+              className={styles.link}
+              onClick={closeMobile}
+              prefetch={false}
+            >
+              {label}
+            </Link>
+          ))}
+
+          {/* Campaigns + subitems (same as desktop) */}
+          <Link
+            href={`${divisionBasePath}/campaigns`}
+            className={styles.link}
+            onClick={closeMobile}
+            prefetch={false}
+          >
+            Campaigns
+          </Link>
+          {CAMPAIGN_LABELS.map(({ id, label }) => (
+            <Link
+              key={id}
+              href={`${divisionBasePath}/campaigns#${id}`}
+              className={styles.link}
+              onClick={closeMobile}
+              prefetch={false}
+            >
+              {label}
+            </Link>
+          ))}
+
+          {/* Academy + subitems (same as desktop; My Training gated by auth) */}
+          <Link href={ACADEMY_BASE} className={styles.link} onClick={closeMobile} prefetch={false}>
+            Academy
+          </Link>
+          <Link href={ACADEMY_APPLY} className={styles.link} onClick={closeMobile} prefetch={false}>
+            Mod Application
+          </Link>
+          {sessionStatus === 'authenticated' && (
+            <Link href={ACADEMY_MY} className={styles.link} onClick={closeMobile} prefetch={false}>
+              My Training
+            </Link>
+          )}
+
+          {/* Streamers */}
+          <Link
+            href={`${divisionBasePath}/creators`}
+            className={styles.link}
+            onClick={closeMobile}
+            prefetch={false}
+          >
+            Streamers
+          </Link>
+
+          {/* Auth/Profile */}
           {sessionStatus === 'authenticated' ? (
             <>
-              <Link
-                href="/profile"
-                className={styles.link}
-                onClick={() => setMobileMenuOpen(false)}
-              >
+              <Link href="/profile" className={styles.link} onClick={closeMobile}>
                 {`Profile${meritPoints !== null ? ` (${meritPoints})` : ''}`}
               </Link>
               <button
                 onClick={() => {
-                  setMobileMenuOpen(false);
+                  closeMobile();
                   signOut();
                 }}
                 className={styles.link}
@@ -297,14 +329,11 @@ const Navbar = () => {
               </button>
             </>
           ) : (
-            <Link
-              href="/auth"
-              className={styles.link}
-              onClick={() => setMobileMenuOpen(false)}
-            >
+            <Link href="/auth" className={styles.link} onClick={closeMobile}>
               Sign in
             </Link>
           )}
+
           <ThemeToggle />
         </div>
       </div>
