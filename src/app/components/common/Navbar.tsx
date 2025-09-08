@@ -281,16 +281,13 @@ const Navbar = () => {
             Academy
           </Link>
           <Link href={ACADEMY_APPLY} className={styles.link} onClick={closeMobile} prefetch={false}>
-            Mod Application
+            Mod Team
           </Link>
           {sessionStatus === 'authenticated' && (
             <Link href={ACADEMY_MY} className={styles.link} onClick={closeMobile} prefetch={false}>
               My Training
             </Link>
           )}
-          <Link href={ACADEMY_MODTEAM} className={styles.link} onClick={closeMobile} prefetch={false}>
-            Mod Team
-          </Link>
 
           {/* Streamers */}
           <Link
