@@ -132,7 +132,7 @@ export default function Footer() {
           )}
         </div>
         <p>
-          © {new Date().getFullYear()} Galactic Phantom Division. All rights
+          © {new Date().getFullYear()} Galactic Phantom Taskforce Fleet. All rights
           reserved.
         </p>
       </div>

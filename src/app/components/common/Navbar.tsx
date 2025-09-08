@@ -71,7 +71,7 @@ const Navbar = () => {
     { href: `${divisionBasePath}/leaderboard`, label: 'Leaderboard' },
     { href: `${divisionBasePath}/challenges`, label: 'Challenges' },
     { href: `${divisionBasePath}/campaigns`, label: 'Campaigns' },
-    { href: ACADEMY_BASE, label: 'Academy' },
+    { href: `${divisionBasePath}/academy`, label: 'Academy' },
     { href: `${divisionBasePath}/creators`, label: 'Streamers' },
   ];
   const standardNavItems = getNavItems();
@@ -168,16 +168,13 @@ const Navbar = () => {
                   </Link>
                   <div className={styles.dropdownMenu} role="menu" aria-label="Academy">
                     <Link href={ACADEMY_APPLY} className={styles.dropdownItem} role="menuitem" prefetch={false}>
-                      Mod Application
+                      Mod Team
                     </Link>
                     {sessionStatus === 'authenticated' && (
                       <Link href={ACADEMY_MY} className={styles.dropdownItem} role="menuitem" prefetch={false}>
                         My Training
                       </Link>
                     )}
-                    <Link href={ACADEMY_MODTEAM} className={styles.dropdownItem} role="menuitem" prefetch={false}>
-                      Mod Team
-                    </Link>
                   </div>
                 </div>
               );
