@@ -44,7 +44,8 @@ const Navbar = () => {
   const divisionBasePath = '/helldivers-2';
   const ACADEMY_BASE = `${divisionBasePath}/academy`;
   const ACADEMY_APPLY = `${ACADEMY_BASE}/apply`;
-  const ACADEMY_MY = `${ACADEMY_BASE}/training`; // My Training
+  const ACADEMY_MY = `${ACADEMY_BASE}/training`;   // My Training
+  const ACADEMY_MODTEAM = `${ACADEMY_BASE}/mod-team`;
 
   // Mark component as mounted on client
   useEffect(() => {
@@ -174,6 +175,9 @@ const Navbar = () => {
                         My Training
                       </Link>
                     )}
+                    <Link href={ACADEMY_MODTEAM} className={styles.dropdownItem} role="menuitem" prefetch={false}>
+                      Mod Team
+                    </Link>
                   </div>
                 </div>
               );
@@ -227,33 +231,21 @@ const Navbar = () => {
 
         {/* Mobile menu — mirrors desktop items, closes on click */}
         <div
-          className={`${styles.mobileMenu} ${
-            isMobileMenuOpen ? styles.mobileMenuOpen : ''
-          }`}
+          className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}
         >
-          {/* Home, Shop, Leaderboard, Streamers */}
+          {/* Home, Shop, Leaderboard */}
           <Link href={`${divisionBasePath}`} className={styles.link} onClick={closeMobile} prefetch={false}>
             Home
           </Link>
           <Link href={`${divisionBasePath}/merch`} className={styles.link} onClick={closeMobile} prefetch={false}>
             Shop
           </Link>
-          <Link
-            href={`${divisionBasePath}/leaderboard`}
-            className={styles.link}
-            onClick={closeMobile}
-            prefetch={false}
-          >
+          <Link href={`${divisionBasePath}/leaderboard`} className={styles.link} onClick={closeMobile} prefetch={false}>
             Leaderboard
           </Link>
 
-          {/* Challenges + subitems (same as desktop) */}
-          <Link
-            href={`${divisionBasePath}/challenges`}
-            className={styles.link}
-            onClick={closeMobile}
-            prefetch={false}
-          >
+          {/* Challenges + subitems */}
+          <Link href={`${divisionBasePath}/challenges`} className={styles.link} onClick={closeMobile} prefetch={false}>
             Challenges
           </Link>
           {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
@@ -268,13 +260,8 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {/* Campaigns + subitems (same as desktop) */}
-          <Link
-            href={`${divisionBasePath}/campaigns`}
-            className={styles.link}
-            onClick={closeMobile}
-            prefetch={false}
-          >
+          {/* Campaigns + subitems */}
+          <Link href={`${divisionBasePath}/campaigns`} className={styles.link} onClick={closeMobile} prefetch={false}>
             Campaigns
           </Link>
           {CAMPAIGN_LABELS.map(({ id, label }) => (
@@ -289,7 +276,7 @@ const Navbar = () => {
             </Link>
           ))}
 
-          {/* Academy + subitems (same as desktop; My Training gated by auth) */}
+          {/* Academy + subitems (My Training gated by auth; Mod Team last) */}
           <Link href={ACADEMY_BASE} className={styles.link} onClick={closeMobile} prefetch={false}>
             Academy
           </Link>
@@ -301,6 +288,9 @@ const Navbar = () => {
               My Training
             </Link>
           )}
+          <Link href={ACADEMY_MODTEAM} className={styles.link} onClick={closeMobile} prefetch={false}>
+            Mod Team
+          </Link>
 
           {/* Streamers */}
           <Link
