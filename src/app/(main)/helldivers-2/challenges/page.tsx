@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
-import YoutubeCarouselPlaceholder from '../YoutubeCarouselPlaceholder';
+import YoutubeCarouselPlaceholder from '../YoutubeCarouselCampaign';
 
 // --- Import CSS Modules ---
 import base from '../HelldiversBase.module.css';

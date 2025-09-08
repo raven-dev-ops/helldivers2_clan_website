@@ -7,7 +7,7 @@ import base from '../HelldiversBase.module.css';
 import exp from '../components/Expanders.module.css';
 import code from '@/app/components/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
-import YoutubeCarousel, { type YoutubeVideo } from '../YoutubeCarousel';
+import YoutubeCarouselPlaceholder from '../YoutubeCarouselCampaign';
 
 interface PrestigeMissionData {
   id: string;
@@ -94,10 +94,15 @@ Mortar Sentry`,
   },
 ];
 
-// Map of campaign ID -> list of YouTube videos. Fill these arrays with embed URLs
-// to display videos in the carousel for each campaign.
-const campaignVideos: Record<string, YoutubeVideo[]> = {
-  'level-8': [],
+/**
+ * Map of campaign ID -> list of public YouTube URLs (watch/shorts/share/embed).
+ * The placeholder will convert these to embed URLs automatically.
+ */
+const campaignVideoUrls: Record<string, string[]> = {
+  'level-8': [
+    // 'https://youtu.be/xxxxxxxxxxx',
+    // 'https://www.youtube.com/watch?v=xxxxxxxxxxx',
+  ],
   'level-9': [],
   'level-10': [],
   'level-11': [],
@@ -118,6 +123,7 @@ export default function CampaignsPage() {
       <div className={base.pageContainer}>
         <section className={base.section} id="gpt-campaign-missions">
           <h2 className={base.sectionTitle}>GPT Prestige Operations</h2>
+
           <div className={base.subsectionCard}>
             <h3 className={base.subHeading}>Rules & Requirements</h3>
             <ul className={`${base.styledList} ${base.decimal}`}>
@@ -137,8 +143,11 @@ export default function CampaignsPage() {
 
           <div className={base.subsectionCard}>
             <h3 className={base.subHeading}>John Helldiver Campaigns</h3>
+
             {prestigeMissions.map((mission) => {
               const isExpanded = !!expanded[mission.id];
+              const videosForMission = campaignVideoUrls[mission.id] || [];
+
               return (
                 <div
                   key={mission.id}
@@ -158,38 +167,31 @@ export default function CampaignsPage() {
                       toggleExpansion(mission.id)
                     }
                   >
-                    <h4 className={base.subHeading}>
-                      {mission.title}
-                    </h4>
+                    <h4 className={base.subHeading}>{mission.title}</h4>
                     <FaChevronDown
                       className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
                       aria-hidden="true"
                     />
                   </div>
+
                   <div
                     id={`mission-content-${mission.id}`}
                     className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
                   >
                     <pre className={code.codeBlock}>{mission.details}</pre>
-                    {/* YouTube videos placeholder / carousel */}
-                    {campaignVideos[mission.id] && campaignVideos[mission.id].length > 0 ? (
-                      <YoutubeCarousel videos={campaignVideos[mission.id]} />
-                    ) : (
-                      <>
-                        <div className={base.youtubeEmbed} aria-label="YouTube videos placeholder" />
-                        <p className={base.paragraph} style={{ textAlign: 'center', marginTop: 8 }}>
-                          No videos added yet for this campaign.
-                        </p>
-                      </>
-                    )}
+
+                    {/* YouTube carousel/placeholder fed by string URLs */}
+                    <YoutubeCarouselPlaceholder
+                      videoUrls={videosForMission}
+                      title={mission.title}
+                    />
                   </div>
                 </div>
               );
             })}
           </div>
-          <div
-            style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}
-          >
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
             <button
               className="btn btn-secondary"
               onClick={() => {
@@ -201,11 +203,13 @@ export default function CampaignsPage() {
             </button>
           </div>
         </section>
+
         {message && (
           <p className={base.paragraph} style={{ textAlign: 'center' }}>
             {message}
           </p>
         )}
+
         <SubmitCampaignModal
           isOpen={isSubmitModalOpen}
           onClose={() => setIsSubmitModalOpen(false)}
