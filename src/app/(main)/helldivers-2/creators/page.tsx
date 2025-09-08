@@ -23,7 +23,7 @@ const initialTwitchChannelNames = [
   'helldiver_black_snow',
   'gingercynic',
   'chappzs',
-  'darcyboy',
+  'darincboy',
 ];
 
 

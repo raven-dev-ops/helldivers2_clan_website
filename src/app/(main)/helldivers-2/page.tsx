@@ -54,26 +54,6 @@ export default function HelldiversPage() {
                 >
                   <FaDiscord className={styles.socialIcon} />
                 </Link>
-                <Link
-                  href={youtubeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="YouTube"
-                  className={styles.socialIconLink}
-                >
-                  <FaYoutube className={styles.socialIcon} />
-                </Link>
-                {tiktokUrl && (
-                  <Link
-                    href={tiktokUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="TikTok"
-                    className={styles.socialIconLink}
-                  >
-                    <FaTiktok className={styles.socialIcon} />
-                  </Link>
-                )}
               </span>
             </h2>
             <p className={styles.paragraph}>

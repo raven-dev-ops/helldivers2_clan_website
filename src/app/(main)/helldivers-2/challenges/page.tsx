@@ -245,7 +245,7 @@ export default function HelldiverChallengesPage() {
 
           <div className={base.subsectionCard}>
             <h3 className={base.subHeading}>
-              Unlock Helldiver Class: John/Jane Helldiver
+              Unlock Helldiver Class: John Helldiver
             </h3>
             {johnHelldiverLevels.map((challenge) => {
               const isExpanded = !!expandedChallenges[challenge.id];
