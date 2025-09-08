@@ -6,12 +6,20 @@ const securityHeaders = () => {
   // NOTE: Adjust allow-lists as needed when you see CSP console warnings.
   const csp = [
     "default-src 'self'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
+    // Allow embeds from Twitch, YouTube, and Google (match middleware)
+    "frame-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com https://www.youtube-nocookie.com https://*.youtube.com",
+    // (Safari fallback)
+    "child-src 'self' https://accounts.google.com https://player.twitch.tv https://www.youtube.com https://www.youtube-nocookie.com https://*.youtube.com",
     "img-src 'self' data: https:",
     "media-src 'self' https:",
     "font-src 'self' data: https:",
     "connect-src 'self' https:",
     // 'unsafe-inline' is a starter fallback; refine with nonces/hashes as you harden.
-    "script-src 'self' 'unsafe-inline' https:",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:",
+    "script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https:",
     "style-src 'self' 'unsafe-inline' https:"
   ].join('; ');
 
