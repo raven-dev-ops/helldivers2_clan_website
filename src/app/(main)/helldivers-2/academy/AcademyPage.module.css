@@ -4,9 +4,8 @@
 /* Base & Utilities     */
 /* -------------------- */
 .pageWrapper {
-  /* CSS variables scoped to the page container (avoids :global(:root) in CSS Modules) */
   --bg-card: #1f2937;        /* gray-800 */
-  --bg-page: #0b1220;        /* site dark base (safe fallback) */
+  --bg-page: #0b1220;
   --border: #374151;         /* gray-700 */
   --border-soft: #4b5563;    /* gray-600 */
   --text: #e5e7eb;           /* gray-200 */
@@ -44,8 +43,6 @@
   color: var(--accent);
   border-bottom: 1px solid var(--border);
   padding-bottom: 0.5rem;
-  letter-spacing: normal;
-  text-transform: none;
 }
 
 .pageSubtitle {
@@ -61,19 +58,13 @@
 /* -------------------- */
 .modulesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* wider min to prevent squish */
   gap: 1.25rem;
 }
 
-@media (min-width: 768px) {
-  .modulesGrid { gap: 1.5rem; }
-}
-@media (min-width: 1024px) {
-  .modulesGrid { gap: 2rem; }
-}
-@media (min-width: 1280px) {
-  .modulesGrid { gap: 2.5rem; }
-}
+@media (min-width: 768px) { .modulesGrid { gap: 1.5rem; } }
+@media (min-width: 1024px) { .modulesGrid { gap: 2rem; } }
+@media (min-width: 1280px) { .modulesGrid { gap: 2.5rem; } }
 
 /* -------------------- */
 /* Module Card          */
@@ -89,9 +80,7 @@
   transition: box-shadow 180ms ease, transform 160ms ease, border-color 160ms ease;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .moduleCard { transition: none; }
-}
+@media (prefers-reduced-motion: reduce) { .moduleCard { transition: none; } }
 
 .moduleCard:hover {
   box-shadow: var(--shadow-lg);
@@ -114,21 +103,19 @@
   display: block;
 }
 
-@media (max-width: 420px) {
-  .moduleImage { height: 160px; }
-}
+@media (max-width: 420px) { .moduleImage { height: 160px; } }
 
 /* Content */
 .moduleContent {
   padding: 1rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.9rem; /* a touch more air */
   flex-grow: 1;
 }
 
 .moduleTitle {
-  font-size: 1.125rem; /* slightly tighter for multi-card readability */
+  font-size: 1.125rem;
   font-weight: 700;
   color: #fff;
   line-height: 1.3;
@@ -147,21 +134,20 @@
 .moduleDescription {
   color: #d1d5db;
   margin: 0.25rem 0 0.5rem 0;
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* -------------------- */
-/* Skills               */
+/* Skills (Basic/Advanced) */
 /* -------------------- */
 .moduleSkills {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr;      /* stack on mobile/tablet */
   gap: 1rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   margin-bottom: 1rem;
 }
-
-@media (min-width: 640px) {
+@media (min-width: 1024px) {        /* side-by-side on desktop */
   .moduleSkills { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 }
 
@@ -174,31 +160,45 @@
   padding-bottom: 0.4rem;
 }
 
-.moduleSkillsList {
+.moduleSkillsList,
+:global(.styledList) {               /* fallback if base.styledList not present */
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.45rem;
-  font-size: 0.92rem;
+  gap: 0.6rem;                      /* more spacing */
+  font-size: 0.94rem;
   color: var(--text-dim);
+  line-height: 1.7;                 /* more readable lines */
+  overflow-wrap: anywhere;          /* prevent overflow squish */
 }
 
-.moduleSkillsItem {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  line-height: 1.5;
+/* -------------------- */
+/* Modal layout helpers */
+/* -------------------- */
+.modalRow {
+  display: grid;
+  grid-template-columns: 1fr;       /* stack by default */
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+@media (min-width: 1024px) {
+  .modalRow { grid-template-columns: 1fr 1fr; } /* side-by-side on desktop */
 }
 
-/* optional small bullet accent */
-.bullet {
-  width: 0.4rem;
-  height: 0.4rem;
-  margin-top: 0.45rem;
-  border-radius: 999px;
-  background: var(--accent);
-  flex: 0 0 auto;
+.modalListCard {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #111827;
+}
+
+.modalListTitle {
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25rem;
 }
 
 /* -------------------- */
@@ -214,13 +214,11 @@
   font-weight: 700;
   text-decoration: none;
   line-height: 1;
-  margin-top: auto; /* pushes to card bottom */
+  margin-top: auto;
   transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
 }
-
 .ctaButton:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
 .ctaButton:active { transform: translateY(0); }
-
 .ctaButton:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;

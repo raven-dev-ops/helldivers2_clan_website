@@ -508,30 +508,26 @@ export default function AcademyPage() {
                 </p>
               ))}
 
-              {/* Tips / Cautions (if any) */}
+              {/* Tips / Cautions */}
               {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
-                <div style={modalStyles.row}>
+                <div className={styles.modalRow}>
                   {selectedModule.details.tips?.length ? (
-                    <div style={modalStyles.listCard}>
-                      <div style={modalStyles.listTitle}>Tips</div>
+                    <div className={styles.modalListCard}>
+                      <div className={styles.modalListTitle}>Tips</div>
                       <ul className={base.styledList}>
                         {selectedModule.details.tips.map((t) => (
-                          <li key={t} className={base.listItem}>
-                            {t}
-                          </li>
+                          <li key={t} className={base.listItem}>{t}</li>
                         ))}
                       </ul>
                     </div>
                   ) : null}
 
                   {selectedModule.details.cautions?.length ? (
-                    <div style={modalStyles.listCard}>
-                      <div style={modalStyles.listTitle}>Cautions</div>
+                    <div className={styles.modalListCard}>
+                      <div className={styles.modalListTitle}>Cautions</div>
                       <ul className={base.styledList}>
                         {selectedModule.details.cautions.map((c) => (
-                          <li key={c} className={base.listItem}>
-                            {c}
-                          </li>
+                          <li key={c} className={base.listItem}>{c}</li>
                         ))}
                       </ul>
                     </div>
@@ -540,24 +536,20 @@ export default function AcademyPage() {
               )}
 
               {/* Basic / Advanced quick reference */}
-              <div style={{ ...modalStyles.row, marginTop: '1.25rem' }}>
-                <div style={modalStyles.listCard}>
-                  <div style={modalStyles.listTitle}>Basic</div>
+              <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
+                <div className={styles.modalListCard}>
+                  <div className={styles.modalListTitle}>Basic</div>
                   <ul className={base.styledList}>
                     {selectedModule.basic.map((item) => (
-                      <li key={item} className={base.listItem}>
-                        {item}
-                      </li>
+                      <li key={item} className={base.listItem}>{item}</li>
                     ))}
                   </ul>
                 </div>
-                <div style={modalStyles.listCard}>
-                  <div style={modalStyles.listTitle}>Advanced</div>
+                <div className={styles.modalListCard}>
+                  <div className={styles.modalListTitle}>Advanced</div>
                   <ul className={base.styledList}>
                     {selectedModule.advanced.map((item) => (
-                      <li key={item} className={base.listItem}>
-                        {item}
-                      </li>
+                      <li key={item} className={base.listItem}>{item}</li>
                     ))}
                   </ul>
                 </div>
