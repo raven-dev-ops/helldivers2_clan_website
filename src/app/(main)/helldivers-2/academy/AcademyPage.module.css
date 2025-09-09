@@ -1,9 +1,8 @@
-/* src/app/(main)/helldivers-2/academy/AcademyPage.module.css */
-
 /* -------------------- */
 /* Base & Utilities     */
 /* -------------------- */
 .pageWrapper {
+  /* Page-scoped CSS vars (safe for CSS Modules) */
   --bg-card: #1f2937;        /* gray-800 */
   --bg-page: #0b1220;
   --border: #374151;         /* gray-700 */
@@ -110,7 +109,7 @@
   padding: 1rem 1.25rem 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 0.9rem; /* a touch more air */
+  gap: 0.9rem;
   flex-grow: 1;
 }
 
@@ -142,35 +141,43 @@
 /* -------------------- */
 .moduleSkills {
   display: grid;
-  grid-template-columns: 1fr;      /* stack on mobile/tablet */
+  grid-template-columns: 1fr;            /* stack on mobile/tablet */
   gap: 1rem;
   margin-top: 0.25rem;
   margin-bottom: 1rem;
 }
-@media (min-width: 1024px) {        /* side-by-side on desktop */
-  .moduleSkills { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+@media (min-width: 1024px) {
+  .moduleSkills { grid-template-columns: 1fr 1fr; gap: 1.25rem; } /* side-by-side on desktop */
 }
 
-.moduleSkillsSectionTitle {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin: 0 0 0.5rem 0;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 0.4rem;
-}
-
-.moduleSkillsList,
-:global(.styledList) {               /* fallback if base.styledList not present */
+/* Local list class used with base.styledList in TSX */
+.moduleSkillsList {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: 0.6rem;                      /* more spacing */
+  gap: 0.6rem;
   font-size: 0.94rem;
   color: var(--text-dim);
-  line-height: 1.7;                 /* more readable lines */
-  overflow-wrap: anywhere;          /* prevent overflow squish */
+  line-height: 1.7;
+  overflow-wrap: anywhere;               /* prevent overflow squish */
+}
+
+.moduleSkillsItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.7;
+}
+
+/* small accent bullet (optional) */
+.bullet {
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-top: 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  flex: 0 0 auto;
 }
 
 /* -------------------- */
@@ -178,7 +185,7 @@
 /* -------------------- */
 .modalRow {
   display: grid;
-  grid-template-columns: 1fr;       /* stack by default */
+  grid-template-columns: 1fr;           /* stack by default */
   gap: 1.25rem;
   margin-top: 1rem;
 }

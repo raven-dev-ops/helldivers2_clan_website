@@ -211,6 +211,7 @@ export default function AcademyPage() {
     [selectedId]
   );
 
+  // Lock/unlock background scroll
   useEffect(() => {
     const { body } = document;
     if (selectedModule) {
@@ -222,6 +223,7 @@ export default function AcademyPage() {
     }
   }, [selectedModule]);
 
+  // ESC to close + focus to close button on open
   useEffect(() => {
     if (!selectedModule) return;
     const onKey = (e: KeyboardEvent) => {
@@ -235,8 +237,10 @@ export default function AcademyPage() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedModule]);
 
+  // Trap focus inside the modal
   useEffect(() => {
     if (!selectedModule || !modalRef.current) return;
+
     const modalEl = modalRef.current;
     const getFocusable = () =>
       Array.from(
@@ -244,12 +248,14 @@ export default function AcademyPage() {
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
       ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
       const focusables = getFocusable();
       if (focusables.length === 0) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
+
       if (e.shiftKey) {
         if (document.activeElement === first) {
           e.preventDefault();
@@ -262,6 +268,7 @@ export default function AcademyPage() {
         }
       }
     };
+
     modalEl.addEventListener('keydown', onKeyDown as any);
     return () => modalEl.removeEventListener('keydown', onKeyDown as any);
   }, [selectedModule]);
@@ -276,6 +283,7 @@ export default function AcademyPage() {
     lastTriggerRef.current?.focus();
   };
 
+  // Inline modal styles kept local to avoid a new CSS file
   const modalStyles = {
     backdrop: {
       position: 'fixed' as const,
@@ -328,6 +336,8 @@ export default function AcademyPage() {
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
+
+      {/* Page shell gets aria-hidden when modal is open */}
       <div
         ref={pageShellRef}
         className={`${base.pageContainer} ${styles.pageWrapper}`}
@@ -354,6 +364,7 @@ export default function AcademyPage() {
                 role="listitem"
                 aria-labelledby={`${m.id}-title`}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={m.img}
                   alt={m.imgAlt}
@@ -362,6 +373,7 @@ export default function AcademyPage() {
                   decoding="async"
                 />
                 <div className={styles.moduleContent}>
+                  {/* Keep heading hierarchy: h4 inside section */}
                   <h4 id={`${m.id}-title`} className={styles.moduleTitle}>
                     {m.title}
                   </h4>
@@ -408,8 +420,14 @@ export default function AcademyPage() {
         </section>
       </div>
 
+      {/* Modal */}
       {selectedModule && (
-        <div style={modalStyles.backdrop} onClick={closeModal} data-modal-open>
+        <div
+          style={modalStyles.backdrop}
+          onClick={closeModal}
+          aria-hidden={false}
+          data-modal-open
+        >
           <div
             id="academy-modal"
             ref={modalRef}
@@ -421,6 +439,8 @@ export default function AcademyPage() {
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Hero image */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={selectedModule.img}
               alt={selectedModule.imgAlt}
@@ -438,11 +458,14 @@ export default function AcademyPage() {
                   {selectedModule.subtitle}
                 </p>
               </div>
+
+              {/* Optional CTA for Command applications */}
               {selectedModule.id === 'command' && (
                 <a href="/mod-team" className={styles.ctaButton} aria-label="Apply to Mod Team">
                   Apply to Mod Team
                 </a>
               )}
+
               <button
                 ref={closeBtnRef}
                 type="button"
@@ -459,12 +482,14 @@ export default function AcademyPage() {
                 {selectedModule.description}
               </div>
 
+              {/* Long description */}
               {selectedModule.details.paragraphs.map((p) => (
                 <p key={p.slice(0, 24)} className={base.paragraph}>
                   {p}
                 </p>
               ))}
 
+              {/* Tips / Cautions (if any) */}
               {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
                 <div className={styles.modalRow}>
                   {selectedModule.details.tips?.length ? (
@@ -479,6 +504,7 @@ export default function AcademyPage() {
                       </ul>
                     </div>
                   ) : null}
+
                   {selectedModule.details.cautions?.length ? (
                     <div className={styles.modalListCard}>
                       <div className={styles.modalListTitle}>Cautions</div>
@@ -494,6 +520,7 @@ export default function AcademyPage() {
                 </div>
               )}
 
+              {/* Basic / Advanced quick reference */}
               <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
                 <div className={styles.modalListCard}>
                   <div className={styles.modalListTitle}>Basic</div>
