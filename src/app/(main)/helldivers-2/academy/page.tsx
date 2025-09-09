@@ -211,7 +211,6 @@ export default function AcademyPage() {
     [selectedId]
   );
 
-  // Lock/unlock background scroll
   useEffect(() => {
     const { body } = document;
     if (selectedModule) {
@@ -223,7 +222,6 @@ export default function AcademyPage() {
     }
   }, [selectedModule]);
 
-  // ESC to close + focus to close button on open
   useEffect(() => {
     if (!selectedModule) return;
     const onKey = (e: KeyboardEvent) => {
@@ -237,10 +235,8 @@ export default function AcademyPage() {
     return () => window.removeEventListener('keydown', onKey);
   }, [selectedModule]);
 
-  // Trap focus inside the modal
   useEffect(() => {
     if (!selectedModule || !modalRef.current) return;
-
     const modalEl = modalRef.current;
     const getFocusable = () =>
       Array.from(
@@ -248,14 +244,12 @@ export default function AcademyPage() {
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
       ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
       const focusables = getFocusable();
       if (focusables.length === 0) return;
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
-
       if (e.shiftKey) {
         if (document.activeElement === first) {
           e.preventDefault();
@@ -268,7 +262,6 @@ export default function AcademyPage() {
         }
       }
     };
-
     modalEl.addEventListener('keydown', onKeyDown as any);
     return () => modalEl.removeEventListener('keydown', onKeyDown as any);
   }, [selectedModule]);
@@ -283,7 +276,6 @@ export default function AcademyPage() {
     lastTriggerRef.current?.focus();
   };
 
-  // Inline modal styles kept local to avoid a new CSS file
   const modalStyles = {
     backdrop: {
       position: 'fixed' as const,
@@ -299,7 +291,7 @@ export default function AcademyPage() {
       background: '#1f2937',
       color: '#e5e7eb',
       border: '1px solid #374151',
-      borderRadius: '0.75rem', 
+      borderRadius: '0.75rem',
       width: 'min(960px, 96vw)',
       maxHeight: '90vh',
       overflowY: 'auto' as const,
@@ -331,32 +323,11 @@ export default function AcademyPage() {
       padding: '0.375rem 0.625rem',
       cursor: 'pointer',
     },
-    row: {
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '1.25rem',
-      marginTop: '1rem',
-    },
-    listCard: {
-      border: '1px solid #374151',
-      borderRadius: '0.5rem',
-      padding: '0.75rem 1rem',
-      background: '#111827',
-    },
-    listTitle: {
-      fontWeight: 700,
-      color: '#facc15',
-      marginBottom: '0.5rem',
-      borderBottom: '1px solid #374151',
-      paddingBottom: '0.25rem',
-    },
   };
 
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
-
-      {/* Page shell gets aria-hidden when modal is open */}
       <div
         ref={pageShellRef}
         className={`${base.pageContainer} ${styles.pageWrapper}`}
@@ -383,7 +354,6 @@ export default function AcademyPage() {
                 role="listitem"
                 aria-labelledby={`${m.id}-title`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={m.img}
                   alt={m.imgAlt}
@@ -392,7 +362,6 @@ export default function AcademyPage() {
                   decoding="async"
                 />
                 <div className={styles.moduleContent}>
-                  {/* Keep heading hierarchy: h4 inside section */}
                   <h4 id={`${m.id}-title`} className={styles.moduleTitle}>
                     {m.title}
                   </h4>
@@ -402,7 +371,7 @@ export default function AcademyPage() {
                   <div className={styles.moduleSkills}>
                     <div>
                       <div className={styles.moduleSkillsSectionTitle}>Basic</div>
-                      <ul className={base.styledList}>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {m.basic.map((item) => (
                           <li key={item} className={base.listItem}>
                             {item}
@@ -412,7 +381,7 @@ export default function AcademyPage() {
                     </div>
                     <div>
                       <div className={styles.moduleSkillsSectionTitle}>Advanced</div>
-                      <ul className={base.styledList}>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {m.advanced.map((item) => (
                           <li key={item} className={base.listItem}>
                             {item}
@@ -439,14 +408,8 @@ export default function AcademyPage() {
         </section>
       </div>
 
-      {/* Modal */}
       {selectedModule && (
-        <div
-          style={modalStyles.backdrop}
-          onClick={closeModal}
-          aria-hidden={false}
-          data-modal-open
-        >
+        <div style={modalStyles.backdrop} onClick={closeModal} data-modal-open>
           <div
             id="academy-modal"
             ref={modalRef}
@@ -458,8 +421,6 @@ export default function AcademyPage() {
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Hero image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={selectedModule.img}
               alt={selectedModule.imgAlt}
@@ -477,14 +438,11 @@ export default function AcademyPage() {
                   {selectedModule.subtitle}
                 </p>
               </div>
-
-              {/* Example CTA for Command applications (update href as needed) */}
               {selectedModule.id === 'command' && (
                 <a href="/mod-team" className={styles.ctaButton} aria-label="Apply to Mod Team">
                   Apply to Mod Team
                 </a>
               )}
-
               <button
                 ref={closeBtnRef}
                 type="button"
@@ -501,33 +459,34 @@ export default function AcademyPage() {
                 {selectedModule.description}
               </div>
 
-              {/* Long description */}
               {selectedModule.details.paragraphs.map((p) => (
                 <p key={p.slice(0, 24)} className={base.paragraph}>
                   {p}
                 </p>
               ))}
 
-              {/* Tips / Cautions */}
               {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
                 <div className={styles.modalRow}>
                   {selectedModule.details.tips?.length ? (
                     <div className={styles.modalListCard}>
                       <div className={styles.modalListTitle}>Tips</div>
-                      <ul className={base.styledList}>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {selectedModule.details.tips.map((t) => (
-                          <li key={t} className={base.listItem}>{t}</li>
+                          <li key={t} className={base.listItem}>
+                            {t}
+                          </li>
                         ))}
                       </ul>
                     </div>
                   ) : null}
-
                   {selectedModule.details.cautions?.length ? (
                     <div className={styles.modalListCard}>
                       <div className={styles.modalListTitle}>Cautions</div>
-                      <ul className={base.styledList}>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {selectedModule.details.cautions.map((c) => (
-                          <li key={c} className={base.listItem}>{c}</li>
+                          <li key={c} className={base.listItem}>
+                            {c}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -535,21 +494,24 @@ export default function AcademyPage() {
                 </div>
               )}
 
-              {/* Basic / Advanced quick reference */}
               <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
                 <div className={styles.modalListCard}>
                   <div className={styles.modalListTitle}>Basic</div>
-                  <ul className={base.styledList}>
+                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                     {selectedModule.basic.map((item) => (
-                      <li key={item} className={base.listItem}>{item}</li>
+                      <li key={item} className={base.listItem}>
+                        {item}
+                      </li>
                     ))}
                   </ul>
                 </div>
                 <div className={styles.modalListCard}>
                   <div className={styles.modalListTitle}>Advanced</div>
-                  <ul className={base.styledList}>
+                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                     {selectedModule.advanced.map((item) => (
-                      <li key={item} className={base.listItem}>{item}</li>
+                      <li key={item} className={base.listItem}>
+                        {item}
+                      </li>
                     ))}
                   </ul>
                 </div>
