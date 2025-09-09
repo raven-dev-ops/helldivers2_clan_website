@@ -6,8 +6,8 @@ import { FaChevronDown } from 'react-icons/fa';
 import base from '../HelldiversBase.module.css';
 import exp from '../components/Expanders.module.css';
 import code from '@/app/components/CodeBlocks.module.css';
-import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
-import YoutubeCarouselPlaceholder from '../YoutubeCarouselCampaign';
+import SubmitCampaignModal from '@/components/campaigns/SubmitCampaignModal';
+import YoutubeCarouselPlaceholder from '../../../../components/campaigns/YoutubeCarouselCampaign';
 
 interface PrestigeMissionData {
   id: string;

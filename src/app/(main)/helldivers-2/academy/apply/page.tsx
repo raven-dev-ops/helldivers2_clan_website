@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import base from '../../HelldiversBase.module.css';
 import styles from './Apply.module.css';
-import Quiz, { type Question } from '../training/Quiz'; // adjust path if needed
+import Quiz, { type Question } from '../../../../../components/academy/training/Quiz'; // adjust path if needed
 
 const PROMPTS = [
   'What does democracy mean to you in Helldivers 2?',

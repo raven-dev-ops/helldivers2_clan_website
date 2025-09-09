@@ -1,7 +1,7 @@
 import styles from './TrainingPage.module.css';
-import Quiz, { type Question } from './Quiz';
-import hd2Questions from './hd2Questions';
-import hd1Questions from './hd1Questions';
+import Quiz, { type Question } from '../../../../../components/academy/training/Quiz';
+import hd2Questions from '../../../../../components/academy/training/hd2Questions';
+import hd1Questions from '../../../../../components/academy/training/hd1Questions';
 import base from '../../HelldiversBase.module.css';
 
 const chunk = (arr: Question[], size: number) =>

@@ -1,23 +1,68 @@
-// src/app/api/leaderboard/route.ts
+// src/app/api/helldivers/leaderboard/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { jsonWithETag } from '@/lib/httpCache';
+import {
+  fetchHelldiversLeaderboard,
+  VALID_SORT_FIELDS,
+  type SortField,
+} from '@/lib/helldiversLeaderboard';
 import { logger } from '@/lib/logger';
 
-export async function GET() {
-  logger.info('[GET /api/leaderboard]');
-  // Example: fetch top 10 players
-  const leaderboard = [
-    { rank: 1, name: 'Player1', score: 9999 },
-    { rank: 2, name: 'Player2', score: 8500 },
-  ];
-  return NextResponse.json(leaderboard);
-}
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const sortByParam = (url.searchParams.get('sortBy') ||
+      'Kills') as SortField;
+    const sortDirParam = (
+      url.searchParams.get('sortDir') || 'desc'
+    ).toLowerCase();
+    const limitParam = parseInt(url.searchParams.get('limit') || '100', 10);
+    const scopeParam = (url.searchParams.get('scope') || 'month').toLowerCase();
+    const monthParam = url.searchParams.get('month');
+    const yearParam = url.searchParams.get('year');
 
-export async function POST(req: NextRequest) {
-  logger.info('[POST /api/leaderboard]');
-  const data = await req.json();
-  // Example: update leaderboard with new score
-  return NextResponse.json(
-    { message: 'Score submitted', data },
-    { status: 201 }
-  );
+    const sortBy: SortField = VALID_SORT_FIELDS.includes(sortByParam)
+      ? sortByParam
+      : 'Kills';
+    const sortDir: 1 | -1 = sortDirParam === 'asc' ? 1 : -1;
+    const limit =
+      Number.isFinite(limitParam) && limitParam > 0
+        ? Math.min(limitParam, 1000)
+        : 100;
+
+    const scope =
+      scopeParam === 'lifetime'
+        ? 'lifetime'
+        : scopeParam === 'solo'
+          ? 'solo'
+          : scopeParam === 'squad'
+            ? 'squad'
+            : scopeParam === 'week'
+              ? 'week'
+              : scopeParam === 'day'
+                ? 'day'
+                : 'month';
+    const month = monthParam ? parseInt(monthParam, 10) : undefined;
+    const year = yearParam ? parseInt(yearParam, 10) : undefined;
+
+    const data = await fetchHelldiversLeaderboard({
+      sortBy,
+      sortDir: sortDir === 1 ? 'asc' : 'desc',
+      limit,
+      scope,
+      month,
+      year,
+    });
+    return jsonWithETag(req, data, {
+      headers: {
+        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
+      },
+    });
+  } catch (error: any) {
+    logger.error('Error fetching helldivers leaderboard:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch leaderboard' },
+      { status: 500 }
+    );
+  }
 }

@@ -1,5 +1,5 @@
 // src/app/(main)/helldivers-2/leaderboard/page.tsx
-import LeaderboardServer from '@/app/(main)/helldivers-2/LeaderboardServer';
+import LeaderboardServer from '@/components/leaderboard/LeaderboardServer';
 import styles from '../HelldiversBase.module.css';
 
 export default function LeaderboardPage() {
