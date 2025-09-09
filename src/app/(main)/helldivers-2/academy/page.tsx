@@ -14,7 +14,6 @@ type Module = {
   description: string;
   basic: string[];
   advanced: string[];
-  // Added: richer modal content
   details: {
     paragraphs: string[];
     tips?: string[];
@@ -50,9 +49,7 @@ const MODULES: Module[] = [
         'In blizzards, marksmen swap to close-range secondaries; rely on sentry arcs.',
         'Lightning disables bots briefly—time pushes between strikes.',
       ],
-      cautions: [
-        'Acid pools destroy extract lanes—scan and plan alternates before uplinks.',
-      ],
+      cautions: ['Acid pools destroy extract lanes—scan and plan alternates before uplinks.'],
     },
   },
   {
@@ -166,19 +163,55 @@ const MODULES: Module[] = [
       cautions: ['Don’t chase breeders into fog—bait them into sentry arcs.'],
     },
   },
+  {
+    id: 'command',
+    title: 'Command',
+    subtitle: 'Roles, duties, applications',
+    img: 'https://placehold.co/1200x675?text=Command',
+    imgAlt: 'Command roles and responsibilities',
+    description:
+      'Understand GPT Fleet leadership roles and how to step up: Fleet Commander (jr. mod), Democracy Officer (mod), Loyalty Officer (admin).',
+    basic: [
+      'Fleet Commander: squad/event ops, quick decisions, escalates issues',
+      'Democracy Officer: moderation, culture enforcement, event leads',
+      'Loyalty Officer: admin, policy, security, final arbitration',
+    ],
+    advanced: [
+      'Playbooks: incident triage → de-escalation → resolution → report',
+      'Signal: concise comms, standard callouts, delegate early',
+      'Pipeline: apply at the Mod Team page; shadow, eval, promote',
+    ],
+    details: {
+      paragraphs: [
+        'Command roles keep games moving and the culture consistent. Use clear comms, set tempo, and delegate tasks to maintain momentum under pressure.',
+        'Document incidents succinctly: what happened, who was impacted, what action you took, and follow-ups. Consistency builds trust.',
+      ],
+      tips: [
+        'Use standard callouts (“Rotate north”, “Hold extract”, “AT on Charger legs”).',
+        'Keep a ready roster for events; backfill before you burn out.',
+      ],
+      cautions: [
+        'Avoid rules lawyering mid-match—stabilize first, debrief after.',
+        'Promotions follow performance and culture fit—no fast-tracking.',
+      ],
+    },
+  },
 ];
 
 export default function AcademyPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const pageShellRef = useRef<HTMLDivElement | null>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
   const selectedModule = useMemo(
     () => MODULES.find((m) => m.id === selectedId) ?? null,
     [selectedId]
   );
 
-  // Lock/unlock background scroll when modal opens/closes
+  // Lock/unlock background scroll
   useEffect(() => {
     const { body } = document;
     if (selectedModule) {
@@ -190,7 +223,7 @@ export default function AcademyPage() {
     }
   }, [selectedModule]);
 
-  // ESC to close, and focus management
+  // ESC to close + focus to close button on open
   useEffect(() => {
     if (!selectedModule) return;
     const onKey = (e: KeyboardEvent) => {
@@ -200,9 +233,44 @@ export default function AcademyPage() {
       }
     };
     window.addEventListener('keydown', onKey);
-    // focus close button when modal opens
     closeBtnRef.current?.focus();
     return () => window.removeEventListener('keydown', onKey);
+  }, [selectedModule]);
+
+  // Trap focus inside the modal
+  useEffect(() => {
+    if (!selectedModule || !modalRef.current) return;
+
+    const modalEl = modalRef.current;
+    const getFocusable = () =>
+      Array.from(
+        modalEl.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+      ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const focusables = getFocusable();
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    modalEl.addEventListener('keydown', onKeyDown as any);
+    return () => modalEl.removeEventListener('keydown', onKeyDown as any);
   }, [selectedModule]);
 
   const openModal = (id: string, trigger: HTMLButtonElement | null) => {
@@ -212,11 +280,10 @@ export default function AcademyPage() {
 
   const closeModal = () => {
     setSelectedId(null);
-    // return focus to the trigger button
     lastTriggerRef.current?.focus();
   };
 
-  // Inline modal styles (kept here to avoid adding a new CSS file)
+  // Inline modal styles kept local to avoid a new CSS file
   const modalStyles = {
     backdrop: {
       position: 'fixed' as const,
@@ -229,15 +296,16 @@ export default function AcademyPage() {
       padding: '1rem',
     },
     dialog: {
-      background: '#1f2937', // gray-800 card, to match site
-      color: '#e5e7eb', // text-gray-200
-      border: '1px solid #374151', // gray-700
-      borderRadius: '0.75rem',
+      background: '#1f2937',
+      color: '#e5e7eb',
+      border: '1px solid #374151',
+      borderRadius: '0.75rem', 
       width: 'min(960px, 96vw)',
       maxHeight: '90vh',
       overflowY: 'auto' as const,
       boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
       position: 'relative' as const,
+      outline: 'none',
     },
     header: {
       padding: '1rem 1.25rem',
@@ -253,6 +321,7 @@ export default function AcademyPage() {
       aspectRatio: '16/9',
       objectFit: 'cover' as const,
       borderBottom: '1px solid #374151',
+      display: 'block',
     },
     close: {
       background: 'transparent',
@@ -272,7 +341,7 @@ export default function AcademyPage() {
       border: '1px solid #374151',
       borderRadius: '0.5rem',
       padding: '0.75rem 1rem',
-      background: '#111827', // gray-900 panel
+      background: '#111827',
     },
     listTitle: {
       fontWeight: 700,
@@ -286,11 +355,17 @@ export default function AcademyPage() {
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
-      <div className={base.pageContainer}>
+
+      {/* Page shell gets aria-hidden when modal is open */}
+      <div
+        ref={pageShellRef}
+        className={`${base.pageContainer} ${styles.pageWrapper}`}
+        aria-hidden={selectedModule ? true : undefined}
+      >
         <header className={styles.pageHeader}>
           <h2 className={styles.pageTitle}>Academy</h2>
           <p className={styles.pageSubtitle}>
-            Five training modules covering environments, equipment, tactics, and enemies.
+            Six training modules covering environments, equipment, tactics, leadership, and enemies.
           </p>
         </header>
 
@@ -317,15 +392,16 @@ export default function AcademyPage() {
                   decoding="async"
                 />
                 <div className={styles.moduleContent}>
-                  <h3 id={`${m.id}-title`} className={styles.moduleTitle}>
+                  {/* Keep heading hierarchy: h4 inside section */}
+                  <h4 id={`${m.id}-title`} className={styles.moduleTitle}>
                     {m.title}
-                  </h3>
+                  </h4>
                   <p className={styles.moduleSubtitle}>{m.subtitle}</p>
                   <p className={base.paragraph}>{m.description}</p>
 
                   <div className={styles.moduleSkills}>
                     <div>
-                      <h4>Basic</h4>
+                      <div className={styles.moduleSkillsSectionTitle}>Basic</div>
                       <ul className={base.styledList}>
                         {m.basic.map((item) => (
                           <li key={item} className={base.listItem}>
@@ -335,7 +411,7 @@ export default function AcademyPage() {
                       </ul>
                     </div>
                     <div>
-                      <h4>Advanced</h4>
+                      <div className={styles.moduleSkillsSectionTitle}>Advanced</div>
                       <ul className={base.styledList}>
                         {m.advanced.map((item) => (
                           <li key={item} className={base.listItem}>
@@ -347,7 +423,10 @@ export default function AcademyPage() {
                   </div>
 
                   <button
+                    type="button"
                     className={styles.ctaButton}
+                    aria-haspopup="dialog"
+                    aria-controls="academy-modal"
                     aria-label={`Open ${m.title} module`}
                     onClick={(e) => openModal(m.id, e.currentTarget)}
                   >
@@ -366,12 +445,17 @@ export default function AcademyPage() {
           style={modalStyles.backdrop}
           onClick={closeModal}
           aria-hidden={false}
+          data-modal-open
         >
           <div
+            id="academy-modal"
+            ref={modalRef}
             style={modalStyles.dialog}
             role="dialog"
             aria-modal="true"
             aria-labelledby="academy-modal-title"
+            aria-describedby="academy-modal-desc"
+            tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Hero image */}
@@ -380,6 +464,8 @@ export default function AcademyPage() {
               src={selectedModule.img}
               alt={selectedModule.imgAlt}
               style={modalStyles.hero}
+              loading="eager"
+              decoding="sync"
             />
 
             <div style={modalStyles.header}>
@@ -391,8 +477,17 @@ export default function AcademyPage() {
                   {selectedModule.subtitle}
                 </p>
               </div>
+
+              {/* Example CTA for Command applications (update href as needed) */}
+              {selectedModule.id === 'command' && (
+                <a href="/mod-team" className={styles.ctaButton} aria-label="Apply to Mod Team">
+                  Apply to Mod Team
+                </a>
+              )}
+
               <button
                 ref={closeBtnRef}
+                type="button"
                 onClick={closeModal}
                 style={modalStyles.close}
                 aria-label="Close module"
@@ -402,6 +497,10 @@ export default function AcademyPage() {
             </div>
 
             <div style={modalStyles.body}>
+              <div id="academy-modal-desc" className={base.paragraph} style={{ marginBottom: '0.75rem' }}>
+                {selectedModule.description}
+              </div>
+
               {/* Long description */}
               {selectedModule.details.paragraphs.map((p) => (
                 <p key={p.slice(0, 24)} className={base.paragraph}>
@@ -410,34 +509,37 @@ export default function AcademyPage() {
               ))}
 
               {/* Tips / Cautions (if any) */}
-              <div style={modalStyles.row}>
-                {selectedModule.details.tips && selectedModule.details.tips.length > 0 && (
-                  <div style={modalStyles.listCard}>
-                    <div style={modalStyles.listTitle}>Tips</div>
-                    <ul className={base.styledList}>
-                      {selectedModule.details.tips.map((t) => (
-                        <li key={t} className={base.listItem}>
-                          {t}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {selectedModule.details.cautions && selectedModule.details.cautions.length > 0 && (
-                  <div style={modalStyles.listCard}>
-                    <div style={modalStyles.listTitle}>Cautions</div>
-                    <ul className={base.styledList}>
-                      {selectedModule.details.cautions.map((c) => (
-                        <li key={c} className={base.listItem}>
-                          {c}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+              {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
+                <div style={modalStyles.row}>
+                  {selectedModule.details.tips?.length ? (
+                    <div style={modalStyles.listCard}>
+                      <div style={modalStyles.listTitle}>Tips</div>
+                      <ul className={base.styledList}>
+                        {selectedModule.details.tips.map((t) => (
+                          <li key={t} className={base.listItem}>
+                            {t}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
 
-              {/* Basic / Advanced again for quick reference in modal */}
+                  {selectedModule.details.cautions?.length ? (
+                    <div style={modalStyles.listCard}>
+                      <div style={modalStyles.listTitle}>Cautions</div>
+                      <ul className={base.styledList}>
+                        {selectedModule.details.cautions.map((c) => (
+                          <li key={c} className={base.listItem}>
+                            {c}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+
+              {/* Basic / Advanced quick reference */}
               <div style={{ ...modalStyles.row, marginTop: '1.25rem' }}>
                 <div style={modalStyles.listCard}>
                   <div style={modalStyles.listTitle}>Basic</div>
@@ -463,6 +565,7 @@ export default function AcademyPage() {
 
               <div style={{ marginTop: '1.25rem', textAlign: 'right' }}>
                 <button
+                  type="button"
                   onClick={closeModal}
                   className={styles.ctaButton}
                   aria-label="Close module"
