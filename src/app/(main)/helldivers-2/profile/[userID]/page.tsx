@@ -9,7 +9,19 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { logger } from '@/lib/logger';
 
-async function getUserProfile(userID: string) {
+type ForumThreadListItem = {
+  _id: string;
+  categoryId: string;
+  title: string;
+  createdAt: string;
+};
+
+type UserProfileData = {
+  user: Record<string, any> & { createdAt?: string | Date };
+  recentThreads: ForumThreadListItem[];
+};
+
+async function getUserProfile(userID: string): Promise<UserProfileData | null> {
   if (!mongoose.Types.ObjectId.isValid(userID)) return null;
   await dbConnect();
 
@@ -23,7 +35,19 @@ async function getUserProfile(userID: string) {
       .select('title categoryId createdAt')
       .lean();
 
-    return JSON.parse(JSON.stringify({ user, recentThreads }));
+    const serialized = JSON.parse(
+      JSON.stringify({ user, recentThreads }),
+    ) as UserProfileData;
+
+    return {
+      ...serialized,
+      recentThreads: serialized.recentThreads.map((thread) => ({
+        ...thread,
+        _id: String(thread._id),
+        categoryId: String(thread.categoryId),
+        createdAt: String(thread.createdAt),
+      })),
+    } satisfies UserProfileData;
   } catch (error) {
     logger.error('Error fetching profile:', error);
     return null;
@@ -42,7 +66,7 @@ export default async function ProfilePage({
     notFound();
   }
 
-  const { user, recentThreads } = profileData as any;
+  const { user, recentThreads } = profileData;
 
   const heightUnit: 'cm' | 'in' =
     user?.preferredHeightUnit === 'in' ? 'in' : 'cm';
@@ -101,7 +125,7 @@ export default async function ProfilePage({
       </h2>
       {recentThreads.length > 0 ? (
         <ul className="space-y-2">
-          {recentThreads.map((thread: any) => (
+          {recentThreads.map((thread) => (
             <li
               key={thread._id}
               className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded border dark:border-slate-700"
