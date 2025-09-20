@@ -7,14 +7,8 @@ import { useEffect } from 'react';
 import type { Route } from 'next';
 
 const toSameOriginPath = (raw: string): string => {
-  if (!raw.startsWith('/')) {
-    return '/';
-  }
-
-  const [pathWithoutQuery] = raw.split('?');
-  const [cleanPath] = pathWithoutQuery.split('#');
-
-  return cleanPath || '/';
+  if (raw.startsWith('/')) return raw;
+  return '/';
 };
 
 /**
@@ -29,13 +23,14 @@ export function useRequireAuth() {
     if (status === 'unauthenticated') {
       const returnTo =
         typeof window !== 'undefined'
-          ? `${window.location.pathname}${window.location.search}`
+          ? `${window.location.pathname}${window.location.search}${window.location.hash}`
           : '/';
 
-      router.push({
-        pathname: '/auth' as Route,
-        query: { callbackUrl: toSameOriginPath(returnTo) },
+      const params = new URLSearchParams({
+        callbackUrl: toSameOriginPath(returnTo),
       });
+
+      router.push((`/auth?${params.toString()}` as Route));
     }
   }, [status, router]);
 
