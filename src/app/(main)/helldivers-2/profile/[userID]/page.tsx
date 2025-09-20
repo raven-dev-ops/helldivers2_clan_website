@@ -133,9 +133,9 @@ export default async function ProfilePage({
               <Link
                 href={{
                   pathname: '/forum/[categoryId]/[threadId]',
-                  params: {
-                    categoryId: thread.categoryId,
-                    threadId: thread._id,
+                  query: {
+                    categoryId: String(thread.categoryId),
+                    threadId: String(thread._id),
                   },
                 }}
                 className="text-blue-600 dark:text-blue-400 hover:underline"
