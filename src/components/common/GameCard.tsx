@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import type { Route } from 'next';
 import { logger } from '@/lib/logger';
 // Import signIn from next-auth/react
 import { useSession, signIn } from 'next-auth/react';
@@ -11,7 +12,7 @@ import styles from './GameCard.module.css'; // Verify path
 interface GameCardProps {
   title: string;
   imageUrl: string;
-  href: string; // Destination path (used for API and navigation)
+  href: Route; // Destination path (used for API and navigation)
   comingSoon?: boolean;
 }
 

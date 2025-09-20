@@ -8,6 +8,7 @@ import 'swiper/css/effect-coverflow';
 
 import styles from './page.module.css';
 
+import type { Route } from 'next';
 import GameCard from '@/components/common/GameCard';
 import ReviewsRotator from '@/components/home/ReviewsRotator';
 import { reviews as helldiversReviews } from '@/components/home/reviews';
@@ -16,16 +17,46 @@ interface GameDivision {
   id: string;
   title: string;
   imageUrl: string;
-  href: string;
+  href: Route;
   comingSoon: boolean;
 }
 
 const gameDivisions: GameDivision[] = [
-  { id: 'helldivers2', title: 'Helldivers 2', imageUrl: '/images/helldivers2-select-card.jpg', href: '/helldivers-2', comingSoon: false },
-  { id: 'dune',         title: 'Dune: Awakening', imageUrl: '/images/dune-awakening-select-card.jpg', href: '/dune-awakening', comingSoon: true },
-  { id: 'future0',      title: 'Vote August 2025', imageUrl: '/images/placeholder-select-card.jpg', href: '/future0', comingSoon: true },
-  { id: 'future1',      title: 'Vote February 2026', imageUrl: '/images/placeholder-select-card.jpg', href: '/future1', comingSoon: true },
-  { id: 'future2',      title: 'Vote August 2026', imageUrl: '/images/placeholder-select-card.jpg', href: '/future2', comingSoon: true },
+  {
+    id: 'helldivers2',
+    title: 'Helldivers 2',
+    imageUrl: '/images/helldivers2-select-card.jpg',
+    href: '/helldivers-2' as Route,
+    comingSoon: false,
+  },
+  {
+    id: 'dune',
+    title: 'Dune: Awakening',
+    imageUrl: '/images/dune-awakening-select-card.jpg',
+    href: '/dune-awakening' as Route,
+    comingSoon: true,
+  },
+  {
+    id: 'future0',
+    title: 'Vote August 2025',
+    imageUrl: '/images/placeholder-select-card.jpg',
+    href: '/future0' as Route,
+    comingSoon: true,
+  },
+  {
+    id: 'future1',
+    title: 'Vote February 2026',
+    imageUrl: '/images/placeholder-select-card.jpg',
+    href: '/future1' as Route,
+    comingSoon: true,
+  },
+  {
+    id: 'future2',
+    title: 'Vote August 2026',
+    imageUrl: '/images/placeholder-select-card.jpg',
+    href: '/future2' as Route,
+    comingSoon: true,
+  },
 ];
 
 export default function Home() {
