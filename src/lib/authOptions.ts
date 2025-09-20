@@ -3,7 +3,7 @@ import type { LoggerInstance, NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import getMongoClientPromise from '@/lib/mongodb';
+import { getMongoClientPromise } from '@/lib/mongodb';
 
 async function refreshDiscordAccessToken(token: any) {
   try {
@@ -59,8 +59,11 @@ const logger = {
   },
 } satisfies Partial<LoggerInstance>;
 
-export const authOptions: NextAuthOptions = {
-    adapter: MongoDBAdapter(getMongoClientPromise()),
+export function getAuthOptions(): NextAuthOptions {
+  const clientPromise = getMongoClientPromise();
+
+  return {
+    adapter: MongoDBAdapter(clientPromise) as any,
     providers: [
       DiscordProvider({
         clientId: process.env.DISCORD_CLIENT_ID!,
@@ -128,7 +131,4 @@ export const authOptions: NextAuthOptions = {
     debug: process.env.NODE_ENV !== 'production',
     logger,
   };
-
-export function getAuthOptions(): NextAuthOptions {
-  return authOptions;
 }
