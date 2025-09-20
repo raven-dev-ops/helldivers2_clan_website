@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import UserModel from '@/models/User';
-import getMongoClientPromise from '@/lib/mongodb';
+import { getMongoClientPromise } from '@/lib/mongodb';
 import { logger } from '@/lib/logger';
 
 export function buildUserResponse(user: any) {

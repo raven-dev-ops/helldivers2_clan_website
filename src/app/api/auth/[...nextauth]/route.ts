@@ -3,18 +3,17 @@ import NextAuth from 'next-auth';
 import type { NextRequest } from 'next/server';
 import { getAuthOptions } from '@/lib/authOptions';
 
-export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 export const fetchCache = 'default-no-store';
+export const runtime = 'nodejs';
 
-let handler: ReturnType<typeof NextAuth> | null = null;
-
-function getHandler() {
-  if (!handler) {
-    handler = NextAuth(getAuthOptions());
-  }
-  return handler;
+export async function GET(req: NextRequest) {
+  const handler = NextAuth(getAuthOptions());
+  return handler(req);
 }
 
-export const GET = (req: NextRequest) => getHandler()(req);
-export const POST = (req: NextRequest) => getHandler()(req);
+export async function POST(req: NextRequest) {
+  const handler = NextAuth(getAuthOptions());
+  return handler(req);
+}

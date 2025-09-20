@@ -20,5 +20,3 @@ export function getMongoClientPromise(): Promise<MongoClient> {
 
   return clientPromise;
 }
-
-export default getMongoClientPromise;

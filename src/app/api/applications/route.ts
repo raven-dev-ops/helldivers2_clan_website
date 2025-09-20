@@ -1,6 +1,6 @@
 // src/app/api/user-applications/route.ts
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
+import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserApplicationModel from '@/models/UserApplication';

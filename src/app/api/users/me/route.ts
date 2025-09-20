@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
-import getMongoClientPromise from '@/lib/mongodb';
+import { getMongoClientPromise } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
 import { jsonWithETag } from '@/lib/httpCache';
