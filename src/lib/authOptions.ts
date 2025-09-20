@@ -45,6 +45,20 @@ async function refreshDiscordAccessToken(token: any) {
   }
 }
 
+const logger = {
+  error(code: string, metadata?: unknown) {
+    console.error('[NextAuth][error]', code, metadata);
+  },
+  warn(code: string) {
+    console.warn('[NextAuth][warn]', code);
+  },
+  debug(code: string, metadata?: unknown) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[NextAuth][debug]', code, metadata);
+    }
+  },
+} satisfies Partial<LoggerInstance>;
+
 export const authOptions: NextAuthOptions = {
     adapter: MongoDBAdapter(getMongoClientPromise()),
     providers: [
@@ -112,19 +126,7 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     pages: { signIn: '/auth' },
     debug: process.env.NODE_ENV !== 'production',
-    logger: {
-      error(code, metadata) {
-        console.error('[NextAuth][error]', code, metadata);
-      },
-      warn(code, metadata) {
-        console.warn('[NextAuth][warn]', code, metadata);
-      },
-      debug(code, metadata) {
-        if (process.env.NODE_ENV !== 'production') {
-          console.debug('[NextAuth][debug]', code, metadata);
-        }
-      },
-    } satisfies Partial<LoggerInstance>,
+    logger,
   };
 
 export function getAuthOptions(): NextAuthOptions {
