@@ -3,13 +3,16 @@
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import type { Route } from 'next';
 
 /**
  * Example: Hook for protected routes
  * This will redirect the user to /api/auth/signin if they're unauthenticated.
  * Or you can show a loading state until the session is determined.
  */
-export default function useRequireAuth(redirectTo = '/api/auth/signin') {
+const DEFAULT_REDIRECT: Route = '/api/auth/signin';
+
+export default function useRequireAuth(redirectTo: Route = DEFAULT_REDIRECT) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
