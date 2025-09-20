@@ -1,20 +1,13 @@
 'use client';
 
-import Link, { type LinkProps } from 'next/link';
-import { type AnchorHTMLAttributes, type PropsWithChildren } from 'react';
+import Link from 'next/link';
+import type { ComponentProps, PropsWithChildren } from 'react';
 
-// Anchor attributes except href (handled by LinkProps)
-type AnchorExtras = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>;
+type NoPrefetchLinkProps = PropsWithChildren<ComponentProps<typeof Link>>;
 
-type NoPrefetchLinkProps = PropsWithChildren<LinkProps & AnchorExtras>;
-
-export default function NoPrefetchLink({
-  children,
-  prefetch: _prefetch,
-  ...rest
-}: NoPrefetchLinkProps) {
+export default function NoPrefetchLink({ children, ...props }: NoPrefetchLinkProps) {
   return (
-    <Link {...rest} prefetch={false}>
+    <Link prefetch={false} {...props}>
       {children}
     </Link>
   );
