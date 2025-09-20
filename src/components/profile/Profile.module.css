@@ -1,0 +1,198 @@
+.gridContainer {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .gridContainer {
+    grid-template-columns: 280px 1fr;
+    align-items: flex-start;
+  }
+}
+
+.content {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.45);
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+}
+
+.contentTitle {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 600;
+  color: var(--color-primary, #60a5fa);
+  margin-bottom: 1rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.18);
+  color: var(--color-text-primary, #f8fafc);
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  text-transform: uppercase;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.statCard {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.9);
+}
+
+.statValue {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text-primary, #f8fafc);
+}
+
+.profileHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  border-radius: 1rem;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.4);
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(96, 165, 250, 0.65);
+  box-shadow: 0 15px 35px rgba(2, 6, 23, 0.45);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 220px;
+}
+
+.profileName {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-weight: 700;
+  color: var(--color-text-primary, #f8fafc);
+  margin: 0;
+}
+
+.profileSubtitle {
+  margin: 0;
+  color: rgba(191, 219, 254, 0.9);
+  font-size: 0.95rem;
+}
+
+.profileActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary, #60a5fa);
+  color: #05080f;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  border: none;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(59, 130, 246, 0.45);
+}
+
+.button:focus-visible {
+  outline: 2px solid rgba(96, 165, 250, 0.7);
+  outline-offset: 3px;
+}
+
+.sidebar {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: rgba(17, 24, 39, 0.75);
+  border: 1px solid rgba(100, 116, 139, 0.35);
+  border-radius: 0.75rem;
+  height: fit-content;
+}
+
+.sidebarButton {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid transparent;
+  color: var(--color-text-secondary, #cbd5f5);
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.6rem;
+  font-weight: 600;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+
+.sidebarButton[aria-pressed='true'] {
+  border-color: rgba(96, 165, 250, 0.65);
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-text-primary, #f8fafc);
+  transform: translateX(4px);
+}
+
+.sidebarButton:hover {
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+@media (max-width: 1023px) {
+  .sidebar {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .sidebarButton {
+    text-align: center;
+  }
+}

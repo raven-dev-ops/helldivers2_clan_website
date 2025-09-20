@@ -4,11 +4,11 @@ import path from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
+    setupFiles: ['./vitest.setup.ts'],
   },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      'server-only': path.resolve(__dirname, 'test/server-only.ts'),
     },
   },
 });

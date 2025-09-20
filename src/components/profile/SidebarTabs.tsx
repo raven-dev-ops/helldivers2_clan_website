@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/app/(main)/profile/Profile.module.css';
+import styles from '@/components/profile/Profile.module.css';
 
 export type InfoTab =
   | 'roles'

@@ -1,5 +1,4 @@
 // src/app/layout.tsx
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import 'swiper/css';

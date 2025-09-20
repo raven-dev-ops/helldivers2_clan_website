@@ -1,8 +1,8 @@
 'use client';
 
 import Expander from '@/components/common/Expander';
-import base from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
-import code from '@/app/components/CodeBlocks.module.css';
+import base from '@/app/(main)/helldivers-2/styles/HelldiversBase.module.css';
+import code from '@/components/common/CodeBlocks.module.css';
 import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaign';
 
 export interface ChallengeLevelData {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import base from '../../HelldiversBase.module.css';
+import base from '../../styles/HelldiversBase.module.css';
 import styles from './Apply.module.css';
 import Quiz, { type Question } from '../../../../../components/academy/training/Quiz'; // adjust path if needed
 

@@ -13,8 +13,8 @@ import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
 
-import base from '../../helldivers-2/HelldiversBase.module.css';
-import s from '@/app/components/forum/ProfileEditForm.module.css'; // reuse Settings layout styles
+import base from '../../styles/HelldiversBase.module.css';
+import s from '@/components/profile/ProfileEditForm.module.css'; // reuse Settings layout styles
 
 const overlayStyle: CSSProperties = {
   position: 'fixed',

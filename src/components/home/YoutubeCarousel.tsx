@@ -7,7 +7,7 @@ import { Navigation, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
-import styles from './HelldiversBase.module.css';
+import styles from './YouTubeCarousel.module.css';
 
 export interface YoutubeVideo {
   id: string;

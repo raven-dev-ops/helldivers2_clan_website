@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FaTwitch, FaCircle } from 'react-icons/fa';
 import styles from './CreatorsPage.module.css'; // Import the CSS Module
 import { logger } from '@/lib/logger';
-import base from '../HelldiversBase.module.css';
+import base from '../styles/HelldiversBase.module.css';
 
 // Define the structure for creator data fetched from *your* API route
 interface CreatorData {

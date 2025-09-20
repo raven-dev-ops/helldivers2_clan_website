@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import base from '../HelldiversBase.module.css';
+import base from '@/app/(main)/helldivers-2/styles/HelldiversBase.module.css';
 import styles from './ModuleCard.module.css';
 import type { AcademyModule } from '@/components/academy/Modules';
 
