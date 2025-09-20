@@ -1,18 +1,11 @@
-// Shared data for Helldivers 2 — Challenges
+import type { ChallengeLevelData } from '@/types/challenges';
 
-export interface ChallengeLevelData {
-    id: string;
-    levelTitle: string;
-    details: string;
-    videoUrls?: string[];
-  }
-  
-  /** John Helldiver challenge levels (JH0–JH7) */
-  export const johnHelldiverLevels: ChallengeLevelData[] = [
-    {
-      id: 'level-0',
-      levelTitle: 'JH0 Basic Clearance',
-      details: `#FORTRESS / MEGA NEST – Solo Base
+/** John Helldiver challenge levels (JH0–JH7) */
+export const challengeLevels: ChallengeLevelData[] = [
+  {
+    id: 'level-0',
+    levelTitle: 'JH0 Basic Clearance',
+    details: `#FORTRESS / MEGA NEST – Solo Base
   Extract Required
   
   RECOMMENDED LOADOUTS & STRATAGEMS (allowed):
@@ -35,12 +28,12 @@ export interface ChallengeLevelData {
   TACTICS
   • FORTRESS: Consider drop-podding onto fabricators to delete spawns early; then clear AA/gun towers and extract. Keep moving between cover; don’t farm.
   • MEGA NEST: Run the rim clockwise, destroy bug holes first, save heavy ordnance for Impalers/Bile Titans and the “Titan hole”. Call heavy eagle/orbital just before you jump down to a cluster.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-1',
-      levelTitle: 'JH1 Sabotage Proficiency',
-      details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+    videoUrls: [],
+  },
+  {
+    id: 'level-1',
+    levelTitle: 'JH1 Sabotage Proficiency',
+    details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
   No special restrictions
   Extract Required
   
@@ -62,12 +55,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Move objective-to-objective; don’t fight the whole map. Use Eagles/Orbitals to clear bunkers, radar, or cannons from outside. Kill scouts first to avoid endless adds. Plant explosives and leave—don’t linger.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-2',
-      levelTitle: 'JH2 Resource Denial',
-      details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
+    videoUrls: [],
+  },
+  {
+    id: 'level-2',
+    levelTitle: 'JH2 Resource Denial',
+    details: `#SABOTAGE MISSION (Command Bunker, Airfield, Orbital Cannon, Nuke Nursery, Purge Hatchery)
   No Stratagems
   No Resupply
   Extract Required
@@ -89,12 +82,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Don’t open fights you can bypass. Use terrain, smoke (if your grenade slot allows), and dives to break contact. Finish the objective and extract—this is a denial op.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-3',
-      levelTitle: 'JH3 ICBM Control',
-      details: `#ICBM
+    videoUrls: [],
+  },
+  {
+    id: 'level-3',
+    levelTitle: 'JH3 ICBM Control',
+    details: `#ICBM
   No Stratagems
   Extract Required
   
@@ -113,12 +106,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Clear perimeter before entering silo. Inside: sprint console-to-console, dive to break line-of-sight, and save stims for exit. Memorize the panel order so you’re not reading under fire.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-4',
-      levelTitle: 'JH4 Flawless ICBM',
-      details: `#ICBM
+    videoUrls: [],
+  },
+  {
+    id: 'level-4',
+    levelTitle: 'JH4 Flawless ICBM',
+    details: `#ICBM
   No Stratagems
   No Resupply
   No Deaths
@@ -132,12 +125,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Plan your route and commit. Pre-clear outside, then execute the silo in one push. Only fight what blocks the path, keep moving, and use dives to cancel enemy attacks. If you lose tempo, reset outside.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-5',
-      levelTitle: 'JH5 Perfect Survey',
-      details: `#Geological Survey
+    videoUrls: [],
+  },
+  {
+    id: 'level-5',
+    levelTitle: 'JH5 Perfect Survey',
+    details: `#Geological Survey
   No Deaths
   Extract Required
   
@@ -151,12 +144,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Objectives are Seismic Probe(s) → Prospecting Drill. Set sentries to create intersecting arcs, keep enemies at standoff, and rotate around the drill to clear burrowers. Start the extract immediately after final data uplink; don’t stay to farm.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-6',
-      levelTitle: 'JH6 Eagle Ace',
-      details: `#Capture Flag
+    videoUrls: [],
+  },
+  {
+    id: 'level-6',
+    levelTitle: 'JH6 Eagle Ace',
+    details: `#Capture Flag
   Eagles Only
   Extract Required
   
@@ -169,12 +162,12 @@ export interface ChallengeLevelData {
   
   TACTICS
   • The flag raises for ~1m40s while a Helldiver stays inside the zone. Saluting speeds the raise per player. Kite around the edge of the circle and chain eagles ahead of your path to keep the lane clear; don’t stand on the pole. Save 500kg for emergency clears or the final 20%. Extract immediately after success.`,
-      videoUrls: [],
-    },
-    {
-      id: 'level-7',
-      levelTitle: 'JH7 The Purist',
-      details: `#ICBM
+    videoUrls: [],
+  },
+  {
+    id: 'level-7',
+    levelTitle: 'JH7 The Purist',
+    details: `#ICBM
   No Stratagems
   Constitution Rifle + Senator with Throwing Knives
   No Deaths
@@ -193,7 +186,10 @@ export interface ChallengeLevelData {
   
   TACTICS
   • Route all side objectives first to snowball XP/samples and reduce world spawns, then commit to the silo. Avoid sustained fights; the Constitution is accurate but not a horde-clearer. Knives stagger/stun hunters and interrupt specials; finish with headshots. Inside the silo, sprint panel-to-panel and dive through melee windups. For the exception: the Break-Action Shotgun may be picked up if found, but drop it before extract to keep the spirit of the run.`,
-      videoUrls: [],
-    },
-  ];
-  
+    videoUrls: [],
+  },
+];
+
+export async function getChallengeLevels(): Promise<ChallengeLevelData[]> {
+  return challengeLevels;
+}

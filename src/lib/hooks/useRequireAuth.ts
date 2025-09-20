@@ -4,6 +4,12 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import type { Route } from 'next';
+
+const toSameOriginPath = (raw: string): string => {
+  if (raw.startsWith('/')) return raw;
+  return '/';
+};
 
 /**
  * Client-side hook to require authentication.
@@ -15,9 +21,16 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      const returnTo = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
-      const url = `/auth?callbackUrl=${encodeURIComponent(returnTo)}`;
-      router.push(url);
+      const returnTo =
+        typeof window !== 'undefined'
+          ? `${window.location.pathname}${window.location.search}${window.location.hash}`
+          : '/';
+
+      const params = new URLSearchParams({
+        callbackUrl: toSameOriginPath(returnTo),
+      });
+
+      router.push((`/auth?${params.toString()}` as Route));
     }
   }, [status, router]);
 

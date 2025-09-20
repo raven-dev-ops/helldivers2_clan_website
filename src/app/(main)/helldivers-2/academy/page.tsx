@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import base from '../HelldiversBase.module.css';
+import base from '../styles/HelldiversBase.module.css';
 import page from './AcademyPage.module.css';
 import ModuleCard from '@/components/academy/ModuleCard';
 import { MODULES, type ModuleWithDetails } from '@/components/academy/Modules';

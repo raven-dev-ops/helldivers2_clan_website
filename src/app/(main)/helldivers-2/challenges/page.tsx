@@ -1,35 +1,9 @@
-'use client';
+import { getChallengeLevels } from '@/lib/challenges';
+import ChallengeList from '@/components/challenges/ChallengeList';
 
-import Expander from '@/components/common/Expander';
-import base from '@/app/(main)/helldivers-2/HelldiversBase.module.css';
-import code from '@/app/components/CodeBlocks.module.css';
-import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaign';
+export const revalidate = 60;
 
-export interface ChallengeLevelData {
-  id: string;
-  levelTitle: string;
-  details: string;
-  videoUrls?: string[];
-}
-
-export default function Challenges({ items }: { items: ChallengeLevelData[] }) {
-  return (
-    <>
-      {items.map((ch) => (
-        <Expander
-          key={ch.id}
-          id={ch.id}
-          title={ch.levelTitle}
-          titleClassName={base.subHeading}
-          style={{ scrollMarginTop: 96 }}
-        >
-          <pre className={code.codeBlock}>{ch.details}</pre>
-          <YoutubeCarouselPlaceholder
-            videoUrls={ch.videoUrls ?? []}
-            title={ch.levelTitle}
-          />
-        </Expander>
-      ))}
-    </>
-  );
+export default async function ChallengesPage() {
+  const items = await getChallengeLevels();
+  return <ChallengeList items={items} />;
 }

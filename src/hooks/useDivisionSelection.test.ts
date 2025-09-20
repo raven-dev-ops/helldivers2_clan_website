@@ -1,6 +1,7 @@
 /* @vitest-environment jsdom */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import type { Route } from 'next';
 import { useDivisionSelection } from './useDivisionSelection';
 
 const mockPush = vi.fn();
@@ -37,22 +38,24 @@ describe('useDivisionSelection', () => {
       json: () => Promise.resolve({}),
     });
 
-    const { result } = renderHook(() => useDivisionSelection());
+    const route = '/helldivers-2' as Route;
+    const { result } = renderHook(() => useDivisionSelection({ href: route }));
 
     await act(async () => {
-      await result.current.selectDivision('/helldivers-2');
+      await result.current.selectDivision();
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/helldivers-2');
+    expect(mockPush).toHaveBeenCalledWith(route);
     expect(mockSignIn).not.toHaveBeenCalled();
   });
 
   it('calls signIn when user is unauthenticated', async () => {
     mockUseSession.mockReturnValue({ data: null, status: 'unauthenticated' });
-    const { result } = renderHook(() => useDivisionSelection());
+    const route = '/helldivers-2' as Route;
+    const { result } = renderHook(() => useDivisionSelection({ href: route }));
 
     await act(async () => {
-      await result.current.selectDivision('/helldivers-2');
+      await result.current.selectDivision();
     });
 
     expect(mockSignIn).toHaveBeenCalled();

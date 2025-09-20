@@ -1,16 +1,20 @@
 // src/app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth';
+import type { NextRequest } from 'next/server';
 import { getAuthOptions } from '@/lib/authOptions';
-import type { NextApiRequest, NextApiResponse } from 'next';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'default-no-store';
 
-/**
- * NextAuth API route handlers.
- */
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  return await NextAuth(req, res, getAuthOptions());
-};
+let handler: ReturnType<typeof NextAuth> | null = null;
 
-export { handler as GET, handler as POST };
+function getHandler() {
+  if (!handler) {
+    handler = NextAuth(getAuthOptions());
+  }
+  return handler;
+}
+
+export const GET = (req: NextRequest) => getHandler()(req);
+export const POST = (req: NextRequest) => getHandler()(req);

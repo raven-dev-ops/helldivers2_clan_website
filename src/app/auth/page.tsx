@@ -1,6 +1,7 @@
 // src/app/auth/page.tsx
 'use client';
 
+import type { Route } from 'next';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -11,6 +12,18 @@ import styles from './Auth.module.css';
 import { logger } from '@/lib/logger';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';
+
+function toSafeRoute(raw: string | null | undefined): Route {
+  if (!raw) return '/' as Route;
+  if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    return '/' as Route;
+  }
+  if (raw.startsWith('/')) {
+    const path = raw.split('?')[0].split('#')[0];
+    return (path || '/') as Route;
+  }
+  return '/' as Route;
+}
 
 function AuthInner() {
   // --- State and Refs ---
@@ -73,8 +86,8 @@ function AuthInner() {
   useEffect(() => {
     // Auth Redirect
     if (status === 'authenticated') {
-      const callbackUrl = searchParams?.get('callbackUrl') || '/';
-      router.replace(callbackUrl);
+      const safeRoute = toSafeRoute(searchParams?.get('callbackUrl'));
+      router.replace(safeRoute);
     }
   }, [status, router, searchParams]);
 
@@ -120,7 +133,7 @@ function AuthInner() {
             <button
               onClick={() => {
                 handleInteraction();
-                const callbackUrl = searchParams?.get('callbackUrl') || '/';
+                const callbackUrl = toSafeRoute(searchParams?.get('callbackUrl'));
                 signIn('discord', { callbackUrl });
               }}
               className={styles.discordButton}
