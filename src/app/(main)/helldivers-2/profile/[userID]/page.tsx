@@ -1,4 +1,4 @@
-// src/app/(main)/profile/[userID]/page.tsx
+// src/app/(main)/helldivers-2/profile/[userID]/page.tsx
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
@@ -33,9 +33,9 @@ async function getUserProfile(userID: string) {
 export default async function ProfilePage({
   params,
 }: {
-  params: { userID: string };
+  params: Promise<{ userID: string }>;
 }) {
-  const { userID } = params;
+  const { userID } = await params;
   const profileData = await getUserProfile(userID);
 
   if (!profileData) {
