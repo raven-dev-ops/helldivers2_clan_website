@@ -1,5 +1,5 @@
 // src/lib/authOptions.ts
-import type { NextAuthOptions } from 'next-auth';
+import type { LoggerInstance, NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
@@ -112,11 +112,19 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     pages: { signIn: '/auth' },
     debug: process.env.NODE_ENV !== 'production',
-    events: {
-      error(...args) {
-        console.error('NextAuth error:', ...args);
+    logger: {
+      error(code, metadata) {
+        console.error('[NextAuth][error]', code, metadata);
       },
-    },
+      warn(code, metadata) {
+        console.warn('[NextAuth][warn]', code, metadata);
+      },
+      debug(code, metadata) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.debug('[NextAuth][debug]', code, metadata);
+        }
+      },
+    } satisfies Partial<LoggerInstance>,
   };
 
 export function getAuthOptions(): NextAuthOptions {
