@@ -4,6 +4,18 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import type { Route } from 'next';
+
+const toSameOriginPath = (raw: string): string => {
+  if (!raw.startsWith('/')) {
+    return '/';
+  }
+
+  const [pathWithoutQuery] = raw.split('?');
+  const [cleanPath] = pathWithoutQuery.split('#');
+
+  return cleanPath || '/';
+};
 
 /**
  * Client-side hook to require authentication.
@@ -20,12 +32,10 @@ export function useRequireAuth() {
           ? `${window.location.pathname}${window.location.search}`
           : '/';
 
-      const authHref = {
-        pathname: '/auth' as const,
-        query: { callbackUrl: returnTo },
-      } satisfies Parameters<typeof router.push>[0];
-
-      router.push(authHref);
+      router.push({
+        pathname: '/auth' as Route,
+        query: { callbackUrl: toSameOriginPath(returnTo) },
+      });
     }
   }, [status, router]);
 
