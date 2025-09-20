@@ -131,7 +131,13 @@ export default async function ProfilePage({
               className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded border dark:border-slate-700"
             >
               <Link
-                href={`/forum/${thread.categoryId}/${thread._id}`}
+                href={{
+                  pathname: '/forum/[categoryId]/[threadId]',
+                  params: {
+                    categoryId: thread.categoryId,
+                    threadId: thread._id,
+                  },
+                }}
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 {thread.title}
