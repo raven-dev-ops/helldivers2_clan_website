@@ -20,10 +20,12 @@ export function useRequireAuth() {
           ? `${window.location.pathname}${window.location.search}`
           : '/';
 
-      router.push({
-        pathname: '/auth',
+      const authHref = {
+        pathname: '/auth' as const,
         query: { callbackUrl: returnTo },
-      });
+      } satisfies Parameters<typeof router.push>[0];
+
+      router.push(authHref);
     }
   }, [status, router]);
 
