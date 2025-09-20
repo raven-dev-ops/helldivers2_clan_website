@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import YoutubeCarousel, { YoutubeVideo } from '../home/YoutubeCarousel';
-import styles from './HelldiversBase.module.css';
+import styles from './YoutubeCarouselCampaign.module.css';
 
 function extractYouTubeId(url: string): string | null {
   try {

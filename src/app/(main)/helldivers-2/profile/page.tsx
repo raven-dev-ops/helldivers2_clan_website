@@ -1,10 +1,9 @@
 'use client';
-/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
-import baseStyles from '../helldivers-2/HelldiversBase.module.css';
+import baseStyles from '../styles/HelldiversBase.module.css';
 import styles from '@/components/profile/Profile.module.css';
 
 import ProfileHeader from '@/components/profile/ProfileHeader';

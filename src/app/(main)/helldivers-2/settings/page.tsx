@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import baseStyles from "../helldivers-2/HelldiversBase.module.css";
-import styles from './Settings.module.css';
+import baseStyles from "../styles/HelldiversBase.module.css";
+import styles from './SettingsPage.module.css';
 import ProfileEditForm from "@/components/profile/ProfileEditForm";
 
 export default function SettingsPage() {

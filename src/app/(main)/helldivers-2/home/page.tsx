@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FaDiscord, FaYoutube } from 'react-icons/fa';
 import { FaTiktok } from 'react-icons/fa6';
-import styles from './HelldiversBase.module.css';
+import styles from './HelldiversPage.module.css';
 import reviews from '../../../../components/home/reviews';
 
 // Note: do NOT pass { ssr: false } here — it's not allowed in Server Components.
