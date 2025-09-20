@@ -1,7 +1,7 @@
 // src/app/api/user-applications/route.ts
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { getAuthOptions } from '@/lib/authOptions';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserApplicationModel from '@/models/UserApplication';
 import mongoose from 'mongoose';
@@ -20,7 +20,7 @@ const userApplicationSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const session = await getServerSession(getAuthOptions());
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id || !mongoose.Types.ObjectId.isValid(session.user.id)) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

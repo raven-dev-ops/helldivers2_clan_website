@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { ObjectId } from 'mongodb';
-import { getAuthOptions } from '@/lib/authOptions';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongodb';
 
 export async function DELETE() {
-  const session = await getServerSession(getAuthOptions());
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
   }

@@ -45,8 +45,7 @@ async function refreshDiscordAccessToken(token: any) {
   }
 }
 
-export function getAuthOptions(): NextAuthOptions {
-  return {
+export const authOptions: NextAuthOptions = {
     adapter: MongoDBAdapter(getMongoClientPromise()),
     providers: [
       DiscordProvider({
@@ -112,6 +111,14 @@ export function getAuthOptions(): NextAuthOptions {
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: { signIn: '/auth' },
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV !== 'production',
+    events: {
+      error(...args) {
+        console.error('NextAuth error:', ...args);
+      },
+    },
   };
+
+export function getAuthOptions(): NextAuthOptions {
+  return authOptions;
 }

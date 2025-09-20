@@ -12,7 +12,7 @@ const ForumCategorySchema = new Schema<ForumCategoryDocument>(
   {
     name: { type: String, required: true, trim: true },
     description: { type: String, default: '' },
-    slug: { type: String, trim: true, index: true },
+    slug: { type: String, trim: true },
   },
   {
     timestamps: true,

@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { getAuthOptions } from '@/lib/authOptions';
+import { authOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
 import getMongoClientPromise from '@/lib/mongodb';
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   const rid = req.headers.get('x-request-id') || cryptoRandomId();
 
   const t0 = Date.now();
-  const session = await getServerSession(getAuthOptions());
+  const session = await getServerSession(authOptions);
   const tAuth = Date.now() - t0;
   if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
@@ -168,7 +168,7 @@ export async function GET(req: NextRequest) {
 /** PUT /api/users/me — update profile (multipart or JSON) */
 export async function PUT(req: NextRequest) {
   const rid = req.headers.get('x-request-id') || cryptoRandomId();
-  const session = await getServerSession(getAuthOptions());
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
   await dbConnect();
@@ -446,7 +446,7 @@ export async function PUT(req: NextRequest) {
 /** DELETE /api/users/me — delete user + auth artifacts */
 export async function DELETE(req: NextRequest) {
   const rid = req.headers.get('x-request-id') || cryptoRandomId();
-  const session = await getServerSession(getAuthOptions());
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) return json({ error: 'unauthorized' }, { status: 401 }, rid);
 
   await dbConnect();
