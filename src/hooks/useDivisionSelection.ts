@@ -2,21 +2,28 @@
 import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import type { Route } from 'next';
 import { logger } from '@/lib/logger';
 
 export interface DivisionSelectionResult {
-  selectDivision: (href: string) => Promise<void>;
+  selectDivision: () => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
 
-export function useDivisionSelection(): DivisionSelectionResult {
+export interface UseDivisionSelectionArgs {
+  href: Route;
+}
+
+export function useDivisionSelection({
+  href,
+}: UseDivisionSelectionArgs): DivisionSelectionResult {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectDivision = async (href: string) => {
+  const selectDivision = async () => {
     setError(null); // Reset error on new attempt
 
     // 1. Prevent action if auth loading
