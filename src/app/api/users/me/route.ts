@@ -11,6 +11,47 @@ import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
 import { jsonWithETag } from '@/lib/httpCache';
 
+type UserProfileSnapshot = {
+  id: string | undefined;
+  name: string | null;
+  firstName: string | null;
+  middleName: string | null;
+  lastName: string | null;
+  sesName: string | null;
+  division: string | null;
+  characterHeightCm: number | null;
+  characterWeightKg: number | null;
+  homeplanet: string | null;
+  background: string | null;
+  callsign: string | null;
+  rankTitle: string | null;
+  favoriteWeapon: string | null;
+  favoredEnemy: string | null;
+  armor: string | null;
+  motto: string | null;
+  twitchUrl: string | null;
+  preferredHeightUnit: string;
+  preferredWeightUnit: string;
+  meritPoints: number;
+  challengeSubmissions: unknown[];
+  discordRoles: unknown[];
+};
+
+type UserProfileHistoryEntry = {
+  user_id: ObjectId;
+  discord_id: string | null;
+  time: Date;
+  profile: UserProfileSnapshot;
+};
+
+type UserProfileDocument = {
+  user_id: ObjectId;
+  discord_id: string | null;
+  last_profile: UserProfileSnapshot;
+  last_updated: Date;
+  history?: UserProfileHistoryEntry[];
+};
+
 type Cached = { data: Record<string, unknown>; expires: number };
 const userCache = new Map<string, Cached>();
 
@@ -361,13 +402,14 @@ export async function PUT(req: NextRequest) {
     const client = await getMongoClientPromise();
     const db = client.db();
     const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
+    const userProfiles = appDb.collection<UserProfileDocument>('User_Profiles');
 
     const userObjectId = new ObjectId(session.user.id);
     const accounts = db.collection('accounts');
     const discordAccount = await accounts.findOne({ userId: userObjectId, provider: 'discord' });
     const discordId = discordAccount?.providerAccountId || null;
 
-    const profile = {
+    const profile: UserProfileSnapshot = {
       id: updated?._id?.toString(),
       name: updated?.name ?? null,
       firstName: updated?.firstName ?? null,
@@ -389,15 +431,22 @@ export async function PUT(req: NextRequest) {
       preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
       preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
       meritPoints: updated?.meritPoints ?? 0,
-      challengeSubmissions: updated?.challengeSubmissions ?? [],
+      challengeSubmissions: Array.isArray(updated?.challengeSubmissions) ? updated?.challengeSubmissions : [],
       discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
     };
 
-    await appDb.collection('User_Profiles').updateOne(
+    const historyEntry: UserProfileHistoryEntry = {
+      user_id: userObjectId,
+      discord_id: discordId,
+      time: new Date(),
+      profile,
+    };
+
+    await userProfiles.updateOne(
       { user_id: userObjectId },
       {
         $set: { user_id: userObjectId, discord_id: discordId, last_profile: profile, last_updated: new Date() },
-        $push: { history: { user_id: userObjectId, discord_id: discordId, time: new Date(), profile } },
+        $push: { history: historyEntry },
       },
       { upsert: true }
     );
