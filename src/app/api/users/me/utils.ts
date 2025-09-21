@@ -1,4 +1,4 @@
-import { ObjectId, type Collection, type UpdateFilter } from 'mongodb';
+import { ObjectId, type Collection, type Document, type UpdateFilter } from 'mongodb';
 import UserModel from '@/models/User';
 import { getMongoClientPromise } from '@/lib/mongodb';
 import { logger } from '@/lib/logger';
@@ -50,7 +50,7 @@ export type UserState = {
   history: HistoryEntry[];
 };
 
-function getUserStateCollection(db: { collection<T>(name: string): Collection<T> }) {
+function getUserStateCollection(db: { collection<TSchema extends Document>(name: string): Collection<TSchema> }) {
   return db.collection<UserState>('User_Profiles');
 }
 
