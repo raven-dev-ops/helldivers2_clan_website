@@ -1,4 +1,14 @@
 // src/app/profile/me/page.tsx
+
+// Force runtime rendering (no SSG/ISR) so DB/env are only needed at request time
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const runtime = 'nodejs';
+
+// Belt & suspenders: touching headers() also forces dynamic rendering
+import { headers } from 'next/headers';
+headers();
+
 import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import ProfileView from '@/components/profile/ProfileView';
@@ -28,7 +38,7 @@ export default async function ProfilePage() {
     );
   }
 
-  // Server-side data fetches
+  // Server-side data fetches (no call to /api/users/profile/last)
   const now = new Date();
   const qs = new URLSearchParams({
     scopes: 'solo,month,lifetime',
@@ -39,19 +49,12 @@ export default async function ProfilePage() {
     year: String(now.getUTCFullYear()),
   }).toString();
 
-  const [me, last, batch] = await Promise.all([
+  const [me, batch] = await Promise.all([
     fetchJSON<any>('/api/users/me?include=avatar,submissions'),
-    (async () => {
-      try {
-        return await fetchJSON<any>('/api/users/profile/last');
-      } catch {
-        return { last_profile: null };
-      }
-    })(),
     fetchJSON<BatchResult>(`/api/helldivers/leaderboard/batch?${qs}`),
   ]);
 
-  const userData = { ...me, lastProfile: last?.last_profile ?? null };
+  const userData = me;
 
   return <ProfileView session={session} userData={userData} batch={batch} />;
 }
