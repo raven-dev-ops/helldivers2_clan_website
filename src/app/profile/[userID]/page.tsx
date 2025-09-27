@@ -1,4 +1,4 @@
-// src/app/(main)/helldivers-2/profile/[userID]/page.tsx
+// src/app/profile/[userID]/page.tsx
 
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/dbConnect';
@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 import { logger } from '@/lib/logger';
 
 type UserProfileData = {
-  user: Record<string, unknown> & { createdAt?: string | Date };
+  user: Record<string, any> & { createdAt?: string | Date };
 };
 
 async function getUserProfile(userID: string): Promise<UserProfileData | null> {
@@ -20,7 +20,7 @@ async function getUserProfile(userID: string): Promise<UserProfileData | null> {
     const user = await UserModel.findById(userID).lean();
     if (!user) return null;
 
-    // Serialize ObjectId/Date for edge/runtime safety
+    // Serialize ObjectId/Date safely for the runtime
     return JSON.parse(JSON.stringify({ user })) as UserProfileData;
   } catch (error) {
     logger.error('Error fetching profile:', error);
@@ -31,9 +31,10 @@ async function getUserProfile(userID: string): Promise<UserProfileData | null> {
 export default async function ProfilePage({
   params,
 }: {
-  params: { userID: string };
+  // NOTE: params is a Promise here to satisfy your project's PageProps constraint
+  params: Promise<{ userID: string }>;
 }) {
-  const { userID } = params;
+  const { userID } = await params;
   const profileData = await getUserProfile(userID);
 
   if (!profileData) {
@@ -82,19 +83,16 @@ export default async function ProfilePage({
           height={160}
           className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
         />
-
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
             {displayName}
           </h1>
-
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Member since{' '}
             {user?.createdAt
               ? format(new Date(user.createdAt), 'MMMM d, yyyy')
               : 'N/A'}
           </p>
-
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}):{' '}
             {weightDisplay}
