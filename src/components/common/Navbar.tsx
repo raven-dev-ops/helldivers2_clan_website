@@ -1,4 +1,5 @@
 // src/components/common/Navbar.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8,7 +9,7 @@ import { useSession, signOut } from 'next-auth/react';
 import styles from '@/styles/Navbar.module.css';
 import ThemeToggle from '@/components/common/ThemeToggle';
 
-// Helper: make Next typed routes happy
+// Helper: build a URL + optional hash (anchor)
 const toUrl = (pathname: string, hash?: string) =>
   hash ? { pathname, hash } : { pathname };
 
@@ -34,7 +35,6 @@ const CAMPAIGN_LABELS: Array<{ id: string; label: string }> = [
 
 function NavLinks(props: {
   variant: Variant;
-  divisionBasePath: string;
   pathname: string;
   isClient: boolean;
   sessionStatus: 'authenticated' | 'loading' | 'unauthenticated';
@@ -43,7 +43,6 @@ function NavLinks(props: {
 }) {
   const {
     variant,
-    divisionBasePath,
     pathname,
     isClient,
     sessionStatus,
@@ -51,7 +50,7 @@ function NavLinks(props: {
     closeMobile,
   } = props;
 
-  const ACADEMY_BASE = `${divisionBasePath}/academy`;
+  const ACADEMY_BASE = `/academy`;
   const ACADEMY_APPLY = `${ACADEMY_BASE}/apply`;
   const ACADEMY_MY = `${ACADEMY_BASE}/training`;
 
@@ -62,13 +61,13 @@ function NavLinks(props: {
     `${styles.link} ${active ? styles.activeLink : ''}`;
 
   const baseItems = [
-    { href: `${divisionBasePath}`, label: 'Home' },
-    { href: `${divisionBasePath}/merch`, label: 'Shop' },
-    { href: `${divisionBasePath}/leaderboard`, label: 'Leaderboard' },
-    { href: `${divisionBasePath}/challenges`, label: 'Challenges' },
-    { href: `${divisionBasePath}/campaigns`, label: 'Campaigns' },
-    { href: `${divisionBasePath}/academy`, label: 'Academy' },
-    { href: `${divisionBasePath}/creators`, label: 'Streamers' },
+    { href: `/`, label: 'Home' },
+    { href: `/merch`, label: 'Shop' },
+    { href: `/leaderboard`, label: 'Leaderboard' },
+    { href: `/challenges`, label: 'Challenges' },
+    { href: `/campaigns`, label: 'Campaigns' },
+    { href: `/academy`, label: 'Academy' },
+    { href: `/creators`, label: 'Streamers' },
   ] as const;
 
   const isDesktop = variant === 'desktop';
@@ -81,16 +80,22 @@ function NavLinks(props: {
         const startsWith = (p: string) => isClient && pathname.startsWith(p);
 
         if (label === 'Leaderboard') {
-          const active = startsWith(`${divisionBasePath}/leaderboard`);
+          const active = startsWith(`/leaderboard`);
           return (
-            <Link key={href} href={toUrl(href)} className={linkCls(active)} prefetch={false} {...linkClick}>
+            <Link
+              key={href}
+              href={toUrl(href)}
+              className={linkCls(active)}
+              prefetch={false}
+              {...linkClick}
+            >
               {label}
             </Link>
           );
         }
 
         if (label === 'Challenges') {
-          const active = startsWith(`${divisionBasePath}/challenges`);
+          const active = startsWith(`/challenges`);
 
           // Desktop: dropdown; Mobile: linear list + subitems
           if (isDesktop) {
@@ -103,7 +108,7 @@ function NavLinks(props: {
                   {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
                     <Link
                       key={id}
-                      href={toUrl(`${divisionBasePath}/challenges`, id)}
+                      href={toUrl(`/challenges`, id)}
                       className={styles.dropdownItem}
                       role="menuitem"
                       prefetch={false}
@@ -124,7 +129,7 @@ function NavLinks(props: {
               {CHALLENGE_LEVEL_LABELS.map(({ id, label }) => (
                 <Link
                   key={id}
-                  href={toUrl(`${divisionBasePath}/challenges`, id)}
+                  href={toUrl(`/challenges`, id)}
                   className={styles.link}
                   prefetch={false}
                   {...linkClick}
@@ -137,7 +142,7 @@ function NavLinks(props: {
         }
 
         if (label === 'Campaigns') {
-          const active = startsWith(`${divisionBasePath}/campaigns`);
+          const active = startsWith(`/campaigns`);
 
           if (isDesktop) {
             return (
@@ -149,7 +154,7 @@ function NavLinks(props: {
                   {CAMPAIGN_LABELS.map(({ id, label }) => (
                     <Link
                       key={id}
-                      href={toUrl(`${divisionBasePath}/campaigns`, id)}
+                      href={toUrl(`/campaigns`, id)}
                       className={styles.dropdownItem}
                       role="menuitem"
                       prefetch={false}
@@ -170,7 +175,7 @@ function NavLinks(props: {
               {CAMPAIGN_LABELS.map(({ id, label }) => (
                 <Link
                   key={id}
-                  href={toUrl(`${divisionBasePath}/campaigns`, id)}
+                  href={toUrl(`/campaigns`, id)}
                   className={styles.link}
                   prefetch={false}
                   {...linkClick}
@@ -285,16 +290,16 @@ const Navbar = () => {
   const pathname = usePathname();
   const { status: sessionStatus } = useSession();
 
-  const divisionBasePath = '/helldivers-2';
-
   useEffect(() => setIsClient(true), []);
 
   useEffect(() => {
     if (sessionStatus === 'authenticated') {
-      fetch('/api/users/me')
+      fetch('/api/users/me', { cache: 'no-store' })
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => setMeritPoints(data ? data.meritPoints ?? 0 : 0))
         .catch(() => setMeritPoints(0));
+    } else {
+      setMeritPoints(null);
     }
   }, [sessionStatus]);
 
@@ -306,6 +311,7 @@ const Navbar = () => {
         <button
           className={styles.mobileMenuButton}
           aria-label="Toggle menu"
+          aria-expanded={isMobileMenuOpen}
           onClick={() => setMobileMenuOpen((v) => !v)}
         >
           {isMobileMenuOpen ? '✕' : '☰'}
@@ -315,7 +321,6 @@ const Navbar = () => {
         <div className={styles.desktopMenu}>
           <NavLinks
             variant="desktop"
-            divisionBasePath={divisionBasePath}
             pathname={pathname}
             isClient={isClient}
             sessionStatus={sessionStatus}
@@ -328,7 +333,6 @@ const Navbar = () => {
         <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           <NavLinks
             variant="mobile"
-            divisionBasePath={divisionBasePath}
             pathname={pathname}
             isClient={isClient}
             sessionStatus={sessionStatus}
