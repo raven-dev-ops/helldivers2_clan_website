@@ -1,163 +1,123 @@
 // src/app/challenges/page.tsx
-
 'use client';
 
-import { useMemo, useState, type CSSProperties } from 'react';
+import React, { useState } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
 
-type ChallengeLevelLite = {
-  id: string;           // e.g., "level-1"
-  levelTitle: string;   // e.g., "JH1 Sabotage Proficiency"
-};
+// Styles
+import base from '@/styles/Base.module.css';
+import exp from '@/styles/Expanders.module.css';
+import code from '@/styles/CodeBlocks.module.css';
 
-type SubmitChallengeModalProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmitted: (msg: string) => void;   // match campaign modal signature
-  levels: ChallengeLevelLite[];         // ← add levels prop (what your page passes)
-};
+// Components
+import SubmitChallengeModal from '@/components/challenges/SubmitChallengeModal';
+import YoutubeCarouselPlaceholder from '@/components/challenges/YoutubeCarouselChallenges';
 
-function parseLevelNumber(id: string): number | null {
-  const parts = id.split('-');
-  const n = Number(parts[1]);
-  return Number.isFinite(n) ? n : null;
-}
+// Data (JH0–JH7)
+import { challengeLevels, type ChallengeLevelData } from '@/lib/challenges';
 
-export default function SubmitChallengeModal({
-  isOpen,
-  onClose,
-  onSubmitted,
-  levels,
-}: SubmitChallengeModalProps) {
-  // Only JH1–JH7 are selectable (exclude JH0)
-  const selectable = useMemo(
-    () =>
-      levels
-        .map((l) => ({ ...l, num: parseLevelNumber(l.id) }))
-        .filter((l): l is ChallengeLevelLite & { num: number } => l.num !== null && l.num >= 1 && l.num <= 7)
-        .sort((a, b) => a.num - b.num),
-    [levels]
-  );
+export default function ChallengesPage() {
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
-  // Default to level 1 if available
-  const [levelNum, setLevelNum] = useState<number>(() => selectable[0]?.num ?? 1);
-  const [youtubeUrl, setYoutubeUrl] = useState<string>('');
-  const [saving, setSaving] = useState<boolean>(false);
-
-  if (!isOpen) return null;
-
-  const modalStyle: CSSProperties = {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.6)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 50,
-  };
-  const cardStyle: CSSProperties = {
-    background: '#0b1220',
-    color: '#fff',
-    width: 'min(92vw, 640px)',
-    borderRadius: 12,
-    border: '1px solid #334155',
-    padding: 16,
-  };
-
-  const handleSubmit = async () => {
-    if (!youtubeUrl.trim()) {
-      onSubmitted('Please provide a YouTube link.');
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const res = await fetch('/api/users/me', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          challengeSubmission: { level: levelNum, youtubeUrl },
-        }),
-      });
-
-      if (res.ok) {
-        let msg = 'Challenge submitted!';
-        try {
-          const json = (await res.json()) as { message?: string };
-          if (json?.message) msg = json.message;
-        } catch {
-          /* ignore parse error; keep default msg */
-        }
-        onSubmitted(msg);
-      } else {
-        const text = await res.text().catch(() => '');
-        onSubmitted(
-          `Submission failed (${res.status} ${res.statusText})${text ? `: ${text}` : ''}`
-        );
-      }
-    } catch {
-      onSubmitted('Network error while submitting challenge.');
-    } finally {
-      setSaving(false);
-      onClose();
-    }
+  const toggleExpansion = (id: string) => {
+    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div
-      style={modalStyle}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Submit Challenge"
-    >
-      <div style={cardStyle}>
-        <h3 style={{ marginTop: 0, marginBottom: 12, fontWeight: 700 }}>
-          Submit Challenge
-        </h3>
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
+      <div className={base.pageContainer}>
+        <section className={base.section} id="gpt-challenge-levels">
+          <h2 className={base.sectionTitle}>John Helldiver Challenge Levels</h2>
 
-        <div style={{ display: 'grid', gap: 12 }}>
-          <label className="field">
-            <span className="label">Challenge</span>
-            <select
-              value={String(levelNum)}
-              onChange={(e) => setLevelNum(Number(e.target.value))}
-            >
-              {selectable.map((l) => (
-                <option key={l.id} value={l.num}>
-                  {l.levelTitle} (Level {l.num})
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>Rules & Requirements</h3>
+            <ul className={`${base.styledList} ${base.decimal}`}>
+              <li className={base.listItem}>
+                If it&apos;s on the map, it&apos;s in play unless the specific level states otherwise.
+              </li>
+              <li className={base.listItem}>
+                Video submissions must be one continuous, unedited recording. No cuts, splits, or speed-ups.
+              </li>
+              <li className={base.listItem}>
+                Mission privacy must be set to Invite Only.
+              </li>
+            </ul>
+          </div>
 
-          <label className="field">
-            <span className="label">YouTube Link</span>
+          <div className={base.subsectionCard}>
+            <h3 className={base.subHeading}>JH0–JH7 Challenges</h3>
 
-            <input
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="https://youtube.com/..."
-            />
-          </label>
+            {challengeLevels.map((level: ChallengeLevelData) => {
+              const isExpanded = !!expanded[level.id];
+              return (
+                <div
+                  key={level.id}
+                  className={exp.challengeLevelContainer}
+                  id={level.id}
+                  style={{ scrollMarginTop: 96 }}
+                >
+                  <div
+                    className={`${exp.challengeHeader} ${!isExpanded ? exp.noBorderBottom : ''}`}
+                    onClick={() => toggleExpansion(level.id)}
+                    role="button"
+                    aria-expanded={isExpanded}
+                    aria-controls={`challenge-content-${level.id}`}
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      (e.key === 'Enter' || e.key === ' ') && toggleExpansion(level.id)
+                    }
+                  >
+                    <h4 className={base.subHeading}>{level.levelTitle}</h4>
+                    <FaChevronDown
+                      className={`${exp.expandIcon} ${isExpanded ? exp.rotated : ''}`}
+                      aria-hidden="true"
+                    />
+                  </div>
 
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                  <div
+                    id={`challenge-content-${level.id}`}
+                    className={`${exp.challengeDetailsContent} ${isExpanded ? exp.expanded : ''}`}
+                  >
+                    <pre className={code.codeBlock}>{level.details}</pre>
+
+                    <YoutubeCarouselPlaceholder
+                      videoUrls={level.videoUrls ?? []}
+                      title={level.levelTitle}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
             <button
               className="btn btn-secondary"
-              type="button"
-              onClick={onClose}
-              disabled={saving}
+              onClick={() => {
+                setMessage(null);
+                setIsSubmitModalOpen(true);
+              }}
             >
-              Cancel
-            </button>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={handleSubmit}
-              disabled={saving}
-            >
-              {saving ? 'Submitting…' : 'Submit'}
+              Submit Challenge
             </button>
           </div>
-        </div>
+        </section>
+
+        {message && (
+          <p className={base.paragraph} style={{ textAlign: 'center' }}>
+            {message}
+          </p>
+        )}
+
+        <SubmitChallengeModal
+          isOpen={isSubmitModalOpen}
+          onClose={() => setIsSubmitModalOpen(false)}
+          onSubmitted={(msg: string) => setMessage(msg)}
+          levels={challengeLevels}
+        />
       </div>
     </div>
   );

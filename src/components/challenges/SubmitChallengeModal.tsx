@@ -1,30 +1,47 @@
+// src/components/challenges/SubmitChallengeModal.tsx
 'use client';
 
-import { useState, type CSSProperties } from 'react';
+import { useMemo, useState, type CSSProperties } from 'react';
 
-// Challenge names (levels 1-7) as in Challenges menu
-const CHALLENGE_LEVEL_LABELS: string[] = [
-  'Sabotage Proficiency',
-  'Resource Denial',
-  'ICBM Control',
-  'Flawless ICBM',
-  'Perfect Survey',
-  'Eagle Ace',
-  'The Purist',
-];
+type ChallengeLevelLite = {
+  id: string;         // e.g. "level-1"
+  levelTitle: string; // e.g. "JH1 Sabotage Proficiency"
+};
 
 type SubmitChallengeModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmitted: (msg: string) => void; // ← match campaign
+  onSubmitted: (msg: string) => void; // match campaign
+  levels: ChallengeLevelLite[];       // supply JH0–JH7 (we'll filter to 1–7)
 };
+
+function parseLevelNumber(id: string): number | null {
+  const m = id.match(/level-(\d+)/i);
+  if (!m) return null;
+  const n = Number(m[1]);
+  return Number.isFinite(n) ? n : null;
+}
 
 export default function SubmitChallengeModal({
   isOpen,
   onClose,
   onSubmitted,
+  levels,
 }: SubmitChallengeModalProps) {
-  const [level, setLevel] = useState<number>(1);
+  // Build dropdown options from provided levels, excluding JH0 and keeping 1–7.
+  const selectable = useMemo(
+    () =>
+      levels
+        .map((l) => ({ ...l, num: parseLevelNumber(l.id) }))
+        .filter(
+          (l): l is ChallengeLevelLite & { num: number } =>
+            l.num !== null && l.num >= 1 && l.num <= 7
+        )
+        .sort((a, b) => a.num - b.num),
+    [levels]
+  );
+
+  const [level, setLevel] = useState<number>(() => selectable[0]?.num ?? 1);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
 
@@ -65,22 +82,23 @@ export default function SubmitChallengeModal({
       });
 
       if (res.ok) {
-        // Try to read a message from the API, fall back to a generic one
         let msg = 'Challenge submitted!';
         try {
           const json = (await res.json()) as { message?: string };
           if (json?.message) msg = json.message;
         } catch {
-          // ignore JSON parse errors, use fallback message
+          /* ignore parse error; keep default msg */
         }
         onSubmitted(msg);
       } else {
         const text = await res.text().catch(() => '');
         onSubmitted(
-          `Submission failed (${res.status} ${res.statusText})${text ? `: ${text}` : ''}`
+          `Submission failed (${res.status} ${res.statusText})${
+            text ? `: ${text}` : ''
+          }`
         );
       }
-    } catch (err) {
+    } catch {
       onSubmitted('Network error while submitting challenge.');
     } finally {
       setSaving(false);
@@ -103,12 +121,12 @@ export default function SubmitChallengeModal({
           <label className="field">
             <span className="label">Challenge</span>
             <select
-              value={level}
+              value={String(level)}
               onChange={(e) => setLevel(Number(e.target.value))}
             >
-              {CHALLENGE_LEVEL_LABELS.map((label: string, idx: number) => (
-                <option key={idx + 1} value={idx + 1}>
-                  {label} (Level {idx + 1})
+              {selectable.map((l) => (
+                <option key={l.id} value={l.num}>
+                  {l.levelTitle} (Level {l.num})
                 </option>
               ))}
             </select>

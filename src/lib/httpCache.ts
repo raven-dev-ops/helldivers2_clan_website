@@ -1,4 +1,6 @@
 // src/lib/httpCache.ts
+import { createHash } from 'node:crypto';
+import { NextResponse } from 'next/server';
 
 /* ---------------------------------------------------------
  * Minimal HTTP cache with TTL, stale-while-revalidate (SWR),
@@ -14,7 +16,7 @@ export type CacheEntry<T> = {
   // absolute times in ms since epoch
   createdAt: number;
   expiresAt: number; // hard TTL
-  staleAt?: number;  // soft TTL for SWR (serve stale, revalidate in background)
+  staleAt?: number; // soft TTL for SWR (serve stale, revalidate in background)
   etag?: string | null;
   lastModified?: string | null;
 };
@@ -24,14 +26,14 @@ export type GetOptions = {
 };
 
 export type SetOptions = {
-  ttlMs: number;            // hard expiration
-  swrMs?: number;           // soft expiration window (serve stale while revalidating)
+  ttlMs: number; // hard expiration
+  swrMs?: number; // soft expiration window (serve stale while revalidating)
   etag?: string | null;
   lastModified?: string | null;
   now?: number;
 };
 
-export type GetOrSetOptions<T> = Omit<SetOptions, "etag" | "lastModified"> & {
+export type GetOrSetOptions<T> = Omit<SetOptions, 'etag' | 'lastModified'> & {
   // Optional function to produce a value (e.g., fetch) when cache miss or refresh is needed.
   fetcher: () => Promise<{ value: T; etag?: string | null; lastModified?: string | null }>;
   // If true, allow returning stale value immediately and revalidate in background.
@@ -49,21 +51,23 @@ export interface HttpCache<T = unknown> {
 }
 
 const defaultSerializeKey: SerializeKey = (key) =>
-  typeof key === "string" ? key : stableStringify(key);
+  typeof key === 'string' ? key : stableStringify(key);
 
 // Deterministic JSON stringify (order object keys)
 function stableStringify(obj: unknown): string {
-  if (obj === null || typeof obj !== "object") return JSON.stringify(obj);
-  if (Array.isArray(obj)) return `[${obj.map(stableStringify).join(",")}]`;
+  if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+  if (Array.isArray(obj)) return `[${obj.map(stableStringify).join(',')}]`;
   const entries = Object.entries(obj as Record<string, unknown>)
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
     .map(([k, v]) => `"${k}":${stableStringify(v)}`);
-  return `{${entries.join(",")}}`;
+  return `{${entries.join(',')}}`;
 }
 
 type InflightMap<T> = Map<string, Promise<T>>;
 
-export function createHttpCache<T = unknown>(serializeKey: SerializeKey = defaultSerializeKey): HttpCache<T> {
+export function createHttpCache<T = unknown>(
+  serializeKey: SerializeKey = defaultSerializeKey
+): HttpCache<T> {
   const store = new Map<string, CacheEntry<T>>();
   const inflight: InflightMap<T> = new Map();
 
@@ -118,7 +122,13 @@ export function createHttpCache<T = unknown>(serializeKey: SerializeKey = defaul
     }
 
     // Stale but SWR allowed?
-    if (existing && existing.expiresAt > now && existing.staleAt && existing.staleAt <= now && opts.allowStale) {
+    if (
+      existing &&
+      existing.expiresAt > now &&
+      existing.staleAt &&
+      existing.staleAt <= now &&
+      opts.allowStale
+    ) {
       // If a fetch is not already inflight, start one in background
       if (!inflight.has(k)) {
         const p = opts
@@ -157,8 +167,7 @@ export function createHttpCache<T = unknown>(serializeKey: SerializeKey = defaul
         now,
       });
       return value;
-    })()
-      .finally(() => inflight.delete(k));
+    })().finally(() => inflight.delete(k));
 
     inflight.set(k, promise);
     return promise;
@@ -179,7 +188,7 @@ export type FetchWithCacheOptions = {
   ttlMs: number;
   swrMs?: number;
   // Only cache safe idempotent requests by default
-  cacheableMethods?: Array<"GET" | "HEAD">;
+  cacheableMethods?: Array<'GET' | 'HEAD'>;
   // Request info
   requestInit?: RequestInit;
   // Optional: override fetch implementation (for testing)
@@ -211,13 +220,13 @@ export async function fetchWithHttpCache(
     key,
     ttlMs,
     swrMs,
-    cacheableMethods = ["GET", "HEAD"],
+    cacheableMethods = ['GET', 'HEAD'],
     requestInit,
     fetchImpl = fetch,
   }: FetchWithCacheOptions
 ): Promise<ResponseLike> {
-  const method = (requestInit?.method ?? "GET").toUpperCase();
-  const isCacheable = cacheableMethods.includes(method as "GET" | "HEAD");
+  const method = (requestInit?.method ?? 'GET').toUpperCase();
+  const isCacheable = cacheableMethods.includes(method as 'GET' | 'HEAD');
   const cacheKey =
     key ??
     {
@@ -225,7 +234,7 @@ export async function fetchWithHttpCache(
       method,
       // If you have auth headers etc., include only cache-relevant ones
       // to avoid cache fragmentation
-      vary: ["accept", "accept-encoding"],
+      vary: ['accept', 'accept-encoding'],
     };
 
   if (!isCacheable) {
@@ -242,8 +251,8 @@ export async function fetchWithHttpCache(
 
   // Build conditional headers if we have validators
   const headers = new Headers(requestInit?.headers ?? {});
-  if (etag && !headers.has("If-None-Match")) headers.set("If-None-Match", etag);
-  if (lastMod && !headers.has("If-Modified-Since")) headers.set("If-Modified-Since", lastMod);
+  if (etag && !headers.has('If-None-Match')) headers.set('If-None-Match', etag);
+  if (lastMod && !headers.has('If-Modified-Since')) headers.set('If-Modified-Since', lastMod);
 
   const getFresh = async (): Promise<ResponseLike> => {
     const res = await fetchImpl(url, { ...requestInit, method, headers });
@@ -267,8 +276,8 @@ export async function fetchWithHttpCache(
     cache.set(cacheKey, record, {
       ttlMs,
       swrMs,
-      etag: res.headers.get("etag"),
-      lastModified: res.headers.get("last-modified"),
+      etag: res.headers.get('etag'),
+      lastModified: res.headers.get('last-modified'),
     });
     return record;
   };
@@ -283,8 +292,8 @@ export async function fetchWithHttpCache(
       // Provide validators back to cache
       return {
         value: fresh,
-        etag: fresh.headers["etag"] ?? null,
-        lastModified: fresh.headers["last-modified"] ?? null,
+        etag: fresh.headers['etag'] ?? null,
+        lastModified: fresh.headers['last-modified'] ?? null,
       };
     },
   });
@@ -295,12 +304,12 @@ export async function fetchWithHttpCache(
  * -------------------------------------------------------- */
 
 export type CacheControlOptions = {
-  maxAge?: number;            // seconds
-  sMaxAge?: number;           // seconds (CDN/proxy)
+  maxAge?: number; // seconds
+  sMaxAge?: number; // seconds (CDN/proxy)
   staleWhileRevalidate?: number; // seconds
-  staleIfError?: number;      // seconds
-  isPublic?: boolean;         // public vs private
-  noStore?: boolean;          // if true, disables caching
+  staleIfError?: number; // seconds
+  isPublic?: boolean; // public vs private
+  noStore?: boolean; // if true, disables caching
 };
 
 export function buildCacheControl({
@@ -311,14 +320,55 @@ export function buildCacheControl({
   isPublic = true,
   noStore = false,
 }: CacheControlOptions = {}): string {
-  if (noStore) return "no-store";
+  if (noStore) return 'no-store';
 
-  const parts: string[] = [isPublic ? "public" : "private"];
-  if (typeof maxAge === "number") parts.push(`max-age=${Math.max(0, maxAge)}`);
-  if (typeof sMaxAge === "number") parts.push(`s-maxage=${Math.max(0, sMaxAge)}`);
-  if (typeof staleWhileRevalidate === "number") parts.push(`stale-while-revalidate=${Math.max(0, staleWhileRevalidate)}`);
-  if (typeof staleIfError === "number") parts.push(`stale-if-error=${Math.max(0, staleIfError)}`);
-  return parts.join(", ");
+  const parts: string[] = [isPublic ? 'public' : 'private'];
+  if (typeof maxAge === 'number') parts.push(`max-age=${Math.max(0, maxAge)}`);
+  if (typeof sMaxAge === 'number') parts.push(`s-maxage=${Math.max(0, sMaxAge)}`);
+  if (typeof staleWhileRevalidate === 'number')
+    parts.push(`stale-while-revalidate=${Math.max(0, staleWhileRevalidate)}`);
+  if (typeof staleIfError === 'number') parts.push(`stale-if-error=${Math.max(0, staleIfError)}`);
+  return parts.join(', ');
+}
+
+/* ---------------------------------------------------------
+ * JSON + ETag helper for Next.js API routes
+ * -------------------------------------------------------- */
+
+export type JsonInit = Omit<ResponseInit, 'headers'> & {
+  headers?: HeadersInit;
+};
+
+/**
+ * Return JSON with a strong ETag. If the inbound request provides a matching
+ * If-None-Match header, respond 304 w/ no body.
+ *
+ * Usage:
+ *   export async function GET(req: Request) {
+ *     return jsonWithETag(req, { ok: true }, {
+ *       headers: { 'Cache-Control': 'public, max-age=60' }
+ *     });
+ *   }
+ */
+export function jsonWithETag(req: Request, data: unknown, init: JsonInit = {}): NextResponse {
+  const body = JSON.stringify(data);
+  const etag = `"${createHash('sha1').update(body).digest('hex')}"`; // strong, quoted
+
+  const ifNoneMatch = req.headers.get('if-none-match');
+  if (ifNoneMatch && ifNoneMatch === etag) {
+    return new NextResponse(null, {
+      status: 304,
+      headers: { ETag: etag, ...(init.headers || {}) },
+    });
+    }
+  return new NextResponse(body, {
+    status: init.status ?? 200,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ETag: etag,
+      ...(init.headers || {}),
+    },
+  });
 }
 
 /* ---------------------------------------------------------
