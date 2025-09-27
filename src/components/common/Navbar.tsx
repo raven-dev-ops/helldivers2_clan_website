@@ -5,8 +5,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import styles from './Navbar.module.css';
-import ThemeToggle from './ThemeToggle';
+import styles from '@/styles/Navbar.module.css';
+import ThemeToggle from '@/components/common/ThemeToggle';
 
 // Helper: make Next typed routes happy
 const toUrl = (pathname: string, hash?: string) =>

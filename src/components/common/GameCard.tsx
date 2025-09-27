@@ -7,7 +7,7 @@ import type { Route } from 'next';
 import { logger } from '@/lib/logger';
 import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import styles from '@/baseStyles/GameCard.module.css';
+import styles from '@/Styles/GameCard.module.css';
 
 interface GameCardProps {
   title: string;
