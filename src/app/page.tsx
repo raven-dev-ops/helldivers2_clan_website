@@ -7,11 +7,6 @@ import { FaDiscord } from 'react-icons/fa';
 import styles from '@/styles/Base.module.css';
 import reviews from '@/lib/reviews';
 
-// Layout chrome
-import Navbar from '@/components/common/Navbar';
-import AlertBar from '@/components/common/AlertBar';
-import Footer from '@/components/common/Footer';
-
 const ReviewsRotator = dynamic(() => import('@/components/home/ReviewsRotator'));
 
 export default function HelldiversPage() {
