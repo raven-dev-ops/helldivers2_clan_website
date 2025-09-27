@@ -12,8 +12,8 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-import styles from './ProfilePage.module.css';
-import baseStyles from '../styles/Base.module.css';
+import styles from '@/styles/ProfilePage.module.css';
+import baseStyles from '@/styles/Base.module.css';
 
 const CHALLENGE_LEVEL_LABELS: string[] = [
   'Sabotage Proficiency',

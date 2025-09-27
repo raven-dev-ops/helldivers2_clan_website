@@ -3,9 +3,9 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import base from '../styles/HelldiversBase.module.css';
-import exp from '@/components/common/Expanders.module.css';
-import code from '@/components/common/CodeBlocks.module.css';
+import base from '@/styles/Base.module.css';
+import exp from '@/styles/Expanders.module.css';
+import code from '@/styles/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/components/campaigns/SubmitCampaignModal';
 import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaigns';
 
