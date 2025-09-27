@@ -1,7 +1,11 @@
 // src/app/merch/page.tsx
 
 import Image from 'next/image';
+<<<<<<< HEAD:src/app/merch/page.tsx
 import NoPrefetchLink from '@/components/NoPrefetchLink';
+=======
+import NoPrefetchLink from '@/components/common/NoPrefetchLink';
+>>>>>>> main:src/app/(main)/helldivers-2/merch/page.tsx
 import React from 'react';
 import styles from '@/styles/MerchPage.module.css';
 import { logger } from '@/lib/logger';

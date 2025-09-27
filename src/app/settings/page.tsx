@@ -1,5 +1,6 @@
-"use client";
+import SettingsPage from "@/components/settings/SettingsPage";
 
+<<<<<<< HEAD:src/app/settings/page.tsx
 import { useState } from 'react';
 import baseStyles from './styles/AppPage.module.css';
 import styles from './Settings.module.css';
@@ -48,4 +49,8 @@ export default function SettingsPage() {
         </div>
     </div>
   );
+=======
+export default function SettingsRoute() {
+  return <SettingsPage />;
+>>>>>>> main:src/app/(main)/settings/page.tsx
 }

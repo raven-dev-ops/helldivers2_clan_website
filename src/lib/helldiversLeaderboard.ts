@@ -1,5 +1,5 @@
 // src/lib/helldiversLeaderboard.ts
-import getMongoClientPromise from '@/lib/mongoClientPromise';
+import { getMongoClientPromise } from '@/lib/mongodb';
 
 export const VALID_SORT_FIELDS = [
   'Kills',
