@@ -1,0 +1,133 @@
+/* src/components/common/GameCard.module.css (Title/Action Text Size & Position Updated) */
+.root {
+  position: relative;
+  flex-shrink: 0;
+  background-color: #162447; /* Use var(--color-surface, #162447); */
+  border: 1px solid #2a3b64; /* Use var(--color-border, #2a3b64); */
+  border-radius: 1rem;
+  overflow: hidden;
+  width: 41.25rem; /* Current large size */
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+  color: #e0e0e0; /* Use var(--color-text-primary, #e0e0e0); */
+  outline: none;
+  /* Add display flex to help position content */
+  display: flex;
+  flex-direction: column;
+}
+
+.interactive:focus-visible {
+  border-color: var(--color-primary, #00bcd4);
+  box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.4);
+}
+.interactive:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 180, 216, 0.3);
+  border-color: #4dd0e1; /* Use var(--color-primary-hover, #4dd0e1); */
+}
+.comingSoon {
+  opacity: 0.65;
+}
+
+.badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(5px);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: bold;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.35rem;
+  text-transform: uppercase;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background-color: #2a3b64;
+  /* Prevent image wrapper from shrinking */
+  flex-shrink: 0;
+}
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-left-radius: calc(1rem - 1px);
+  border-top-right-radius: calc(1rem - 1px);
+  transition: transform 0.3s ease;
+}
+
+/* Container for text content below image */
+.contentArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes title up, action/comingSoon down */
+  flex-grow: 1; /* Takes remaining vertical space */
+  padding: 0 1rem; /* Add horizontal padding */
+}
+
+.title {
+  /* --- Increased Font Size --- */
+  font-size: 2.5rem; /* Example: Larger title size */
+  /* --- Adjust Margins --- */
+  margin-top: 1.5rem; /* Keep top margin */
+  margin-bottom: 0.75rem; /* Reduced bottom margin */
+  margin-left: auto; /* Centering text within padding */
+  margin-right: auto;
+  /* --- Keep other styles --- */
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #e8eaf6; /* Use var(--color-text-primary, #e8eaf6); */
+  line-height: 1.2;
+  min-height: auto; /* Remove min-height or adjust carefully */
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 90%; /* Prevent extra wide titles from hitting edges */
+}
+
+.comingSoonText {
+  display: block;
+  /* --- Positioned lower via justify-content on parent --- */
+  margin-top: auto; /* Push to bottom within flex column */
+  margin-bottom: 1.5rem; /* Space from bottom edge */
+  padding: 0 0.75rem;
+  color: #90a4ae; /* Use var(--color-text-muted, #90a4ae); */
+  font-style: italic;
+  font-size: 1rem;
+}
+.actionText {
+  display: block;
+  /* --- Positioned lower via justify-content on parent --- */
+  margin-top: auto; /* Push to bottom within flex column */
+  /* --- Increased Size & Bottom Margin --- */
+  font-size: 1.1rem; /* Increased font size */
+  margin-bottom: 1.5rem; /* Control space from bottom edge */
+  /* --- Keep other styles --- */
+  padding: 0 0.75rem;
+  color: var(--color-primary, #00bcd4);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.interactive:hover .actionText {
+  color: var(--color-primary-hover, #80deea);
+}
+
+.linkWrapper {
+  display: flex; /* Allow flex properties */
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}

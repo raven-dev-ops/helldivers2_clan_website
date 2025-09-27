@@ -1,37 +1,30 @@
-// src/models/ForumThread.ts (Updated)
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import { Schema, models, model, type Model, type Document, Types } from 'mongoose';
 
-export interface IForumThread extends Document {
-  categoryId: mongoose.Types.ObjectId;
+export interface ForumThreadDocument extends Document {
   title: string;
-  authorId?: mongoose.Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date; // Mongoose timestamps handle this automatically
-  // Optional but useful additions:
-  lastActivity?: Date; // Timestamp of the last post
-  replyCount?: number; // Number of posts (minus the first one)
+  body?: string;
+  categoryId: Types.ObjectId;
+  authorId: Types.ObjectId | string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const ForumThreadSchema = new Schema<IForumThread>(
+const ForumThreadSchema = new Schema<ForumThreadDocument>(
   {
-    categoryId: {
-      type: Schema.Types.ObjectId,
-      ref: 'ForumCategory',
-      required: true,
-    },
-    title: { type: String, required: true },
-    authorId: { type: Schema.Types.ObjectId, ref: 'User' },
-    lastActivity: { type: Date, default: Date.now, index: true }, // Index for sorting
-    replyCount: { type: Number, default: 0 },
+    title: { type: String, required: true, trim: true },
+    body: { type: String, default: '' },
+    categoryId: { type: Schema.Types.ObjectId, ref: 'ForumCategory', required: true },
+    authorId: { type: Schema.Types.Mixed, required: true },
   },
-  { timestamps: true } // Adds createdAt and updatedAt
+  {
+    timestamps: true,
+  }
 );
 
-// Update lastActivity whenever a post is added/updated (can be done via middleware or explicitly in actions)
-// We will update it explicitly in the server action for creating posts.
+ForumThreadSchema.index({ categoryId: 1, createdAt: -1 });
+ForumThreadSchema.index({ authorId: 1, createdAt: -1 });
 
-const ForumThreadModel =
-  (mongoose.models.ForumThread as Model<IForumThread>) ||
-  mongoose.model<IForumThread>('ForumThread', ForumThreadSchema);
+const ForumThreadModel: Model<ForumThreadDocument> =
+  models.ForumThread || model<ForumThreadDocument>('ForumThread', ForumThreadSchema);
 
 export default ForumThreadModel;

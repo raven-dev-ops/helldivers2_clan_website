@@ -1,9 +1,10 @@
-// src/app/(main)/helldivers-2/academy/page.tsx
+<<<<<<< HEAD:src/app/academy/page.tsx
+// src/app/academy/page.tsx
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import base from '../HelldiversBase.module.css';
-import styles from './AcademyPage.module.css';
+import base from '@/styles/Base.module.css';
+import styles from '@/styles/AcademyPage.module.css';
 
 type Module = {
   id: string;
@@ -197,29 +198,36 @@ const MODULES: Module[] = [
     },
   },
 ];
+=======
+/* eslint-disable @next/next/no-img-element */
+'use client';
+
+import { useEffect, useMemo, useRef, useState } from 'react';
+import base from '../styles/HelldiversBase.module.css';
+import page from './AcademyPage.module.css';
+import ModuleCard from '@/components/academy/ModuleCard';
+import { MODULES, type ModuleWithDetails } from '@/components/academy/Modules';
+>>>>>>> main:src/app/(main)/helldivers-2/academy/page.tsx
 
 export default function AcademyPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const pageShellRef = useRef<HTMLDivElement | null>(null);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedModule = useMemo(
+  const selectedModule = useMemo<ModuleWithDetails | null>(
     () => MODULES.find((m) => m.id === selectedId) ?? null,
     [selectedId]
   );
 
-  // Lock/unlock background scroll
+  // Lock/unlock background scroll when modal opens/closes
   useEffect(() => {
     const { body } = document;
     if (selectedModule) {
       const prev = body.style.overflow;
       body.style.overflow = 'hidden';
-      return () => {
-        body.style.overflow = prev || '';
-      };
+      return () => void (body.style.overflow = prev || '');
     }
   }, [selectedModule]);
 
@@ -240,7 +248,6 @@ export default function AcademyPage() {
   // Trap focus inside the modal
   useEffect(() => {
     if (!selectedModule || !modalRef.current) return;
-
     const modalEl = modalRef.current;
     const getFocusable = () =>
       Array.from(
@@ -248,27 +255,17 @@ export default function AcademyPage() {
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
         )
       ).filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
-
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
       const focusables = getFocusable();
       if (focusables.length === 0) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
+      const first = focusables[0], last = focusables[focusables.length - 1];
       if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
       } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     };
-
     modalEl.addEventListener('keydown', onKeyDown as any);
     return () => modalEl.removeEventListener('keydown', onKeyDown as any);
   }, [selectedModule]);
@@ -277,59 +274,32 @@ export default function AcademyPage() {
     lastTriggerRef.current = trigger;
     setSelectedId(id);
   };
-
   const closeModal = () => {
     setSelectedId(null);
     lastTriggerRef.current?.focus();
   };
 
-  // Inline modal styles kept local to avoid a new CSS file
+  // Inline modal styles (kept local)
   const modalStyles = {
     backdrop: {
-      position: 'fixed' as const,
-      inset: 0,
-      background: 'rgba(0,0,0,0.55)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem',
+      position: 'fixed' as const, inset: 0, background: 'rgba(0,0,0,0.55)',
+      zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
     },
     dialog: {
-      background: '#1f2937',
-      color: '#e5e7eb',
-      border: '1px solid #374151',
-      borderRadius: '0.75rem',
-      width: 'min(960px, 96vw)',
-      maxHeight: '90vh',
-      overflowY: 'auto' as const,
-      boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
-      position: 'relative' as const,
-      outline: 'none',
+      background: '#1f2937', color: '#e5e7eb', border: '1px solid #374151', borderRadius: '0.75rem',
+      width: 'min(960px, 96vw)', maxHeight: '90vh', overflowY: 'auto' as const, boxShadow: '0 20px 40px rgba(0,0,0,0.35)',
+      position: 'relative' as const, outline: 'none',
     },
     header: {
-      padding: '1rem 1.25rem',
-      borderBottom: '1px solid #374151',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '1rem',
+      padding: '1rem 1.25rem', borderBottom: '1px solid #374151',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem',
     },
     body: { padding: '1rem 1.25rem 1.5rem' },
     hero: {
-      width: '100%',
-      aspectRatio: '16/9',
-      objectFit: 'cover' as const,
-      borderBottom: '1px solid #374151',
-      display: 'block',
+      width: '100%', aspectRatio: '16/9', objectFit: 'cover' as const, borderBottom: '1px solid #374151', display: 'block',
     },
     close: {
-      background: 'transparent',
-      color: '#e5e7eb',
-      border: '1px solid #4b5563',
-      borderRadius: '0.375rem',
-      padding: '0.375rem 0.625rem',
-      cursor: 'pointer',
+      background: 'transparent', color: '#e5e7eb', border: '1px solid #4b5563', borderRadius: '0.375rem', padding: '0.375rem 0.625rem', cursor: 'pointer',
     },
   };
 
@@ -337,84 +307,21 @@ export default function AcademyPage() {
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
 
-      {/* Page shell gets aria-hidden when modal is open */}
-      <div
-        ref={pageShellRef}
-        className={`${base.pageContainer} ${styles.pageWrapper}`}
-        aria-hidden={selectedModule ? true : undefined}
-      >
-        <header className={styles.pageHeader}>
-          <h2 className={styles.pageTitle}>Academy</h2>
-          <p className={styles.pageSubtitle}>
+      <div className={`${base.pageContainer} ${page.pageWrapper}`}>
+        <header className={page.pageHeader}>
+          <h2 className={page.pageTitle}>Academy</h2>
+          <p className={page.pageSubtitle}>
             Six training modules covering environments, equipment, tactics, leadership, and enemies.
           </p>
         </header>
 
         <section className={base.section} aria-labelledby="academy-title">
-          <h3 id="academy-title" className={base.sectionTitle}>
-            Training Modules
-          </h3>
+          <h3 id="academy-title" className={base.sectionTitle}>Training Modules</h3>
 
-          <div className={styles.modulesGrid} role="list">
-            {MODULES.map((m) => (
-              <article
-                key={m.id}
-                id={m.id}
-                className={styles.moduleCard}
-                role="listitem"
-                aria-labelledby={`${m.id}-title`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={m.img}
-                  alt={m.imgAlt}
-                  className={styles.moduleImage}
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className={styles.moduleContent}>
-                  {/* Keep heading hierarchy: h4 inside section */}
-                  <h4 id={`${m.id}-title`} className={styles.moduleTitle}>
-                    {m.title}
-                  </h4>
-                  <p className={styles.moduleSubtitle}>{m.subtitle}</p>
-                  <p className={base.paragraph}>{m.description}</p>
-
-                  <div className={styles.moduleSkills}>
-                    <div>
-                      <div className={styles.moduleSkillsSectionTitle}>Basic</div>
-                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                        {m.basic.map((item) => (
-                          <li key={item} className={base.listItem}>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className={styles.moduleSkillsSectionTitle}>Advanced</div>
-                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                        {m.advanced.map((item) => (
-                          <li key={item} className={base.listItem}>
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={styles.ctaButton}
-                    aria-haspopup="dialog"
-                    aria-controls="academy-modal"
-                    aria-label={`Open ${m.title} module`}
-                    onClick={(e) => openModal(m.id, e.currentTarget)}
-                  >
-                    Open module
-                  </button>
-                </div>
-              </article>
+          {/* Horizontal rail */}
+          <div className={page.modulesRail} role="list" aria-label="Academy modules">
+            {MODULES.map(({ details, ...m }) => (
+              <ModuleCard key={m.id} data={m} onOpen={openModal} />
             ))}
           </div>
         </section>
@@ -422,12 +329,7 @@ export default function AcademyPage() {
 
       {/* Modal */}
       {selectedModule && (
-        <div
-          style={modalStyles.backdrop}
-          onClick={closeModal}
-          aria-hidden={false}
-          data-modal-open
-        >
+        <div style={modalStyles.backdrop} onClick={closeModal} data-modal-open>
           <div
             id="academy-modal"
             ref={modalRef}
@@ -439,42 +341,23 @@ export default function AcademyPage() {
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Hero image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={selectedModule.img}
-              alt={selectedModule.imgAlt}
-              style={modalStyles.hero}
-              loading="eager"
-              decoding="sync"
-            />
+            <img src={selectedModule.img} alt={selectedModule.imgAlt} style={modalStyles.hero} loading="eager" decoding="sync" />
 
             <div style={modalStyles.header}>
               <div>
                 <h3 id="academy-modal-title" className={base.sectionTitle} style={{ marginBottom: 4 }}>
                   {selectedModule.title}
                 </h3>
-                <p className={styles.moduleSubtitle} style={{ margin: 0 }}>
+                <p className={page.moduleSubtitle} style={{ margin: 0 }}>
                   {selectedModule.subtitle}
                 </p>
               </div>
 
-              {/* Optional CTA for Command applications */}
               {selectedModule.id === 'command' && (
-                <a href="/mod-team" className={styles.ctaButton} aria-label="Apply to Mod Team">
-                  Apply to Mod Team
-                </a>
+                <a href="/mod-team" className={page.ctaButton} aria-label="Apply to Mod Team">Apply to Mod Team</a>
               )}
 
-              <button
-                ref={closeBtnRef}
-                type="button"
-                onClick={closeModal}
-                style={modalStyles.close}
-                aria-label="Close module"
-              >
-                ✕
-              </button>
+              <button ref={closeBtnRef} type="button" onClick={closeModal} style={modalStyles.close} aria-label="Close module">✕</button>
             </div>
 
             <div style={modalStyles.body}>
@@ -482,37 +365,29 @@ export default function AcademyPage() {
                 {selectedModule.description}
               </div>
 
-              {/* Long description */}
               {selectedModule.details.paragraphs.map((p) => (
-                <p key={p.slice(0, 24)} className={base.paragraph}>
-                  {p}
-                </p>
+                <p key={p.slice(0, 24)} className={base.paragraph}>{p}</p>
               ))}
 
-              {/* Tips / Cautions (if any) */}
               {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
-                <div className={styles.modalRow}>
+                <div className={page.modalRow}>
                   {selectedModule.details.tips?.length ? (
-                    <div className={styles.modalListCard}>
-                      <div className={styles.modalListTitle}>Tips</div>
-                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
+                    <div className={page.modalListCard}>
+                      <div className={page.modalListTitle}>Tips</div>
+                      <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
                         {selectedModule.details.tips.map((t) => (
-                          <li key={t} className={base.listItem}>
-                            {t}
-                          </li>
+                          <li key={t} className={base.listItem}>{t}</li>
                         ))}
                       </ul>
                     </div>
                   ) : null}
 
                   {selectedModule.details.cautions?.length ? (
-                    <div className={styles.modalListCard}>
-                      <div className={styles.modalListTitle}>Cautions</div>
-                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
+                    <div className={page.modalListCard}>
+                      <div className={page.modalListTitle}>Cautions</div>
+                      <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
                         {selectedModule.details.cautions.map((c) => (
-                          <li key={c} className={base.listItem}>
-                            {c}
-                          </li>
+                          <li key={c} className={base.listItem}>{c}</li>
                         ))}
                       </ul>
                     </div>
@@ -520,37 +395,27 @@ export default function AcademyPage() {
                 </div>
               )}
 
-              {/* Basic / Advanced quick reference */}
-              <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
-                <div className={styles.modalListCard}>
-                  <div className={styles.modalListTitle}>Basic</div>
-                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
+              <div className={page.modalRow} style={{ marginTop: '1.25rem' }}>
+                <div className={page.modalListCard}>
+                  <div className={page.modalListTitle}>Basic</div>
+                  <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
                     {selectedModule.basic.map((item) => (
-                      <li key={item} className={base.listItem}>
-                        {item}
-                      </li>
+                      <li key={item} className={base.listItem}>{item}</li>
                     ))}
                   </ul>
                 </div>
-                <div className={styles.modalListCard}>
-                  <div className={styles.modalListTitle}>Advanced</div>
-                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
+                <div className={page.modalListCard}>
+                  <div className={page.modalListTitle}>Advanced</div>
+                  <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
                     {selectedModule.advanced.map((item) => (
-                      <li key={item} className={base.listItem}>
-                        {item}
-                      </li>
+                      <li key={item} className={base.listItem}>{item}</li>
                     ))}
                   </ul>
                 </div>
               </div>
 
               <div style={{ marginTop: '1.25rem', textAlign: 'right' }}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className={styles.ctaButton}
-                  aria-label="Close module"
-                >
+                <button type="button" onClick={closeModal} className={page.ctaButton} aria-label="Close module">
                   Close
                 </button>
               </div>

@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
-import getMongoClientPromise from '@/lib/mongoClientPromise';
+import { getMongoClientPromise } from '@/lib/mongodb';
 
 export async function DELETE() {
   const session = await getServerSession(getAuthOptions());

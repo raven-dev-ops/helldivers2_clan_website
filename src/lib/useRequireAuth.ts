@@ -1,25 +1,29 @@
-// src/hooks/useRequireAuth.ts
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import type { Route } from 'next';
 
 /**
- * Client-side hook to require authentication.
- * If the user is not authenticated, they will be redirected to the sign-in page.
+ * Example: Hook for protected routes.
+ * Redirect unauthenticated users to the in-app auth page instead of the raw
+ * NextAuth API endpoint so navigation stays within the typed-route system.
  */
-export function useRequireAuth() {
-  const { status } = useSession();
+const DEFAULT_REDIRECT: Route = '/auth';
+
+export default function useRequireAuth(redirectTo: Route = DEFAULT_REDIRECT) {
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      const returnTo = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/';
-      const url = `/auth?callbackUrl=${encodeURIComponent(returnTo)}`;
-      router.push(url);
-    }
-  }, [status, router]);
+      router.push(redirectTo);
 
-  return { status };
+      // Option 2: Use next-auth's signIn with a callback
+      // signIn(undefined, { callbackUrl: redirectTo });
+    }
+  }, [router, status, redirectTo]);
+
+  return { session, status };
 }

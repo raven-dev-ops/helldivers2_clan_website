@@ -1,9 +1,15 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import base from '../../HelldiversBase.module.css';
+<<<<<<< HEAD:src/app/academy/apply/page.tsx
+import base from '@/styles/Base.module.css';
+import styles from '@/styles/Apply.module.css';
+import Quiz, { type Question } from '../training/Quiz';
+=======
+import base from '../../styles/HelldiversBase.module.css';
 import styles from './Apply.module.css';
-import Quiz, { type Question } from '../training/Quiz'; // adjust path if needed
+import Quiz, { type Question } from '../../../../../components/academy/training/Quiz'; // adjust path if needed
+>>>>>>> main:src/app/(main)/helldivers-2/academy/apply/page.tsx
 
 const PROMPTS = [
   'What does democracy mean to you in Helldivers 2?',

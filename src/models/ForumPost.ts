@@ -1,29 +1,28 @@
-// src/models/ForumPost.ts
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import { Schema, models, model, type Model, type Document, Types } from 'mongoose';
 
-export interface IForumPost extends Document {
-  threadId: mongoose.Types.ObjectId;
-  authorId?: mongoose.Types.ObjectId;
+export interface ForumPostDocument extends Document {
+  threadId: Types.ObjectId;
+  authorId: Types.ObjectId | string;
   content: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const ForumPostSchema = new Schema<IForumPost>(
+const ForumPostSchema = new Schema<ForumPostDocument>(
   {
-    threadId: {
-      type: Schema.Types.ObjectId,
-      ref: 'ForumThread',
-      required: true,
-    },
-    authorId: { type: Schema.Types.ObjectId, ref: 'User' },
+    threadId: { type: Schema.Types.ObjectId, ref: 'ForumThread', required: true },
+    authorId: { type: Schema.Types.Mixed, required: true },
     content: { type: String, required: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-const ForumPostModel =
-  (mongoose.models.ForumPost as Model<IForumPost>) ||
-  mongoose.model<IForumPost>('ForumPost', ForumPostSchema);
+ForumPostSchema.index({ threadId: 1, createdAt: 1 });
+ForumPostSchema.index({ authorId: 1, createdAt: -1 });
+
+const ForumPostModel: Model<ForumPostDocument> =
+  models.ForumPost || model<ForumPostDocument>('ForumPost', ForumPostSchema);
 
 export default ForumPostModel;

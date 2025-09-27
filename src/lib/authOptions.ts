@@ -1,9 +1,9 @@
 // src/lib/authOptions.ts
-import type { NextAuthOptions } from 'next-auth';
+import type { LoggerInstance, NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
 import GoogleProvider from 'next-auth/providers/google';
 import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import getMongoClientPromise from '@/lib/mongoClientPromise';
+import { getMongoClientPromise } from '@/lib/mongodb';
 
 async function refreshDiscordAccessToken(token: any) {
   try {
@@ -45,9 +45,25 @@ async function refreshDiscordAccessToken(token: any) {
   }
 }
 
+const logger = {
+  error(code: string, metadata?: unknown) {
+    console.error('[NextAuth][error]', code, metadata);
+  },
+  warn(code: string) {
+    console.warn('[NextAuth][warn]', code);
+  },
+  debug(code: string, metadata?: unknown) {
+    if (process.env.NODE_ENV !== 'production') {
+      console.debug('[NextAuth][debug]', code, metadata);
+    }
+  },
+} satisfies Partial<LoggerInstance>;
+
 export function getAuthOptions(): NextAuthOptions {
+  const clientPromise = getMongoClientPromise();
+
   return {
-    adapter: MongoDBAdapter(getMongoClientPromise()),
+    adapter: MongoDBAdapter(clientPromise) as any,
     providers: [
       DiscordProvider({
         clientId: process.env.DISCORD_CLIENT_ID!,
@@ -112,6 +128,7 @@ export function getAuthOptions(): NextAuthOptions {
     },
     secret: process.env.NEXTAUTH_SECRET,
     pages: { signIn: '/auth' },
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV !== 'production',
+    logger,
   };
 }

@@ -1,0 +1,72 @@
+/* Design tokens / theming */
+:root {
+  /* Dark Theme */
+  --color-background: #0f172a;
+  --color-background-alt: #1e293b;
+  --color-surface: #1e293b;
+  --color-surface-alt: #334155;
+  --color-surface-hover: #475569;
+  --color-border: #334155;
+  --color-border-alt: #4b5563;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-text-disabled: #475569;
+
+  /* Accent */
+  --color-primary: #facc15;
+  --color-primary-hover: #f59e0b;
+  --color-primary-focus: #d97706;
+  --color-primary-light: #fde047;
+  --color-on-primary: #1e293b;
+
+  /* Feedback */
+  --color-error: #f87171;
+  --color-success: #4ade80;
+
+  /* Alerts */
+  --alert-purple: #6b46c1;
+  --alert-red: #dc2626;
+  --alert-green: #16a34a;
+  --alert-blue: #2563eb;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  --font-serif: Georgia, Cambria, 'Times New Roman', Times, serif;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
+    'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
+    'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+
+  /* Spacing / radii */
+  --spacing-unit: 0.25rem;
+  --spacing-1: calc(var(--spacing-unit) * 1);
+  --spacing-2: calc(var(--spacing-unit) * 2);
+  --spacing-3: calc(var(--spacing-unit) * 3);
+  --spacing-4: calc(var(--spacing-unit) * 4);
+  --spacing-5: calc(var(--spacing-unit) * 5);
+  --spacing-6: calc(var(--spacing-unit) * 6);
+  --spacing-8: calc(var(--spacing-unit) * 8);
+  --spacing-10: calc(var(--spacing-unit) * 10);
+  --spacing-12: calc(var(--spacing-unit) * 12);
+  --spacing-16: calc(var(--spacing-unit) * 16);
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+  --border-width: 1px;
+
+  color-scheme: dark;
+
+  /* Swiper variables */
+  --swiper-navigation-size: 36px;
+  --swiper-theme-color: var(--color-primary);
+  --swiper-navigation-color: var(--color-primary);
+  --swiper-navigation-color-hover: var(--color-primary-hover);
+  --swiper-pagination-color: var(--color-primary);
+  --swiper-pagination-bullet-inactive-color: var(--color-text-muted);
+  --swiper-pagination-bullet-inactive-opacity: 0.5;
+  --swiper-pagination-bullet-size: 8px;
+  --swiper-pagination-bullet-horizontal-gap: 5px;
+  --swiper-pagination-bullet-vertical-gap: 6px;
+  --swiper-navigation-sides-offset: 1rem;
+}

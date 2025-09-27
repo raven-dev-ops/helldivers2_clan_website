@@ -1,0 +1,35 @@
+.tableContainer {
+    width:100%; overflow-x:auto; border-radius: var(--border-radius-lg);
+    border:1px solid var(--color-border); background-color: var(--color-surface);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1);
+  }
+  .table { width:100%; border-collapse:collapse; table-layout:fixed; }
+  .th, .td { padding:.75rem; border-bottom:1px solid var(--color-border-alt); color: var(--color-text-secondary); }
+  thead .th { color: var(--color-text-primary); }
+  tbody tr:last-child .td { border-bottom:none; }
+  
+  .sortButton{ display:inline-flex; align-items:center; gap:.35rem; color:inherit; background:transparent; border:none; font:inherit; cursor:pointer; }
+  .sortButton:hover{ color: var(--color-text-primary); }
+  .sortArrow{ opacity:.8; font-size:.85em; }
+  
+  /* Columns */
+  .colRank{ width:48px; }
+  .colPlayer{ max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .colKills,.colAccuracy,.colShotsFired,.colShotsHit,.colDeaths,
+  .colAvgKills,.colAvgShotsFired,.colAvgShotsHit,.colAvgDeaths{ width:100px; }
+  .colSubmitted{ width:160px; }
+  
+  /* Responsive */
+  @media (max-width:1024px){ .colSubmitted{ display:none; } }
+  @media (max-width:900px){
+    .colAvgKills,.colAvgShotsFired,.colAvgShotsHit,.colAvgDeaths{ display:none; }
+  }
+  @media (max-width:768px){
+    .colShotsFired,.colShotsHit{ display:none; }
+    .colPlayer{ max-width:180px; }
+  }
+  @media (max-width:640px){
+    .colAccuracy{ display:none; }
+    .colPlayer{ max-width:160px; }
+  }
+  

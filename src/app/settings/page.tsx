@@ -1,9 +1,10 @@
-"use client";
+import SettingsPage from "@/components/settings/SettingsPage";
 
-import { useState } from "react";
-import baseStyles from "../helldivers-2/HelldiversBase.module.css";
+<<<<<<< HEAD:src/app/settings/page.tsx
+import { useState } from 'react';
+import baseStyles from './styles/AppPage.module.css';
 import styles from './Settings.module.css';
-import ProfileEditForm from "@/app/components/forum/ProfileEditForm";
+import ProfileEditForm from './ProfileEditForm';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -48,4 +49,8 @@ export default function SettingsPage() {
         </div>
     </div>
   );
+=======
+export default function SettingsRoute() {
+  return <SettingsPage />;
+>>>>>>> main:src/app/(main)/settings/page.tsx
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 
-vi.mock('@/lib/mongoClientPromise', () => ({
+vi.mock('@/lib/mongodb', () => ({
   default: vi.fn(),
 }));
 
