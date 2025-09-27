@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import styles from './AlertBar.module.css';
+import styles from '@/styles/AlertBar.module.css';
 import type { Alert } from '@/models/Alerts';
 
 // Allow either `kind` (from our shared type) or legacy `variant`
