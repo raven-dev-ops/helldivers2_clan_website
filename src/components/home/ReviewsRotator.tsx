@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FaStar } from 'react-icons/fa';
-import styles from './Reviews.module.css';
+import styles from '@/styles/Reviews.module.css';
 
 export interface Review {
   id: number | string;

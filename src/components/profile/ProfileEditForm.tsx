@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import ChangeAvatarModal from '@/components/profile/ChangeAvatarModal';
-import s from './ProfileEditForm.module.css';
+import s from '@/styles/ProfileEditForm.module.css';
 
 type UnitHeight = 'cm' | 'in';
 type UnitWeight = 'kg' | 'lb';

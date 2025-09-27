@@ -3,19 +3,11 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-<<<<<<< HEAD:src/app/campaigns/page.tsx
-import base from '@/HelldiversBase.module.css';
-import exp from '@/components/Expanders.module.css';
-import code from '@/app/components/CodeBlocks.module.css';
-import SubmitCampaignModal from '@/components/SubmitCampaignModal';
-import YoutubeCarouselPlaceholder from '@/components/YoutubeCarouselCampaign';
-=======
 import base from '../styles/HelldiversBase.module.css';
 import exp from '@/components/common/Expanders.module.css';
 import code from '@/components/common/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/components/campaigns/SubmitCampaignModal';
-import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaign';
->>>>>>> main:src/app/(main)/helldivers-2/campaigns/page.tsx
+import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaigns';
 
 interface PrestigeMissionData {
   id: string;

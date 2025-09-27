@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from 'next/link';
-import styles from './Profile.module.css';
+import styles from '@/styles/Profile.module.css';
 
 const toUrl = (pathname: string) => ({ pathname });
 

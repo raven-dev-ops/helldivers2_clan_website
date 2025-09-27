@@ -1,16 +1,8 @@
-<<<<<<< HEAD:src/app/academy/training/page.tsx
 import styles from '@/styles/TrainingPage.module.css';
-import Quiz, { type Question } from './Quiz';
-import hd2Questions from './hd2Questions';
-import hd1Questions from './hd1Questions';
+import Quiz, { type Question } from '@/components/academy/training/Quiz';
+import hd2Questions from '@/lib/hd2Questions';
+import hd1Questions from '@/lib/hd1Questions';
 import base from '@/styles/Base.module.css';
-=======
-import styles from './TrainingPage.module.css';
-import Quiz, { type Question } from '../../../../../components/academy/training/Quiz';
-import hd2Questions from '../../../../../components/academy/training/hd2Questions';
-import hd1Questions from '../../../../../components/academy/training/hd1Questions';
-import base from '../../styles/HelldiversBase.module.css';
->>>>>>> main:src/app/(main)/helldivers-2/academy/training/page.tsx
 
 const chunk = (arr: Question[], size: number) =>
   Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>

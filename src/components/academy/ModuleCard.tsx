@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import base from '@/app/(main)/helldivers-2/styles/HelldiversBase.module.css';
+import base from '@/styles/Base.module.css';
 import styles from './ModuleCard.module.css';
-import type { AcademyModule } from '@/components/academy/Modules';
+import type { AcademyModule } from '@/lib/Modules';
 
 type Props = {
   data: AcademyModule;

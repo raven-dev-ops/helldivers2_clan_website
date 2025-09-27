@@ -1,5 +1,3 @@
-// Shared data for Helldivers 2 — Campaigns (Prestige Operations)
-
 export interface PrestigeMissionData {
   id: string;
   title: string;

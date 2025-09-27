@@ -1,4 +1,5 @@
-// src/app/(main)/helldivers-2/LeaderboardServer.tsx
+// src/app/LeaderboardServer.tsx
+
 import React from 'react';
 import { headers } from 'next/headers';
 import HelldiversLeaderboard from '@/components/leaderboard/HelldiversLeaderboard';

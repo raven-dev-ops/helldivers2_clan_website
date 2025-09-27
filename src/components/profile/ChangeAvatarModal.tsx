@@ -3,7 +3,7 @@
 
 import { useCallback, useMemo, useRef, useState } from 'react';
 import Cropper, { Area } from 'react-easy-crop';
-import styles from './ChangeAvatarModal.module.css';
+import styles from '@/styles/ChangeAvatarModal.module.css';
 
 interface ChangeAvatarModalProps {
   initialImageUrl?: string;

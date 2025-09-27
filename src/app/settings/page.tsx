@@ -1,10 +1,7 @@
-import SettingsPage from "@/components/settings/SettingsPage";
-
-<<<<<<< HEAD:src/app/settings/page.tsx
 import { useState } from 'react';
-import baseStyles from './styles/AppPage.module.css';
-import styles from './Settings.module.css';
-import ProfileEditForm from './ProfileEditForm';
+import baseStyles from '@/styles/AppPage.module.css';
+import styles from '@/Settings.module.css';
+import ProfileEditForm from '@/components/profile/ProfileEditForm';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -49,8 +46,4 @@ export default function SettingsPage() {
         </div>
     </div>
   );
-=======
-export default function SettingsRoute() {
-  return <SettingsPage />;
->>>>>>> main:src/app/(main)/settings/page.tsx
 }

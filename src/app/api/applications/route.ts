@@ -1,4 +1,5 @@
-// src/app/api/user-applications/route.ts
+// src/app/api/applications/route.ts
+
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
@@ -7,68 +8,105 @@ import UserApplicationModel from '@/models/UserApplication';
 import mongoose from 'mongoose';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
-import { postDiscordWebhook } from '@/lib/discordWebhook';
+import { postToDiscord } from '@/lib/discordWebhook';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const userApplicationSchema = z.object({
-  type: z.string({ required_error: 'type is required' }),
-  interest: z.string({ required_error: 'interest is required' }),
+  type: z.string({ required_error: 'type is required' }).min(1, 'type is required'),
+  interest: z.string({ required_error: 'interest is required' }).min(1, 'interest is required'),
   about: z.string().optional(),
-  interviewAvailability: z.string().optional(),
+  interviewAvailability: z.coerce.date().optional(),
 });
+
+// Narrower helper so we don't need NextAuth module augmentation for user.id
+function getUserId(user: unknown): string | null {
+  if (user && typeof user === 'object' && 'id' in (user as any)) {
+    const id = (user as any).id;
+    return typeof id === 'string' ? id : null;
+  }
+  return null;
+}
 
 export async function POST(request: Request) {
   const session = await getServerSession(getAuthOptions());
-  if (!session?.user?.id || !mongoose.Types.ObjectId.isValid(session.user.id)) {
+
+  const userIdStr = getUserId(session?.user);
+  if (!userIdStr || !mongoose.Types.ObjectId.isValid(userIdStr)) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
-  const userId = new mongoose.Types.ObjectId(session.user.id);
+
   try {
     const json = await request.json();
     const parsed = userApplicationSchema.safeParse(json);
     if (!parsed.success) {
       return NextResponse.json(
-        {
-          message: 'Validation Error',
-          errors: parsed.error.flatten().fieldErrors,
-        },
-        { status: 400 }
+        { message: 'Validation Error', errors: parsed.error.flatten().fieldErrors },
+        { status: 400 },
       );
     }
+
     const { type, interest, about, interviewAvailability } = parsed.data;
+
     await dbConnect();
+
+    const userId = new mongoose.Types.ObjectId(userIdStr);
     const app = new UserApplicationModel({
       userId,
       type,
       interest,
       about,
-      interviewAvailability: interviewAvailability
-        ? new Date(interviewAvailability)
-        : undefined,
+      interviewAvailability,
     });
+
     await app.save();
 
     const webhookUrl = process.env.DISCORD_APPLICATION_WEBHOOK_URL;
+
     if (webhookUrl) {
-      const lines = [
-        `New application from ${session.user?.name || 'unknown user'}`,
-        `Type: ${type}`,
-        `Interest: ${interest}`,
-      ];
-      if (about) lines.push(`About: ${about}`);
-      if (interviewAvailability)
-        lines.push(
-          `Interview Availability: ${new Date(
-            interviewAvailability
-          ).toISOString()}`
-        );
       try {
         logger.info('Sending application webhook');
-        await postDiscordWebhook(webhookUrl, {
-          content: lines.join('\n'),
-        });
+
+        const applicant = session?.user?.name || 'Unknown user';
+        const content = `New application received from ${applicant}`;
+
+        const embedFields: Array<{ name: string; value: string; inline: boolean }> = [
+          { name: 'Type', value: type, inline: true },
+          { name: 'Interest', value: interest, inline: true },
+        ];
+
+        if (about) {
+          embedFields.push({
+            name: 'About',
+            value: about.length > 1024 ? about.slice(0, 1021) + '…' : about,
+            inline: false,
+          });
+        }
+
+        if (interviewAvailability) {
+          embedFields.push({
+            name: 'Interview Availability',
+            value: interviewAvailability.toISOString(),
+            inline: false,
+          });
+        }
+
+        await postToDiscord(
+          {
+            content,
+            embeds: [
+              {
+                title: 'User Application Submitted',
+                description: `Applicant: **${applicant}**`,
+                color: 0x00b894,
+                timestamp: new Date().toISOString(),
+                fields: embedFields,
+              },
+            ],
+          },
+          { webhookUrlOverride: webhookUrl },
+        );
       } catch (err) {
         logger.error('Failed to send application webhook:', err);
       }
@@ -78,13 +116,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { message: 'Application submitted successfully!' },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     logger.error('User application error:', error);
     return NextResponse.json(
       { message: 'Internal Server Error' },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,4 +1,12 @@
-import type { ChallengeLevelData } from '@/types/challenges';
+// src/data/helldivers2/challenges.ts
+
+/** Shape of a single challenge level */
+export interface ChallengeLevelData {
+  id: string;
+  levelTitle: string;
+  details: string;
+  videoUrls?: string[];
+}
 
 /** John Helldiver challenge levels (JH0–JH7) */
 export const challengeLevels: ChallengeLevelData[] = [

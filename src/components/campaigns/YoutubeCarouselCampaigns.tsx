@@ -1,22 +1,22 @@
 'use client';
 
 import React, { useMemo } from 'react';
-<<<<<<<< HEAD:src/components/YoutubeCarouselChallenges.tsx
-import YoutubeCarousel, { YoutubeVideo } from '../../YoutubeCarousel';
-import styles from './HelldiversBase.module.css';
-========
 import YoutubeCarousel, { YoutubeVideo } from '../home/YoutubeCarousel';
-import styles from '../campaigns/YoutubeCarouselCampaign.module.css';
->>>>>>>> main:src/components/challenges/YoutubeCarouselChallenges copy.tsx
+import styles from '@/styles/YoutubeCarouselCampaign.module.css';
 
 function extractYouTubeId(url: string): string | null {
   try {
     const parsed = new URL(url);
-    if (parsed.hostname.includes('youtu.be')) {
+    const host = parsed.hostname.replace(/^www\./, '');
+
+    // youtu.be/<id>
+    if (host.includes('youtu.be')) {
       const id = parsed.pathname.replace('/', '').trim();
       return id || null;
     }
-    if (parsed.hostname.includes('youtube.com')) {
+
+    // youtube.com variations
+    if (host.includes('youtube.com')) {
       if (parsed.pathname.startsWith('/watch')) {
         return parsed.searchParams.get('v');
       }
@@ -28,8 +28,8 @@ function extractYouTubeId(url: string): string | null {
         return parsed.pathname.split('/').pop() || null;
       }
     }
-  } catch (_err) {
-    // Fall through and return null
+  } catch {
+    // ignore and fall through
   }
   return null;
 }
@@ -37,11 +37,10 @@ function extractYouTubeId(url: string): string | null {
 function toEmbedUrl(url: string): { id: string; embedUrl: string } | null {
   const id = extractYouTubeId(url);
   if (!id) return null;
-  const embedUrl = `https://www.youtube.com/embed/${id}?rel=0`;
-  return { id, embedUrl };
+  return { id, embedUrl: `https://www.youtube.com/embed/${id}?rel=0` };
 }
 
-export default function YoutubeCarouselPlaceholder({
+export default function YoutubeCarouselCampaigns({
   videoUrls,
   title,
 }: {
@@ -50,22 +49,25 @@ export default function YoutubeCarouselPlaceholder({
 }) {
   const videos: YoutubeVideo[] = useMemo(() => {
     if (!videoUrls || videoUrls.length === 0) return [];
-    const converted = videoUrls
-      .map((url) => toEmbedUrl(url))
+    return videoUrls
+      .map(toEmbedUrl)
       .filter((v): v is { id: string; embedUrl: string } => Boolean(v))
       .map((v) => ({ id: v.id, embedUrl: v.embedUrl }));
-    return converted;
   }, [videoUrls]);
 
   if (!videos.length) {
     return (
-      <div className={styles.youtubePlaceholder} role="note" aria-label="YouTube videos placeholder">
+      <div
+        className={styles.youtubePlaceholder}
+        role="note"
+        aria-label="YouTube videos placeholder"
+      >
         <div className={styles.youtubePlaceholderTitle}>No videos yet</div>
         <p className={styles.youtubePlaceholderText}>
-          Add YouTube links to this challenge to show a carousel. Edit the
+          Add YouTube links to this campaign to show a carousel. Edit the
           <span> videoUrls </span>
-          field for this challenge in the page data.
-          {title ? ` (${title})` : ''}
+          field for this campaign in the page data
+          {title ? ` (${title})` : ''}.
         </p>
       </div>
     );
@@ -73,4 +75,3 @@ export default function YoutubeCarouselPlaceholder({
 
   return <YoutubeCarousel videos={videos} />;
 }
-

@@ -1,4 +1,4 @@
-import { Question } from './Quiz';
+import { Question } from '@/components/academy/training/Quiz';
 
 const hd2Questions: Question[] = [
   {

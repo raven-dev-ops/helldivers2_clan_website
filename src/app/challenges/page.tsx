@@ -1,11 +1,10 @@
 import { getChallengeLevels } from '@/lib/challenges';
 import ChallengeList from '@/components/challenges/ChallengeList';
 
-<<<<<<< HEAD:src/app/challenges/page.tsx
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import SubmitChallengeModal from '@/components/SubmitChallengeModal';
-import YoutubeCarouselPlaceholder from '@/components/YoutubeCarouselCampaign';
+import SubmitChallengeModal from '@/components/challenges/SubmitChallengeModal';
+import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaigns';
 
 // --- Import CSS Modules ---
 import base from '../Base.module.css';
@@ -18,11 +17,4 @@ interface ChallengeLevelData {
   levelTitle: string;
   details: string;
   videoUrls?: string[];
-=======
-export const revalidate = 60;
-
-export default async function ChallengesPage() {
-  const items = await getChallengeLevels();
-  return <ChallengeList items={items} />;
->>>>>>> main:src/app/(main)/helldivers-2/challenges/page.tsx
 }

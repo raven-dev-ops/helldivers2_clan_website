@@ -1,15 +1,199 @@
-.navbar{
-    background-color: rgba(15,23,42,.85); backdrop-filter: blur(10px);
-    border-bottom: var(--border-width) solid var(--color-border-alt);
-    position:sticky; top:0; z-index:50; padding: var(--spacing-3) 0;
+/* src/components/common/Navbar.module.css */
+
+/* --- Base Nav Structure --- */
+.nav {
+  background-color: var(--color-surface, #ffffff);
+  padding: var(--spacing-3, 0.75rem) var(--spacing-4, 1rem);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing-2, 0.5rem);
+  padding-right: var(--spacing-2, 0.5rem);
+  position: relative;
+}
+
+/* --- Logo Area --- */
+.logoArea {
+  display: flex;
+  align-items: center;
+  /* Removed position: relative as dropdown is gone */
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* NEW: Style for the link replacing the dropdown button */
+.logoLinkButton {
+  display: inline-flex; /* Use flex to align icon and text if needed */
+  align-items: center;
+  gap: var(--spacing-2, 0.5rem);
+  background-color: transparent;
+  border: 1px solid transparent; /* Can add border for button look */
+  padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+  border-radius: var(--border-radius-md, 4px);
+  color: var(--color-text-primary, #333);
+  font-weight: 600;
+  font-size: 1rem; /* Adjusted size slightly */
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none; /* Remove link underline */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* NEW: Hover/focus state for the logo link */
+.logoLinkButton:hover,
+.logoLinkButton:focus-visible {
+  background-color: var(--color-surface-alt, #f5f5f5);
+  color: var(--color-primary, #facc15); /* Use your primary color */
+  border-color: var(--color-border, #e0e0e0); /* Example border on hover */
+  outline: none;
+}
+
+/* Spinner Style */
+.spinnerRotating {
+  animation: spin 1s linear infinite;
+  /* Optional: Adjust size/margin if needed */
+  width: 1em;
+  height: 1em;
+  /* margin-right: 0.5rem; */ /* If you have text next to it */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  .link{
-    color: var(--color-text-secondary);
-    padding: var(--spacing-2) var(--spacing-3);
-    border-radius: var(--border-radius-sm); font-weight:500;
-    transition: color .2s, background-color .2s;
+  to {
+    transform: rotate(360deg);
   }
-  .link:hover, .link:focus-visible, .active{
-    color: var(--color-text-primary); background-color: var(--color-surface-alt);
+}
+
+/* --- Desktop Menu --- */
+.desktopMenu {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3, 0.75rem);
+}
+
+/* --- Mobile Menu --- */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--color-primary, #facc15);
+  cursor: pointer;
+}
+
+.mobileMenu {
+  display: none;
+  flex-direction: column;
+  gap: var(--spacing-2, 0.5rem);
+  background-color: var(--color-surface, #ffffff);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  padding: var(--spacing-3, 0.75rem);
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+  z-index: 40;
+}
+
+.mobileMenuOpen {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .desktopMenu {
+    display: none;
   }
-  
+
+  .mobileMenuButton {
+    display: block;
+  }
+}
+
+/* Style for links within the desktop menu */
+.link {
+  color: var(--color-primary, #facc15); /* Default nav link color to yellow */
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: var(--spacing-2, 0.5rem) var(--spacing-3, 0.75rem);
+  border-radius: var(--border-radius-md, 4px);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+  white-space: nowrap; /* Prevent links wrapping */
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--color-primary-hover, #f59e0b);
+  background-color: var(--color-surface-alt, #f5f5f5);
+  outline: none;
+}
+
+/* Style for the currently active link (optional) */
+.activeLink {
+  color: var(--color-primary, #facc15);
+  font-weight: 700;
+  /* background-color: var(--color-primary-light, #e0f7ff); */ /* Optional subtle background */
+}
+
+/* --- Dropdown --- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdownMenu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 6px;
+  z-index: 1000;
+}
+
+.dropdown:hover .dropdownMenu {
+  display: block;
+}
+
+.dropdownItem {
+  display: block;
+  padding: 8px 10px;
+  border-radius: 4px;
+  color: var(--color-text-primary, #374151);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dropdownItem:hover,
+.dropdownItem:focus-visible {
+  background-color: var(--color-surface-alt, #f9fafb);
+  color: var(--color-primary, #f59e0b);
+  outline: none;
+}
+
+/* Disabled style for placeholder items */
+.disabled {
+  color: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+}

@@ -1,213 +1,10 @@
-<<<<<<< HEAD:src/app/academy/page.tsx
 // src/app/academy/page.tsx
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import base from '@/styles/Base.module.css';
 import styles from '@/styles/AcademyPage.module.css';
-
-type Module = {
-  id: string;
-  title: string;
-  subtitle: string;
-  img: string;
-  imgAlt: string;
-  description: string;
-  basic: string[];
-  advanced: string[];
-  details: {
-    paragraphs: string[];
-    tips?: string[];
-    cautions?: string[];
-  };
-};
-
-const MODULES: Module[] = [
-  {
-    id: 'environmental',
-    title: 'Environmental',
-    subtitle: 'Planetary concerns / considerations',
-    img: 'https://placehold.co/1200x675?text=Environmental',
-    imgAlt: 'Environmental conditions affecting combat',
-    description:
-      'Understand how biomes, weather, and hazards change your plan of attack and extraction.',
-    basic: [
-      'Biomes: desert, arctic, forest, swamp — impacts visibility & mobility',
-      'Weather: sandstorms, blizzards, fog/night ops — shorten engagement ranges',
-      'Hazards: meteor/artillery zones, lightning, seismic shockwaves, acid pools',
-    ],
-    advanced: [
-      'Route planning: pre-mark safeholds & fallback lines around hazard zones',
-      'Adaptation: bring stuns/smokes for low-vis, sentries for lane control',
-      'Timing: start objectives between weather waves; call Pelican early',
-    ],
-    details: {
-      paragraphs: [
-        'Environmental factors control tempo. Use storms and night ops to break line of sight, rotate squads, and reposition heavy weapons without drawing cross-map aggro.',
-        'Meteor/artillery events can be weaponized: fight with your back to their impact lanes so incoming waves path through damage.',
-      ],
-      tips: [
-        'In blizzards, marksmen swap to close-range secondaries; rely on sentry arcs.',
-        'Lightning disables bots briefly—time pushes between strikes.',
-      ],
-      cautions: ['Acid pools destroy extract lanes—scan and plan alternates before uplinks.'],
-    },
-  },
-  {
-    id: 'weaponry',
-    title: 'Weaponry',
-    subtitle: 'Types, range, description',
-    img: 'https://placehold.co/1200x675?text=Weaponry',
-    imgAlt: 'Helldiver weapons on a rack',
-    description:
-      'Choose the right tool and range for the job; manage recoil, reloads, and penetration.',
-    basic: [
-      'Primaries: AR-23 Liberator (AR), SG-225 Breaker (Shotgun), DMR-8 Diligence (DMR)',
-      'Energy/Plasma: LAS-16 Sickle (sustain), PLAS-1 Scorcher (splash)',
-      'Support/AT: Railgun, Recoilless Rifle, Autocannon for armor threats',
-    ],
-    advanced: [
-      'Armor breakpoints: Chargers legs; Hulks/Devs vents/power units',
-      'Target priority: spawners, artillery, commanders before fodder',
-      'Ammo economy: share resupplies; rotate roles as mags run low',
-    ],
-    details: {
-      paragraphs: [
-        'Think in roles: Anchor (lane denial), Demo (armor delete), Flex (revives/utility). Slot your primary to complement squad gaps.',
-        'Penetration and stagger matter more than raw DPS when kiting armored waves.',
-      ],
-      tips: [
-        'Railgun (safe mode off) deletes vents through soft cover.',
-        'Autocannon + smoke = safe turreting in open fields.',
-      ],
-      cautions: ['Breaker friendly-fire cones are wide—announce pushes.'],
-    },
-  },
-  {
-    id: 'armory',
-    title: 'Armory',
-    subtitle: 'Types, range, description',
-    img: 'https://placehold.co/1200x675?text=Armory',
-    imgAlt: 'Helldiver armor sets on mannequins',
-    description:
-      'Balance protection and mobility; pick armor that matches your role and mission.',
-    basic: [
-      'Armor classes: Light (mobility), Medium (balanced), Heavy (survivability)',
-      'Mobility & stamina: heavier armor slows sprints and recoveries',
-      'Perk synergies: backpack choices (Ammo/Shield) and grenade types',
-    ],
-    advanced: [
-      'Role gearing: Demo (AT focus), Anchor (line holding), Support (revives/backpacks)',
-      'Damage mitigation: plan for friendly-fire and explosive radii',
-      'Team comp: at least two anti-armor sources per squad',
-    ],
-    details: {
-      paragraphs: [
-        'Heavier kits shine in static objectives; light kits excel at map control and tag-and-drag.',
-        'Armor choice dictates revive reliability; heavier anchors should carry utility grenades.',
-      ],
-      tips: ['Heavy + shield backpack = clutch extra life on extracts.'],
-      cautions: ['Don’t over-stack heavy; squad mobility collapses under meteor spam.'],
-    },
-  },
-  {
-    id: 'stratagems',
-    title: 'Stratagems',
-    subtitle: 'Type, warnings, advantage',
-    img: 'https://placehold.co/1200x675?text=Stratagems',
-    imgAlt: 'Stratagem beacons being thrown',
-    description:
-      'Call down the right support at the right time while managing risk to your squad.',
-    basic: [
-      'Categories: Offensive (Eagle/Orbitals), Defensive (Sentries/Mines), Utility (Resupply/Shield)',
-      'Timing & danger zones: announce throws; clear teammates before impact',
-      'LOS & terrain: use ridges/walls to block blast & shrapnel',
-    ],
-    advanced: [
-      'Combos: Stun → Railcannon; Smoke → Uplinks; Barrages to hold extracts',
-      'Sentry placement: behind cover, overlapping arcs, avoid friendly lanes',
-      'Cooldowns: pre-cast Eagles before timers; stagger orbitals',
-    ],
-    details: {
-      paragraphs: [
-        'Treat orbitals like terrain you place: shape enemy paths, then exploit with AT bursts.',
-        'Pre-call Eagle runs on spawner pings to keep pressure low during objective inputs.',
-      ],
-      tips: ['Mortar sentry behind low wall = safe infinite suppression.'],
-      cautions: ['Announce precision strikes—no surprise blue-on-blue.'],
-    },
-  },
-  {
-    id: 'xenology',
-    title: 'Xenology',
-    subtitle: 'Race, armor type, weakness, strengths',
-    img: 'https://placehold.co/1200x675?text=Xenology',
-    imgAlt: 'Enemy faction silhouettes',
-    description:
-      'Know your enemy: identify armor types, behaviors, and the counters that work.',
-    basic: [
-      'Factions: Terminids (melee swarms) and Automatons (ranged armor)',
-      'Weak points: Charger legs, Bile Titan head/back; Bot vents/power units',
-      'Spawners & commanders: eliminate to reduce pressure',
-    ],
-    advanced: [
-      'Counters: AT vs Chargers/Tanks; EMP/Impact vs bots; fire vs bugs',
-      'Threat triage: artillery, snipers, breeders before fodder',
-      'CC vs single-target: swap roles as the fight evolves',
-    ],
-    details: {
-      paragraphs: [
-        'Terminids reward kiting funnels and fire DoTs; Automatons demand cover discipline and angle denial.',
-        'Kill-chain: commanders → spawners → heavies → chaff; starve waves at the source.',
-      ],
-      tips: ['Impact grenades pop bot vents on flanks without exposing the squad.'],
-      cautions: ['Don’t chase breeders into fog—bait them into sentry arcs.'],
-    },
-  },
-  {
-    id: 'command',
-    title: 'Command',
-    subtitle: 'Roles, duties, applications',
-    img: 'https://placehold.co/1200x675?text=Command',
-    imgAlt: 'Command roles and responsibilities',
-    description:
-      'Understand GPT Fleet leadership roles and how to step up: Fleet Commander (jr. mod), Democracy Officer (mod), Loyalty Officer (admin).',
-    basic: [
-      'Fleet Commander: squad/event ops, quick decisions, escalates issues',
-      'Democracy Officer: moderation, culture enforcement, event leads',
-      'Loyalty Officer: admin, policy, security, final arbitration',
-    ],
-    advanced: [
-      'Playbooks: incident triage → de-escalation → resolution → report',
-      'Signal: concise comms, standard callouts, delegate early',
-      'Pipeline: apply at the Mod Team page; shadow, eval, promote',
-    ],
-    details: {
-      paragraphs: [
-        'Command roles keep games moving and the culture consistent. Use clear comms, set tempo, and delegate tasks to maintain momentum under pressure.',
-        'Document incidents succinctly: what happened, who was impacted, what action you took, and follow-ups. Consistency builds trust.',
-      ],
-      tips: [
-        'Use standard callouts (“Rotate north”, “Hold extract”, “AT on Charger legs”).',
-        'Keep a ready roster for events; backfill before you burn out.',
-      ],
-      cautions: [
-        'Avoid rules lawyering mid-match—stabilize first, debrief after.',
-        'Promotions follow performance and culture fit—no fast-tracking.',
-      ],
-    },
-  },
-];
-=======
-/* eslint-disable @next/next/no-img-element */
-'use client';
-
-import { useEffect, useMemo, useRef, useState } from 'react';
-import base from '../styles/HelldiversBase.module.css';
-import page from './AcademyPage.module.css';
-import ModuleCard from '@/components/academy/ModuleCard';
-import { MODULES, type ModuleWithDetails } from '@/components/academy/Modules';
->>>>>>> main:src/app/(main)/helldivers-2/academy/page.tsx
+import { MODULES, type AcademyModule } from '@/lib/academy';
 
 export default function AcademyPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -216,7 +13,7 @@ export default function AcademyPage() {
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedModule = useMemo<ModuleWithDetails | null>(
+  const selectedModule = useMemo<AcademyModule | null>(
     () => MODULES.find((m) => m.id === selectedId) ?? null,
     [selectedId]
   );
@@ -307,10 +104,10 @@ export default function AcademyPage() {
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
 
-      <div className={`${base.pageContainer} ${page.pageWrapper}`}>
-        <header className={page.pageHeader}>
-          <h2 className={page.pageTitle}>Academy</h2>
-          <p className={page.pageSubtitle}>
+      <div className={`${base.pageContainer} ${styles.pageWrapper}`}>
+        <header className={styles.pageHeader}>
+          <h2 className={styles.pageTitle}>Academy</h2>
+          <p className={styles.pageSubtitle}>
             Six training modules covering environments, equipment, tactics, leadership, and enemies.
           </p>
         </header>
@@ -319,7 +116,7 @@ export default function AcademyPage() {
           <h3 id="academy-title" className={base.sectionTitle}>Training Modules</h3>
 
           {/* Horizontal rail */}
-          <div className={page.modulesRail} role="list" aria-label="Academy modules">
+          <div className={styles.modulesRail} role="list" aria-label="Academy modules">
             {MODULES.map(({ details, ...m }) => (
               <ModuleCard key={m.id} data={m} onOpen={openModal} />
             ))}
@@ -341,23 +138,39 @@ export default function AcademyPage() {
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
           >
-            <img src={selectedModule.img} alt={selectedModule.imgAlt} style={modalStyles.hero} loading="eager" decoding="sync" />
+            <img
+              src={selectedModule.img}
+              alt={selectedModule.imgAlt}
+              style={modalStyles.hero}
+              loading="eager"
+              decoding="sync"
+            />
 
             <div style={modalStyles.header}>
               <div>
                 <h3 id="academy-modal-title" className={base.sectionTitle} style={{ marginBottom: 4 }}>
                   {selectedModule.title}
                 </h3>
-                <p className={page.moduleSubtitle} style={{ margin: 0 }}>
+                <p className={styles.moduleSubtitle} style={{ margin: 0 }}>
                   {selectedModule.subtitle}
                 </p>
               </div>
 
               {selectedModule.id === 'command' && (
-                <a href="/mod-team" className={page.ctaButton} aria-label="Apply to Mod Team">Apply to Mod Team</a>
+                <a href="/mod-team" className={styles.ctaButton} aria-label="Apply to Mod Team">
+                  Apply to Mod Team
+                </a>
               )}
 
-              <button ref={closeBtnRef} type="button" onClick={closeModal} style={modalStyles.close} aria-label="Close module">✕</button>
+              <button
+                ref={closeBtnRef}
+                type="button"
+                onClick={closeModal}
+                style={modalStyles.close}
+                aria-label="Close module"
+              >
+                ✕
+              </button>
             </div>
 
             <div style={modalStyles.body}>
@@ -370,11 +183,11 @@ export default function AcademyPage() {
               ))}
 
               {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) && (
-                <div className={page.modalRow}>
+                <div className={styles.modalRow}>
                   {selectedModule.details.tips?.length ? (
-                    <div className={page.modalListCard}>
-                      <div className={page.modalListTitle}>Tips</div>
-                      <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
+                    <div className={styles.modalListCard}>
+                      <div className={styles.modalListTitle}>Tips</div>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {selectedModule.details.tips.map((t) => (
                           <li key={t} className={base.listItem}>{t}</li>
                         ))}
@@ -383,9 +196,9 @@ export default function AcademyPage() {
                   ) : null}
 
                   {selectedModule.details.cautions?.length ? (
-                    <div className={page.modalListCard}>
-                      <div className={page.modalListTitle}>Cautions</div>
-                      <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
+                    <div className={styles.modalListCard}>
+                      <div className={styles.modalListTitle}>Cautions</div>
+                      <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                         {selectedModule.details.cautions.map((c) => (
                           <li key={c} className={base.listItem}>{c}</li>
                         ))}
@@ -395,18 +208,18 @@ export default function AcademyPage() {
                 </div>
               )}
 
-              <div className={page.modalRow} style={{ marginTop: '1.25rem' }}>
-                <div className={page.modalListCard}>
-                  <div className={page.modalListTitle}>Basic</div>
-                  <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
+              <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
+                <div className={styles.modalListCard}>
+                  <div className={styles.modalListTitle}>Basic</div>
+                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                     {selectedModule.basic.map((item) => (
                       <li key={item} className={base.listItem}>{item}</li>
                     ))}
                   </ul>
                 </div>
-                <div className={page.modalListCard}>
-                  <div className={page.modalListTitle}>Advanced</div>
-                  <ul className={`${base.styledList} ${page.moduleSkillsList}`}>
+                <div className={styles.modalListCard}>
+                  <div className={styles.modalListTitle}>Advanced</div>
+                  <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
                     {selectedModule.advanced.map((item) => (
                       <li key={item} className={base.listItem}>{item}</li>
                     ))}
@@ -415,7 +228,7 @@ export default function AcademyPage() {
               </div>
 
               <div style={{ marginTop: '1.25rem', textAlign: 'right' }}>
-                <button type="button" onClick={closeModal} className={page.ctaButton} aria-label="Close module">
+                <button type="button" onClick={closeModal} className={styles.ctaButton} aria-label="Close module">
                   Close
                 </button>
               </div>
@@ -424,5 +237,40 @@ export default function AcademyPage() {
         </div>
       )}
     </div>
+  );
+}
+
+/** Small card component kept inline for clarity */
+function ModuleCard({
+  data,
+  onOpen,
+}: {
+  data: Omit<AcademyModule, 'details'>;
+  onOpen: (id: string, trigger: HTMLButtonElement | null) => void;
+}) {
+  return (
+    <article className={styles.moduleCard} role="listitem">
+      <img
+        className={styles.moduleCardImg}
+        src={data.img}
+        alt={data.imgAlt}
+        loading="lazy"
+        decoding="async"
+      />
+      <div className={styles.moduleCardBody}>
+        <h4 className={styles.moduleCardTitle}>{data.title}</h4>
+        <p className={styles.moduleCardSubtitle}>{data.subtitle}</p>
+        <p className={styles.moduleCardDesc}>{data.description}</p>
+        <button
+          className={styles.ctaButton}
+          onClick={(e) => onOpen(data.id, e.currentTarget)}
+          aria-haspopup="dialog"
+          aria-controls="academy-modal"
+          aria-label={`Open ${data.title} module`}
+        >
+          Open
+        </button>
+      </div>
+    </article>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import styles from './Quiz.module.css';
+import styles from '@/styles/Quiz.module.css';
 
 export interface Question {
   question: string;

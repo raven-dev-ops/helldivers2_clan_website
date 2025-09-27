@@ -1,6 +1,6 @@
 // src/components/common/Footer.tsx
 import React from 'react';
-import styles from './Footer.module.css';
+import styles from '@/styles/Footer.module.css';
 import { FaDiscord, FaTwitch, FaYoutube } from 'react-icons/fa';
 import { FaTiktok, FaXTwitter, FaInstagram, FaSnapchat } from 'react-icons/fa6';
 import { FaFacebook } from 'react-icons/fa';

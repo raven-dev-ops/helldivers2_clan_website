@@ -1,4 +1,5 @@
 // src/app/components/leaderboard/HelldiversLeaderboard.tsx
+
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';

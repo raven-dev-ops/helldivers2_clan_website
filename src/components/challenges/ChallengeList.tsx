@@ -2,9 +2,9 @@
 
 import Expander from '@/components/common/Expander';
 import code from '@/components/common/CodeBlocks.module.css';
-import YoutubeCarouselPlaceholder from '@/components/campaigns/YoutubeCarouselCampaign';
-import base from '@/app/(main)/helldivers-2/styles/HelldiversBase.module.css';
-import type { ChallengeLevelData } from '@/types/challenges';
+import YoutubeCarouselPlaceholder from '@/components/challenges/YoutubeCarouselChallenges';
+import base from '@/styles/Base.module.css';
+import type { ChallengeLevelData } from '@/lib/challenges';
 
 type ChallengeListProps = {
   items: ChallengeLevelData[];

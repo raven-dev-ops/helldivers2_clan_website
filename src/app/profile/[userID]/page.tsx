@@ -1,9 +1,5 @@
-<<<<<<<< HEAD:src/app/profile/[userID]/page.tsx
-// src/app/profile/[userID]/page.tsx
-
-========
 // src/app/(main)/helldivers-2/profile/[userID]/page.tsx
->>>>>>>> main:src/app/(main)/helldivers-2/profile/[userID]/page.tsx
+
 import mongoose from 'mongoose';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
@@ -12,16 +8,8 @@ import Image from 'next/image';
 import { format } from 'date-fns';
 import { logger } from '@/lib/logger';
 
-type ForumThreadListItem = {
-  _id: string;
-  categoryId: string;
-  title: string;
-  createdAt: string;
-};
-
 type UserProfileData = {
-  user: Record<string, any> & { createdAt?: string | Date };
-  recentThreads: ForumThreadListItem[];
+  user: Record<string, unknown> & { createdAt?: string | Date };
 };
 
 async function getUserProfile(userID: string): Promise<UserProfileData | null> {
@@ -32,29 +20,8 @@ async function getUserProfile(userID: string): Promise<UserProfileData | null> {
     const user = await UserModel.findById(userID).lean();
     if (!user) return null;
 
-<<<<<<<< HEAD:src/app/profile/[userID]/page.tsx
-    return JSON.parse(JSON.stringify({ user }));
-========
-    const recentThreads = await ForumThreadModel.find({ authorId: userID })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select('title categoryId createdAt')
-      .lean();
-
-    const serialized = JSON.parse(
-      JSON.stringify({ user, recentThreads }),
-    ) as UserProfileData;
-
-    return {
-      ...serialized,
-      recentThreads: serialized.recentThreads.map((thread) => ({
-        ...thread,
-        _id: String(thread._id),
-        categoryId: String(thread.categoryId),
-        createdAt: String(thread.createdAt),
-      })),
-    } satisfies UserProfileData;
->>>>>>>> main:src/app/(main)/helldivers-2/profile/[userID]/page.tsx
+    // Serialize ObjectId/Date for edge/runtime safety
+    return JSON.parse(JSON.stringify({ user })) as UserProfileData;
   } catch (error) {
     logger.error('Error fetching profile:', error);
     return null;
@@ -64,20 +31,16 @@ async function getUserProfile(userID: string): Promise<UserProfileData | null> {
 export default async function ProfilePage({
   params,
 }: {
-  params: Promise<{ userID: string }>;
+  params: { userID: string };
 }) {
-  const { userID } = await params;
+  const { userID } = params;
   const profileData = await getUserProfile(userID);
 
   if (!profileData) {
     notFound();
   }
 
-<<<<<<<< HEAD:src/app/profile/[userID]/page.tsx
   const { user } = profileData as any;
-========
-  const { user, recentThreads } = profileData;
->>>>>>>> main:src/app/(main)/helldivers-2/profile/[userID]/page.tsx
 
   const heightUnit: 'cm' | 'in' =
     user?.preferredHeightUnit === 'in' ? 'in' : 'cm';
@@ -98,83 +61,46 @@ export default async function ProfilePage({
     return Math.round(Number(kgVal) * 2.2046226218);
   })();
 
+  const displayName =
+    user?.name ||
+    [user?.firstName, user?.middleName, user?.lastName]
+      .filter(Boolean)
+      .join(' ') ||
+    'User';
+
   return (
     <main className="container mx-auto py-8 px-4">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border dark:border-slate-700 flex items-center gap-6 mb-8">
         <Image
           src={
-            user.customAvatarDataUrl ||
-            user.image ||
+            user?.customAvatarDataUrl ||
+            user?.image ||
             '/images/avatar-default.png'
           }
-          alt={`${
-            user.name ||
-            [user.firstName, user.middleName, user.lastName]
-              .filter(Boolean)
-              .join(' ') ||
-            'User'
-          }'s Avatar`}
+          alt={`${displayName}'s Avatar`}
           width={160}
           height={160}
           className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
         />
+
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            {user.name ||
-              [user.firstName, user.middleName, user.lastName]
-                .filter(Boolean)
-                .join(' ') ||
-              'User'}
+            {displayName}
           </h1>
+
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Member since{' '}
-            {user.createdAt
+            {user?.createdAt
               ? format(new Date(user.createdAt), 'MMMM d, yyyy')
               : 'N/A'}
           </p>
+
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}):{' '}
             {weightDisplay}
           </p>
         </div>
       </div>
-<<<<<<<< HEAD:src/app/profile/[userID]/page.tsx
-========
-
-      <h2 className="text-2xl font-semibold mb-4 text-slate-900 dark:text-slate-100">
-        Recent Threads
-      </h2>
-      {recentThreads.length > 0 ? (
-        <ul className="space-y-2">
-          {recentThreads.map((thread) => (
-            <li
-              key={thread._id}
-              className="p-2 bg-slate-100 dark:bg-slate-800/50 rounded border dark:border-slate-700"
-            >
-              <Link
-                href={{
-                  pathname: '/forum/[categoryId]/[threadId]',
-                  query: {
-                    categoryId: String(thread.categoryId),
-                    threadId: String(thread._id),
-                  },
-                }}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                {thread.title}
-              </Link>
-              <span className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-                ({format(new Date(thread.createdAt), 'MMM d, yyyy')})
-              </span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-slate-600 dark:text-slate-400">
-          No threads started yet.
-        </p>
-      )}
->>>>>>>> main:src/app/(main)/helldivers-2/profile/[userID]/page.tsx
     </main>
   );
 }

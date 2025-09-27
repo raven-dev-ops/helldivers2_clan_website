@@ -1,4 +1,5 @@
 // src/app/(main)/helldivers-2/YoutubeCarousel.tsx
+
 'use client';
 
 import React from 'react';
@@ -7,7 +8,7 @@ import { Navigation, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
-import styles from './YouTubeCarousel.module.css';
+import styles from '@/styles/YouTubeHomeCarousel.module.css';
 
 export interface YoutubeVideo {
   id: string;

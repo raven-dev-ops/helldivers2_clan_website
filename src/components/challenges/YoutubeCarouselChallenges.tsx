@@ -1,13 +1,8 @@
 'use client';
 
 import React, { useMemo } from 'react';
-<<<<<<<< HEAD:src/components/YoutubeCarouselChallenges.tsx
-import YoutubeCarousel, { YoutubeVideo } from '../../YoutubeCarousel';
-import styles from './HelldiversBase.module.css';
-========
 import YoutubeCarousel, { YoutubeVideo } from '../home/YoutubeCarousel';
-import styles from '../campaigns/YoutubeCarouselCampaign.module.css';
->>>>>>>> main:src/components/challenges/YoutubeCarouselChallenges copy.tsx
+import styles from '@/styles/YoutubeCarouselChallenges.module.css';
 
 function extractYouTubeId(url: string): string | null {
   try {

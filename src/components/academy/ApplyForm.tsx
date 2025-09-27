@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import styles from './ApplyForm.module.css'; // Create this CSS module file
+import styles from '@/styles/ApplyForm.module.css'; // Create this CSS module file
 import { logger } from '@/lib/logger';
 
 interface ApplyFormProps {

@@ -12,14 +12,9 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-<<<<<<<< HEAD:src/app/profile/me/page.tsx
-import base from '../styles/Base.module.css';
-import s from '../styles/ProfileEditForm.module.css'; // reuse Settings layout styles
-========
+import base from '@/styles/Base.module.css';
+import s from '@/styles/ProfileEditForm.module.css'; // reuse Settings layout styles
 
-import base from '../../styles/HelldiversBase.module.css';
-import s from '@/components/profile/ProfileEditForm.module.css'; // reuse Settings layout styles
->>>>>>>> main:src/app/(main)/helldivers-2/profile/me/page.tsx
 
 const overlayStyle: CSSProperties = {
   position: 'fixed',

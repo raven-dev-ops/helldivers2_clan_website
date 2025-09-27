@@ -2,7 +2,7 @@
 
 import { useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import styles from './Expanders.module.css';
+import styles from '@/styles/Expanders.module.css';
 
 type ExpanderProps = {
   id: string;                        // anchor id on the container

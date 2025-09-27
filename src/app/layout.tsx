@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-// src/app/layout.tsx
-=======
 // src/app/layout.tsx
 'use client';
 
@@ -55,4 +52,4 @@ export default function RootLayout({
     </html>
   );
 }
->>>>>>> main
+
