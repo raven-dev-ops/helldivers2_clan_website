@@ -1,10 +1,15 @@
+// src/components/common/AlertBar.tsx
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import styles from './AlertBar.module.css';
-import type { Alert } from '@/_types/alerts';
+import type { Alert } from '@/models/Alerts';
+
+// Allow either `kind` (from our shared type) or legacy `variant`
+type AlertLike = Alert & { variant?: string };
 
 export default function AlertBar() {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [alerts, setAlerts] = useState<AlertLike[]>([]);
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(false);
   const [closed, setClosed] = useState(false);
@@ -19,7 +24,8 @@ export default function AlertBar() {
       try {
         const res = await fetch('/api/alerts', { cache: 'no-store' });
         const data = res.ok ? await res.json() : null;
-        setAlerts(Array.isArray(data?.alerts) ? data.alerts : []);
+        const list = Array.isArray(data?.alerts) ? (data.alerts as AlertLike[]) : [];
+        setAlerts(list);
       } catch {
         // ignore errors
       }
@@ -51,7 +57,7 @@ export default function AlertBar() {
 
       // Slower = smaller px/sec. Tweak if needed.
       const PX_PER_SEC = 35;
-      const secs = Math.max(120, (wrapperW + contentW) / PX_PER_SEC); // min 40s for readability
+      const secs = Math.max(120, (wrapperW + contentW) / PX_PER_SEC); // min 120s for readability
       setDurationSec(secs);
     };
 
@@ -80,12 +86,14 @@ export default function AlertBar() {
   };
 
   const current = alerts[index];
-  const barVariant = current.variant ?? 'purple';
+  // Prefer `variant`, fall back to `kind`, then a safe default
+  const barVariant = current.variant ?? current.kind ?? 'purple';
 
   return (
     <div
       className={`${styles.bar} ${styles[`alertBar--${barVariant}`]}`}
       role="status"
+      aria-live="polite"
       style={{ ['--ticker-duration' as any]: `${durationSec}s` }} // consumed by CSS
     >
       <div className={styles.inner}>
@@ -97,16 +105,26 @@ export default function AlertBar() {
             ref={tickerRef}
             onAnimationEnd={handleAnimationEnd}
           >
-            {current.message}
+            {/* If an href is provided, make the alert clickable */}
+            {current.href ? (
+              <a href={current.href} className={styles.link}>
+                {current.message}
+              </a>
+            ) : (
+              current.message
+            )}
           </div>
         </div>
-        <button
-          className={styles.close}
-          onClick={handleClose}
-          aria-label="Close alert"
-        >
-          ×
-        </button>
+        {current.dismissible !== false && (
+          <button
+            className={styles.close}
+            onClick={handleClose}
+            aria-label="Close alert"
+            type="button"
+          >
+            ×
+          </button>
+        )}
       </div>
     </div>
   );
