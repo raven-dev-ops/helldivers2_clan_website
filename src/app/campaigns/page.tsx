@@ -7,7 +7,7 @@ import base from '../HelldiversBase.module.css';
 import exp from '../components/Expanders.module.css';
 import code from '@/app/components/CodeBlocks.module.css';
 import SubmitCampaignModal from '@/app/components/campaigns/SubmitCampaignModal';
-import YoutubeCarouselPlaceholder from '../components/YoutubeCarouselCampaign';
+import YoutubeCarouselPlaceholder from '../../components/YoutubeCarouselCampaign';
 
 interface PrestigeMissionData {
   id: string;

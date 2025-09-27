@@ -9,7 +9,7 @@ import reviews from '../lib/reviews';
 
 // Note: do NOT pass { ssr: false } here — it's not allowed in Server Components.
 const ReviewsRotator = dynamic(
-  () => import('@/app/components/ReviewsRotator')
+  () => import('@/components/ReviewsRotator')
 );
 
 export default function HelldiversPage() {
