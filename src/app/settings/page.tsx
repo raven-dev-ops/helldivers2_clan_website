@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import baseStyles from '@/styles/AppPage.module.css';
-import styles from '@/Settings.module.css';
+import baseStyles from '@/styles/Base.module.css';
+import styles from '@/styles/Settings.module.css';
 import ProfileEditForm from '@/components/profile/ProfileEditForm';
 
 export default function SettingsPage() {
@@ -10,7 +10,6 @@ export default function SettingsPage() {
     switch (activeTab) {
       case 'profile':
         return <ProfileEditForm />;
-      // Add other settings sections here
       default:
         return null;
     }
