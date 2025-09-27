@@ -6,9 +6,5 @@ export const fetchCache = 'default-no-store';
 
 import NextAuth from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
-
-// Create the handler once at module scope
 const handler = NextAuth(getAuthOptions());
-
-// App Router needs both verbs exported
 export { handler as GET, handler as POST };
