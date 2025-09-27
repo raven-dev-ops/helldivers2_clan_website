@@ -1,11 +1,12 @@
 // src/app/layout.tsx
+
 'use client';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import '@/styles/globals.css';
 import { ThemeProvider } from '@/components/common/ThemeProvider';
 import MusicButton from '@/components/common/MusicButton';
 import { SessionProvider } from 'next-auth/react';
