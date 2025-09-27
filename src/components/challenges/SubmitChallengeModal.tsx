@@ -13,15 +13,17 @@ const CHALLENGE_LEVEL_LABELS: string[] = [
   'The Purist',
 ];
 
+type SubmitChallengeModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmitted: (msg: string) => void; // ← match campaign
+};
+
 export default function SubmitChallengeModal({
   isOpen,
   onClose,
   onSubmitted,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmitted: () => void;
-}) {
+}: SubmitChallengeModalProps) {
   const [level, setLevel] = useState<number>(1);
   const [youtubeUrl, setYoutubeUrl] = useState<string>('');
   const [saving, setSaving] = useState<boolean>(false);
@@ -47,6 +49,11 @@ export default function SubmitChallengeModal({
   };
 
   const handleSubmit = async () => {
+    if (!youtubeUrl.trim()) {
+      onSubmitted('Please provide a YouTube link.');
+      return;
+    }
+
     setSaving(true);
     try {
       const res = await fetch('/api/users/me', {
@@ -56,7 +63,25 @@ export default function SubmitChallengeModal({
           challengeSubmission: { level, youtubeUrl },
         }),
       });
-      if (res.ok) onSubmitted();
+
+      if (res.ok) {
+        // Try to read a message from the API, fall back to a generic one
+        let msg = 'Challenge submitted!';
+        try {
+          const json = (await res.json()) as { message?: string };
+          if (json?.message) msg = json.message;
+        } catch {
+          // ignore JSON parse errors, use fallback message
+        }
+        onSubmitted(msg);
+      } else {
+        const text = await res.text().catch(() => '');
+        onSubmitted(
+          `Submission failed (${res.status} ${res.statusText})${text ? `: ${text}` : ''}`
+        );
+      }
+    } catch (err) {
+      onSubmitted('Network error while submitting challenge.');
     } finally {
       setSaving(false);
       onClose();
@@ -81,13 +106,14 @@ export default function SubmitChallengeModal({
               value={level}
               onChange={(e) => setLevel(Number(e.target.value))}
             >
-              {CHALLENGE_LEVEL_LABELS.map((label, idx) => (
+              {CHALLENGE_LEVEL_LABELS.map((label: string, idx: number) => (
                 <option key={idx + 1} value={idx + 1}>
                   {label} (Level {idx + 1})
                 </option>
               ))}
             </select>
           </label>
+
           <label className="field">
             <span className="label">YouTube Link</span>
             <input
@@ -96,6 +122,7 @@ export default function SubmitChallengeModal({
               placeholder="https://youtube.com/..."
             />
           </label>
+
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
             <button
               className="btn btn-secondary"

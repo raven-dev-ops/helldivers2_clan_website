@@ -2,7 +2,8 @@
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { FaDiscord} from 'react-icons/fa';
+import Image from 'next/image';
+import { FaDiscord } from 'react-icons/fa';
 import styles from '@/styles/Base.module.css';
 import reviews from '@/lib/reviews';
 
@@ -73,12 +74,13 @@ export default function HelldiversPage() {
             </p>
           </div>
           <div className={styles.splitImage}>
-            <img
+            <Image
               src="/images/ultrasad.gif"
               alt="Ultra Sad Helldiver"
               className={styles.centeredImage}
+              width={800}
+              height={450}
               loading="lazy"
-              decoding="async"
             />
           </div>
         </section>
@@ -108,12 +110,13 @@ export default function HelldiversPage() {
             </p>
           </div>
           <div className={styles.splitImage}>
-            <img
+            <Image
               src="/images/helldiver_poster.gif"
               alt="New to the Fight"
               className={styles.centeredImage}
+              width={800}
+              height={450}
               loading="lazy"
-              decoding="async"
             />
           </div>
         </section>
@@ -141,12 +144,13 @@ export default function HelldiversPage() {
             </p>
           </div>
           <div className={styles.splitImage}>
-            <img
+            <Image
               src="/images/veteran_image.gif"
               alt="Seasoned Helldiver Veteran"
               className={styles.centeredImage}
+              width={800}
+              height={450}
               loading="lazy"
-              decoding="async"
             />
           </div>
         </section>
