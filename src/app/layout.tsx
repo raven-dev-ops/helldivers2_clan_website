@@ -11,6 +11,11 @@ import { ThemeProvider } from '@/components/common/ThemeProvider';
 import MusicButton from '@/components/common/MusicButton';
 import { SessionProvider } from 'next-auth/react';
 
+// New: layout chrome
+import Navbar from '@/components/common/Navbar';
+import AlertBar from '@/components/common/AlertBar';
+import Footer from '@/components/common/Footer';
+
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
@@ -27,6 +32,7 @@ export default function RootLayout({
         <link rel="preload" as="video" href={videoSrc} type="video/mp4" />
       </head>
       <body className="bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+        {/* Background video */}
         <video
           src={videoSrc}
           autoPlay
@@ -45,12 +51,24 @@ export default function RootLayout({
             filter: 'brightness(0.6)',
           }}
         />
+
         <ThemeProvider>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            {/* Top nav + global alerts */}
+            <Navbar />
+            <AlertBar />
+
+            {/* Page content */}
+            {children}
+
+            {/* Global footer */}
+            <Footer />
+          </SessionProvider>
         </ThemeProvider>
+
+        {/* Floating music control (overlay) */}
         <MusicButton />
       </body>
     </html>
   );
 }
-

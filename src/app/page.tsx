@@ -22,10 +22,6 @@ export default function HelldiversPage() {
 
   return (
     <>
-      {/* Top navigation + global alerts */}
-      <Navbar />
-      <AlertBar />
-
       <div className={styles.wrapper}>
         <div className={styles.dividerLayer} />
         <div className={styles.pageContainer}>
@@ -149,9 +145,6 @@ export default function HelldiversPage() {
           <ReviewsRotator reviews={reviews} />
         </div>
       </div>
-
-      {/* Footer */}
-      <Footer />
     </>
   );
 }
