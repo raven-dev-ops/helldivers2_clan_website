@@ -1,6 +1,6 @@
 // src/lib/hellhub.ts
 // Client for the HellHub community API mirror/aggregator
-import { fetchWithRevalidate } from '@/lib/helldivers/fetch';
+import { fetchWithRevalidate } from '@/lib/fetch';
 
 const DEFAULT_BASE = 'https://api-hellhub-collective.koyeb.app';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';
