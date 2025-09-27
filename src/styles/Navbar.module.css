@@ -1,0 +1,15 @@
+.navbar{
+    background-color: rgba(15,23,42,.85); backdrop-filter: blur(10px);
+    border-bottom: var(--border-width) solid var(--color-border-alt);
+    position:sticky; top:0; z-index:50; padding: var(--spacing-3) 0;
+  }
+  .link{
+    color: var(--color-text-secondary);
+    padding: var(--spacing-2) var(--spacing-3);
+    border-radius: var(--border-radius-sm); font-weight:500;
+    transition: color .2s, background-color .2s;
+  }
+  .link:hover, .link:focus-visible, .active{
+    color: var(--color-text-primary); background-color: var(--color-surface-alt);
+  }
+  
