@@ -3,13 +3,13 @@
 
 import React, { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
-import SubmitChallengeModal from '@/app/components/challenges/SubmitChallengeModal';
-import YoutubeCarouselPlaceholder from '../../components/YoutubeCarouselCampaign';
+import SubmitChallengeModal from '@/components/SubmitChallengeModal';
+import YoutubeCarouselPlaceholder from '@/components/YoutubeCarouselCampaign';
 
 // --- Import CSS Modules ---
-import base from '../HelldiversBase.module.css';
-import exp from '../components/Expanders.module.css';
-import code from '@/app/components/CodeBlocks.module.css';
+import base from '../Base.module.css';
+import exp from '../styles/Expanders.module.css';
+import code from '../styles/CodeBlocks.module.css';
 
 // --- John Helldiver Challenge Data ---
 interface ChallengeLevelData {

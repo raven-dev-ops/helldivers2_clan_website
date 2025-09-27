@@ -1,13 +1,11 @@
-// src/app/(main)/helldivers-2/page.tsx
-/* eslint-disable @next/next/no-img-element */
+// src/app/page.tsx
+
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { FaDiscord, FaYoutube } from 'react-icons/fa';
-import { FaTiktok } from 'react-icons/fa6';
-import styles from './HelldiversBase.module.css';
-import reviews from '../lib/reviews';
+import { FaDiscord} from 'react-icons/fa';
+import styles from '@/styles/Base.module.css';
+import reviews from '@/lib/reviews';
 
-// Note: do NOT pass { ssr: false } here — it's not allowed in Server Components.
 const ReviewsRotator = dynamic(
   () => import('@/components/ReviewsRotator')
 );

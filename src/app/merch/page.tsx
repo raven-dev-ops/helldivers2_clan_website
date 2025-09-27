@@ -1,8 +1,9 @@
-// src/app/(main)/helldivers-2/merch/page.tsx
+// src/app/merch/page.tsx
+
 import Image from 'next/image';
-import NoPrefetchLink from '@/app/components/NoPrefetchLink';
+import NoPrefetchLink from '@/components/NoPrefetchLink';
 import React from 'react';
-import styles from './MerchPage.module.css';
+import styles from '@/styles/MerchPage.module.css';
 import { logger } from '@/lib/logger';
 
 // ✅ Force dynamic so build never tries to statically prerender

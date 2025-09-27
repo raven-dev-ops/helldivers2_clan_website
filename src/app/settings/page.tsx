@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import baseStyles from "../helldivers-2/HelldiversBase.module.css";
+import { useState } from 'react';
+import baseStyles from './styles/AppPage.module.css';
 import styles from './Settings.module.css';
-import ProfileEditForm from "@/app/components/forum/ProfileEditForm";
+import ProfileEditForm from './ProfileEditForm';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');

@@ -7,7 +7,7 @@ import { useEffect, useState, useRef, Suspense } from 'react';
 import { FaDiscord, FaPlay, FaPause } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './Auth.module.css';
+import styles from '@/styles/Auth.module.css';
 import { logger } from '@/lib/logger';
 
 const ANTHEM_YOUTUBE_URL = 'https://youtu.be/Q9pkh4Z39nE?si=2v5e1EEBKdoVC6YW';

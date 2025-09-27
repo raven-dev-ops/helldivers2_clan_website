@@ -1,8 +1,8 @@
-import styles from './TrainingPage.module.css';
+import styles from '@/styles/TrainingPage.module.css';
 import Quiz, { type Question } from './Quiz';
 import hd2Questions from './hd2Questions';
 import hd1Questions from './hd1Questions';
-import base from '../../HelldiversBase.module.css';
+import base from '@/styles/Base.module.css';
 
 const chunk = (arr: Question[], size: number) =>
   Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>

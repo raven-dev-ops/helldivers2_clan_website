@@ -1,5 +1,4 @@
 'use client';
-/* eslint-disable @next/next/no-img-element */
 
 import {
   useEffect,
@@ -8,13 +7,13 @@ import {
   useState,
   type CSSProperties,
 } from 'react';
+
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-
-import base from '../../helldivers-2/HelldiversBase.module.css';
-import s from '@/app/components/forum/ProfileEditForm.module.css'; // reuse Settings layout styles
+import base from '../styles/Base.module.css';
+import s from '../styles/ProfileEditForm.module.css'; // reuse Settings layout styles
 
 const overlayStyle: CSSProperties = {
   position: 'fixed',

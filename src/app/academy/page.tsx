@@ -1,9 +1,9 @@
-// src/app/(main)/helldivers-2/academy/page.tsx
+// src/app/academy/page.tsx
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import base from '../HelldiversBase.module.css';
-import styles from './AcademyPage.module.css';
+import base from '@/styles/Base.module.css';
+import styles from '@/styles/AcademyPage.module.css';
 
 type Module = {
   id: string;

@@ -1,5 +1,4 @@
 'use client';
-/* eslint-disable @next/next/no-img-element */
 
 import {
   useEffect,
@@ -8,12 +7,13 @@ import {
   useState,
   type CSSProperties,
 } from 'react';
+
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { FaTwitch } from 'react-icons/fa';
-import styles from './Profile.module.css'; // Import the new CSS module
-import baseStyles from '../helldivers-2/HelldiversBase.module.css';
+import styles from './ProfilePage.module.css';
+import baseStyles from '../styles/Base.module.css';
 
 const CHALLENGE_LEVEL_LABELS: string[] = [
   'Sabotage Proficiency',
