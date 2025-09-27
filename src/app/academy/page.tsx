@@ -6,7 +6,7 @@ import type { MouseEvent } from 'react';
 import Image from 'next/image';
 import base from '@/styles/Base.module.css';
 import styles from '@/styles/AcademyPage.module.css';
-import { MODULES, type AcademyModule } from '@/lib/academy';
+import { MODULES, type AcademyModule } from '@/lib/Academy';
 import Modal from '@/components/common/Modal';
 
 export default function AcademyPage() {
