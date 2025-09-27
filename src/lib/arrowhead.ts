@@ -1,6 +1,6 @@
 // src/lib/arrowhead.ts
 // Lightweight client for Arrowhead's live game endpoints
-import { fetchWithRevalidate, FetchWithRevalidateOptions } from '@/lib/helldivers/fetch';
+import { fetchWithRevalidate, FetchWithRevalidateOptions } from '@/lib/fetch';
 
 const DEFAULT_BASE = 'https://api.live.prod.thehelldiversgame.com/api';
 const USER_AGENT = 'GPT-Fleet-CommunitySite/1.0';

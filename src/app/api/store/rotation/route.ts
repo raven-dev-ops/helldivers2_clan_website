@@ -1,6 +1,6 @@
 // src/app/api/store/rotation/route.ts
 import { NextResponse } from 'next/server';
-import { fetchSuperstore } from '@/lib/helldivers/superstore';
+import { fetchSuperstore } from '@/lib/superstore';
 
 export const revalidate = 60; // allow CDN to cache for a minute with SWR
 export const runtime = 'nodejs';

@@ -1,244 +1,161 @@
-'use client';
+// src/app/(main)/helldivers-2/page.tsx
+/* eslint-disable @next/next/no-img-element */
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { FaDiscord, FaYoutube } from 'react-icons/fa';
+import { FaTiktok } from 'react-icons/fa6';
+import styles from './HelldiversBase.module.css';
+import reviews from '../lib/reviews';
 
-import styled, { keyframes } from 'styled-components';
+// Note: do NOT pass { ssr: false } here — it's not allowed in Server Components.
+const ReviewsRotator = dynamic(
+  () => import('@/app/components/ReviewsRotator')
+);
 
-// --- Swiper Imports ---
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, EffectCoverflow, A11y } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/effect-coverflow';
+export default function HelldiversPage() {
+  // hardcode socials
+  const discordUrl = 'https://discord.gg/gptfleet';
+  const youtubeUrl = 'https://www.youtube.com/@gptfleet';
+  const tiktokUrl = process.env.NEXT_PUBLIC_SOCIAL_TIKTOK_URL;
 
-// Import the GameCard component
-import GameCard from '@/app/components/common/GameCard'; // Adjust path if needed
-import ReviewsRotator from '@/app/(main)/helldivers-2/ReviewsRotator';
-import { reviews as helldiversReviews } from '@/app/(main)/helldivers-2/reviews';
-
-// --- Define Type for Game Division Data ---
-interface GameDivision {
-  id: string;
-  title: string;
-  imageUrl: string;
-  href: string;
-  comingSoon: boolean;
-}
-
-// --- Data for Game Divisions (with Explicit Type) ---
-const gameDivisions: GameDivision[] = [
-  // Added type annotation
-  {
-    id: 'helldivers2',
-    title: 'Helldivers 2',
-    imageUrl: '/images/helldivers2-select-card.jpg',
-    href: '/helldivers-2',
-    comingSoon: false,
-  },
-  {
-    id: 'dune',
-    title: 'Dune: Awakening',
-    imageUrl: '/images/dune-awakening-select-card.jpg',
-    href: '/dune-awakening',
-    comingSoon: true,
-  },
-  {
-    id: 'future0',
-    title: 'Vote August 2025',
-    imageUrl: '/images/placeholder-select-card.jpg',
-    href: '/future0',
-    comingSoon: true,
-  },
-  {
-    id: 'future1',
-    title: 'Vote Febuary 2026',
-    imageUrl: '/images/placeholder-select-card.jpg',
-    href: '/future1',
-    comingSoon: true,
-  },
-  {
-    id: 'future2',
-    title: 'Vote August 2026',
-    imageUrl: '/images/placeholder-select-card.jpg',
-    href: '/future2',
-    comingSoon: true,
-  },
-];
-
-// --- Keyframes ---
-const pulse = keyframes`
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-`;
-
-// --- Styled Components ---
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 120px); /* Adjust based on layout */
-  width: 100%;
-  padding: 2rem 0; /* Only vertical padding */
-  color: var(--color-text-primary, #e0e0e0);
-  overflow-x: hidden;
-`;
-const CarouselSection = styled.section`
-  padding: 0;
-  width: 100%;
-  max-width: 1400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-// CarouselTitle Removed
-const SwiperWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  padding: 1rem 0; /* Reduced vertical padding slightly */
-  margin: 0 auto;
-  .swiper-button-prev,
-  .swiper-button-next {
-    color: var(--color-primary, #00bcd4);
-    background-color: rgba(30, 41, 59, 0.6);
-    backdrop-filter: blur(4px);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid var(--color-border, #334155);
-    transition: all 0.2s ease;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 30;
-    position: fixed;
-    &:hover {
-      background-color: rgba(51, 65, 85, 0.85);
-      color: #ffffff;
-      transform: translateY(-50%) scale(1.05);
-    }
-    &::after {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-  }
-  .swiper-button-prev {
-    left: 1.5rem;
-  }
-  .swiper-button-next {
-    right: 1.5rem;
-  }
-  .swiper-button-disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  .swiper {
-    padding: 4rem 5vw;
-    overflow: visible !important;
-  } /* Adjusted padding */
-  .swiper-slide {
-    width: auto;
-    transform: scale(0.55);
-    opacity: 0.4;
-    filter: grayscale(75%) brightness(0.65);
-    transition:
-      transform 0.5s ease,
-      opacity 0.5s ease,
-      filter 0.5s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backface-visibility: hidden;
-    perspective: 1000px;
-    & > div {
-      flex-shrink: 0;
-    }
-  }
-  .swiper-slide-active {
-    transform: scale(1.5);
-    opacity: 1;
-    filter: grayscale(0%) brightness(1);
-    z-index: 10;
-  }
-  .swiper-slide-active > div {
-    cursor: pointer;
-  }
-`;
-const LoadingMessage = styled.p`
-  text-align: center;
-  padding: 8rem 1rem;
-  font-size: 1.2rem;
-  color: var(--color-text-secondary, #90a4ae);
-  font-style: italic;
-  animation: ${pulse} 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-`;
-const FallbackContainer = styled(Container)`
-  min-height: 60vh;
-`;
-const SignInButton = styled.button`
-  background-color: var(--color-primary, #00bcd4);
-  color: var(--color-background-alt, #1a1a2e);
-  padding: 0.85rem 1.75rem;
-  border-radius: 9999px;
-  font-weight: 700;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  &:hover {
-    background-color: var(--color-primary-hover, #00acc1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--color-primary-focus, #80deea);
-    outline-offset: 2px;
-  }
-`;
-// --- End Styled Components ---
-
-export default function Home() {
   return (
-    <Container>
-      <CarouselSection>
-        {/* Title Removed */}
-        <SwiperWrapper>
-          <Swiper
-            modules={[Navigation, EffectCoverflow, A11y]}
-            effect="coverflow"
-            grabCursor
-            centeredSlides
-            loop={gameDivisions.length > 4}
-            slidesPerView={'auto'} // Keep as auto
-            spaceBetween={-50} // Adjust for bigger base cards + scaling
-            coverflowEffect={{
-              rotate: 20,
-              stretch: -100, // More negative stretch needed
-              depth: 250, // Adjust depth
-              modifier: 1,
-              scale: 0.6, // Inactive scale
-              slideShadows: false,
-            }}
-            navigation={true}
-            a11y={{ prevSlideMessage: 'Previous', nextSlideMessage: 'Next' }}
-            className="mySwiper"
-          >
-            {/* Map over explicitly typed array */}
-            {gameDivisions.map((game) => (
-              <SwiperSlide key={game.id}>
-                <GameCard
-                  title={game.title}
-                  imageUrl={game.imageUrl}
-                  href={game.href}
-                  comingSoon={game.comingSoon}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </SwiperWrapper>
-      </CarouselSection>
-      <ReviewsRotator reviews={helldiversReviews} />
-    </Container>
+    <div className={styles.wrapper}>
+      <div className={styles.dividerLayer} />
+      <div className={styles.pageContainer}>
+        {/* === YouTube Video Section === */}
+        <section className={styles.section}>
+          <div className={styles.youtubeEmbed}>
+            <iframe
+              width="100%"
+              height="100%"
+              // Use specific featured video; keep modest branding + autoplay muted
+              src="https://www.youtube.com/embed/LiVr7VOykDs?si=NxGDOVzyHbggVlV1&autoplay=1&mute=1&rel=0&modestbranding=1&playsinline=1"
+              title="GPT Fleet — Featured Video"
+              frameBorder={0}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
+        </section>
+
+        {/* === About (Split) Section: Text left, GIF right === */}
+        <section className={`${styles.section} ${styles.splitSection}`}>
+          <div className={styles.splitText}>
+            <h2 className={styles.sectionTitle}>
+              About GPT Helldivers 2
+              <span className={styles.socialIconsGroup}>
+                <Link
+                  href={discordUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Discord"
+                  className={styles.socialIconLink}
+                >
+                  <FaDiscord className={styles.socialIcon} />
+                </Link>
+              </span>
+            </h2>
+            <p className={styles.paragraph}>
+              Welcome to the Galactic Phantom Taskforce (GPT) Helldivers 2
+              Division! We are a rapidly growing, multi-game community focused
+              on creating a non-toxic, mature, and fun environment for gamers.
+              Whether you're a fresh recruit dropping onto Malevelon Creek for
+              the first time or a seasoned Super Citizen spreading managed
+              democracy across the galaxy, you have a place here.
+            </p>
+            <p className={styles.paragraph}>
+              Our core values center around respect, teamwork, and enjoying the
+              game together. We value every member and strive to provide an
+              inclusive space where players can coordinate missions, share
+              strategies, showcase their triumphs (and epic fails!), and simply
+              hang out. We utilize Discord extensively for communication, LFG
+              (Looking For Group), and organizing community events. Join us
+              today!
+            </p>
+          </div>
+          <div className={styles.splitImage}>
+            <img
+              src="/images/ultrasad.gif"
+              alt="Ultra Sad Helldiver"
+              className={styles.centeredImage}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </section>
+
+        {/* === New to the Fight (Split) Section: Image left, Text right === */}
+        <section
+          className={`${styles.section} ${styles.splitSection} ${styles.reverse}`}
+        >
+          <div className={styles.splitText}>
+            <h2 className={styles.sectionTitle}>
+              PC, PS5, Xbox, or Steamdeck!
+            </h2>
+            <p className={styles.paragraph}>
+              Just bought the game? Feeling overwhelmed by Bile Titans or Hulks?
+              Don't worry, we've all been there! GPT offers a supportive
+              environment for new players. Ask questions, team up with
+              experienced members who can show you the ropes (and the best ways
+              to avoid friendly fire... mostly!), and learn the basics without
+              fear of judgment.
+            </p>
+            <p className={styles.paragraph}>
+              We have dedicated channels for LFG, tips, and loadout discussions.
+              Joining voice chat is encouraged for better coordination during
+              missions, but not mandatory if you prefer text. Find squadmates
+              for anything from trivial difficulty farming to your first
+              Helldive attempt!
+            </p>
+          </div>
+          <div className={styles.splitImage}>
+            <img
+              src="/images/helldiver_poster.gif"
+              alt="New to the Fight"
+              className={styles.centeredImage}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </section>
+
+        {/* === Veterans (Split) Section: Text left, GIF right === */}
+        <section className={`${styles.section} ${styles.splitSection}`}>
+          <div className={styles.splitText}>
+            <h2 className={styles.sectionTitle}>
+              High Level Helldivers Requested!
+            </h2>
+            <p className={styles.paragraph}>
+              Think you've seen it all? Mastered the art of the 500kg bomb?
+              Looking for a consistent group to tackle Difficulty 9+ operations
+              and coordinate advanced strategies? GPT is home to many
+              experienced Helldivers eager to push the limits and contribute to
+              the Galactic War effort effectively.
+            </p>
+            <p className={styles.paragraph}>
+              Coordinate multi-squad planetary operations, share your high-level
+              strategies, participate in community-organized challenges (like
+              the John Helldiver Course!), or simply find reliable teammates who
+              understand the importance of covering flanks and calling out
+              patrols. Help mentor newer players or form elite squads for the
+              toughest challenges the galaxy throws at us.
+            </p>
+          </div>
+          <div className={styles.splitImage}>
+            <img
+              src="/images/veteran_image.gif"
+              alt="Seasoned Helldiver Veteran"
+              className={styles.centeredImage}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </section>
+
+        {/* === Reviews Section (Bottom) === */}
+        <ReviewsRotator reviews={reviews} />
+      </div>
+    </div>
   );
 }
