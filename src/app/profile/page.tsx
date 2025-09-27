@@ -1,14 +1,14 @@
-// src/app/profile/me/page.tsx
+// src/app/profile/page.tsx
 
-import dynamic from 'next/dynamic';
+export const runtime = 'nodejs';        
+export const dynamic = 'force-dynamic'; 
+export const revalidate = 0;            
 
-const ProfileClient = dynamic(
-  () => import('@/components/profile/ProfileClient'),
-  { ssr: false, loading: () => <div className="container mx-auto px-4 py-8">Loading…</div> }
-);
+// Just import the client component directly.
+// Since ProfileClient has 'use client' at the top, Next will treat it as a client boundary.
+import ProfileClient from '@/components/profile/ProfileClient';
 
-export const runtime = 'nodejs';
-
+// (Optional) metadata
 export const metadata = {
   title: 'My Profile',
 };
