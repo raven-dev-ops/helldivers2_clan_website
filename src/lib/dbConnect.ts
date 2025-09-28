@@ -2,70 +2,52 @@
 import mongoose, { Mongoose } from 'mongoose';
 import { logger } from '@/lib/logger';
 
-// Import all your Mongoose models to register schemas once in dev.
+// Register schemas once (OK as long as models don't import dbConnect)
 import '@/models/User';
 import '@/models/ForumCategory';
 import '@/models/ForumThread';
 import '@/models/ForumPost';
-// Add more as needed.
 
-interface MongooseCache {
-  conn: Mongoose | null;
-  promise: Promise<Mongoose> | null;
-}
+type MongooseCache = { conn: Mongoose | null; promise: Promise<Mongoose> | null };
 
 declare global {
+  // eslint-disable-next-line no-var
   var mongoose_cache: MongooseCache | undefined;
 }
 
-if (!global.mongoose_cache) {
-  global.mongoose_cache = { conn: null, promise: null };
-}
+const g = globalThis as typeof globalThis & { mongoose_cache?: MongooseCache };
+g.mongoose_cache ??= { conn: null, promise: null };
+const cached = g.mongoose_cache!;
 
-const cached = global.mongoose_cache;
-
-/**
- * Connect to MongoDB using Mongoose with caching.
- * Does NOT read secrets until called.
- */
-async function dbConnect(): Promise<Mongoose> {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  const MONGODB_URI = process.env.MONGODB_URI;
-  if (!MONGODB_URI) {
-    throw new Error('Please define the MONGODB_URI environment variable.');
-  }
+/** Connect to MongoDB lazily (no env access at import). */
+export default async function dbConnect(): Promise<Mongoose> {
+  if (cached.conn) return cached.conn;
 
   if (!cached.promise) {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) throw new Error('MONGODB_URI missing: set it in Heroku config vars');
+
     const opts: Parameters<typeof mongoose.connect>[1] = {
       bufferCommands: false,
-      // Use MONGODB_DB if provided; otherwise defer to DB in the URI
       ...(process.env.MONGODB_DB ? { dbName: process.env.MONGODB_DB } : {}),
-      // Connection tuning for Heroku/dyno environments
       maxPoolSize: Number(process.env.MONGODB_MAX_POOL_SIZE || 10),
       minPoolSize: Number(process.env.MONGODB_MIN_POOL_SIZE || 1),
-      serverSelectionTimeoutMS: Number(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS || 5000),
-      socketTimeoutMS: Number(process.env.MONGODB_SOCKET_TIMEOUT_MS || 20000),
+      serverSelectionTimeoutMS: Number(process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS || 4000),
+      socketTimeoutMS: Number(process.env.MONGODB_SOCKET_TIMEOUT_MS || 15000),
       waitQueueTimeoutMS: Number(process.env.MONGODB_WAIT_QUEUE_TIMEOUT_MS || 2000),
       heartbeatFrequencyMS: Number(process.env.MONGODB_HEARTBEAT_FREQUENCY_MS || 10000),
       family: 4,
     };
-    cached.promise = mongoose
-      .connect(MONGODB_URI, opts)
-      .then((mongooseInstance) => mongooseInstance);
+
+    cached.promise = mongoose.connect(uri, opts).then((m) => m);
   }
 
   try {
     cached.conn = await cached.promise;
-  } catch (error) {
+    return cached.conn!;
+  } catch (err) {
     cached.promise = null;
-    logger.error('MongoDB connection error:', error);
-    throw error;
+    logger?.error?.('MongoDB connection error:', err);
+    throw err;
   }
-
-  return cached.conn;
 }
-
-export default dbConnect;

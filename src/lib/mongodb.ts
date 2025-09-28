@@ -1,22 +1,22 @@
 // src/lib/mongodb.ts
 import { MongoClient } from 'mongodb';
 
-let client: MongoClient | null = null;
-let clientPromise: Promise<MongoClient> | null = null;
+type MongoGlobal = typeof globalThis & {
+  _mongo?: { client?: MongoClient; promise?: Promise<MongoClient> };
+};
 
-export function getMongoClientPromise(): Promise<MongoClient> {
-  const uri = process.env.MONGODB_URI;
-  if (!uri) {
-    throw new Error('MONGODB_URI is required at runtime');
+const g = globalThis as MongoGlobal;
+g._mongo ??= {};
+
+export async function getMongoClient(): Promise<MongoClient> {
+  if (g._mongo!.client) return g._mongo!.client;
+
+  if (!g._mongo!.promise) {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) throw new Error('MONGODB_URI missing: set it in Heroku config vars');
+    g._mongo!.promise = MongoClient.connect(uri);
   }
 
-  if (!client) {
-    client = new MongoClient(uri);
-  }
-
-  if (!clientPromise) {
-    clientPromise = client.connect();
-  }
-
-  return clientPromise;
+  g._mongo!.client = await g._mongo!.promise!;
+  return g._mongo!.client!;
 }

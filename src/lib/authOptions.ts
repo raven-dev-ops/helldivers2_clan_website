@@ -1,119 +1,78 @@
 // src/lib/authOptions.ts
-import type { LoggerInstance, NextAuthOptions } from 'next-auth';
-import DiscordProvider from 'next-auth/providers/discord';
-import GoogleProvider from 'next-auth/providers/google';
-import { MongoDBAdapter } from '@next-auth/mongodb-adapter';
-import { getMongoClientPromise } from '@/lib/mongodb';
-
-async function refreshDiscordAccessToken(token: any) {
-  try {
-    if (!token.discordRefreshToken) return token;
-
-    const params = new URLSearchParams({
-      client_id: process.env.DISCORD_CLIENT_ID as string,
-      client_secret: process.env.DISCORD_CLIENT_SECRET as string,
-      grant_type: 'refresh_token',
-      refresh_token: token.discordRefreshToken as string,
-    });
-
-    const res = await fetch('https://discord.com/api/v10/oauth2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
-      cache: 'no-store',
-    });
-
-    if (!res.ok) return { ...token, discordError: 'refresh_failed' };
-
-    const json = await res.json();
-    const now = Math.floor(Date.now() / 1000);
-
-    return {
-      ...token,
-      discordAccessToken: json.access_token as string,
-      discordRefreshToken: (json.refresh_token ?? token.discordRefreshToken) as string,
-      discordTokenType: json.token_type as string,
-      discordScope: (json.scope ?? token.discordScope) as string,
-      discordExpiresAt: now + (json.expires_in as number),
-      discordError: undefined,
-    };
-  } catch {
-    return { ...token, discordError: 'refresh_exception' };
-  }
-}
-
-const logger = {
-  error(code: string, metadata?: unknown) {
-    console.error('[NextAuth][error]', code, metadata);
-  },
-  warn(code: string) {
-    console.warn('[NextAuth][warn]', code);
-  },
-  debug(code: string, metadata?: unknown) {
-    // keep verbose logs while diagnosing; turn off later if noisy
-    console.debug('[NextAuth][debug]', code, metadata);
-  },
-} satisfies Partial<LoggerInstance>;
+import type { NextAuthOptions } from 'next-auth';
+import Discord from 'next-auth/providers/discord';
+import Google from 'next-auth/providers/google';
+import dbConnect from '@/lib/dbConnect';
+import UserModel from '@/models/User';
 
 export function getAuthOptions(): NextAuthOptions {
-  const clientPromise = getMongoClientPromise();
+  const providers = [
+    Discord({
+      clientId: process.env.DISCORD_CLIENT_ID ?? '',
+      clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
+    }),
+    // Remove if you don’t use Google:
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+    }),
+  ];
 
   return {
-    adapter: MongoDBAdapter(clientPromise) as any,
-    providers: [
-      DiscordProvider({
-        clientId: process.env.DISCORD_CLIENT_ID!,
-        clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-        authorization: {
-          params: { scope: 'identify email guilds guilds.members.read' },
-        },
-      }),
-      GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!, // ← fixed env name
-      }),
-    ],
+    // ✅ No adapter — pure JWT sessions
     session: { strategy: 'jwt' },
+    secret: process.env.NEXTAUTH_SECRET,
+
+    providers,
+
     callbacks: {
-      async jwt({ token, user, account }) {
-        if (user?.id) (token as any).id = user.id;
-
-        if (account?.provider === 'discord') {
-          const now = Math.floor(Date.now() / 1000);
-          (token as any).discordAccessToken = account.access_token;
-          (token as any).discordRefreshToken = account.refresh_token;
-          (token as any).discordTokenType = account.token_type;
-          (token as any).discordScope = account.scope;
-          (token as any).discordExpiresAt = account.expires_at ?? now + 3600;
-          (token as any).discordUserId = account.providerAccountId;
-        }
-
-        if ((token as any).discordAccessToken && (token as any).discordExpiresAt) {
-          const willExpireIn =
-            (token as any).discordExpiresAt - Math.floor(Date.now() / 1000);
-          if (willExpireIn < 60) {
-            return await refreshDiscordAccessToken(token);
-          }
-        }
-
-        return token;
-      },
+      // Inject the user id into the session object for convenience
       async session({ session, token }) {
-        if (session.user && (token as any).id) {
-          session.user.id = (token as any).id as string;
-        }
-        if ((token as any).discordAccessToken) {
-          (session as any).discordAccessToken = (token as any).discordAccessToken as string;
-          (session as any).discordScope = (token as any).discordScope as string;
-          (session as any).discordUserId = (token as any).discordUserId as string | undefined;
-          (session as any).accessToken = (token as any).discordAccessToken as string; // back-compat
+        if (session?.user && token?.sub) {
+          // Add .id onto session.user (TS users: extend Session type)
+          // @ts-expect-error - augmenting at runtime
+          session.user.id = token.sub;
         }
         return session;
       },
+      async jwt({ token }) {
+        // Token already contains `sub` (the user id when using an adapter),
+        // without an adapter it’s still stable per provider account.
+        return token;
+      },
     },
-    secret: process.env.NEXTAUTH_SECRET,
-    pages: { signIn: '/auth' },
-    debug: true, // TEMP: leave on until /api/auth/_log 500s stop
-    logger,
+
+    events: {
+      // Upsert a user record in your MongoDB when someone signs in
+      async signIn({ user, account, profile }) {
+        try {
+          await dbConnect();
+          // Minimal upsert based on email (tweak to your schema)
+          await UserModel.findOneAndUpdate(
+            { email: user.email },
+            {
+              $setOnInsert: {
+                email: user.email,
+                createdAt: new Date(),
+              },
+              $set: {
+                name: user.name ?? null,
+                image: user.image ?? null,
+                lastLoginAt: new Date(),
+                // Track seen providers (optional)
+                providers: account?.provider
+                  ? { [account.provider]: true }
+                  : undefined,
+              },
+            },
+            { upsert: true, new: true }
+          ).lean();
+        } catch (err) {
+          // Returning false blocks sign-in; we generally don’t want that for a DB hiccup.
+          // So just log and continue.
+          console.error('signIn upsert error:', err);
+        }
+      },
+    },
   };
 }
