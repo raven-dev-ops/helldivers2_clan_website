@@ -33,12 +33,6 @@ export default function AcademyPage() {
       <div className={base.dividerLayer} />
 
       <div className={`${base.pageContainer} ${styles.pageWrapper}`}>
-        <header className={styles.pageHeader}>
-          <h2 className={styles.pageTitle}>Academy</h2>
-          <p className={styles.pageSubtitle}>
-            Six training modules covering environments, equipment, tactics, leadership, and enemies.
-          </p>
-        </header>
 
         <section className={base.section} aria-labelledby="academy-title">
           <h3 id="academy-title" className={base.sectionTitle}>Training Modules</h3>
