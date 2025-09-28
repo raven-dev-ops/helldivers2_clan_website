@@ -153,8 +153,30 @@ export async function GET(req: NextRequest) {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };
-    if (includeSet.has('avatar')) data.customAvatarDataUrl = user.customAvatarDataUrl ?? null;
-    if (includeSet.has('submissions')) data.challengeSubmissions = user.challengeSubmissions ?? [];
+
+    // Avatar meta only (no base64)
+    if (includeSet.has('avatar')) {
+      data.avatar = {
+        hasCustom: !!user.customAvatarDataUrl,
+        endpoint: '/api/users/me/avatar',
+        sizeHint: user.customAvatarDataUrl ? user.customAvatarDataUrl.length : 0,
+      };
+    }
+
+    // Slim + cap submissions
+    if (includeSet.has('submissions')) {
+      const raw = Array.isArray(user.challengeSubmissions) ? user.challengeSubmissions : [];
+      data.challengeSubmissions = raw
+        .slice(-10)
+        .map((s: any) => ({
+          level: s.level,
+          youtubeUrl: s.youtubeUrl ?? null,
+          twitchUrl: s.twitchUrl ?? null,
+          witnessName: s.witnessName ?? null,
+          witnessDiscordId: s.witnessDiscordId ?? null,
+          createdAt: s.createdAt ?? null,
+        }));
+    }
 
     userCache.set(cacheKey, { data, expires: now + 60_000 });
 
@@ -459,6 +481,18 @@ export async function PUT(req: NextRequest) {
       }
     }
 
+    // Slim + cap submissions in PUT response too
+    const submissionsSlim = Array.isArray(updated?.challengeSubmissions)
+      ? updated!.challengeSubmissions.slice(-10).map((s: any) => ({
+          level: s.level,
+          youtubeUrl: s.youtubeUrl ?? null,
+          twitchUrl: s.twitchUrl ?? null,
+          witnessName: s.witnessName ?? null,
+          witnessDiscordId: s.witnessDiscordId ?? null,
+          createdAt: s.createdAt ?? null,
+        }))
+      : [];
+
     return json(
       {
         id: updated?._id.toString(),
@@ -474,7 +508,12 @@ export async function PUT(req: NextRequest) {
         characterWeightKg: updated?.characterWeightKg ?? null,
         homeplanet: updated?.homeplanet ?? null,
         background: updated?.background ?? null,
-        customAvatarDataUrl: updated?.customAvatarDataUrl ?? null,
+        // no base64 here:
+        avatar: {
+          hasCustom: !!updated?.customAvatarDataUrl,
+          endpoint: '/api/users/me/avatar',
+          sizeHint: updated?.customAvatarDataUrl ? updated.customAvatarDataUrl.length : 0,
+        },
         callsign: updated?.callsign ?? null,
         rankTitle: updated?.rankTitle ?? null,
         favoriteWeapon: updated?.favoriteWeapon ?? null,
@@ -485,7 +524,7 @@ export async function PUT(req: NextRequest) {
         twitchUrl: updated?.twitchUrl ?? null,
         preferredHeightUnit: updated?.preferredHeightUnit ?? 'cm',
         preferredWeightUnit: updated?.preferredWeightUnit ?? 'kg',
-        challengeSubmissions: updated?.challengeSubmissions ?? [],
+        challengeSubmissions: submissionsSlim,
         discordRoles: Array.isArray(updated?.discordRoles) ? updated?.discordRoles : [],
         createdAt: updated?.createdAt,
         updatedAt: updated?.updatedAt,
