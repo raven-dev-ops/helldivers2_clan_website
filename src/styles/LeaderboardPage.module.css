@@ -1,11 +1,53 @@
 /* src/styles/LeaderboardPage.module.css */
 
-/* ---------- Layout ---------- */
+/* --- Shell (mirrors Merch page) --- */
+.wrapper {
+  position: relative;
+}
+
+.dividerLayer {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-background-alt);
+  z-index: 0;
+}
+
+.mainContainer {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  color: var(--color-text-primary);
+  background: transparent;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  .mainContainer { padding: 3rem 1rem 4rem; }
+}
+
+.pageTitle {
+  font-size: clamp(1.8rem, 5vw, 2.25rem);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.5rem;
+}
+
+.pageSubtitle {
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* --- Controls + header row (keeps your previous naming) --- */
 .container {
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   gap: 16px;
-  padding: 16px;
 }
 
 .header {
@@ -34,7 +76,7 @@
   gap: 8px;
 }
 
-/* ---------- Scope tabs ---------- */
+/* --- Scope tabs --- */
 .tabs {
   display: flex;
   flex-wrap: wrap;
@@ -44,7 +86,6 @@
   border-radius: 10px;
   border: 1px solid var(--color-border);
 }
-
 .tab {
   appearance: none;
   border: 1px solid transparent;
@@ -56,12 +97,7 @@
   cursor: pointer;
   transition: background .2s ease, color .2s ease, border-color .2s ease;
 }
-
-.tab:hover {
-  background: var(--color-surface-alt);
-  color: var(--color-text-primary);
-}
-
+.tab:hover { background: var(--color-surface-alt); color: var(--color-text-primary); }
 .tabActive {
   background: linear-gradient(180deg, var(--color-surface-alt), var(--color-surface));
   border-color: var(--color-border);
@@ -69,7 +105,7 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
 }
 
-/* ---------- Card ---------- */
+/* --- Card --- */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -78,7 +114,7 @@
   overflow: clip;
 }
 
-/* ---------- Toolbar ---------- */
+/* --- Toolbar --- */
 .toolbar {
   display: flex;
   gap: 8px;
@@ -87,10 +123,8 @@
   border-bottom: 1px solid var(--color-border);
   background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
 }
-
 .search {
-  flex: 1 1 240px;
-  min-width: 180px;
+  flex: 1 1 240px; min-width: 180px;
   background: var(--color-background);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
@@ -98,50 +132,31 @@
   padding: 8px 10px;
   outline: none;
 }
-
 .search::placeholder { color: var(--color-text-muted); }
-
 .sortBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  display: inline-flex; align-items: center; gap: 6px;
   border: 1px solid var(--color-border);
   background: var(--color-background);
   color: var(--color-text-primary);
-  padding: 8px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background .2s ease, border-color .2s ease;
+  padding: 8px 10px; border-radius: 10px; cursor: pointer;
+  transition: background .2s, border-color .2s;
 }
-
-.sortBtn:hover {
-  background: var(--color-surface-hover);
-  border-color: var(--color-border-alt);
-}
-
+.sortBtn:hover { background: var(--color-surface-hover); border-color: var(--color-border-alt); }
 .sortIcon {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
+  display: inline-block; width: 10px; height: 10px;
   border-right: 2px solid var(--color-text-muted);
   border-bottom: 2px solid var(--color-text-muted);
   transform: rotate(45deg);
 }
+.sortIconAsc { transform: rotate(-135deg); border-right-color: var(--color-primary); border-bottom-color: var(--color-primary); }
+.sortIconDesc { transform: rotate(45deg); border-right-color: var(--color-primary); border-bottom-color: var(--color-primary); }
 
-.sortIconAsc {
-  transform: rotate(-135deg);
-  border-right-color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
+/* --- Table with center spine & vertical separators --- */
+.tableWrap { position: relative; overflow: auto; max-height: 72vh; }
+.tableWrap::before {
+  content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 1px; background: var(--color-border); opacity: .6; pointer-events: none;
 }
-
-.sortIconDesc {
-  transform: rotate(45deg);
-  border-right-color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-}
-
-/* ---------- Table ---------- */
-.tableWrap { overflow: auto; max-height: 72vh; }
 
 .table {
   width: 100%;
@@ -151,128 +166,100 @@
   background: var(--color-surface);
   color: var(--color-text-primary);
 }
-
 .thead th {
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  position: sticky; top: 0; z-index: 2;
   background: linear-gradient(180deg, var(--color-surface-alt), var(--color-surface));
   border-bottom: 1px solid var(--color-border);
-  text-align: left;
-  font-size: 12px;
-  letter-spacing: .2px;
-  color: var(--color-text-secondary);
-  padding: 10px 12px;
+  text-align: left; font-size: 12px; letter-spacing: .2px;
+  color: var(--color-text-secondary); padding: 10px 12px;
+  box-shadow: inset 0 -1px 0 var(--color-border), 0 2px 12px rgba(0,0,0,.18);
 }
 
 .tr { transition: background .12s ease; }
 .tr:hover { background: rgba(255,255,255,.03); }
 
-.td, .th {
-  padding: 12px;
-  border-bottom: 1px solid var(--color-border);
-  vertical-align: middle;
-}
+.td, .th { padding: 12px; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
 
+/* Vertical column separators */
+.thead th, .table tbody td { border-right: 1px solid var(--color-border); }
+.thead th:last-child, .table tbody td:last-child { border-right: 0; }
+
+/* Column sizing & emphasis */
 .rankCol { width: 64px; text-align: right; color: var(--color-text-secondary); }
-.nameCol { width: 36%; }
-.statCol { text-align: right; font-variant-numeric: tabular-nums; }
+.nameCol { width: 36%; border-right: 1px solid var(--color-border-alt); }
+.statCol { text-align: right; font-variant-numeric: tabular-nums; padding-right: 14px; }
 
 .avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
+  width: 28px; height: 28px; border-radius: 999px;
   border: 1px solid var(--color-border);
-  object-fit: cover;
-  margin-right: 10px;
+  object-fit: cover; margin-right: 10px;
   background: var(--color-background-alt);
 }
 
-/* ---------- Badges ---------- */
+/* --- Badges --- */
 .badges { display: inline-flex; gap: 6px; margin-left: 8px; }
-
 .badge {
-  font-size: 11px;
-  line-height: 1;
-  padding: 4px 6px;
-  border-radius: 999px;
+  font-size: 11px; line-height: 1; padding: 4px 6px; border-radius: 999px;
   border: 1px solid var(--color-border);
   background: var(--color-background);
   color: var(--color-text-secondary);
 }
-
 .badgeSolo { color: var(--color-primary); border-color: var(--color-border-alt); }
-.badgeSquad { color: #a78bfa; border-color: rgba(167,139,250,.5); } /* optional extra accent */
+.badgeSquad { color: #a78bfa; border-color: rgba(167,139,250,.5); }
 .badgeTop1 { color: var(--color-success); border-color: rgba(74,222,128,.5); }
 .badgeWarn { color: #fbbf24; border-color: rgba(251,191,36,.5); }
 
-/* ---------- Footer / pagination ---------- */
+/* --- Footer / pagination --- */
 .footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px;
-  border-top: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 10px; border-top: 1px solid var(--color-border);
   background: linear-gradient(0deg, rgba(255,255,255,.02), transparent);
 }
-
 .pageInfo { font-size: 12px; color: var(--color-text-secondary); }
-
 .pager { display: inline-flex; gap: 6px; }
-
 .pageBtn {
   border: 1px solid var(--color-border);
   background: var(--color-background);
   color: var(--color-text-primary);
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
+  padding: 6px 10px; border-radius: 8px; cursor: pointer;
   transition: background .2s ease, border-color .2s ease;
 }
-
 .pageBtn:hover { background: var(--color-surface-hover); }
 .pageBtn[disabled] { opacity: .5; cursor: not-allowed; }
 
-/* ---------- Skeleton ---------- */
-.skeleton {
-  position: relative;
-  overflow: hidden;
-  background: #1b2433;
-  border-radius: 6px;
-}
-
+/* --- Skeleton --- */
+.skeleton { position: relative; overflow: hidden; background: #1b2433; border-radius: 6px; }
 .skeleton::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transform: translateX(-100%);
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
   animation: shimmer 1.25s infinite;
 }
-
 @keyframes shimmer { 100% { transform: translateX(100%); } }
 
-/* ---------- Utilities ---------- */
+/* --- Utilities --- */
 .kNum { font-variant-numeric: tabular-nums; }
 .muted { color: var(--color-text-muted); }
-
 .srOnly {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0,0,0,0);
-  white-space: nowrap; border: 0;
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 920px) {
-  .title { font-size: 20px; }
-  .toolbar { flex-wrap: wrap; }
+/* --- Responsive --- */
+@media (max-width: 920px) { .toolbar { flex-wrap: wrap; } .title { font-size: 20px; } }
+@media (max-width: 640px) { .container { gap: 12px; } .tabs { gap: 4px; } .tab { padding: 6px 8px; font-size: 12px; } .table { min-width: 640px; } }
+
+/* Alias so existing page.tsx keeps working */
+.pageContainer { 
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  color: var(--color-text-primary);
+  background: transparent;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
-@media (max-width: 640px) {
-  .container { padding: 12px; gap: 12px; }
-  .tabs { gap: 4px; }
-  .tab { padding: 6px 8px; font-size: 12px; }
-  .table { min-width: 640px; }
+@media (min-width: 768px) {
+  .pageContainer { padding: 3rem 1rem 4rem; }
 }

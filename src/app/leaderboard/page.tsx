@@ -6,9 +6,11 @@ export default function LeaderboardPage() {
   return (
     <div className={styles.wrapper}>
       <div className={styles.dividerLayer} />
-      <div className={styles.pageContainer}>
+      <main className={styles.mainContainer}>
+        <h1 className={styles.pageTitle}>Leaderboard</h1>
+        <p className={styles.pageSubtitle}>Updated every 60s</p>
         <LeaderboardServer />
-      </div>
+      </main>
     </div>
   );
 }
