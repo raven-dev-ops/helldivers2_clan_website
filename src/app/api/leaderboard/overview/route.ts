@@ -1,7 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { jsonWithETag } from '@/lib/httpCache';
+// src/app/api/leaderboard/overview/route.ts
 
-export const revalidate = 60; // CDN / ISR-friendly
+export const runtime = 'nodejs';
+export const revalidate = 60;
+export const fetchCache = 'default-no-store';
+
+import { NextRequest } from 'next/server';
+import { jsonWithETag } from '@/lib/httpCache';
 
 function qs(params: Record<string, string | number | undefined>) {
   const url = new URLSearchParams();
@@ -19,8 +23,9 @@ async function fetchScope(
   limit = 100
 ) {
   const q = qs({ scope, sortBy, sortDir, limit });
-  const res = await fetch(`${base}/api/helldivers/leaderboard?${q}`, {
+  const res = await fetch(`${base}/api/leaderboard?${q}`, {
     headers: { Accept: 'application/json' },
+    // Each internal call can be cached/revalidated for 60s independently
     next: { revalidate: 60 },
   });
   if (!res.ok) {
@@ -32,26 +37,28 @@ async function fetchScope(
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const sortBy = searchParams.get('sortBy') ?? 'Kills';
-  const sortDir = searchParams.get('sortDir') ?? 'desc';
-  const limit = Number(searchParams.get('limit') ?? '100');
+  const sortDir = (searchParams.get('sortDir') ?? 'desc').toLowerCase();
+  const limit = Math.min(Number(searchParams.get('limit') ?? '100') || 100, 1000);
 
+  // Resolve base URL
   const proto = req.headers.get('x-forwarded-proto') ?? 'https';
-  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host')!;
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host') ?? 'localhost:3000';
   const base = `${proto}://${host}`;
 
   const [day, week, month, lifetime] = await Promise.all([
     fetchScope(base, 'day', sortBy, sortDir, limit),
     fetchScope(base, 'week', sortBy, sortDir, limit),
     fetchScope(base, 'month', sortBy, sortDir, limit),
-    fetchScope(base, 'lifetime', sortBy, sortDir, Math.min(limit, 1000)),
+    fetchScope(base, 'lifetime', sortBy, sortDir, limit),
   ]);
 
+  // ETag + cache headers for the rolled-up response (60s public, 60s s-maxage)
   return jsonWithETag(
     req,
     { day, week, month, lifetime },
     {
       headers: {
-        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300',
       },
     }
   );

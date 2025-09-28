@@ -1,4 +1,9 @@
-// src/app/api/helldivers/leaderboard/batch/route.ts
+// src/app/api/leaderboard/batch/route.ts
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+export const fetchCache = 'default-no-store';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { jsonWithETag } from '@/lib/httpCache';
 import {
@@ -19,13 +24,11 @@ const CACHE_TTL_MS = 60_000; // 1 minute
 const MAX_CACHE_ENTRIES = 100;
 
 function getCache(): Map<string, CacheEntry> {
-  const globalForCache = globalThis as unknown as {
+  const g = globalThis as unknown as {
     __helldivers_batch_cache__?: Map<string, CacheEntry>;
   };
-  if (!globalForCache.__helldivers_batch_cache__) {
-    globalForCache.__helldivers_batch_cache__ = new Map();
-  }
-  return globalForCache.__helldivers_batch_cache__;
+  if (!g.__helldivers_batch_cache__) g.__helldivers_batch_cache__ = new Map();
+  return g.__helldivers_batch_cache__;
 }
 
 function getFromCache(key: string) {
@@ -37,7 +40,7 @@ function getFromCache(key: string) {
     cache.set(key, entry);
     return entry.data;
   }
-  if (entry) cache.delete(key);
+  if (entry) cache.delete(entry as any);
   return null;
 }
 
@@ -50,60 +53,60 @@ function setCache(key: string, data: any) {
   cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
 }
 
+function parseIntSafe(v: string | null): number | undefined {
+  if (!v) return undefined;
+  const n = Number.parseInt(v, 10);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
-    const scopesParam = url.searchParams.get('scopes') || '';
-    const scopes = scopesParam
+    // scopes=day,week,month,lifetime,solo,squad
+    const scopesParam = (url.searchParams.get('scopes') || '')
       .split(',')
       .map((s) => s.trim().toLowerCase())
-      .filter(Boolean) as LeaderboardScope[];
+      .filter(Boolean);
+
+    // Dedupe and type as LeaderboardScope (cast is OK if your fetcher validates)
+    const scopes = Array.from(new Set(scopesParam)) as LeaderboardScope[];
     if (scopes.length === 0) {
-      return NextResponse.json(
-        { error: 'No scopes provided' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'No scopes provided' }, { status: 400 });
     }
 
-    const sortByParam = (url.searchParams.get('sortBy') || 'Kills') as SortField;
-    const sortDirParam = (url.searchParams.get('sortDir') || 'desc').toLowerCase();
-    const limitParam = parseInt(url.searchParams.get('limit') || '100', 10);
-    const monthParam = url.searchParams.get('month');
-    const yearParam = url.searchParams.get('year');
+    // sortBy, sortDir, limit, month, year
+    const sortByRaw = (url.searchParams.get('sortBy') || 'Kills') as SortField;
+    const sortBy: SortField = VALID_SORT_FIELDS.includes(sortByRaw) ? sortByRaw : 'Kills';
 
-    const sortBy: SortField = VALID_SORT_FIELDS.includes(sortByParam)
-      ? sortByParam
-      : 'Kills';
-    const sortDir: 'asc' | 'desc' = sortDirParam === 'asc' ? 'asc' : 'desc';
-    const limit =
-      Number.isFinite(limitParam) && limitParam > 0
-        ? Math.min(limitParam, 1000)
-        : 100;
-    const month = monthParam ? parseInt(monthParam, 10) : undefined;
-    const year = yearParam ? parseInt(yearParam, 10) : undefined;
+    const sortDir: 'asc' | 'desc' =
+      (url.searchParams.get('sortDir') || 'desc').toLowerCase() === 'asc' ? 'asc' : 'desc';
 
+    const limitReq = parseIntSafe(url.searchParams.get('limit')) ?? 100;
+    const limit = Math.min(Math.max(limitReq, 1), 1000);
+
+    let month = parseIntSafe(url.searchParams.get('month'));
+    if (month !== undefined) month = Math.min(Math.max(month, 1), 12);
+
+    let year = parseIntSafe(url.searchParams.get('year'));
+    if (year !== undefined) year = Math.min(Math.max(year, 1970), 9999);
+
+    // Prepare output and cache lookups
     const out: Record<string, any> = {};
+    const errors: Record<string, string> = {};
     const fetches: { scope: LeaderboardScope; key: string }[] = [];
 
-    scopes.forEach((scope) => {
-      const key = JSON.stringify({
-        sortBy,
-        sortDir,
-        limit,
-        scope,
-        month,
-        year,
-      });
+    for (const scope of scopes) {
+      const key = JSON.stringify({ sortBy, sortDir, limit, scope, month, year });
       const cached = getFromCache(key);
       if (cached) {
         out[scope] = cached;
       } else {
         fetches.push({ scope, key });
       }
-    });
+    }
 
     if (fetches.length > 0) {
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         fetches.map(({ scope }) =>
           fetchHelldiversLeaderboard({
             sortBy,
@@ -115,17 +118,24 @@ export async function GET(req: NextRequest) {
           })
         )
       );
+
       results.forEach((res, i) => {
         const { scope, key } = fetches[i];
-        out[scope] = res;
-        setCache(key, res);
+        if (res.status === 'fulfilled') {
+          out[scope] = res.value;
+          setCache(key, res.value);
+        } else {
+          errors[scope] = res.reason?.message ?? 'Fetch failed';
+          logger.error?.('leaderboard scope fetch failed', { scope, error: String(res.reason) });
+        }
       });
     }
 
-    return jsonWithETag(req, out, {
+    const payload = Object.keys(errors).length ? { ...out, errors } : out;
+
+    return jsonWithETag(req, payload, {
       headers: {
-        'Cache-Control':
-          'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
+        'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
       },
     });
   } catch (error: any) {

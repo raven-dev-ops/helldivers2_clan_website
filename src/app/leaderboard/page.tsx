@@ -1,4 +1,4 @@
-// src/app/(main)/helldivers-2/leaderboard/page.tsx
+// src/app/leaderboard/page.tsx
 import LeaderboardServer from '@/components/leaderboard/LeaderboardServer';
 import styles from '@/styles/Base.module.css';
 
