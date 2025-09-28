@@ -1,0 +1,328 @@
+/* src/app/leaderboard/LeaderboardPage.module.css */
+
+/* ---------- Theme vars (inherits well with Tailwind too) ---------- */
+:root {
+    --bg: #0f172a;            /* slate-900 */
+    --bg-soft: #111827;       /* gray-900 */
+    --surface: #1f2937;       /* gray-800 */
+    --surface-2: #243041;     /* custom */
+    --surface-hover: #2a3a52; /* custom */
+    --border: #334155;        /* slate-700 */
+    --text: #e5e7eb;          /* gray-200 */
+    --muted: #94a3b8;         /* slate-400 */
+    --accent: #60a5fa;        /* blue-400 */
+    --accent-2: #a78bfa;      /* violet-400 */
+    --success: #34d399;       /* emerald-400 */
+    --warn: #fbbf24;          /* amber-400 */
+    --danger: #f87171;        /* red-400 */
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  
+  /* ---------- Layout ---------- */
+  .container {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  
+  .title {
+    color: var(--text);
+    font-size: clamp(20px, 2vw, 28px);
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+  
+  .meta {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* ---------- Scope tabs (day/week/month/lifetime/solo/squad) ---------- */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: var(--surface);
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  
+  .tab {
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    padding: 6px 10px;
+    font-size: 12.5px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  
+  .tab:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  
+  .tabActive {
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    border-color: var(--border);
+    color: var(--text);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  
+  /* ---------- Card wrapper ---------- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: clip;
+  }
+  
+  /* ---------- Top row: sort, filter, search ---------- */
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+  }
+  
+  .search {
+    flex: 1 1 240px;
+    min-width: 180px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    outline: none;
+  }
+  
+  .search::placeholder {
+    color: var(--muted);
+  }
+  
+  .sortBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  
+  .sortBtn:hover {
+    background: var(--surface-hover);
+    border-color: #3b4a62;
+  }
+  
+  .sortIcon {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg);
+  }
+  
+  .sortIconAsc {
+    transform: rotate(-135deg);
+    border-right-color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  
+  .sortIconDesc {
+    transform: rotate(45deg);
+    border-right-color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  
+  /* ---------- Table ---------- */
+  .tableWrap {
+    overflow: auto;
+    max-height: 72vh;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 840px;
+    background: var(--surface);
+    color: var(--text);
+  }
+  
+  .thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, var(--surface-2), var(--surface));
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: .2px;
+    color: var(--muted);
+    padding: 10px 12px;
+  }
+  
+  .tr {
+    transition: background .12s ease;
+  }
+  
+  .tr:hover {
+    background: rgba(255,255,255,.03);
+  }
+  
+  .td, .th {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  
+  .rankCol { width: 64px; text-align: right; color: var(--muted); }
+  .nameCol { width: 36%; }
+  .statCol { text-align: right; font-variant-numeric: tabular-nums; }
+  
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    margin-right: 10px;
+    background: var(--bg-soft);
+  }
+  
+  /* ---------- Badges ---------- */
+  .badges {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+  }
+  
+  .badge {
+    font-size: 11px;
+    line-height: 1;
+    padding: 4px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--muted);
+  }
+  
+  .badgeSolo { color: var(--accent); border-color: rgba(96,165,250,.5); }
+  .badgeSquad { color: var(--accent-2); border-color: rgba(167,139,250,.5); }
+  .badgeTop1 { color: var(--success); border-color: rgba(52,211,153,.5); }
+  .badgeWarn { color: var(--warn); border-color: rgba(251,191,36,.5); }
+  
+  /* ---------- Footer / pagination ---------- */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px;
+    border-top: 1px solid var(--border);
+    background: linear-gradient(0deg, rgba(255,255,255,.02), transparent);
+  }
+  
+  .pageInfo {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  
+  .pager {
+    display: inline-flex;
+    gap: 6px;
+  }
+  
+  .pageBtn {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+  }
+  
+  .pageBtn:hover { background: var(--surface-hover); }
+  .pageBtn[disabled] {
+    opacity: .5;
+    cursor: not-allowed;
+  }
+  
+  /* ---------- Skeleton ---------- */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: #1b2433;
+    border-radius: 6px;
+  }
+  
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+    animation: shimmer 1.25s infinite;
+  }
+  
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+  
+  /* ---------- Utilities ---------- */
+  .kNum {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .muted {
+    color: var(--muted);
+  }
+  
+  .srOnly {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  
+  /* ---------- Responsive tweaks ---------- */
+  @media (max-width: 920px) {
+    .title { font-size: 20px; }
+    .toolbar { flex-wrap: wrap; }
+  }
+  
+  @media (max-width: 640px) {
+    .container { padding: 12px; gap: 12px; }
+    .tabs { gap: 4px; }
+    .tab { padding: 6px 8px; font-size: 12px; }
+    .table { min-width: 640px; } /* keep horizontal scroll rather than collapsing */
+  }
+  

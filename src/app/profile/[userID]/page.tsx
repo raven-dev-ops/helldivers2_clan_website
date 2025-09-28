@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { logger } from '@/lib/logger';
+import styles from '@/styles/Profile.module.css';
 
 type UserProfileData = {
   user: Record<string, any> & { createdAt?: string | Date };
@@ -71,34 +72,59 @@ export default async function ProfilePage({
 
   return (
     <main className="container mx-auto py-8 px-4">
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border dark:border-slate-700 flex items-center gap-6 mb-8">
-        <Image
-          src={
-            user?.customAvatarDataUrl ||
-            user?.image ||
-            '/images/avatar-default.png'
-          }
-          alt={`${displayName}'s Avatar`}
-          width={160}
-          height={160}
-          className="rounded-full object-cover border-2 border-slate-300 dark:border-slate-600"
-        />
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            {displayName}
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Member since{' '}
-            {user?.createdAt
-              ? format(new Date(user.createdAt), 'MMMM d, yyyy')
-              : 'N/A'}
-          </p>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}):{' '}
-            {weightDisplay}
-          </p>
+      <section className={styles.content}>
+        <h2 className={styles.contentTitle}>Profile</h2>
+
+        <header className={styles.profileHeader}>
+          <div className={styles.avatar}>
+            <Image
+              src={
+                user?.customAvatarDataUrl ||
+                user?.image ||
+                '/images/avatar-default.png'
+              }
+              alt={`${displayName}'s Avatar`}
+              fill
+              sizes="160px"
+              style={{ objectFit: 'cover' }}
+              priority
+            />
+          </div>
+
+          <div className={styles.profileInfo}>
+            <h1 className={styles.profileName}>{displayName}</h1>
+            <p className={styles.profileSubtitle}>
+              Member since{' '}
+              {user?.createdAt
+                ? format(new Date(user.createdAt), 'MMMM d, yyyy')
+                : 'N/A'}
+            </p>
+            <p className={styles.profileSubtitle}>
+              Height ({heightUnit}): {heightDisplay} · Weight ({weightUnit}):{' '}
+              {weightDisplay}
+            </p>
+
+            {/* Optional actions slot */}
+            <div className={styles.profileActions}>
+              {/* e.g., <a className={styles.button} href="/profile/edit">Edit Profile</a> */}
+            </div>
+          </div>
+        </header>
+
+        {/* Optional stats grid if you want to show quick stats */}
+        {/* 
+        <div className={styles.statGrid}>
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Merit Points</div>
+            <div className={styles.statValue}>{user?.meritPoints ?? 0}</div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statLabel}>Favored Enemy</div>
+            <div className={styles.statValue}>{user?.favoredEnemy ?? '—'}</div>
+          </div>
         </div>
-      </div>
+        */}
+      </section>
     </main>
   );
 }
