@@ -29,15 +29,11 @@ export function getAuthOptions(): NextAuthOptions {
       // Inject the user id into the session object for convenience
       async session({ session, token }) {
         if (session?.user && token?.sub) {
-          // Add .id onto session.user (TS users: extend Session type)
-          // @ts-expect-error - augmenting at runtime
           session.user.id = token.sub;
         }
         return session;
       },
       async jwt({ token }) {
-        // Token already contains `sub` (the user id when using an adapter),
-        // without an adapter it’s still stable per provider account.
         return token;
       },
     },
