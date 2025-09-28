@@ -5,13 +5,14 @@ import Google from 'next-auth/providers/google';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
 
+
 export function getAuthOptions(): NextAuthOptions {
   const providers = [
     Discord({
       clientId: process.env.DISCORD_CLIENT_ID ?? '',
       clientSecret: process.env.DISCORD_CLIENT_SECRET ?? '',
     }),
-    // Remove if you don’t use Google:
+    // Remove this block if you don't use Google
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
@@ -19,54 +20,83 @@ export function getAuthOptions(): NextAuthOptions {
   ];
 
   return {
-    // ✅ No adapter — pure JWT sessions
     session: { strategy: 'jwt' },
     secret: process.env.NEXTAUTH_SECRET,
-
     providers,
 
     callbacks: {
-      // Inject the user id into the session object for convenience
+      async jwt({ token, user }) {
+        try {
+          // Initial sign-in flow (user is defined only then)
+          if (user?.email) {
+            await dbConnect();
+
+            const doc = await UserModel.findOneAndUpdate(
+              { email: user.email },
+              {
+                $setOnInsert: {
+                  email: user.email,
+                  createdAt: new Date(),
+                },
+                $set: {
+                  name: user.name ?? null,
+                  image: user.image ?? null,
+                  lastLoginAt: new Date(),
+                },
+              },
+              { new: true, upsert: true, lean: true }
+            );
+
+            if (doc) {
+              token.uid = doc._id.toString();
+            }
+          }
+
+          if (!token.uid && token.email) {
+            await dbConnect();
+            const existing = await UserModel.findOne({ email: token.email })
+              .select('_id')
+              .lean();
+            if (existing?._id) {
+              token.uid = existing._id.toString();
+            }
+          }
+        } catch (e) {
+          // Don't block auth on DB hiccups; just leave uid undefined
+          console.error('next-auth jwt callback error:', e);
+        }
+
+        return token;
+      },
+
       async session({ session, token }) {
-        if (session?.user && token?.sub) {
-          session.user.id = token.sub;
+
+        const uid = token?.uid as string | undefined;
+        if (session?.user && uid) {
+          session.user.id = uid;
         }
         return session;
-      },
-      async jwt({ token }) {
-        return token;
       },
     },
 
     events: {
-      // Upsert a user record in your MongoDB when someone signs in
-      async signIn({ user, account, profile }) {
+      async signIn({ user }) {
+        if (!user?.email) return;
         try {
           await dbConnect();
-          // Minimal upsert based on email (tweak to your schema)
-          await UserModel.findOneAndUpdate(
+          await UserModel.updateOne(
             { email: user.email },
             {
-              $setOnInsert: {
-                email: user.email,
-                createdAt: new Date(),
-              },
               $set: {
                 name: user.name ?? null,
                 image: user.image ?? null,
                 lastLoginAt: new Date(),
-                // Track seen providers (optional)
-                providers: account?.provider
-                  ? { [account.provider]: true }
-                  : undefined,
               },
             },
-            { upsert: true, new: true }
-          ).lean();
-        } catch (err) {
-          // Returning false blocks sign-in; we generally don’t want that for a DB hiccup.
-          // So just log and continue.
-          console.error('signIn upsert error:', err);
+            { upsert: true }
+          );
+        } catch (e) {
+          console.error('next-auth signIn event upsert error:', e);
         }
       },
     },
