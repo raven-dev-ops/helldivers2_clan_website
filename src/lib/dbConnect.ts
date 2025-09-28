@@ -11,8 +11,7 @@ import '@/models/ForumPost';
 type MongooseCache = { conn: Mongoose | null; promise: Promise<Mongoose> | null };
 
 declare global {
-  // eslint-disable-next-line no-var
-  var mongoose_cache: MongooseCache | undefined;
+  var mongoose_cache: MongooseCache | undefined; // no eslint-disable needed
 }
 
 const g = globalThis as typeof globalThis & { mongoose_cache?: MongooseCache };
@@ -44,7 +43,7 @@ export default async function dbConnect(): Promise<Mongoose> {
 
   try {
     cached.conn = await cached.promise;
-    return cached.conn!;
+    return cached.conn;
   } catch (err) {
     cached.promise = null;
     logger?.error?.('MongoDB connection error:', err);

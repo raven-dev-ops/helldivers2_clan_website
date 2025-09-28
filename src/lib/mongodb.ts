@@ -8,6 +8,7 @@ type MongoGlobal = typeof globalThis & {
 const g = globalThis as MongoGlobal;
 g._mongo ??= {};
 
+/** Preferred lazy getter */
 export async function getMongoClient(): Promise<MongoClient> {
   if (g._mongo!.client) return g._mongo!.client;
 
@@ -19,4 +20,8 @@ export async function getMongoClient(): Promise<MongoClient> {
 
   g._mongo!.client = await g._mongo!.promise!;
   return g._mongo!.client!;
+}
+
+export function getMongoClientPromise(): Promise<MongoClient> {
+  return getMongoClient();
 }

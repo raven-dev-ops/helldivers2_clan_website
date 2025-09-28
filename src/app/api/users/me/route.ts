@@ -8,7 +8,7 @@ import { getServerSession } from 'next-auth';
 import { getAuthOptions } from '@/lib/authOptions';
 import dbConnect from '@/lib/dbConnect';
 import UserModel from '@/models/User';
-import { getMongoClientPromise } from '@/lib/mongodb';
+import { getMongoClient } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { logger } from '@/lib/logger';
 import { jsonWithETag } from '@/lib/httpCache';
@@ -393,7 +393,7 @@ export async function PUT(req: NextRequest) {
 
     // Snapshot to User_Profiles collection (best-effort)
     try {
-      const client = await getMongoClientPromise();
+      const client = await getMongoClient();
       const db = client.db();
       const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
 
@@ -513,18 +513,18 @@ export async function DELETE(req: NextRequest) {
     // Remove user document
     await UserModel.deleteOne({ _id: userId });
 
-    // Remove NextAuth artifacts
-    const client = await getMongoClientPromise();
+    // Remove NextAuth artifacts (collections may not exist if you're JWT-only)
+    const client = await getMongoClient();
     const db = client.db();
     await Promise.all([
-      db.collection('accounts').deleteMany({ userId }),
-      db.collection('sessions').deleteMany({ userId }),
-      // Intentionally NOT deleting verificationTokens globally; they aren't user-scoped.
+      db.collection('accounts').deleteMany({ userId }).catch(() => undefined),
+      db.collection('sessions').deleteMany({ userId }).catch(() => undefined),
+      // Note: verificationTokens are not user-scoped; leave them alone.
     ]);
 
     // Remove app snapshot
     const appDb = client.db(process.env.MONGODB_DB || 'GPTHellbot');
-    await appDb.collection('User_Profiles').deleteOne({ user_id: userId });
+    await appDb.collection('User_Profiles').deleteOne({ user_id: userId }).catch(() => undefined);
 
     // Evict cache entries
     for (const key of Array.from(userCache.keys())) {
