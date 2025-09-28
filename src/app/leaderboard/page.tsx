@@ -1,6 +1,6 @@
 // src/app/leaderboard/page.tsx
 import LeaderboardServer from '@/components/leaderboard/LeaderboardServer';
-import styles from '@/styles/Base.module.css';
+import styles from '@/styles/LeaderboardPage.module.css';
 
 export default function LeaderboardPage() {
   return (

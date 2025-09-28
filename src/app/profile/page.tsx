@@ -7,7 +7,7 @@ export const revalidate = 0;
 export const metadata = { title: 'Profile' };
 
 import ProfileClient from '@/components/profile/ProfileClient';
-import styles from '@/styles/Profile.module.css';
+import styles from '@/styles/ProfilePage.module.css';
 
 export default function ProfilePage() {
   return (
