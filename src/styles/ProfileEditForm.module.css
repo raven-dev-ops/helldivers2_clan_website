@@ -1,0 +1,177 @@
+/* src/styles/ProfileEditForm.module.css */
+
+/* --- Layout wrappers --- */
+.form {
+    display: grid;
+    gap: 1rem;
+  }
+  
+  .section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 0.5rem;
+  }
+  
+  /* --- Field rows --- */
+  .row {
+    display: grid;
+    gap: 0.5rem;
+  }
+  
+  .gridTwo {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .gridThree {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  @media (min-width: 640px) {
+    .gridTwo { grid-template-columns: repeat(2, 1fr); }
+    .gridThree { grid-template-columns: repeat(3, 1fr); }
+  }
+  
+  .label {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+  
+  .input,
+  .select,
+  .textarea {
+    width: 100%;
+    background: var(--color-background);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    outline: none;
+    transition: border-color .15s ease, background-color .15s ease;
+  }
+  
+  .input:focus,
+  .select:focus,
+  .textarea:focus {
+    border-color: var(--color-border-alt);
+  }
+  
+  .textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+  
+  .hint {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+  
+  .error {
+    font-size: 0.85rem;
+    color: var(--color-error);
+  }
+  
+  /* --- Avatar block --- */
+  .avatarBlock {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .avatarImg {
+    width: 96px;
+    height: 96px;
+    border-radius: 999px;
+    border: 3px solid var(--color-border);
+    object-fit: cover;
+    background: var(--color-background-alt);
+  }
+  
+  .avatarActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  /* --- Unit toggles --- */
+  .unitToggle {
+    display: inline-flex;
+    gap: 0.25rem;
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+  }
+  
+  .unitBtn {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 0;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+  }
+  .unitBtn[aria-pressed="true"] {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+  
+  /* --- Actions --- */
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+  
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    transition: background-color .15s ease, border-color .15s ease, transform .06s ease;
+  }
+  .button:hover {
+    background: var(--color-surface-alt);
+    border-color: var(--color-border-alt);
+  }
+  .button:active { transform: translateY(1px); }
+  
+  .primaryButton {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    border-color: var(--color-primary);
+  }
+  .primaryButton:hover { background: var(--color-primary-hover); }
+  
+   /* --- Misc --- */
+  .inline {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: 0.5rem 0;
+  }
+  
