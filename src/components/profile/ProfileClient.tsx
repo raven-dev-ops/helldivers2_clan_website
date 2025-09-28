@@ -63,7 +63,7 @@ export default function ProfileClient() {
   }).toString();
 
   const { data: batchData } = useSWR(
-    `/api/helldivers/leaderboard/batch?${qsBatch}`,
+    `/api/leaderboard/batch?${qsBatch}`,
     fetcher
   );
   const soloData = batchData?.solo;
