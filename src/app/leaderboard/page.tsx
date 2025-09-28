@@ -1,18 +1,16 @@
 // src/app/leaderboard/page.tsx
 import LeaderboardServer from '@/components/leaderboard/LeaderboardServer';
+import base from '@/styles/Base.module.css';
 import styles from '@/styles/LeaderboardPage.module.css';
 
 export default function LeaderboardPage() {
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.dividerLayer} />
+    <div className={base.wrapper}>
+      <div className={base.dividerLayer} />
 
-      <main className={styles.mainContainer}>
+      <main className={base.pageContainer} role="main" aria-label="Leaderboard">
         {/* Centered header */}
-        <header
-          className={styles.header}
-          style={{ justifyContent: 'center', textAlign: 'center' }}
-        >
+        <header className={styles.header} style={{ justifyContent: 'center', textAlign: 'center' }}>
           <div>
             <h1 className={styles.pageTitle}>Leaderboard</h1>
             <p className={styles.pageSubtitle}>Updated every 60s</p>
@@ -20,14 +18,19 @@ export default function LeaderboardPage() {
         </header>
 
         {/* Centered controls (tabs + toolbar) */}
-        <section className={styles.container}>
+        <section className={styles.container} aria-label="Controls">
           <div
             className={styles.controls}
             style={{ justifyContent: 'center', width: '100%' }}
             aria-label="Leaderboard filters"
           >
             <div className={styles.tabs} role="tablist" aria-label="Scope">
-              <button type="button" role="tab" aria-selected className={`${styles.tab} ${styles.tabActive}`}>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="true"
+                className={`${styles.tab} ${styles.tabActive}`}
+              >
                 Month
               </button>
               <button type="button" role="tab" aria-selected="false" className={styles.tab}>
@@ -61,7 +64,12 @@ export default function LeaderboardPage() {
                 placeholder="Search players…"
                 aria-label="Search players"
               />
-              <button type="button" className={styles.sortBtn} aria-pressed="true" aria-label="Sort by Kills descending">
+              <button
+                type="button"
+                className={styles.sortBtn}
+                aria-pressed="true"
+                aria-label="Sort by Kills descending"
+              >
                 Kills <i className={`${styles.sortIcon} ${styles.sortIconDesc}`} />
               </button>
               <button type="button" className={styles.sortBtn} aria-label="Sort by K/D">

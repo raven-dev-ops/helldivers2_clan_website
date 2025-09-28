@@ -1,8 +1,7 @@
 // src/app/academy/page.tsx
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
-import type { MouseEvent } from 'react';
+import { useMemo, useRef, useState, useCallback, KeyboardEvent, MouseEvent } from 'react';
 import Image from 'next/image';
 import base from '@/styles/Base.module.css';
 import styles from '@/styles/AcademyPage.module.css';
@@ -14,40 +13,64 @@ export default function AcademyPage() {
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   const selectedModule = useMemo<AcademyModule | null>(
-    () => MODULES.find((m: AcademyModule) => m.id === selectedId) ?? null,
+    () => MODULES.find((m) => m.id === selectedId) ?? null,
     [selectedId]
   );
 
-  const openModal = (id: string, trigger: HTMLButtonElement | null) => {
+  const openModal = useCallback((id: string, trigger: HTMLButtonElement | null) => {
     lastTriggerRef.current = trigger;
     setSelectedId(id);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setSelectedId(null);
-    lastTriggerRef.current?.focus();
-  };
+    lastTriggerRef.current?.focus(); // restore focus to the trigger
+  }, []);
+
+  const onCardKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>, id: string) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal(id, e.currentTarget);
+      }
+    },
+    [openModal]
+  );
 
   return (
     <div className={base.wrapper}>
       <div className={base.dividerLayer} />
 
-      <div className={`${base.pageContainer} ${styles.pageWrapper}`}>
+      <main className={base.pageContainer} role="main" aria-label="Academy">
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>Academy</h1>
+          <p className={styles.pageSubtitle}>
+            Structured training modules to level up your skills.
+          </p>
+        </header>
 
         <section className={base.section} aria-labelledby="academy-title">
-          <h3 id="academy-title" className={base.sectionTitle}>Training Modules</h3>
+          <h2 id="academy-title" className={base.sectionTitle}>
+            Training Modules
+          </h2>
 
-          {/* Horizontal rail */}
-          <div className={styles.modulesRail} role="list" aria-label="Academy modules">
-            {MODULES.map((module: AcademyModule) => {
+          <ul className={styles.modulesRail} aria-label="Available modules">
+            {MODULES.map((module) => {
               const { details: _omit, ...m } = module;
-              return <ModuleCard key={m.id} data={m} onOpen={openModal} />;
+              return (
+                <ModuleCard
+                  key={m.id}
+                  data={m}
+                  onOpen={openModal}
+                  onKeyOpen={onCardKeyDown}
+                />
+              );
             })}
-          </div>
+          </ul>
         </section>
-      </div>
+      </main>
 
-      {/* Modal */}
+      {/* Modal (removed unsupported `id` prop) */}
       <Modal
         open={!!selectedModule}
         onClose={closeModal}
@@ -68,26 +91,26 @@ export default function AcademyPage() {
       >
         {selectedModule && (
           <>
-            <div
-              id="academy-modal-desc"
-              className={base.paragraph}
-              style={{ marginBottom: '0.75rem' }}
-            >
+            <p id="academy-modal-desc" className={base.paragraph} style={{ marginBottom: '0.75rem' }}>
               {selectedModule.description}
-            </div>
+            </p>
 
-            {selectedModule.details.paragraphs.map((p: string) => (
-              <p key={p.slice(0, 24)} className={base.paragraph}>{p}</p>
+            {selectedModule.details.paragraphs.map((p, idx) => (
+              <p key={`${selectedModule.id}-p-${idx}`} className={base.paragraph}>
+                {p}
+              </p>
             ))}
 
             {(selectedModule.details.tips?.length || selectedModule.details.cautions?.length) ? (
-              <div className={styles.modalRow}>
+              <div className={styles.modalRow} aria-label="Tips and cautions">
                 {selectedModule.details.tips?.length ? (
                   <div className={styles.modalListCard}>
                     <div className={styles.modalListTitle}>Tips</div>
                     <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                      {selectedModule.details.tips.map((t: string) => (
-                        <li key={t} className={base.listItem}>{t}</li>
+                      {selectedModule.details.tips.map((t, idx) => (
+                        <li key={`${selectedModule.id}-tip-${idx}`} className={base.listItem}>
+                          {t}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -97,8 +120,10 @@ export default function AcademyPage() {
                   <div className={styles.modalListCard}>
                     <div className={styles.modalListTitle}>Cautions</div>
                     <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                      {selectedModule.details.cautions.map((c: string) => (
-                        <li key={c} className={base.listItem}>{c}</li>
+                      {selectedModule.details.cautions.map((c, idx) => (
+                        <li key={`${selectedModule.id}-caution-${idx}`} className={base.listItem}>
+                          {c}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -106,20 +131,24 @@ export default function AcademyPage() {
               </div>
             ) : null}
 
-            <div className={styles.modalRow} style={{ marginTop: '1.25rem' }}>
+            <div className={styles.modalRow} style={{ marginTop: '1.25rem' }} aria-label="Skills">
               <div className={styles.modalListCard}>
                 <div className={styles.modalListTitle}>Basic</div>
                 <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                  {selectedModule.basic.map((item: string) => (
-                    <li key={item} className={base.listItem}>{item}</li>
+                  {selectedModule.basic.map((item, idx) => (
+                    <li key={`${selectedModule.id}-basic-${idx}`} className={base.listItem}>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
               <div className={styles.modalListCard}>
                 <div className={styles.modalListTitle}>Advanced</div>
                 <ul className={`${base.styledList} ${styles.moduleSkillsList}`}>
-                  {selectedModule.advanced.map((item: string) => (
-                    <li key={item} className={base.listItem}>{item}</li>
+                  {selectedModule.advanced.map((item, idx) => (
+                    <li key={`${selectedModule.id}-adv-${idx}`} className={base.listItem}>
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -142,39 +171,49 @@ export default function AcademyPage() {
   );
 }
 
-/** Small card component kept inline for clarity */
+/** Small card component */
 function ModuleCard({
   data,
   onOpen,
+  onKeyOpen,
 }: {
   data: Omit<AcademyModule, 'details'>;
   onOpen: (id: string, trigger: HTMLButtonElement | null) => void;
+  onKeyOpen: (e: KeyboardEvent<HTMLButtonElement>, id: string) => void;
 }) {
   return (
-    <article className={styles.moduleCard} role="listitem">
-      {/* Card image */}
-      <Image
-        className={styles.moduleCardImg}
-        src={data.img}
-        alt={data.imgAlt}
-        width={1200}
-        height={675}
-        loading="lazy"
-      />
+    <li className={styles.moduleCard} aria-label={`${data.title} module`}>
+      <div className={styles.moduleCardImgWrap}>
+        <Image
+          className={styles.moduleCardImg}
+          src={data.img}
+          alt={data.imgAlt}
+          width={1200}
+          height={675}
+          sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 33vw"
+          loading="lazy"
+          priority={false}
+        />
+      </div>
+
       <div className={styles.moduleCardBody}>
-        <h4 className={styles.moduleCardTitle}>{data.title}</h4>
+        <h3 className={styles.moduleCardTitle}>{data.title}</h3>
         <p className={styles.moduleCardSubtitle}>{data.subtitle}</p>
         <p className={styles.moduleCardDesc}>{data.description}</p>
-        <button
-          className={styles.ctaButton}
-          onClick={(e: MouseEvent<HTMLButtonElement>) => onOpen(data.id, e.currentTarget)}
-          aria-haspopup="dialog"
-          aria-controls="academy-modal"
-          aria-label={`Open ${data.title} module`}
-        >
-          Open
-        </button>
+
+        <div className={styles.moduleCardActions}>
+          <button
+            className={styles.ctaButton}
+            onClick={(e: MouseEvent<HTMLButtonElement>) => onOpen(data.id, e.currentTarget)}
+            onKeyDown={(e) => onKeyOpen(e, data.id)}
+            aria-haspopup="dialog"
+            // removed aria-controls since we’re not setting an external id on Modal
+            aria-label={`Open ${data.title} module`}
+          >
+            Open
+          </button>
+        </div>
       </div>
-    </article>
+    </li>
   );
 }
